@@ -1,13 +1,21 @@
 package com.epherical.professions.profession.action;
 
 import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.profession.action.builtin.BreakBlockAction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.GsonAdapterFactory;
 import net.minecraft.world.level.storage.loot.Serializer;
 
-public class ProfessionActions {
-    public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction());
+import java.util.function.Predicate;
 
+public class ProfessionActions {
+    public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction.Serializer());
+
+
+    public static Object createGsonAdapter() {
+        return GsonAdapterFactory.builder(ProfessionsMod.PROFESSION_ACTIONS, "actions", "actions", Action::getType).build();
+    }
 
     public static ActionType register(ResourceLocation id, Serializer<? extends Action> serializer) {
         return Registry.register(ProfessionsMod.PROFESSION_ACTIONS, id, new ActionType(serializer));
@@ -15,5 +23,21 @@ public class ProfessionActions {
 
     public static ResourceLocation modID(String name) {
         return new ResourceLocation("professions", name);
+    }
+
+    public static <T> Predicate<T> andAllConditions(Predicate<T>[] conditions) {
+        return switch (conditions.length) {
+            case 0 -> t -> true;
+            case 1 -> conditions[0];
+            case 2 -> conditions[0].and(conditions[1]);
+            default -> t -> {
+                for (Predicate<T> condition : conditions) {
+                    if (!condition.test(t)) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+        };
     }
 }

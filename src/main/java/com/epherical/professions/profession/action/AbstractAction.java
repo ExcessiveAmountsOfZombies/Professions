@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.action;
 
+import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.google.gson.JsonDeserializationContext;
@@ -12,18 +13,32 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public abstract class AbstractAction implements Action {
     protected final ActionCondition[] conditions;
     protected final Reward[] rewards;
-    /*private final Predicate<> predicate;*/
+    private final Predicate<ProfessionContext> predicate;
 
     protected AbstractAction(ActionCondition[] conditions, Reward[] rewards) {
         this.conditions = conditions;
         this.rewards = rewards;
-        /*this.predicate =*/
+        this.predicate = ProfessionActions.andAllConditions(conditions);
     }
 
+    public final void runAction() {
+        if (this.predicate.test(null) && action()) {
+            // todo: rewards.
+        }
+    }
+
+    public abstract boolean action();
+
+    public void giveRewards() {
+        for (Reward reward : rewards) {
+            reward.giveReward();
+        }
+    }
 
     public abstract static class ActionSerializer<T extends AbstractAction> implements Serializer<T> {
 
@@ -55,10 +70,10 @@ public abstract class AbstractAction implements Action {
 
         public T when(ActionCondition.Builder conditionBuilder) {
             this.conditions.add(conditionBuilder.build());
-            return getThis();
+            return instance();
         }
 
-        protected abstract T getThis();
+        protected abstract T instance();
 
         public ActionCondition[] getConditions() {
             return conditions.toArray(new ActionCondition[0]);

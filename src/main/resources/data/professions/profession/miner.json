@@ -1,0 +1,48 @@
+{
+  "type": "professions:default",
+  "color": "#FF0000",
+  "descriptionColor": "#FFFFFF",
+  "description": [
+    "Earn money by breaking ores."
+  ],
+  "displayName": "Miner",
+  "maxLevel": "100",
+  "actions": [
+    {
+      "type": "professions:break_block",
+      "blocks": [
+        "minecraft:diamond_ore",
+        "minecraft:deepslate_diamond_ore"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "type": "professions:money",
+          "amount": 15.0
+        },
+        {
+          "type": "professions:occupation_exp",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "professions:break_block",
+      "blocks": [
+        "minecraft:iron_ore",
+        "minecraft:deepslate_iron_ore"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "type": "professions:money",
+          "amount": 5.0
+        },
+        {
+          "type": "professions:occupation_exp",
+          "amount": 0.5
+        }
+      ]
+    }
+  ]
+}

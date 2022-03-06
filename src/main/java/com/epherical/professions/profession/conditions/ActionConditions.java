@@ -14,7 +14,7 @@ public class ActionConditions {
 
 
     public static Object createGsonAdapter() {
-        return GsonAdapterFactory.builder(ProfessionsMod.ACTION_CONDITION_TYPE, "conditions", "conditions", ActionCondition::getType).build();
+        return GsonAdapterFactory.builder(ProfessionsMod.ACTION_CONDITION_TYPE, "condition", "condition", ActionCondition::getType).build();
     }
 
     public static ActionConditionType register(ResourceLocation location, Serializer<? extends ActionCondition> serializer) {

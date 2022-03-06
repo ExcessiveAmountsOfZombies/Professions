@@ -28,15 +28,15 @@ public abstract class AbstractAction implements Action {
 
     public final void runAction(ProfessionContext context) {
         if (this.predicate.test(context) && test(context)) {
-            // todo: rewards.
+            giveRewards(context);
         }
     }
 
     public abstract boolean test(ProfessionContext professionContext);
 
-    public void giveRewards() {
+    public void giveRewards(ProfessionContext context) {
         for (Reward reward : rewards) {
-            reward.giveReward();
+            reward.giveReward(context, this);
         }
     }
 

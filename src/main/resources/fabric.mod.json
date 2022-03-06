@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "Professions",
+  "id": "professions",
   "version": "${version}",
   "name": "Professions",
   "description": "Professions that earn you configurable rewards.",

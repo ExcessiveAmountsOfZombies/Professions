@@ -16,7 +16,7 @@ public class ProfessionActions {
 
 
     public static Object createGsonAdapter() {
-        return GsonAdapterFactory.builder(ProfessionsMod.ACTION_TYPE, "actions", "actions", Action::getType).build();
+        return GsonAdapterFactory.builder(ProfessionsMod.ACTION_TYPE, "action", "action", Action::getType).build();
     }
 
     public static ActionType register(ResourceLocation id, Serializer<? extends Action> serializer) {

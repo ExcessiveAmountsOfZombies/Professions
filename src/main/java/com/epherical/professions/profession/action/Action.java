@@ -9,6 +9,7 @@ public interface Action extends Predicate<ProfessionContext> {
 
     ActionType getType();
 
+    @FunctionalInterface
     interface Builder {
         Action build();
     }

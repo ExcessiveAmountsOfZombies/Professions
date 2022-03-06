@@ -25,7 +25,7 @@ public record ToolMatcher(ItemPredicate predicate) implements ActionCondition {
         return stack != null && this.predicate.matches(stack);
     }
 
-    public static ActionCondition.Builder toolMatcher(ItemPredicate.Builder builder) {
+    public static Builder toolMatcher(ItemPredicate.Builder builder) {
         return () -> new ToolMatcher(builder.build());
     }
 

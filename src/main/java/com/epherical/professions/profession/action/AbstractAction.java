@@ -26,13 +26,13 @@ public abstract class AbstractAction implements Action {
         this.predicate = ProfessionActions.andAllConditions(conditions);
     }
 
-    public final void runAction() {
-        if (this.predicate.test(null) && action()) {
+    public final void runAction(ProfessionContext context) {
+        if (this.predicate.test(context) && test(context)) {
             // todo: rewards.
         }
     }
 
-    public abstract boolean action();
+    public abstract boolean test(ProfessionContext professionContext);
 
     public void giveRewards() {
         for (Reward reward : rewards) {

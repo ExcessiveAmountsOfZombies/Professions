@@ -1,5 +1,7 @@
 package com.epherical.professions.profession.action.builtin;
 
+import com.epherical.professions.profession.ProfessionContext;
+import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.ProfessionActions;
@@ -14,6 +16,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,8 +36,9 @@ public class BreakBlockAction extends AbstractAction {
     }
 
     @Override
-    public boolean action() {
-        return false;
+    public boolean test(ProfessionContext professionContext) {
+        BlockState state = professionContext.getPossibleParameter(ProfessionParameter.THIS_BLOCKSTATE);
+        return state != null && blocks.contains(state.getBlock());
     }
 
 

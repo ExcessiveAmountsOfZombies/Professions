@@ -9,20 +9,18 @@ import net.minecraft.world.level.storage.loot.Serializer;
 
 import java.util.function.Predicate;
 
+import static com.epherical.professions.ProfessionsMod.modID;
+
 public class ProfessionActions {
     public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction.Serializer());
 
 
     public static Object createGsonAdapter() {
-        return GsonAdapterFactory.builder(ProfessionsMod.PROFESSION_ACTIONS, "actions", "actions", Action::getType).build();
+        return GsonAdapterFactory.builder(ProfessionsMod.ACTION_TYPE, "actions", "actions", Action::getType).build();
     }
 
     public static ActionType register(ResourceLocation id, Serializer<? extends Action> serializer) {
-        return Registry.register(ProfessionsMod.PROFESSION_ACTIONS, id, new ActionType(serializer));
-    }
-
-    public static ResourceLocation modID(String name) {
-        return new ResourceLocation("professions", name);
+        return Registry.register(ProfessionsMod.ACTION_TYPE, id, new ActionType(serializer));
     }
 
     public static <T> Predicate<T> andAllConditions(Predicate<T>[] conditions) {

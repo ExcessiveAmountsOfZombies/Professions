@@ -7,7 +7,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -16,7 +15,7 @@ import org.slf4j.Logger;
 
 import java.util.Map;
 
-public class Professions extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
+public class OccupationLoader extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping()
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
@@ -24,7 +23,7 @@ public class Professions extends SimpleJsonResourceReloadListener implements Ide
     private Map<ResourceLocation, Profession> professionMap = ImmutableMap.of();
 
 
-    public Professions() {
+    public OccupationLoader() {
         super(GSON, "professions/occupations");
     }
 

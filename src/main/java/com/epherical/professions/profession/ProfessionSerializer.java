@@ -4,10 +4,15 @@ import com.epherical.professions.ProfessionsMod;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 
 public interface ProfessionSerializer<T extends Profession> {
+    ProfessionSerializer<Profession> DEFAULT_PROFESSION = registerSerializer(ProfessionsMod.modID("default"), new Profession.Serializer());
 
+    // Potential client integration in the future? This would be a case of not when they log in, but when they push
+    // the appropriate keybind, and it would send the profession data and store it until they leave.
+    /*T fromServer(ResourceLocation id, FriendlyByteBuf buf);
+
+    void toClient(FriendlyByteBuf buf, T profession);*/
 
     T deserialize(ResourceLocation id, JsonObject profession);
 

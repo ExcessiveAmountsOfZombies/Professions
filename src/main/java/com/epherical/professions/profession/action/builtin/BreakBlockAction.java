@@ -3,6 +3,7 @@ package com.epherical.professions.profession.action.builtin;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.AbstractAction;
+import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.ProfessionActions;
 import com.epherical.professions.profession.conditions.ActionCondition;
@@ -41,6 +42,29 @@ public class BreakBlockAction extends AbstractAction {
         return state != null && blocks.contains(state.getBlock());
     }
 
+    public static class Builder extends AbstractAction.Builder<BreakBlockAction.Builder> {
+        private List<Block> blocks = new ArrayList<>();
+
+        public Builder withBlock(Block block) {
+            this.blocks.add(block);
+            return this;
+        }
+
+        public Builder withBlocks(Block... blocks) {
+            this.blocks.addAll(List.of(blocks));
+            return this;
+        }
+
+        @Override
+        protected Builder instance() {
+            return this;
+        }
+
+        @Override
+        public Action build() {
+            return new BreakBlockAction(this.getConditions(), this.getRewards(), blocks);
+        }
+    }
 
     public static class Serializer extends ActionSerializer<BreakBlockAction> {
 

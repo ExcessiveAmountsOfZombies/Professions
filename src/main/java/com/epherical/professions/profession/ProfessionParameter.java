@@ -16,11 +16,4 @@ public record ProfessionParameter<T>(ResourceLocation name) {
     private static <T> ProfessionParameter<T> create(String id) {
         return new ProfessionParameter<>(new ResourceLocation("professions", id));
     }
-
-    @Override
-    public String toString() {
-        return "ProfessionParameter{" +
-                "name=" + name +
-                '}';
-    }
 }

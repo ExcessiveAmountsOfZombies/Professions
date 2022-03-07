@@ -4,6 +4,7 @@ import com.epherical.octoecon.api.Currency;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
@@ -23,10 +24,9 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
     }
 
     @Override
-    public void giveReward(ProfessionContext context, Action action) {
+    public void giveReward(ProfessionContext context, Action action, Occupation occupation) {
 
     }
-
 
     public static class RewardSerializer implements Serializer<PaymentReward> {
 

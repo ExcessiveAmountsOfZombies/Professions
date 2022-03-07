@@ -1,7 +1,9 @@
 package com.epherical.professions.profession.action;
 
+import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.conditions.ActionCondition;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -26,17 +28,18 @@ public abstract class AbstractAction implements Action {
         this.predicate = ProfessionActions.andAllConditions(conditions);
     }
 
-    public final void runAction(ProfessionContext context) {
+    @Override
+    public void handleRewards(ProfessionContext context, Occupation occupation) {
         if (this.predicate.test(context) && test(context)) {
-            giveRewards(context);
+            giveRewards(context, occupation);
         }
     }
 
     public abstract boolean test(ProfessionContext professionContext);
 
-    public void giveRewards(ProfessionContext context) {
+    public void giveRewards(ProfessionContext context, Occupation occupation) {
         for (Reward reward : rewards) {
-            reward.giveReward(context, this);
+            reward.giveReward(context, this, occupation);
         }
     }
 

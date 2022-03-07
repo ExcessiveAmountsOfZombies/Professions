@@ -29,6 +29,10 @@ public class Profession {
     }
 
 
+    public Action[] getActions() {
+        return actions;
+    }
+
     public static class Serializer implements ProfessionSerializer<Profession> {
 
 

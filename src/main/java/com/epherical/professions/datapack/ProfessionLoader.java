@@ -1,7 +1,7 @@
 package com.epherical.professions.datapack;
 
 import com.epherical.professions.ProfessionsMod;
-import com.epherical.professions.events.ProfessionEvents;
+import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Action;
@@ -72,7 +72,7 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
                 .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
                 .registerTypeHierarchyAdapter(Action.class, ProfessionActions.createGsonAdapter())
                 .registerTypeAdapter(Profession.class, new Profession.Serializer());
-        ProfessionEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
+        ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;
     }
 }

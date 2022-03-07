@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
-public final class ProfessionEvents {
+public final class ProfessionUtilityEvents {
 
     /**
      * See {@link SerializerCallback#addProfessionSerializer(GsonBuilder)}

@@ -1,7 +1,9 @@
 package com.epherical.professions.trigger;
 
+import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
+import com.epherical.professions.profession.action.ProfessionActions;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.server.level.ServerLevel;
 
@@ -13,10 +15,11 @@ public class BlockBreakTrigger {
             if (world instanceof ServerLevel) {
                 ProfessionContext.Builder builder = new ProfessionContext.Builder((ServerLevel) world)
                         .addRandom(world.random)
+                        .addParameter(ProfessionParameter.ACTION_TYPE, ProfessionActions.BREAK_BLOCK)
                         .addParameter(ProfessionParameter.BLOCKPOS, pos)
                         .addParameter(ProfessionParameter.THIS_PLAYER, player)
                         .addParameter(ProfessionParameter.TOOL, player.getMainHandItem());
-                builder.
+                RewardHandler.handleReward(builder.build());
             }
         });
     }

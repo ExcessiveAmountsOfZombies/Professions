@@ -2,6 +2,7 @@ package com.epherical.professions;
 
 import com.epherical.octoecon.api.Economy;
 import com.epherical.octoecon.api.event.EconomyEvents;
+import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
@@ -19,17 +20,19 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class ProfessionsMod implements ModInitializer {
     public static final String MOD_ID = "professions";
 
+    private static ProfessionsMod mod;
 
     private static @Nullable Economy economy;
-    private Storage dataStorage;
+    private Storage<ProfessionalPlayer, UUID> dataStorage;
 
     public static final ResourceKey<Registry<Object>> PROFESSION_KEY = ResourceKey.createRegistryKey(modID("professions/occupations"));
     public static final ResourceKey<Registry<ProfessionSerializer<?>>> PROFESSION_TYPE_KEY = ResourceKey.createRegistryKey(modID("professions/occupation_type"));
@@ -50,6 +53,7 @@ public class ProfessionsMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        mod = this;
         init();
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(professionLoader);
         EconomyEvents.ECONOMY_CHANGE_EVENT.register(economy -> {
@@ -70,5 +74,13 @@ public class ProfessionsMod implements ModInitializer {
 
     public static Economy getEconomy() {
         return economy;
+    }
+
+    public Storage<ProfessionalPlayer, UUID> getDataStorage() {
+        return dataStorage;
+    }
+
+    public static ProfessionsMod getInstance() {
+        return mod;
     }
 }

@@ -5,25 +5,25 @@ import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
-import com.epherical.professions.profession.rewards.Reward;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ProfessionalPlayerImpl implements ProfessionalPlayer {
-    private final String userName;
+public class ProfessionalPlayerImpl implements ProfessionalPlayer, JsonSerializer<ProfessionalPlayerImpl>, JsonDeserializer<ProfessionalPlayerImpl> {
     private final UUID uuid;
     private List<Occupation> occupations = new ArrayList<>();
 
-    public ProfessionalPlayerImpl(String userName, UUID uuid) {
+    public ProfessionalPlayerImpl(UUID uuid) {
         this.uuid = uuid;
-        this.userName = userName;
 
-    }
-
-    public String getUserName() {
-        return userName;
     }
 
     public UUID getUuid() {
@@ -31,9 +31,8 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     }
 
     @Override
-    public List<Reward> handleAction(ProfessionContext context) {
+    public void handleAction(ProfessionContext context) {
         OccupationEvents.BEFORE_ACTION_HANDLED_EVENT.invoker().onHandleAction(context, this);
-        List<Reward> rewards = new ArrayList<>();
         for (Occupation occupation : occupations) {
             if (occupation.isActive()) {
                 for (Action action : occupation.getProfession().getActions()) {
@@ -43,6 +42,15 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
                 }
             }
         }
-        return rewards;
+    }
+
+    @Override
+    public ProfessionalPlayerImpl deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        return null;
+    }
+
+    @Override
+    public JsonElement serialize(ProfessionalPlayerImpl src, Type typeOfSrc, JsonSerializationContext context) {
+        return null;
     }
 }

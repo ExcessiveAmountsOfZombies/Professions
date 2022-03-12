@@ -1,8 +1,13 @@
 package com.epherical.professions.data;
 
-public abstract class Storage {
+import org.jetbrains.annotations.Nullable;
 
-    public Storage() {
+public interface Storage<Result, Key> {
 
-    }
+    boolean hasUser(Key uuid);
+
+    @Nullable
+    Result getUser(Key uuid);
+
+    Result createUser(Key uuid);
 }

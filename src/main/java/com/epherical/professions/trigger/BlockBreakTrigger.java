@@ -1,6 +1,5 @@
 package com.epherical.professions.trigger;
 
-import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.ProfessionActions;

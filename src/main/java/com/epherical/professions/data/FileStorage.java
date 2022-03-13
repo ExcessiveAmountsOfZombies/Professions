@@ -47,12 +47,16 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
 
     @Override
     public @Nullable ProfessionalPlayer getUser(UUID uuid) {
-        try (FileReader reader = new FileReader(resolve(uuid).toFile())) {
-            ProfessionalPlayerImpl player = GSON.fromJson(reader, ProfessionalPlayerImpl.class);
-            player.setUuid(uuid);
-            return player;
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (hasUser(uuid)) {
+            try (FileReader reader = new FileReader(resolve(uuid).toFile())) {
+                ProfessionalPlayerImpl player = GSON.fromJson(reader, ProfessionalPlayerImpl.class);
+                player.setUuid(uuid);
+                return player;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            return createUser(uuid);
         }
         return null;
     }
@@ -66,5 +70,14 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
             e.printStackTrace();
         }
         return player;
+    }
+
+    @Override
+    public void saveUser(ProfessionalPlayer player) {
+        try (FileWriter writer = new FileWriter(resolve(player.getUuid()).toFile())) {
+            GSON.toJson(player, ProfessionalPlayerImpl.class, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.epherical.professions.profession.action;
 
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.profession.action.builtin.BreakBlockAction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -16,11 +16,11 @@ public class ProfessionActions {
 
 
     public static Object createGsonAdapter() {
-        return GsonAdapterFactory.builder(ProfessionsMod.ACTION_TYPE, "action", "action", Action::getType).build();
+        return GsonAdapterFactory.builder(ProfessionConstants.ACTION_TYPE, "action", "action", Action::getType).build();
     }
 
     public static ActionType register(ResourceLocation id, Serializer<? extends Action> serializer) {
-        return Registry.register(ProfessionsMod.ACTION_TYPE, id, new ActionType(serializer));
+        return Registry.register(ProfessionConstants.ACTION_TYPE, id, new ActionType(serializer));
     }
 
     public static <T> Predicate<T> andAllConditions(Predicate<T>[] conditions) {

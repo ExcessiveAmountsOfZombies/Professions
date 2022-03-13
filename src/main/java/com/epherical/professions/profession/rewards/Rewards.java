@@ -1,6 +1,6 @@
 package com.epherical.professions.profession.rewards;
 
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.rewards.builtin.PaymentReward;
 import net.minecraft.core.Registry;
@@ -15,10 +15,10 @@ public class Rewards {
 
 
     public static Object createGsonAdapter() {
-        return GsonAdapterFactory.builder(ProfessionsMod.ACTION_TYPE, "reward", "reward", Action::getType).build();
+        return GsonAdapterFactory.builder(ProfessionConstants.ACTION_TYPE, "reward", "reward", Action::getType).build();
     }
 
     public static RewardType register(ResourceLocation id, Serializer<? extends Reward> serializer) {
-        return Registry.register(ProfessionsMod.REWARDS, id, new RewardType(serializer));
+        return Registry.register(ProfessionConstants.REWARDS, id, new RewardType(serializer));
     }
 }

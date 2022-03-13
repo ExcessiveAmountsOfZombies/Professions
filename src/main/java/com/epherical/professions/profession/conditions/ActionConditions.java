@@ -1,6 +1,6 @@
 package com.epherical.professions.profession.conditions;
 
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.profession.conditions.builtin.ToolMatcher;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -14,10 +14,10 @@ public class ActionConditions {
 
 
     public static Object createGsonAdapter() {
-        return GsonAdapterFactory.builder(ProfessionsMod.ACTION_CONDITION_TYPE, "condition", "condition", ActionCondition::getType).build();
+        return GsonAdapterFactory.builder(ProfessionConstants.ACTION_CONDITION_TYPE, "condition", "condition", ActionCondition::getType).build();
     }
 
     public static ActionConditionType register(ResourceLocation location, Serializer<? extends ActionCondition> serializer) {
-        return Registry.register(ProfessionsMod.ACTION_CONDITION_TYPE, location, new ActionConditionType(serializer));
+        return Registry.register(ProfessionConstants.ACTION_CONDITION_TYPE, location, new ActionConditionType(serializer));
     }
 }

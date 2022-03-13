@@ -1,6 +1,7 @@
 package com.epherical.professions.profession.progression;
 
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.data.Storage;
 import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -22,6 +23,8 @@ import java.util.UUID;
 public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     private UUID uuid;
     private final List<Occupation> occupations;
+
+    private volatile boolean dirty = false;
 
     public ProfessionalPlayerImpl(List<Occupation> occupations) {
         this.occupations = occupations;
@@ -53,6 +56,20 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
                 }
             }
         }
+    }
+
+    @Override
+    public void save(Storage<ProfessionalPlayer, UUID> storage) {
+        if (dirty) {
+            storage.saveUser(this);
+            dirty = false;
+        }
+
+    }
+
+    @Override
+    public void needsToBeSaved() {
+        dirty = true;
     }
 
     public static class Serializer implements JsonSerializer<ProfessionalPlayerImpl>, JsonDeserializer<ProfessionalPlayerImpl> {

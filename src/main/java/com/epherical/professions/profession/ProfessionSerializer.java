@@ -1,5 +1,6 @@
 package com.epherical.professions.profession;
 
+import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.ProfessionsMod;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
@@ -20,7 +21,7 @@ public interface ProfessionSerializer<T extends Profession> extends JsonDeserial
     Class<T> getType();
 
     static <S extends ProfessionSerializer<T>, T extends Profession> S registerSerializer(ResourceLocation id, S serializer) {
-        return Registry.register(ProfessionsMod.PROFESSION_SERIALIZER, id, serializer);
+        return Registry.register(ProfessionConstants.PROFESSION_SERIALIZER, id, serializer);
     }
 
 }

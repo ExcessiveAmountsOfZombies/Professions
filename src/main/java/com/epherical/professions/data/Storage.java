@@ -10,4 +10,6 @@ public interface Storage<Result, Key> {
     Result getUser(Key uuid);
 
     Result createUser(Key uuid);
+
+    void saveUser(Result result);
 }

@@ -1,6 +1,6 @@
 package com.epherical.professions.datapack;
 
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
@@ -47,7 +47,7 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
             JsonObject jsonObject = GsonHelper.convertToJsonObject(jsonElement, "profession");
             if (jsonObject.has("type")) {
                 ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "type"));
-                ProfessionSerializer<? extends Profession> nullable = ProfessionsMod.PROFESSION_SERIALIZER.get(type);
+                ProfessionSerializer<? extends Profession> nullable = ProfessionConstants.PROFESSION_SERIALIZER.get(type);
                 nullable = nullable != null ? nullable : ProfessionSerializer.DEFAULT_PROFESSION;
                 Profession profession = GSON.fromJson(jsonElement, nullable.getType());
                 System.out.println(profession);

@@ -1,6 +1,7 @@
 package com.epherical.professions.data;
 
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.ProfessionalPlayerImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,6 +18,8 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
 
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting().disableHtmlEscaping()
+            .registerTypeAdapter(ProfessionalPlayerImpl.class, new ProfessionalPlayerImpl.Serializer())
+            .registerTypeAdapter(Occupation.class, new Occupation.Serializer())
             .create();
 
     private final Path basePath;
@@ -45,7 +48,9 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
     @Override
     public @Nullable ProfessionalPlayer getUser(UUID uuid) {
         try (FileReader reader = new FileReader(resolve(uuid).toFile())) {
-            return GSON.fromJson(reader, ProfessionalPlayerImpl.class);
+            ProfessionalPlayerImpl player = GSON.fromJson(reader, ProfessionalPlayerImpl.class);
+            player.setUuid(uuid);
+            return player;
         } catch (IOException e) {
             e.printStackTrace();
         }

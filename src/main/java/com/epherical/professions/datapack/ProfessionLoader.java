@@ -22,6 +22,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.Map;
@@ -61,6 +62,23 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
         }).deserialize(professionID, object);
     }
 */
+
+    @Nullable
+    public Profession getProfession(ResourceLocation location) {
+        return professionMap.get(location);
+    }
+
+
+    @Nullable
+    public ResourceLocation getIDFromProfession(Profession profession) {
+        for (Map.Entry<ResourceLocation, Profession> entry : professionMap.entrySet()) {
+            if (entry.getValue().equals(profession)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     @Override
     public ResourceLocation getFabricId() {
         return new ResourceLocation("professions", "professions/occupations");

@@ -1,6 +1,7 @@
 package com.epherical.professions.profession.progression;
 
 import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.Profession;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -19,6 +20,7 @@ public class Occupation {
     private double exp;
     private int level;
     private boolean active;
+    private transient int maxExp = -1;
 
     public Occupation(Profession profession, double exp, int level, boolean active) {
         this.profession = profession;
@@ -34,6 +36,48 @@ public class Occupation {
     public Profession getProfession() {
         return profession;
     }
+
+    public boolean addExp(double exp, ProfessionalPlayer player) {
+        player.needsToBeSaved();
+        this.exp += exp;
+        return checkIfLevelUp();
+    }
+
+    public void setLevel(int level, ProfessionalPlayer player) {
+        player.needsToBeSaved();
+        this.level = level;
+        resetMaxExperience();
+        checkIfLevelUp();
+    }
+
+    public boolean checkIfLevelUp() {
+        boolean willLevel = false;
+
+        while (exp >= maxExp) {
+            if (profession.getMaxLevel() > 0 && level >= profession.getMaxLevel()) {
+                break;
+            }
+            level++;
+            exp -= maxExp;
+            willLevel = true;
+            resetMaxExperience();
+        }
+
+        if (exp > maxExp) {
+            exp = maxExp;
+        }
+
+        return willLevel;
+    }
+
+    public void resetMaxExperience() {
+        this.maxExp = (int) profession.getExperienceForLevel(level);
+    }
+
+    public boolean isProfession(Profession profession) {
+        return this.profession.isSameProfession(profession);
+    }
+
 
 
     public static class Serializer implements JsonDeserializer<Occupation>, JsonSerializer<Occupation> {

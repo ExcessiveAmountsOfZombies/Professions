@@ -8,7 +8,7 @@ import com.epherical.professions.profession.ProfessionParameter;
 public class RewardHandler {
 
     public static void handleReward(ProfessionContext context) {
-        ProfessionalPlayer pPlayer = ProfessionsMod.getInstance().getDataStorage().getUser(context.getParameter(ProfessionParameter.THIS_PLAYER).getUUID());
+        ProfessionalPlayer pPlayer = ProfessionsMod.getInstance().getDataStorage().getUser(context.getParameter(ProfessionParameter.THIS_PLAYER).getUuid());
         if (pPlayer != null) {
             pPlayer.handleAction(context);
         }

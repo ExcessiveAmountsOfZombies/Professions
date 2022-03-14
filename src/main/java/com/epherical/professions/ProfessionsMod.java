@@ -40,12 +40,12 @@ public class ProfessionsMod implements ModInitializer {
             this.economy = economy;
         });
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            dataStorage = new FileStorage(server.getWorldPath(LevelResource.ROOT).resolve("/professions/playerdata"));
+            dataStorage = new FileStorage(server.getWorldPath(LevelResource.ROOT).resolve("professions/playerdata"));
             this.playerManager = new PlayerManager(this.dataStorage);
             this.listener = new ProfessionListener(this.playerManager);
+            ServerPlayConnectionEvents.JOIN.register(this.listener::onPlayerJoin);
+            ServerPlayConnectionEvents.DISCONNECT.register(this.listener::onPlayerLeave);
         });
-        ServerPlayConnectionEvents.JOIN.register(this.listener::onPlayerJoin);
-        ServerPlayConnectionEvents.DISCONNECT.register(this.listener::onPlayerLeave);
     }
 
     public static ResourceLocation modID(String name) {

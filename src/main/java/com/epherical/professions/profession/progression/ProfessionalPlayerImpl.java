@@ -3,6 +3,7 @@ package com.epherical.professions.profession.progression;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.events.OccupationEvents;
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
@@ -14,6 +15,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -72,6 +74,37 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         dirty = true;
     }
 
+    @Override
+    public boolean alreadyHasProfession(Profession profession) {
+        return getOccupation(profession) != null;
+    }
+
+    @Override
+    public boolean joinOccupation(Profession profession) {
+        if (!alreadyHasProfession(profession)) {
+            occupations.add(new Occupation(profession, 0, 0, true));
+            resetMaxExperience();
+            return true;
+        }
+        return false;
+    }
+
+    @Nullable
+    public Occupation getOccupation(Profession profession) {
+        for (Occupation occupation : occupations) {
+            if (occupation.isProfession(profession)) {
+                return occupation;
+            }
+        }
+        return null;
+    }
+
+    private void resetMaxExperience() {
+        for (Occupation occupation : occupations) {
+            occupation.resetMaxExperience();
+        }
+    }
+
     public static class Serializer implements JsonSerializer<ProfessionalPlayerImpl>, JsonDeserializer<ProfessionalPlayerImpl> {
         @Override
         public ProfessionalPlayerImpl deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -83,7 +116,7 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         @Override
         public JsonElement serialize(ProfessionalPlayerImpl src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
-            object.add("occupations", context.serialize(src.occupations, Occupation[].class));
+            object.add("occupations", context.serialize(src.occupations.toArray(), Occupation[].class));
             return object;
         }
     }

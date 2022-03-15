@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 
 import java.lang.reflect.Type;
@@ -22,6 +23,8 @@ public class Profession {
     private final Action[] actions;
     private final Parser experienceScalingEquation;
     private final Parser incomeScalingEquation;
+
+    private ResourceLocation key;
 
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Action[] actions,
                       Parser experienceScalingEquation, Parser incomeScalingEquation) {
@@ -73,6 +76,27 @@ public class Profession {
         return Objects.equals(this, profession);
     }
 
+    public void setKey(ResourceLocation key) {
+        this.key = key;
+    }
+
+    public ResourceLocation getKey() {
+        return key;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Profession that = (Profession) o;
+        return key.equals(that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key);
+    }
+
     public static class Serializer implements ProfessionSerializer<Profession> {
 
 
@@ -85,7 +109,9 @@ public class Profession {
             String displayName = GsonHelper.getAsString(object, "displayName");
             int maxLevel = GsonHelper.getAsInt(object, "maxLevel");
             Action[] actions = GsonHelper.getAsObject(object, "actions", new Action[0], context, Action[].class);
-            return new Profession(professionColor, descriptionColor, description, displayName, maxLevel, actions);
+            Parser experienceScaling = new Parser(GsonHelper.getAsString(object, "experienceSclEquation"));
+            Parser incomeScaling = new Parser(GsonHelper.getAsString(object, "incomeSclEquation"));
+            return new Profession(professionColor, descriptionColor, description, displayName, maxLevel, actions, experienceScaling, incomeScaling);
         }
 
         @Override

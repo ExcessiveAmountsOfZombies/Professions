@@ -14,23 +14,32 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 
 import java.lang.reflect.Type;
+import java.util.Locale;
 
 public class Occupation {
     private final Profession profession;
     private double exp;
     private int level;
-    private boolean active;
+    private OccupationSlot slot;
     private transient int maxExp = -1;
 
-    public Occupation(Profession profession, double exp, int level, boolean active) {
+    public Occupation(Profession profession, double exp, int level, OccupationSlot slot) {
         this.profession = profession;
         this.exp = exp;
         this.level = level;
-        this.active = active;
+        this.slot = slot;
     }
 
     public boolean isActive() {
-        return active;
+        return slot != OccupationSlot.INACTIVE;
+    }
+
+    public OccupationSlot getSlotStatus() {
+        return slot;
+    }
+
+    public void setSlot(OccupationSlot slot) {
+        this.slot = slot;
     }
 
     public Profession getProfession() {
@@ -86,10 +95,10 @@ public class Occupation {
         @Override
         public Occupation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject object = json.getAsJsonObject();
-            Profession profession = ProfessionsMod.professionLoader.getProfession(new ResourceLocation(GsonHelper.getAsString(object, "prof")));
+            Profession profession = ProfessionsMod.getInstance().getProfessionLoader().getProfession(new ResourceLocation(GsonHelper.getAsString(object, "prof")));
             double exp = GsonHelper.getAsInt(object, "exp");
             int level = GsonHelper.getAsInt(object, "lvl");
-            boolean active = GsonHelper.getAsBoolean(object, "active");
+            OccupationSlot active = OccupationSlot.valueOf(GsonHelper.getAsString(object, "slot").toUpperCase(Locale.ROOT));
             return new Occupation(profession, exp, level, active);
         }
 
@@ -98,8 +107,8 @@ public class Occupation {
             JsonObject object = new JsonObject();
             object.addProperty("exp", src.exp);
             object.addProperty("lvl", src.level);
-            object.addProperty("active", src.active);
-            object.addProperty("prof", ProfessionsMod.professionLoader.getIDFromProfession(src.profession).toString());
+            object.addProperty("slot", src.slot.name());
+            object.addProperty("prof", ProfessionsMod.getInstance().getProfessionLoader().getIDFromProfession(src.profession).toString());
             return object;
         }
     }

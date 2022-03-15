@@ -1,6 +1,8 @@
 package com.epherical.professions.datapack;
 
+import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionConstants;
+import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.Map;
+import java.util.Set;
 
 public class ProfessionLoader extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -41,6 +44,8 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
+        professionMap = null;
+
         ImmutableMap.Builder<ResourceLocation, Profession> builder = ImmutableMap.builder();
 
         object.forEach((location, jsonElement) -> {
@@ -50,29 +55,33 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
                 ProfessionSerializer<? extends Profession> nullable = ProfessionConstants.PROFESSION_SERIALIZER.get(type);
                 nullable = nullable != null ? nullable : ProfessionSerializer.DEFAULT_PROFESSION;
                 Profession profession = GSON.fromJson(jsonElement, nullable.getType());
-                System.out.println(profession);
+                profession.setKey(location);
+                builder.put(location, profession);
             }
         });
-    }
+        this.professionMap = builder.build();
 
-    /*public static Profession fromJson(ResourceLocation professionID, JsonObject object) {
-        String type = GsonHelper.getAsString(object, "type");
-        return ProfessionsMod.PROFESSION_SERIALIZER.getOptional(new ResourceLocation(type)).orElseThrow(() -> {
-            return new JsonSyntaxException("Invalid or unknown profession type '" + type + "'.");
-        }).deserialize(professionID, object);
+        PlayerManager manager = ProfessionsMod.getInstance().getPlayerManager();
+        // this will be null when it first loads.
+        if (manager != null) {
+            ProfessionsMod.getInstance().getPlayerManager().reload();
+        }
     }
-*/
 
     @Nullable
     public Profession getProfession(ResourceLocation location) {
         return professionMap.get(location);
     }
 
+    public Set<ResourceLocation> getProfessionKeys() {
+        return professionMap.keySet();
+    }
+
 
     @Nullable
     public ResourceLocation getIDFromProfession(Profession profession) {
         for (Map.Entry<ResourceLocation, Profession> entry : professionMap.entrySet()) {
-            if (entry.getValue().equals(profession)) {
+            if (entry.getValue().getKey().equals(profession.getKey())) {
                 return entry.getKey();
             }
         }

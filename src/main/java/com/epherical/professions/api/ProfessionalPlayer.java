@@ -4,7 +4,9 @@ import com.epherical.professions.data.Storage;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.progression.Occupation;
+import com.epherical.professions.profession.progression.OccupationSlot;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ProfessionalPlayer {
@@ -24,7 +26,19 @@ public interface ProfessionalPlayer {
      */
     void needsToBeSaved();
 
-    boolean alreadyHasProfession(Profession profession);
+    /**
+     * Checks if the player has previously joined or leveled an occupation. This only applies when the config is
+     * set to allow players to keep their occupation exp when they mark it as inactive.
+     * @param profession The profession to check
+     * @return true if the player currently has progress in their occupation, false otherwise.
+     */
+    boolean alreadyHasOccupation(Profession profession);
 
-    boolean joinOccupation(Profession occupation);
+    boolean isOccupationActive(Profession profession);
+
+    boolean joinOccupation(Profession occupation, OccupationSlot slot);
+
+    List<Occupation> getActiveOccupations();
+
+    List<Occupation> getInactiveOccupations();
 }

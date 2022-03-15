@@ -7,6 +7,7 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots"}
     maven { url 'https://jitpack.io' }
 }
 
@@ -17,6 +18,7 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-1.18.1:2021.12.19")
     }
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation 'me.lucko:fabric-permissions-api:0.1-SNAPSHOT'
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

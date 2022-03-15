@@ -7,7 +7,7 @@
   ],
   "displayName": "Miner",
   "maxLevel": 100,
-  "experienceSclEquation": "91+1000(1.1)^(lvl-1)",
+  "experienceSclEquation": "(91+1000)*((1.1)^(lvl-1))",
   "incomeSclEquation": "base",
   "actions": [
     {
@@ -18,14 +18,6 @@
       ],
       "conditions": [],
       "rewards": [
-        {
-          "type": "professions:payment",
-          "amount": 15.0
-        },
-        {
-          "type": "professions:occupation_exp",
-          "amount": 1.0
-        }
       ]
     },
     {
@@ -36,15 +28,7 @@
       ],
       "conditions": [],
       "rewards": [
-        {
-          "reward": "professions:payment",
-          "currency": "eights_economy:dollars",
-          "amount": 5.0
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 0.5
-        }
+
       ]
     }
   ]

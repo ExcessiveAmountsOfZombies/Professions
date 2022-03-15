@@ -7,6 +7,8 @@ import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -75,18 +78,55 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     }
 
     @Override
-    public boolean alreadyHasProfession(Profession profession) {
+    public boolean alreadyHasOccupation(Profession profession) {
         return getOccupation(profession) != null;
     }
 
     @Override
-    public boolean joinOccupation(Profession profession) {
-        if (!alreadyHasProfession(profession)) {
-            occupations.add(new Occupation(profession, 0, 0, true));
+    public boolean isOccupationActive(Profession profession) {
+        Occupation occupation = getOccupation(profession);
+        return occupation != null && occupation.isActive();
+    }
+
+    @Override
+    public boolean joinOccupation(Profession profession, OccupationSlot slot) {
+        if (!alreadyHasOccupation(profession)) {
+            occupations.add(new Occupation(profession, 0, 0, slot));
             resetMaxExperience();
             return true;
+        } else {
+            for (Occupation occupation : occupations) {
+                if (occupation.isProfession(profession)) {
+                    occupation.setSlot(slot);
+                    return true;
+                }
+            }
         }
         return false;
+    }
+
+    public List<Occupation> getOccupations() {
+        return Collections.unmodifiableList(occupations);
+    }
+
+    @Override
+    public List<Occupation> getActiveOccupations() {
+        return getOccupations(true);
+    }
+
+    @Override
+    public List<Occupation> getInactiveOccupations() {
+        return getOccupations(false);
+    }
+
+    private List<Occupation> getOccupations(boolean active) {
+        ImmutableList.Builder<Occupation> occ = ImmutableList.builder();
+        for (Occupation occupation : occupations) {
+            if (occupation.isActive() == active) {
+                occ.add(occupation);
+            }
+        }
+        return occ.build();
     }
 
     @Nullable
@@ -110,7 +150,7 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         public ProfessionalPlayerImpl deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject object = json.getAsJsonObject();
             Occupation[] occupations = GsonHelper.getAsObject(object, "occupations", new Occupation[0], context, Occupation[].class);
-            return new ProfessionalPlayerImpl(List.of(occupations));
+            return new ProfessionalPlayerImpl(Lists.newArrayList(occupations));
         }
 
         @Override

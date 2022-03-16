@@ -5,6 +5,7 @@ import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +38,8 @@ public interface ProfessionalPlayer {
     boolean isOccupationActive(Profession profession);
 
     boolean joinOccupation(Profession occupation, OccupationSlot slot);
+
+    boolean leaveOccupation(Profession profession);
 
     List<Occupation> getActiveOccupations();
 

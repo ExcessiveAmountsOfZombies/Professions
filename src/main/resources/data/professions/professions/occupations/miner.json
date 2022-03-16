@@ -18,6 +18,15 @@
       ],
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 15.0
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        }
       ]
     },
     {
@@ -28,7 +37,15 @@
       ],
       "conditions": [],
       "rewards": [
-
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 5.0
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 0.5
+        }
       ]
     }
   ]

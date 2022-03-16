@@ -74,8 +74,10 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
 
     @Override
     public void saveUser(ProfessionalPlayer player) {
-        try (FileWriter writer = new FileWriter(resolve(player.getUuid()).toFile())) {
+        try {
+            FileWriter writer = new FileWriter(resolve(player.getUuid()).toFile());
             GSON.toJson(player, ProfessionalPlayerImpl.class, writer);
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

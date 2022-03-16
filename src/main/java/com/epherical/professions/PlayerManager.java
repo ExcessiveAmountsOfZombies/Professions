@@ -45,7 +45,7 @@ public class PlayerManager {
         }
     }
 
-    public void playerJoinOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, OccupationSlot slot, ServerPlayer serverPlayer) {
+    public void joinOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, OccupationSlot slot, ServerPlayer serverPlayer) {
         if (profession == null) {
             serverPlayer.sendMessage(new TextComponent("Profession does not exist."), Util.NIL_UUID);
             return;
@@ -73,8 +73,27 @@ public class PlayerManager {
         if (!player.joinOccupation(profession, slot)) {
             return;
         }
+        serverPlayer.sendMessage(new TextComponent("You have joined an occupation!"), Util.NIL_UUID);
 
         storage.saveUser(player);
+    }
+
+    public boolean leaveOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, ServerPlayer serverPlayer) {
+        if (profession == null) {
+            serverPlayer.sendMessage(new TextComponent("That profession does not exist."), Util.NIL_UUID);
+            return false;
+        }
+
+        if (player == null) {
+            return false;
+        }
+
+        if (!player.leaveOccupation(profession)) {
+            return false;
+        }
+        storage.saveUser(player);
+        serverPlayer.sendMessage(new TextComponent("You have left an occupation!"), Util.NIL_UUID);
+        return true;
     }
 
     @Nullable

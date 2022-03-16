@@ -14,6 +14,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
@@ -35,6 +37,17 @@ public class BreakBlockAction extends AbstractAction {
     @Override
     public ActionType getType() {
         return ProfessionActions.BREAK_BLOCK;
+    }
+
+    @Override
+    public List<Component> displayInformation() {
+        List<Component> components = new ArrayList<>();
+        for (Block block : blocks) {
+            //block.getName().append(new TranslatableComponent(" (%s | %s & %s)"));
+            //block.getName().append(" ($0.40 | 0.40xp & More)");
+            components.add(block.getName());
+        }
+        return components;
     }
 
     @Override

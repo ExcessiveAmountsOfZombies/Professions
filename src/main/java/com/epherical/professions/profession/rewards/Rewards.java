@@ -17,7 +17,7 @@ public class Rewards {
 
 
     public static Object createGsonAdapter() {
-        return GsonAdapterFactory.builder(ProfessionConstants.ACTION_TYPE, "reward", "reward", Action::getType).build();
+        return GsonAdapterFactory.builder(ProfessionConstants.REWARDS, "reward", "reward", Reward::getType).build();
     }
 
     public static RewardType register(ResourceLocation id, Serializer<? extends Reward> serializer) {

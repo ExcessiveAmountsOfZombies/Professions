@@ -105,6 +105,18 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         return false;
     }
 
+    @Override
+    public boolean leaveOccupation(Profession profession) {
+        if (!this.isOccupationActive(profession)) {
+            return false;
+        } else {
+            // TODO: config option here. will either determine if it gets slotted as inactive, or entirely removed from the player.
+            getOccupation(profession).setSlot(OccupationSlot.INACTIVE);
+        }
+
+        return true;
+    }
+
     public List<Occupation> getOccupations() {
         return Collections.unmodifiableList(occupations);
     }

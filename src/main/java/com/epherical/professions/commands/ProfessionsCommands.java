@@ -4,23 +4,29 @@ import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.Profession;
+import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ProfessionsCommands {
@@ -50,27 +56,27 @@ public class ProfessionsCommands {
     // removexp - removes experience from the player in an occupation - admin command
 
     private void registerCommands(CommandDispatcher<CommandSourceStack> stack) {
+        SuggestionProvider<CommandSourceStack> provider = (context, builder) -> {
+            for (ResourceLocation professionKey : mod.getProfessionLoader().getProfessionKeys()) {
+                builder.suggest("\"" + professionKey.toString() + "\"");
+            }
+            return builder.buildFuture();
+        };
+
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("professions")
                 .then(Commands.literal("help")
-                        .requires(commandSourceStack -> true) // TODO: luckperms
+                        .requires(Permissions.require("professions.command.help", 0))
                         .executes(this::help)) // todo: this command can be improved, but work on it after.
                 .then(Commands.literal("join")
-                        .requires(commandSourceStack -> true) // todo: luckperms
+                        .requires(Permissions.require("professions.command.join", 0))
                         .then(Commands.argument("occupation", StringArgumentType.string())
-                                .suggests((context, builder) -> {
-                                    for (ResourceLocation professionKey : mod.getProfessionLoader().getProfessionKeys()) {
-                                        builder.suggest("\"" + professionKey.toString() + "\"");
-                                    }
-                                    return builder.buildFuture();
-                                })
-                                .executes(this::join))) // todo: finish command
+                                .suggests(provider)
+                                .executes(this::join)))
                 .then(Commands.literal("leave")
-                        .requires(commandSourceStack -> true) // todo; luckperms
+                        .requires(Permissions.require("professions.command.leave", 0))
                         .then(Commands.argument("occupation", StringArgumentType.string())
-                                .suggests((context, builder) -> {
-                                    return builder.buildFuture(); // todo; suggestions
-                                })
-                                .executes(this::leave))) // todo; finish command
+                                .suggests(provider)
+                                .executes(this::leave)))
                 .then(Commands.literal("leaveall")
                         .requires(commandSourceStack -> true) // todo; luckperms
                         .executes(this::leaveAll)) // todo; finish command
@@ -115,14 +121,26 @@ public class ProfessionsCommands {
             ServerPlayer player = stack.getSource().getPlayerOrException();
             ProfessionalPlayer pPlayer = manager.getPlayer(player.getUUID());
 
-            mod.getPlayerManager().playerJoinOccupation(pPlayer, profession, OccupationSlot.ACTIVE, player);
+            mod.getPlayerManager().joinOccupation(pPlayer, profession, OccupationSlot.ACTIVE, player);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return 1;
     }
 
-    private int leave(CommandContext<CommandSourceStack> stack) {
+    private int leave(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+        ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+
+        try {
+            Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
+            ServerPlayer player = stack.getSource().getPlayerOrException();
+            PlayerManager manager = mod.getPlayerManager();
+            ProfessionalPlayer pPlayer = manager.getPlayer(player.getUUID());
+            manager.leaveOccupation(pPlayer, profession, player);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return 1;
     }
 
@@ -131,6 +149,24 @@ public class ProfessionsCommands {
     }
 
     private int info(CommandContext<CommandSourceStack> stack) {
+        ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+        //Break
+        //  Deepslate Iron Ore  ($0.40 | 0.40xp & More)
+        // hover component for & more.
+
+        try {
+            Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
+            List<Component> components = new ArrayList<>();
+            for (Action action : profession.getActions()) {
+                components.addAll(action.displayInformation());
+            }
+            for (Component component : components) {
+                stack.getSource().sendSuccess(component, false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return 1;
     }
 

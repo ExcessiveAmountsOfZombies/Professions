@@ -1,6 +1,5 @@
 package com.epherical.professions.profession.action;
 
-import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.progression.Occupation;

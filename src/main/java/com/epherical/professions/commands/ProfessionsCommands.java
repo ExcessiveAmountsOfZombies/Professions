@@ -24,11 +24,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -87,9 +87,7 @@ public class ProfessionsCommands {
                 .then(Commands.literal("info")
                         .requires(commandSourceStack -> true) // todo; luckperms
                         .then(Commands.argument("occupation", StringArgumentType.string())
-                                .suggests((context, builder) -> {
-                                    return builder.buildFuture(); // todo; suggestions
-                                })
+                                .suggests(provider)
                                 .executes(this::info))) // todo; finish command
                 .then(Commands.literal("stats")
                         .requires(commandSourceStack -> true) // todo luckperms
@@ -163,15 +161,30 @@ public class ProfessionsCommands {
                 // todo: null checking.
                 Collection<Action> actionsFor = profession.getActions(actionType);
                 if (actionsFor != null && !actionsFor.isEmpty()) {
-                    // todo: pick better color than light purple
-                    components.add(new TextComponent(actionType.getDisplayName()).setStyle(Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)));
+                    // todo: configurable color
+                    components.add(new TranslatableComponent("=-=-=| %s |=-=-=",
+                                    new TextComponent(actionType.getDisplayName()).setStyle(Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)))
+                            .setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
                     for (Action action : actionsFor) {
                         components.addAll(action.displayInformation());
                     }
                 }
             }
 
-            for (Component component : components) {
+            int page = 1;
+
+            int messages = components.size();
+            int messagesPerPage = 12;
+            int maxPage = Math.max(messages / messagesPerPage, 1);
+            maxPage = messages % messagesPerPage != 0 ? maxPage + 1 : maxPage;
+            int counter = page == 1 ? 1 : ((page -1) * messagesPerPage) + 1;
+            // =-=-=| Break Block |=-=-=
+            // =-=-=| Prev pp/mp Next |=-=-=
+
+            int begin = page == 1 ? 0 : Math.min(messages, ((page -1) * messagesPerPage));
+            int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
+
+            for (Component component : components.subList(begin, end)) {
                 stack.getSource().sendSuccess(component, false);
             }
         } catch (Exception e) {

@@ -121,6 +121,7 @@ public class Profession {
             int maxLevel = GsonHelper.getAsInt(object, "maxLevel");
             Action[] actions = GsonHelper.getAsObject(object, "actions", new Action[0], context, Action[].class);
             Multimap<ActionType, Action> actionMap = HashMultimap.create();
+            // TODO: order isn't kept anymore, need to fix
             for (Action action : actions) {
                 actionMap.put(action.getType(), action);
             }

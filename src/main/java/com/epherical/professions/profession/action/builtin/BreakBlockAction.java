@@ -58,11 +58,6 @@ public class BreakBlockAction extends AbstractAction {
     }
 
     @Override
-    public String actionDisplayName() {
-        return "Break Block";
-    }
-
-    @Override
     public boolean test(ProfessionContext professionContext) {
         BlockState state = professionContext.getPossibleParameter(ProfessionParameter.THIS_BLOCKSTATE);
         return state != null && blocks.contains(state.getBlock());

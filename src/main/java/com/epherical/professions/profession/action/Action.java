@@ -16,8 +16,6 @@ public interface Action extends Predicate<ProfessionContext> {
 
     List<Component> displayInformation();
 
-    String actionDisplayName();
-
     @FunctionalInterface
     interface Builder {
         Action build();

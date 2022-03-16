@@ -12,15 +12,15 @@ import java.util.function.Predicate;
 import static com.epherical.professions.ProfessionsMod.modID;
 
 public class ProfessionActions {
-    public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction.Serializer());
+    public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction.Serializer(), "Break Block");
 
 
     public static Object createGsonAdapter() {
         return GsonAdapterFactory.builder(ProfessionConstants.ACTION_TYPE, "action", "action", Action::getType).build();
     }
 
-    public static ActionType register(ResourceLocation id, Serializer<? extends Action> serializer) {
-        return Registry.register(ProfessionConstants.ACTION_TYPE, id, new ActionType(serializer));
+    public static ActionType register(ResourceLocation id, Serializer<? extends Action> serializer, String displayName) {
+        return Registry.register(ProfessionConstants.ACTION_TYPE, id, new ActionType(serializer, displayName));
     }
 
     public static <T> Predicate<T> andAllConditions(Predicate<T>[] conditions) {

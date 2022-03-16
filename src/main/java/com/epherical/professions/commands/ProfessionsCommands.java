@@ -1,10 +1,12 @@
 package com.epherical.professions.commands;
 
 import com.epherical.professions.PlayerManager;
+import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -26,6 +28,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -150,16 +154,23 @@ public class ProfessionsCommands {
 
     private int info(CommandContext<CommandSourceStack> stack) {
         ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
-        //Break
-        //  Deepslate Iron Ore  ($0.40 | 0.40xp & More)
-        // hover component for & more.
 
         try {
             Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
             List<Component> components = new ArrayList<>();
-            for (Action action : profession.getActions()) {
-                components.addAll(action.displayInformation());
+
+            for (ActionType actionType : ProfessionConstants.ACTION_TYPE) {
+                // todo: null checking.
+                Collection<Action> actionsFor = profession.getActions(actionType);
+                if (actionsFor != null && !actionsFor.isEmpty()) {
+                    // todo: pick better color than light purple
+                    components.add(new TextComponent(actionType.getDisplayName()).setStyle(Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)));
+                    for (Action action : actionsFor) {
+                        components.addAll(action.displayInformation());
+                    }
+                }
             }
+
             for (Component component : components) {
                 stack.getSource().sendSuccess(component, false);
             }

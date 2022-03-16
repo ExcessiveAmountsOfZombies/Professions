@@ -8,13 +8,17 @@ import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.ProfessionActions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
+import com.epherical.professions.profession.rewards.RewardType;
+import com.epherical.professions.profession.rewards.Rewards;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -24,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class BreakBlockAction extends AbstractAction {
@@ -42,12 +47,19 @@ public class BreakBlockAction extends AbstractAction {
     @Override
     public List<Component> displayInformation() {
         List<Component> components = new ArrayList<>();
+        Map<RewardType, Component> map = getRewardInformation();
         for (Block block : blocks) {
-            //block.getName().append(new TranslatableComponent(" (%s | %s & %s)"));
-            //block.getName().append(" ($0.40 | 0.40xp & More)");
-            components.add(block.getName());
+            components.add(block.getName().setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)).append(new TranslatableComponent(" (%s | %s & %s)",
+                    map.get(Rewards.PAYMENT_REWARD),
+                    map.get(Rewards.EXPERIENCE_REWARD),
+                    extraRewardInformation(map))));
         }
         return components;
+    }
+
+    @Override
+    public String actionDisplayName() {
+        return "Break Block";
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -54,8 +55,9 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         OccupationEvents.BEFORE_ACTION_HANDLED_EVENT.invoker().onHandleAction(context, this);
         for (Occupation occupation : occupations) {
             if (occupation.isActive()) {
-                for (Action action : occupation.getProfession().getActions()) {
-                    if (action.getType() == context.getParameter(ProfessionParameter.ACTION_TYPE)) {
+                Collection<Action> actions = occupation.getProfession().getActions(context.getParameter(ProfessionParameter.ACTION_TYPE));
+                if (actions != null) {
+                    for (Action action : actions) {
                         action.handleRewards(context, occupation);
                     }
                 }

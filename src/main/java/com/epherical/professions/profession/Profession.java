@@ -2,6 +2,9 @@ package com.epherical.professions.profession;
 
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.profession.action.ActionType;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,8 +13,11 @@ import com.google.gson.JsonSerializationContext;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 public class Profession {
@@ -20,13 +26,13 @@ public class Profession {
     private final String[] description;
     private final String displayName;
     private final int maxLevel;
-    private final Action[] actions;
+    private final Map<ActionType, Collection<Action>> actions;
     private final Parser experienceScalingEquation;
     private final Parser incomeScalingEquation;
 
     private ResourceLocation key;
 
-    public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Action[] actions,
+    public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
                       Parser experienceScalingEquation, Parser incomeScalingEquation) {
         this.color = color;
         this.description = description;
@@ -58,8 +64,13 @@ public class Profession {
         return color;
     }
 
-    public Action[] getActions() {
+    public Map<ActionType, Collection<Action>> getActions() {
         return actions;
+    }
+
+    @Nullable
+    public Collection<Action> getActions(ActionType type) {
+        return actions.get(type);
     }
 
     public double getExperienceForLevel(int level) {
@@ -109,9 +120,13 @@ public class Profession {
             String displayName = GsonHelper.getAsString(object, "displayName");
             int maxLevel = GsonHelper.getAsInt(object, "maxLevel");
             Action[] actions = GsonHelper.getAsObject(object, "actions", new Action[0], context, Action[].class);
+            Multimap<ActionType, Action> actionMap = HashMultimap.create();
+            for (Action action : actions) {
+                actionMap.put(action.getType(), action);
+            }
             Parser experienceScaling = new Parser(GsonHelper.getAsString(object, "experienceSclEquation"));
             Parser incomeScaling = new Parser(GsonHelper.getAsString(object, "incomeSclEquation"));
-            return new Profession(professionColor, descriptionColor, description, displayName, maxLevel, actions, experienceScaling, incomeScaling);
+            return new Profession(professionColor, descriptionColor, description, displayName, maxLevel, actionMap.asMap(), experienceScaling, incomeScaling);
         }
 
         @Override

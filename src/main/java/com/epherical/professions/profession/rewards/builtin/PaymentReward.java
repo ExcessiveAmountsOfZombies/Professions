@@ -11,6 +11,10 @@ import com.epherical.professions.profession.rewards.Rewards;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.Serializer;
@@ -26,6 +30,11 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
     @Override
     public void giveReward(ProfessionContext context, Action action, Occupation occupation) {
 
+    }
+
+    @Override
+    public Component rewardChatInfo() {
+        return new TextComponent(String.format("$%.2f", amount)).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN));
     }
 
     public static class RewardSerializer implements Serializer<PaymentReward> {

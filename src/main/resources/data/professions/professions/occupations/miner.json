@@ -13,19 +13,139 @@
     {
       "action": "professions:break_block",
       "blocks": [
-        "minecraft:diamond_ore",
-        "minecraft:deepslate_diamond_ore"
+        "minecraft:stone",
+        "minecraft:andesite",
+        "minecraft:granite",
+        "minecraft:diorite",
+        "minecraft:deepslate",
+        "minecraft:dripstone_block",
+        "minecraft:tuff",
+        "minecraft:calcite"
       ],
       "conditions": [],
       "rewards": [
         {
           "reward": "professions:payment",
           "currency": "eights_economy:dollars",
-          "amount": 15.0
+          "amount": 0.5
         },
         {
           "reward": "professions:occupation_exp",
-          "amount": 1.0
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "blocks": [
+        "minecraft:lapis_ore",
+        "minecraft:deepslate_lapis_ore"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 5.0
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 0.5
+        }
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "blocks": [
+        "minecraft:emerald_ore",
+        "minecraft:deepslate_emerald_ore"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 142.0
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 53.3
+        }
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "blocks": [
+        "minecraft:redstone_ore",
+        "minecraft:deepslate_redstone_ore"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 7.5
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 3.24
+        }
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "blocks": [
+        "minecraft:gold_ore",
+        "minecraft:deepslate_gold_ore"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 100.5
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 25.0
+        }
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "blocks": [
+        "minecraft:copper_ore",
+        "minecraft:deepslate_copper_ore"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 20.5
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 30.5
+        }
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "blocks": [
+        "minecraft:coal_ore",
+        "minecraft:deepslate_coal_ore"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 3.0
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 2.0
         }
       ]
     },
@@ -45,6 +165,29 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 0.5
+        }
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "blocks": [
+        "minecraft:diamond_ore",
+        "minecraft:deepslate_diamond_ore"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 15.0
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:item",
+          "item": "minecraft:nether_star"
         }
       ]
     }

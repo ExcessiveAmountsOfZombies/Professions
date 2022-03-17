@@ -9,6 +9,7 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -20,6 +21,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -85,10 +87,12 @@ public class ProfessionsCommands {
                         .requires(commandSourceStack -> true) // todo; luckperms
                         .executes(this::leaveAll)) // todo; finish command
                 .then(Commands.literal("info")
-                        .requires(commandSourceStack -> true) // todo; luckperms
+                        .requires(Permissions.require("professions.command.info"))
                         .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(provider)
-                                .executes(this::info))) // todo; finish command
+                                .executes(this::info)
+                                .then(Commands.argument("page", IntegerArgumentType.integer(1))
+                                        .executes(this::info))))
                 .then(Commands.literal("stats")
                         .requires(commandSourceStack -> true) // todo luckperms
                         .executes(this::stats) // todo; command
@@ -151,7 +155,11 @@ public class ProfessionsCommands {
     }
 
     private int info(CommandContext<CommandSourceStack> stack) {
+        int page = 1;
         ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+        try {
+            page = IntegerArgumentType.getInteger(stack, "page");
+        } catch (IllegalArgumentException ignored) {}
 
         try {
             Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
@@ -171,22 +179,34 @@ public class ProfessionsCommands {
                 }
             }
 
-            int page = 1;
-
             int messages = components.size();
             int messagesPerPage = 12;
             int maxPage = Math.max(messages / messagesPerPage, 1);
             maxPage = messages % messagesPerPage != 0 ? maxPage + 1 : maxPage;
-            int counter = page == 1 ? 1 : ((page -1) * messagesPerPage) + 1;
             // =-=-=| Break Block |=-=-=
-            // =-=-=| Prev pp/mp Next |=-=-=
-
+            // =-=-=| Prev curPage/maxPage Next |=-=-=
             int begin = page == 1 ? 0 : Math.min(messages, ((page -1) * messagesPerPage));
             int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
+
+            if (page > maxPage) {
+                stack.getSource().sendFailure(new TextComponent("That page doesn't exist!"));
+                return 0;
+            }
 
             for (Component component : components.subList(begin, end)) {
                 stack.getSource().sendSuccess(component, false);
             }
+
+            MutableComponent previous = new TextComponent("Prev").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)
+                    .withUnderlined(true)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page-1))));
+            MutableComponent next = new TextComponent("Next").setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)
+                    .withUnderlined(true)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page+1))));
+
+            MutableComponent pageComp = new TranslatableComponent("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
+            stack.getSource().sendSuccess(pageComp, false);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -7,7 +7,7 @@ import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Action;
-import com.epherical.professions.profession.action.ProfessionActions;
+import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.conditions.ActionConditions;
 import com.epherical.professions.profession.rewards.Reward;
@@ -97,7 +97,7 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
         GsonBuilder builder = new GsonBuilder()
                 .registerTypeHierarchyAdapter(Reward.class, Rewards.createGsonAdapter())
                 .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
-                .registerTypeHierarchyAdapter(Action.class, ProfessionActions.createGsonAdapter())
+                .registerTypeHierarchyAdapter(Action.class, Actions.createGsonAdapter())
                 .registerTypeAdapter(Profession.class, new Profession.Serializer());
         ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;

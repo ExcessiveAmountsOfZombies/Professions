@@ -3,7 +3,6 @@ package com.epherical.professions.profession.action.builtin;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.AbstractAction;
-import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
@@ -30,17 +29,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class BreakBlockAction extends AbstractAction {
+public class PlaceBlockAction extends AbstractAction {
+
     private final List<Block> blocks;
 
-    protected BreakBlockAction(ActionCondition[] conditions, Reward[] rewards, List<Block> blocks) {
+    protected PlaceBlockAction(ActionCondition[] conditions, Reward[] rewards, List<Block> blocks) {
         super(conditions, rewards);
         this.blocks = blocks;
     }
 
     @Override
+    public boolean test(ProfessionContext professionContext) {
+        BlockState state = professionContext.getPossibleParameter(ProfessionParameter.THIS_BLOCKSTATE);
+        return state != null && blocks.contains(state.getBlock());
+    }
+
+    @Override
     public ActionType getType() {
-        return Actions.BREAK_BLOCK;
+        return Actions.PLACE_BLOCK;
     }
 
     @Override
@@ -56,40 +62,10 @@ public class BreakBlockAction extends AbstractAction {
         return components;
     }
 
-    @Override
-    public boolean test(ProfessionContext professionContext) {
-        BlockState state = professionContext.getPossibleParameter(ProfessionParameter.THIS_BLOCKSTATE);
-        return state != null && blocks.contains(state.getBlock());
-    }
-
-    public static class Builder extends AbstractAction.Builder<BreakBlockAction.Builder> {
-        private List<Block> blocks = new ArrayList<>();
-
-        public Builder withBlock(Block block) {
-            this.blocks.add(block);
-            return this;
-        }
-
-        public Builder withBlocks(Block... blocks) {
-            this.blocks.addAll(List.of(blocks));
-            return this;
-        }
+    public static class Serializer extends ActionSerializer<PlaceBlockAction> {
 
         @Override
-        protected Builder instance() {
-            return this;
-        }
-
-        @Override
-        public Action build() {
-            return new BreakBlockAction(this.getConditions(), this.getRewards(), blocks);
-        }
-    }
-
-    public static class Serializer extends ActionSerializer<BreakBlockAction> {
-
-        @Override
-        public void serialize(@NotNull JsonObject json, @NotNull BreakBlockAction value, @NotNull JsonSerializationContext serializationContext) {
+        public void serialize(@NotNull JsonObject json, PlaceBlockAction value, @NotNull JsonSerializationContext serializationContext) {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (Block block : value.blocks) {
@@ -99,16 +75,14 @@ public class BreakBlockAction extends AbstractAction {
         }
 
         @Override
-        public BreakBlockAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
+        public PlaceBlockAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
             JsonArray array = GsonHelper.getAsJsonArray(object, "blocks");
             List<Block> blocks = new ArrayList<>();
             for (JsonElement element : array) {
                 String blockID = element.getAsString();
                 blocks.add(Registry.BLOCK.get(new ResourceLocation(blockID)));
             }
-            return new BreakBlockAction(conditions, rewards, blocks);
+            return new PlaceBlockAction(conditions, rewards, blocks);
         }
     }
-
-
 }

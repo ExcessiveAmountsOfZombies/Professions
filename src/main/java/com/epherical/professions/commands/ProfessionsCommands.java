@@ -7,6 +7,7 @@ import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -87,7 +88,7 @@ public class ProfessionsCommands {
                         .requires(commandSourceStack -> true) // todo; luckperms
                         .executes(this::leaveAll)) // todo; finish command
                 .then(Commands.literal("info")
-                        .requires(Permissions.require("professions.command.info"))
+                        .requires(Permissions.require("professions.command.info", 0))
                         .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(provider)
                                 .executes(this::info)
@@ -214,7 +215,15 @@ public class ProfessionsCommands {
         return 1;
     }
 
-    private int stats(CommandContext<CommandSourceStack> stack) {
+    private int stats(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+        ServerPlayer player = stack.getSource().getPlayerOrException();
+        PlayerManager manager = mod.getPlayerManager();
+        ProfessionalPlayer pPlayer = manager.getPlayer(player.getUUID());
+
+        for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
+            System.out.println(activeOccupation.getExp());
+            System.out.println(activeOccupation.getMaxExp());
+        }
         return 1;
     }
 

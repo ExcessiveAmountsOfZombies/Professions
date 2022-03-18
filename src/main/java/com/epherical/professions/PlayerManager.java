@@ -4,12 +4,16 @@ import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.profession.Profession;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.google.common.collect.Maps;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.Util;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.commands.SayCommand;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -94,6 +98,29 @@ public class PlayerManager {
         storage.saveUser(player);
         serverPlayer.sendMessage(new TextComponent("You have left an occupation!"), Util.NIL_UUID);
         return true;
+    }
+
+    /**
+     * central method to send any announcements to the player or server about a player leveling up.
+     */
+    public void levelUp(ProfessionalPlayer player, Occupation occupation) {
+        // TODO: make it translate
+        TranslatableComponent message;
+        ServerPlayer sPlayer = server.getPlayerList().getPlayer(player.getUuid());
+        if (ProfessionConfig.announceLevelUps) {
+            // todo: colors
+            message = new TranslatableComponent("%s has leveled up %s to %s.", sPlayer.getDisplayName(), occupation.getProfession().getDisplayName(), occupation.getLevel());
+        } else {
+            message = new TranslatableComponent("You have leveled up %s to %s.", occupation.getProfession().getDisplayName(), occupation.getLevel());
+        }
+
+        if (ProfessionConfig.announceLevelUps) {
+            server.getPlayerList().broadcastMessage(message, ChatType.SYSTEM, Util.NIL_UUID);
+        } else {
+            // todo: maybe multiple ways to send messages? hotbar, chat, toasts, title? for now it's just chat.
+            sPlayer.sendMessage(message, Util.NIL_UUID);
+        }
+
     }
 
     @Nullable

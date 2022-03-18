@@ -93,7 +93,7 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     @Override
     public boolean joinOccupation(Profession profession, OccupationSlot slot) {
         if (!alreadyHasOccupation(profession)) {
-            occupations.add(new Occupation(profession, 0, 0, slot));
+            occupations.add(new Occupation(profession, 0, 1, slot));
             resetMaxExperience();
             return true;
         } else {

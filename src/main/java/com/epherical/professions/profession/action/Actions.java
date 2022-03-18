@@ -2,6 +2,7 @@ package com.epherical.professions.profession.action;
 
 import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.profession.action.builtin.BreakBlockAction;
+import com.epherical.professions.profession.action.builtin.PlaceBlockAction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.GsonAdapterFactory;
@@ -11,8 +12,9 @@ import java.util.function.Predicate;
 
 import static com.epherical.professions.ProfessionsMod.modID;
 
-public class ProfessionActions {
+public class Actions {
     public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction.Serializer(), "Break Block");
+    public static final ActionType PLACE_BLOCK = register(modID("place_block"), new PlaceBlockAction.Serializer(), "Place Block");
 
 
     public static Object createGsonAdapter() {

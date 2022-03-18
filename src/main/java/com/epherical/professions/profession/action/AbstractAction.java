@@ -34,7 +34,7 @@ public abstract class AbstractAction implements Action {
     protected AbstractAction(ActionCondition[] conditions, Reward[] rewards) {
         this.conditions = conditions;
         this.rewards = rewards;
-        this.predicate = ProfessionActions.andAllConditions(conditions);
+        this.predicate = Actions.andAllConditions(conditions);
     }
 
     @Override

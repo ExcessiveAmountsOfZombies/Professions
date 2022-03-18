@@ -79,6 +79,18 @@ public class Occupation {
         return willLevel;
     }
 
+    public double getExp() {
+        return exp;
+    }
+
+    public int getMaxExp() {
+        return maxExp;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
     public void resetMaxExperience() {
         this.maxExp = (int) profession.getExperienceForLevel(level);
     }

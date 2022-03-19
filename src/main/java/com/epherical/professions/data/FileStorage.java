@@ -51,6 +51,7 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
             try (FileReader reader = new FileReader(resolve(uuid).toFile())) {
                 ProfessionalPlayerImpl player = GSON.fromJson(reader, ProfessionalPlayerImpl.class);
                 player.setUuid(uuid);
+                player.resetMaxExperience();
                 return player;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -63,9 +64,10 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
 
     @Override
     public ProfessionalPlayer createUser(UUID uuid) {
-        ProfessionalPlayer player = new ProfessionalPlayerImpl(uuid);
+        ProfessionalPlayerImpl player = new ProfessionalPlayerImpl(uuid);
         try (FileWriter writer = new FileWriter(resolve(uuid).toFile())) {
             GSON.toJson(player, ProfessionalPlayerImpl.class, writer);
+            player.resetMaxExperience();
         } catch (IOException e) {
             e.printStackTrace();
         }

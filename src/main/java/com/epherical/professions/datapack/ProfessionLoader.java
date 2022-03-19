@@ -27,6 +27,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -71,6 +72,10 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
     @Nullable
     public Profession getProfession(ResourceLocation location) {
         return professionMap.get(location);
+    }
+
+    public Collection<Profession> getProfessions() {
+        return professionMap.values();
     }
 
     public Set<ResourceLocation> getProfessionKeys() {

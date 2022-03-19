@@ -33,6 +33,9 @@ processResources {
         expand "version": project.version
     }
 }
+loom {
+    accessWidenerPath = file("src/main/resources/professions.accesswidener")
+}
 
 def targetJavaVersion = 17
 tasks.withType(JavaCompile).configureEach {

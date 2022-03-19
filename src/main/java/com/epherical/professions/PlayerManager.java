@@ -125,7 +125,11 @@ public class PlayerManager {
 
     @Nullable
     public ProfessionalPlayer getPlayer(@NotNull UUID uuid) {
-        return players.get(uuid);
+        ProfessionalPlayer player = players.get(uuid);
+        if (player == null) {
+            player = storage.getUser(uuid);
+        }
+        return player;
     }
 
     @Nullable

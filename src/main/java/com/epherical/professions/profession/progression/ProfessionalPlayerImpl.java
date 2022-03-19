@@ -153,7 +153,7 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         return null;
     }
 
-    private void resetMaxExperience() {
+    public void resetMaxExperience() {
         for (Occupation occupation : occupations) {
             occupation.resetMaxExperience();
         }

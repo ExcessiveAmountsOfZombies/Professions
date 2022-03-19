@@ -30,7 +30,18 @@ public class BlockTriggers {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.PLACE_BLOCK)
+                    .addParameter(ProfessionParameter.THIS_BLOCKSTATE, state)
                     .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()));
+            RewardHandler.handleReward(builder.build());
+        });
+
+        TriggerEvents.TNT_DESTROY_EVENT.register((source, state) -> {
+            ServerLevel level = source.getLevel();
+            ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                    .addRandom(level.random)
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TNT_DESTROY)
+                    .addParameter(ProfessionParameter.THIS_BLOCKSTATE, state)
+                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(source.getUUID()));
             RewardHandler.handleReward(builder.build());
         });
     }

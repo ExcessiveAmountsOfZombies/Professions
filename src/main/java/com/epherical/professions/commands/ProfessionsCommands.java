@@ -110,10 +110,10 @@ public class ProfessionsCommands {
                                 })
                                 .executes(this::stats)))
                 .then(Commands.literal("browse")
-                        .requires(commandSourceStack -> true) // todo luckperms
-                        .executes(this::browse)) // todo; finish command
+                        .requires(Permissions.require("professions.command.browse", 0))
+                        .executes(this::browse))
                 .then(Commands.literal("top")
-                        .requires(commandSourceStack -> true) // todo; luckperms
+                        .requires(commandSourceStack -> false) // todo; luckperms
                         .executes(this::top)); // todo; finish command
 
 

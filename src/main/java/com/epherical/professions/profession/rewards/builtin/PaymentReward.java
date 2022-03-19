@@ -29,7 +29,7 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
 
     @Override
     public void giveReward(ProfessionContext context, Action action, Occupation occupation) {
-
+        // TODO: add money reward.
     }
 
     @Override

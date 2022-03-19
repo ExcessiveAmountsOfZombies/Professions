@@ -16,29 +16,29 @@ import net.minecraft.world.level.block.Block;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaceBlockAction extends BasicBlockAbstractAction {
+public class TntDestroyAction extends BasicBlockAbstractAction {
 
 
-    protected PlaceBlockAction(ActionCondition[] conditions, Reward[] rewards, List<Block> blocks) {
-        super(conditions, rewards, blocks);
+    protected TntDestroyAction(ActionCondition[] conditions, Reward[] rewards, List<Block> blockList) {
+        super(conditions, rewards, blockList);
     }
 
     @Override
     public ActionType getType() {
-        return Actions.PLACE_BLOCK;
+        return Actions.TNT_DESTROY;
     }
 
-    public static class Serializer extends BasicBlockAbstractAction.Serializer<PlaceBlockAction> {
+    public static class Serializer extends BasicBlockAbstractAction.Serializer<TntDestroyAction> {
 
         @Override
-        public PlaceBlockAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
+        public TntDestroyAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
             JsonArray array = GsonHelper.getAsJsonArray(object, "blocks");
             List<Block> blocks = new ArrayList<>();
             for (JsonElement element : array) {
                 String blockID = element.getAsString();
                 blocks.add(Registry.BLOCK.get(new ResourceLocation(blockID)));
             }
-            return new PlaceBlockAction(conditions, rewards, blocks);
+            return new TntDestroyAction(conditions, rewards, blocks);
         }
     }
 }

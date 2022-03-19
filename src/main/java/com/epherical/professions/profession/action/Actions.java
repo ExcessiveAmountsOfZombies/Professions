@@ -2,6 +2,7 @@ package com.epherical.professions.profession.action;
 
 import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.profession.action.builtin.BreakBlockAction;
+import com.epherical.professions.profession.action.builtin.KillAction;
 import com.epherical.professions.profession.action.builtin.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.TntDestroyAction;
 import net.minecraft.core.Registry;
@@ -17,6 +18,7 @@ public class Actions {
     public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction.Serializer(), "Break Block");
     public static final ActionType PLACE_BLOCK = register(modID("place_block"), new PlaceBlockAction.Serializer(), "Place Block");
     public static final ActionType TNT_DESTROY = register(modID("tnt_destroy"), new TntDestroyAction.Serializer(), "TNT Destroy");
+    public static final ActionType KILL_ENTITY = register(modID("kill_entity"), new KillAction.Serializer(), "Kill");
 
 
     public static Object createGsonAdapter() {

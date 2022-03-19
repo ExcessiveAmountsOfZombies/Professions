@@ -24,7 +24,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -40,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class ProfessionsCommands {
 
@@ -101,8 +99,8 @@ public class ProfessionsCommands {
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                         .executes(this::info))))
                 .then(Commands.literal("stats")
-                        .requires(commandSourceStack -> true) // todo luckperms
-                        .executes(this::stats) // todo; command
+                        .requires(Permissions.require("professions.command.stats", 0))
+                        .executes(this::stats)
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests((context, builder) -> {
                                     for (ServerPlayer player : context.getSource().getServer().getPlayerList().getPlayers()) {
@@ -110,7 +108,7 @@ public class ProfessionsCommands {
                                     }
                                     return builder.buildFuture();
                                 })
-                                .executes(this::stats))) // todo: finish command
+                                .executes(this::stats)))
                 .then(Commands.literal("browse")
                         .requires(commandSourceStack -> true) // todo luckperms
                         .executes(this::browse)) // todo; finish command
@@ -317,6 +315,19 @@ public class ProfessionsCommands {
     }
 
     private int browse(CommandContext<CommandSourceStack> stack) {
+        // -=-=-=-=-=| Browse Professions |=-=-=-=-=-
+        // Miner Max Level: 100 <-- hover component the description across the entire thing
+        // TODO: better better
+        MutableComponent header = new TranslatableComponent("-=-=-=-=-=| Browse Professions |=-=-=-=-=-");
+        List<Component> components = new ArrayList<>();
+        components.add(header);
+        for (Profession profession : mod.getProfessionLoader().getProfessions()) {
+            components.add(profession.createBrowseMessage());
+        }
+        for (Component component : components) {
+            stack.getSource().sendSuccess(component, false);
+        }
+
         return 1;
     }
 

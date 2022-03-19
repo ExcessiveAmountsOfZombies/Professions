@@ -10,7 +10,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.Nullable;
@@ -21,16 +28,16 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Profession {
-    private final TextColor color;
-    private final TextColor descriptionColor;
-    private final String[] description;
-    private final String displayName;
-    private final int maxLevel;
-    private final Map<ActionType, Collection<Action>> actions;
-    private final Parser experienceScalingEquation;
-    private final Parser incomeScalingEquation;
+    protected final TextColor color;
+    protected final TextColor descriptionColor;
+    protected final String[] description;
+    protected final String displayName;
+    protected final int maxLevel;
+    protected final Map<ActionType, Collection<Action>> actions;
+    protected final Parser experienceScalingEquation;
+    protected final Parser incomeScalingEquation;
 
-    private ResourceLocation key;
+    protected ResourceLocation key;
 
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
                       Parser experienceScalingEquation, Parser incomeScalingEquation) {
@@ -93,6 +100,19 @@ public class Profession {
 
     public ResourceLocation getKey() {
         return key;
+    }
+
+    public Component createBrowseMessage() {
+        MutableComponent name = new TextComponent(displayName).setStyle(Style.EMPTY.withColor(color));
+        MutableComponent level = new TextComponent("" + maxLevel).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
+        MutableComponent hoverText = new TextComponent("").setStyle(Style.EMPTY.withColor(descriptionColor));
+        for (String s : getDescription()) {
+            hoverText.append(s);
+        }
+
+        return new TranslatableComponent("%s. Max Level: %s", name, level)
+                .setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE)
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText)));
     }
 
     @Override

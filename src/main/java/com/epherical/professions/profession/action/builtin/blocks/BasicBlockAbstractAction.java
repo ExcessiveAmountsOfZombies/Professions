@@ -1,4 +1,4 @@
-package com.epherical.professions.profession.action.builtin;
+package com.epherical.professions.profession.action.builtin.blocks;
 
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -8,7 +8,7 @@ import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.ChatFormatting;
@@ -16,6 +16,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +63,16 @@ public abstract class BasicBlockAbstractAction extends AbstractAction {
                 array.add(Registry.BLOCK.getKey(block).toString());
             }
             json.add("blocks", array);
+        }
+
+        public List<Block> deserializeBlocks(JsonObject object) {
+            JsonArray array = GsonHelper.getAsJsonArray(object, "blocks");
+            List<Block> blocks = new ArrayList<>();
+            for (JsonElement element : array) {
+                String blockID = element.getAsString();
+                blocks.add(Registry.BLOCK.get(new ResourceLocation(blockID)));
+            }
+            return blocks;
         }
     }
 }

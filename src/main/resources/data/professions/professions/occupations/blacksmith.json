@@ -1,0 +1,35 @@
+{
+  "type": "professions:default",
+  "color": "#666e63",
+  "descriptionColor": "#FFFFFF",
+  "description": [
+    "Earn money by crafting gear."
+  ],
+  "displayName": "Blacksmith",
+  "maxLevel": 100,
+  "experienceSclEquation": "(91+1000)*((1.1)^(lvl-1))",
+  "incomeSclEquation": "base",
+  "actions": [
+    {
+      "action": "professions:craft_item",
+      "items": [
+        "minecraft:diamond_axe",
+        "minecraft:diamond_pickaxe",
+        "minecraft:diamond_sword",
+        "minecraft:diamond_shovel"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 32.5
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 50.3
+        }
+      ]
+    }
+  ]
+}

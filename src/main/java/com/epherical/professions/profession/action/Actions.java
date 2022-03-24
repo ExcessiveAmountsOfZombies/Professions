@@ -1,11 +1,12 @@
 package com.epherical.professions.profession.action;
 
 import com.epherical.professions.ProfessionConstants;
-import com.epherical.professions.profession.action.builtin.BreakBlockAction;
-import com.epherical.professions.profession.action.builtin.FishingAction;
+import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
+import com.epherical.professions.profession.action.builtin.items.CraftingAction;
+import com.epherical.professions.profession.action.builtin.items.FishingAction;
 import com.epherical.professions.profession.action.builtin.KillAction;
-import com.epherical.professions.profession.action.builtin.PlaceBlockAction;
-import com.epherical.professions.profession.action.builtin.TntDestroyAction;
+import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
+import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.GsonAdapterFactory;
@@ -21,7 +22,7 @@ public class Actions {
     public static final ActionType TNT_DESTROY = register(modID("tnt_destroy"), new TntDestroyAction.Serializer(), "TNT Destroy");
     public static final ActionType KILL_ENTITY = register(modID("kill_entity"), new KillAction.Serializer(), "Kill");
     public static final ActionType FISH_ACTION = register(modID("catch_fish"), new FishingAction.Serializer(), "Fishing");
-    // crafting action
+    public static final ActionType CRAFTS_ITEM = register(modID("craft_item"), new CraftingAction.Serializer(), "Craft");
     // smelting action
     // brewing action
     // enchanting action

@@ -4,6 +4,7 @@
   "package": "com.epherical.professions.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "CraftingMixin",
     "FishingMixin",
     "GameProfileCacheMixin",
     "PlaceBlockTriggerMixin",

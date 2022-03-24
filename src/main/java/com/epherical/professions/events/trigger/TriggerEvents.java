@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class TriggerEvents {
@@ -27,6 +28,12 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<CraftItem> CRAFT_ITEM_EVENT = EventFactory.createArrayBacked(CraftItem.class, calls -> (player, stack, recipe) -> {
+        for (CraftItem call : calls) {
+            call.onCraftItem(player, stack, recipe);
+        }
+    });
+
 
 
     public interface PlaceBlock {
@@ -42,6 +49,18 @@ public final class TriggerEvents {
 
     public interface CatchFish {
         void onCatchFish(ServerPlayer player, ItemStack stack);
+    }
+
+    public interface CraftItem {
+        /**
+         * This event is only called on the remote side.
+         * <br>
+         * This event is called for every 'craft' the player does. If a player crafts 64 emerald blocks,
+         * this event will be called 64 times.
+         * @param player The player who crafted the item.
+         * @param stack The item that was crafted
+         */
+        void onCraftItem(ServerPlayer player, ItemStack stack, Recipe<?> recipe);
     }
 
 }

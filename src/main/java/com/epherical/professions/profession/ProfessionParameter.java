@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.state.BlockState;
 
 public record ProfessionParameter<T>(ResourceLocation name) {
@@ -16,6 +17,7 @@ public record ProfessionParameter<T>(ResourceLocation name) {
     public static final ProfessionParameter<ActionType> ACTION_TYPE = create("action");
     public static final ProfessionParameter<Entity> ENTITY = create("entity");
     public static final ProfessionParameter<ItemStack> ITEM_INVOLVED = create("item_involved");
+    public static final ProfessionParameter<Recipe<?>> RECIPE_CRAFTED = create("recipe");
 
 
     public static <T> ProfessionParameter<T> create(String id) {

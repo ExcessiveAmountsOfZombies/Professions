@@ -1,16 +1,14 @@
-package com.epherical.professions.profession.action.builtin;
+package com.epherical.professions.profession.action.builtin.items;
 
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.action.ActionType;
-import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -23,17 +21,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FishingAction extends AbstractAction {
+public abstract class AbstractItemAction extends AbstractAction {
 
-    private final List<Item> items;
+    protected final List<Item> items;
 
-    protected FishingAction(ActionCondition[] conditions, Reward[] rewards, List<Item> items) {
+    protected AbstractItemAction(ActionCondition[] conditions, Reward[] rewards, List<Item> items) {
         super(conditions, rewards);
         this.items = items;
     }
@@ -45,16 +44,11 @@ public class FishingAction extends AbstractAction {
     }
 
     @Override
-    public ActionType getType() {
-        return Actions.FISH_ACTION;
-    }
-
-    @Override
     public List<Component> displayInformation() {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
-        for (Item entity : items) {
-            components.add(((TranslatableComponent) entity.getDescription()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)).append(new TranslatableComponent(" (%s | %s & %s)",
+        for (Item item : items) {
+            components.add(((TranslatableComponent) item.getDescription()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)).append(new TranslatableComponent(" (%s | %s & %s)",
                     map.get(Rewards.PAYMENT_REWARD),
                     map.get(Rewards.EXPERIENCE_REWARD),
                     extraRewardInformation(map))));
@@ -62,11 +56,10 @@ public class FishingAction extends AbstractAction {
         return components;
     }
 
-
-    public static class Serializer extends ActionSerializer<FishingAction> {
+    public abstract static class Serializer<T extends AbstractItemAction> extends ActionSerializer<T> {
 
         @Override
-        public void serialize(@NotNull JsonObject json, FishingAction value, @NotNull JsonSerializationContext serializationContext) {
+        public void serialize(@NotNull JsonObject json, T value, @NotNull JsonSerializationContext serializationContext) {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (Item item : value.items) {
@@ -75,15 +68,14 @@ public class FishingAction extends AbstractAction {
             json.add("items", array);
         }
 
-        @Override
-        public FishingAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
+        public List<Item> deserializeItems(JsonObject object) {
             JsonArray array = GsonHelper.getAsJsonArray(object, "items");
             List<Item> items = new ArrayList<>();
             for (JsonElement element : array) {
                 String id = element.getAsString();
                 items.add(Registry.ITEM.get(new ResourceLocation(id)));
             }
-            return new FishingAction(conditions, rewards, items);
+            return items;
         }
     }
 }

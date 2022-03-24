@@ -1,0 +1,35 @@
+{
+  "type": "professions:default",
+  "color": "#666e63",
+  "descriptionColor": "#FFFFFF",
+  "description": [
+    "Earn money and experience by fishing."
+  ],
+  "displayName": "Fishing",
+  "maxLevel": 100,
+  "experienceSclEquation": "(91+1000)*((1.1)^(lvl-1))",
+  "incomeSclEquation": "base",
+  "actions": [
+    {
+      "action": "professions:catch_fish",
+      "items": [
+        "minecraft:cod",
+        "minecraft:tropical_fish",
+        "minecraft:pufferfish",
+        "minecraft:salmon"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 32.5
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 22.5
+        }
+      ]
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class TriggerEvents {
@@ -20,6 +21,12 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<CatchFish> CATCH_FISH_EVENT = EventFactory.createArrayBacked(CatchFish.class, calls -> (player, stack) -> {
+        for (CatchFish call : calls) {
+            call.onCatchFish(player, stack);
+        }
+    });
+
 
 
     public interface PlaceBlock {
@@ -31,6 +38,10 @@ public final class TriggerEvents {
 
     public interface TNTDestroy {
         void onTNTDestroy(ServerPlayer source, BlockState state);
+    }
+
+    public interface CatchFish {
+        void onCatchFish(ServerPlayer player, ItemStack stack);
     }
 
 }

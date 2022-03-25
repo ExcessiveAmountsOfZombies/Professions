@@ -3,20 +3,20 @@
   "color": "#666e63",
   "descriptionColor": "#FFFFFF",
   "description": [
-    "Earn money by crafting gear."
+    "Earn money by enchanting items."
   ],
-  "displayName": "Blacksmithing",
+  "displayName": "Enchanting",
   "maxLevel": 100,
   "experienceSclEquation": "(91+1000)*((1.1)^(lvl-1))",
   "incomeSclEquation": "base",
   "actions": [
     {
-      "action": "professions:craft_item",
+      "action": "professions:enchant",
       "items": [
-        "minecraft:diamond_axe",
-        "minecraft:diamond_pickaxe",
         "minecraft:diamond_sword",
-        "minecraft:diamond_shovel"
+        "minecraft:netherite_sword",
+        "minecraft:gold_sword",
+        "minecraft:iron_sword"
       ],
       "conditions": [],
       "rewards": [
@@ -27,14 +27,21 @@
         },
         {
           "reward": "professions:occupation_exp",
-          "amount": 50.3
+          "amount": 10.5
         }
       ]
     },
     {
-      "action": "professions:take_smelted_item",
+      "action": "professions:enchant",
       "items": [
-        "minecraft:iron_ingot"
+      ],
+      "enchants": [
+        "minecraft:sharpness#3",
+        "minecraft:fortune#3",
+        "minecraft:smite#2",
+        "minecraft:unbreaking#3",
+        "minecraft:looting#3",
+        "minecraft:fire_aspect#2"
       ],
       "conditions": [],
       "rewards": [
@@ -45,14 +52,21 @@
         },
         {
           "reward": "professions:occupation_exp",
-          "amount": 60
+          "amount": 400
         }
       ]
     },
     {
-      "action": "professions:on_item_smelted",
+      "action": "professions:enchant",
       "items": [
-        "minecraft:gold_ingot"
+      ],
+      "enchants": [
+        "minecraft:sharpness#5",
+        "minecraft:smite#5",
+        "minecraft:fortune#2",
+        "minecraft:unbreaking#2",
+        "minecraft:looting#1",
+        "minecraft:fire_aspect#1"
       ],
       "conditions": [],
       "rewards": [
@@ -63,7 +77,7 @@
         },
         {
           "reward": "professions:occupation_exp",
-          "amount": 120
+          "amount": 600
         }
       ]
     }

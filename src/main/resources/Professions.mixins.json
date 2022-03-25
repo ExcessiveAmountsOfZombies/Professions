@@ -5,13 +5,13 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "CraftingMixin",
+    "EnchantmentMixin",
     "FishingMixin",
     "FurnaceCraftingMixin",
     "GameProfileCacheMixin",
     "PlaceBlockTriggerMixin",
     "TntExplosionTriggerMixin",
     "ownables.AbstractFurnaceBlockEntityOwnableMixin",
-    ,
     "ownables.BrewingStandBlockEntityOwnableMixin"
   ],
   "client": [

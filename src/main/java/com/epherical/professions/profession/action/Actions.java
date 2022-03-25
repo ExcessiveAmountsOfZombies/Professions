@@ -4,6 +4,7 @@ import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.items.BrewAction;
 import com.epherical.professions.profession.action.builtin.items.CraftingAction;
+import com.epherical.professions.profession.action.builtin.items.EnchantAction;
 import com.epherical.professions.profession.action.builtin.items.FishingAction;
 import com.epherical.professions.profession.action.builtin.KillAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
@@ -29,11 +30,11 @@ public class Actions {
     public static final ActionType TAKE_COOKED_ITEM = register(modID("take_smelted_item"), new TakeSmeltAction.Serializer(), "Take Smelted Item");
     public static final ActionType ON_ITEM_COOK = register(modID("on_item_smelted"), new SmeltItemAction.Serializer(), "Smelt Item");
     public static final ActionType BREW_ITEM = register(modID("brew"), new BrewAction.Serializer(), "Brew Potion");
-    // enchanting action
+    public static final ActionType ENCHANT_ITEM = register(modID("enchant"), new EnchantAction.Serializer(), "Enchant");
     // repair action
     // breed action
     // taming action
-    // trading action
+    // villager trading action
 
 
     public static Object createGsonAdapter() {

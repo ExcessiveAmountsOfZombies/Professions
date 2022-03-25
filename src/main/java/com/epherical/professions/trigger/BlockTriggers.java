@@ -5,8 +5,15 @@ import com.epherical.professions.events.trigger.TriggerEvents;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Actions;
+import com.epherical.professions.util.EnchantmentContainer;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.block.entity.EnchantmentTableBlockEntity;
+
+import java.util.Map;
 
 public class BlockTriggers {
 
@@ -71,5 +78,28 @@ public class BlockTriggers {
                 RewardHandler.handleReward(builder.build());
             }
         });
+
+        TriggerEvents.ENCHANT_ITEM_EVENT.register((player, itemEnchanted, spentLevels) -> {
+            ServerLevel level = player.getLevel();
+            ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                    .addRandom(level.random)
+                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()));
+
+            for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(itemEnchanted).entrySet()) {
+                builder.addParameter(ProfessionParameter.ACTION_TYPE, Actions.ENCHANT_ITEM)
+                        .addParameter(ProfessionParameter.ENCHANTMENT, new EnchantmentContainer(entry.getKey(), entry.getValue()));
+                RewardHandler.handleReward(builder.build());
+            }
+
+            builder = new ProfessionContext.Builder(level)
+                    .addRandom(level.random)
+                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.ENCHANT_ITEM)
+                    .addParameter(ProfessionParameter.ITEM_INVOLVED, itemEnchanted);
+            RewardHandler.handleReward(builder.build());
+
+        });
+
+
     }
 }

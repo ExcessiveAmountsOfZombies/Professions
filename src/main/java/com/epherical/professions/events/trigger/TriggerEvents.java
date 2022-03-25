@@ -57,6 +57,12 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<EnchantItem> ENCHANT_ITEM_EVENT = EventFactory.createArrayBacked(EnchantItem.class, calls -> (player, itemEnchanted, spentLevels) -> {
+        for (EnchantItem call : calls) {
+            call.onItemEnchant(player, itemEnchanted, spentLevels);
+        }
+    });
+
 
 
     public interface PlaceBlock {
@@ -99,6 +105,13 @@ public final class TriggerEvents {
          * This event is not great.
          */
         void onPotionBrew(UUID owner, ItemStack brewingIngredient, BrewingStandBlockEntity blockEntity);
+    }
+
+    public interface EnchantItem {
+        /**
+         * Event for after the player has enchanted an item.
+         */
+        void onItemEnchant(ServerPlayer player, ItemStack itemEnchanted, int spentLevels);
     }
 
 }

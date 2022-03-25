@@ -8,6 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.UUID;
@@ -50,6 +51,12 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<BrewPotion> BREW_POTION_EVENT = EventFactory.createArrayBacked(BrewPotion.class, calls -> (owner, brewingIngredient, blockEntity) -> {
+        for (BrewPotion call : calls) {
+            call.onPotionBrew(owner, brewingIngredient, blockEntity);
+        }
+    });
+
 
 
     public interface PlaceBlock {
@@ -85,6 +92,13 @@ public final class TriggerEvents {
 
     public interface SmeltItem {
         void onItemSmelt(UUID owner, ItemStack smeltedItem, Recipe<?> recipe, AbstractFurnaceBlockEntity blockEntity);
+    }
+
+    public interface BrewPotion {
+        /**
+         * This event is not great.
+         */
+        void onPotionBrew(UUID owner, ItemStack brewingIngredient, BrewingStandBlockEntity blockEntity);
     }
 
 }

@@ -1,0 +1,50 @@
+{
+  "type": "professions:default",
+  "color": "#666e63",
+  "descriptionColor": "#FFFFFF",
+  "description": [
+    "Earn money by brewing potions."
+  ],
+  "displayName": "Alchemist",
+  "maxLevel": 100,
+  "experienceSclEquation": "(91+1000)*((1.1)^(lvl-1))",
+  "incomeSclEquation": "base",
+  "actions": [
+    {
+      "action": "professions:brew",
+      "items": [
+        "minecraft:nether_wart"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 32.5
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 10.5
+        }
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "items": [
+        "minecraft:sugar"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 5
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 23
+        }
+      ]
+    }
+  ]
+}

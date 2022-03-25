@@ -58,5 +58,18 @@ public class BlockTriggers {
                 RewardHandler.handleReward(builder.build());
             }
         });
+
+        TriggerEvents.BREW_POTION_EVENT.register((owner, brewingIngredient, blockEntity) -> {
+            if (blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide) {
+                ServerLevel level = (ServerLevel) blockEntity.getLevel();
+                ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                        .addRandom(level.random)
+                        .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(owner))
+                        .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREW_ITEM)
+                        .addParameter(ProfessionParameter.ITEM_INVOLVED, brewingIngredient)
+                        .addParameter(ProfessionParameter.THIS_BLOCKSTATE, blockEntity.getBlockState());
+                RewardHandler.handleReward(builder.build());
+            }
+        });
     }
 }

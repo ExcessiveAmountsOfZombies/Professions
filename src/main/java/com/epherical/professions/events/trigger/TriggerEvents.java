@@ -34,6 +34,12 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<TakeSmeltedItem> TAKE_SMELTED_ITEM_EVENT = EventFactory.createArrayBacked(TakeSmeltedItem.class, calls -> (player, stack) -> {
+        for (TakeSmeltedItem call : calls) {
+            call.onItemTake(player, stack);
+        }
+    });
+
 
 
     public interface PlaceBlock {
@@ -61,6 +67,10 @@ public final class TriggerEvents {
          * @param stack The item that was crafted
          */
         void onCraftItem(ServerPlayer player, ItemStack stack, Recipe<?> recipe);
+    }
+
+    public interface TakeSmeltedItem {
+        void onItemTake(ServerPlayer player, ItemStack stack);
     }
 
 }

@@ -6,6 +6,7 @@
   "mixins": [
     "CraftingMixin",
     "FishingMixin",
+    "FurnaceCraftingMixin",
     "GameProfileCacheMixin",
     "PlaceBlockTriggerMixin",
     "TntExplosionTriggerMixin"

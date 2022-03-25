@@ -43,5 +43,15 @@ public class EntityTriggers {
                     .addParameter(ProfessionParameter.RECIPE_CRAFTED, recipe);
             RewardHandler.handleReward(builder.build());
         });
+
+        TriggerEvents.TAKE_SMELTED_ITEM_EVENT.register((player, stack) -> {
+            ServerLevel level = player.getLevel();
+            ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                    .addRandom(level.random)
+                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAKE_COOKED_ITEM)
+                    .addParameter(ProfessionParameter.ITEM_INVOLVED, stack);
+            RewardHandler.handleReward(builder.build());
+        });
     }
 }

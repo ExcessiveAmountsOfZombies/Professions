@@ -32,11 +32,6 @@ public class FishingAction extends AbstractItemAction {
         @Override
         public void serialize(@NotNull JsonObject json, FishingAction value, @NotNull JsonSerializationContext serializationContext) {
             super.serialize(json, value, serializationContext);
-            JsonArray array = new JsonArray();
-            for (Item item : value.items) {
-                array.add(Registry.ITEM.getKey(item).toString());
-            }
-            json.add("items", array);
         }
 
         @Override

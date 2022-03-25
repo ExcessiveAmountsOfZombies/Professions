@@ -21,6 +21,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.Serializer;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+
 
 public record OccupationExperience(double expAmount) implements Reward {
 
@@ -33,7 +35,7 @@ public record OccupationExperience(double expAmount) implements Reward {
     public void giveReward(ProfessionContext context, Action action, Occupation occupation) {
         // if true, player levels up.
         ProfessionalPlayer player = context.getParameter(ProfessionParameter.THIS_PLAYER);
-        if (occupation.addExp(expAmount, player)) {
+        if (occupation.addExp(action.modifyReward(context, this, expAmount), player)) {
             PlayerManager manager = ProfessionsMod.getInstance().getPlayerManager();
             manager.levelUp(player, occupation);
         }

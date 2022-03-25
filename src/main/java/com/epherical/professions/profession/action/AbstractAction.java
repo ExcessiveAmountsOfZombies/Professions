@@ -52,6 +52,11 @@ public abstract class AbstractAction implements Action {
         }
     }
 
+    @Override
+    public double modifyReward(ProfessionContext context, Reward reward, double base) {
+        return base;
+    }
+
     public final Map<RewardType, Component> getRewardInformation() {
         Map<RewardType, Component> map = new HashMap<>();
         for (Reward reward : rewards) {

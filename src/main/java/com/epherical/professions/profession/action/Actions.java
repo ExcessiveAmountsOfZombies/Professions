@@ -7,6 +7,7 @@ import com.epherical.professions.profession.action.builtin.items.FishingAction;
 import com.epherical.professions.profession.action.builtin.KillAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
+import com.epherical.professions.profession.action.builtin.items.TakeSmeltAction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.GsonAdapterFactory;
@@ -23,7 +24,8 @@ public class Actions {
     public static final ActionType KILL_ENTITY = register(modID("kill_entity"), new KillAction.Serializer(), "Kill");
     public static final ActionType FISH_ACTION = register(modID("catch_fish"), new FishingAction.Serializer(), "Fishing");
     public static final ActionType CRAFTS_ITEM = register(modID("craft_item"), new CraftingAction.Serializer(), "Craft");
-    // smelting action
+    public static final ActionType TAKE_COOKED_ITEM = register(modID("take_smelted_item"), new TakeSmeltAction.Serializer(), "Take Smelted Item");
+    //public static final ActionType ON_ITEM_COOK = register(modID("on_item_smelted"), new );
     // brewing action
     // enchanting action
     // repair action

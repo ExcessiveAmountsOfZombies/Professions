@@ -30,6 +30,24 @@
           "amount": 50.3
         }
       ]
+    }, {
+      "action": "professions:take_smelted_item",
+      "items": [
+        "minecraft:iron_ingot",
+        "minecraft:gold_ingot"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "currency": "eights_economy:dollars",
+          "amount": 5
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 60
+        }
+      ]
     }
   ]
 }

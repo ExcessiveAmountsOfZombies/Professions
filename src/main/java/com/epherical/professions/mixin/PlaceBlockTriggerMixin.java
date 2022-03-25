@@ -19,7 +19,7 @@ public class PlaceBlockTriggerMixin {
      */
     @Inject(method = "trigger", at = @At("HEAD"))
     public void onTrigger(ServerPlayer player, BlockPos pos, ItemStack item, CallbackInfo ci) {
-        TriggerEvents.PLACE_BLOCK_EVENT.invoker().onBlockPlace(player, player.getLevel().getBlockState(pos));
+        TriggerEvents.PLACE_BLOCK_EVENT.invoker().onBlockPlace(player, player.getLevel().getBlockState(pos), pos);
     }
 
 }

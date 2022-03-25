@@ -10,6 +10,7 @@ import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
+import com.epherical.professions.trigger.UtilityListener;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -54,6 +55,7 @@ public class ProfessionsMod implements ModInitializer {
             ServerPlayConnectionEvents.DISCONNECT.register(this.listener::onPlayerLeave);
             BlockTriggers.init(playerManager);
             EntityTriggers.init(playerManager);
+            UtilityListener.init(playerManager);
         });
     }
 

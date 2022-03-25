@@ -2,17 +2,21 @@ package com.epherical.professions.events.trigger;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.UUID;
 
 public final class TriggerEvents {
 
-    public static final Event<PlaceBlock> PLACE_BLOCK_EVENT = EventFactory.createArrayBacked(PlaceBlock.class, calls -> (player, state) -> {
+    public static final Event<PlaceBlock> PLACE_BLOCK_EVENT = EventFactory.createArrayBacked(PlaceBlock.class, calls -> (player, state, pos) -> {
         for (PlaceBlock call : calls) {
-            call.onBlockPlace(player, state);
+            call.onBlockPlace(player, state, pos);
         }
     });
 
@@ -40,13 +44,19 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<SmeltItem> SMELT_ITEM_EVENT = EventFactory.createArrayBacked(SmeltItem.class, calls -> (owner, smeltedItem, recipe, blockEntity) -> {
+        for (SmeltItem call : calls) {
+            call.onItemSmelt(owner, smeltedItem, recipe, blockEntity);
+        }
+    });
+
 
 
     public interface PlaceBlock {
         /**
          * This event is already assumed to take place on the server, no side checks are needed.
          */
-        void onBlockPlace(ServerPlayer player, BlockState state);
+        void onBlockPlace(ServerPlayer player, BlockState state, BlockPos pos);
     }
 
     public interface TNTDestroy {
@@ -71,6 +81,10 @@ public final class TriggerEvents {
 
     public interface TakeSmeltedItem {
         void onItemTake(ServerPlayer player, ItemStack stack);
+    }
+
+    public interface SmeltItem {
+        void onItemSmelt(UUID owner, ItemStack smeltedItem, Recipe<?> recipe, AbstractFurnaceBlockEntity blockEntity);
     }
 
 }

@@ -9,7 +9,8 @@
     "FurnaceCraftingMixin",
     "GameProfileCacheMixin",
     "PlaceBlockTriggerMixin",
-    "TntExplosionTriggerMixin"
+    "TntExplosionTriggerMixin",
+    "ownables.AbstractFurnaceBlockEntityOwnableMixin",
   ],
   "client": [
   ],

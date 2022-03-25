@@ -25,7 +25,7 @@ public class BlockTriggers {
             }
         });
 
-        TriggerEvents.PLACE_BLOCK_EVENT.register((player, state) -> {
+        TriggerEvents.PLACE_BLOCK_EVENT.register((player, state, pos) -> {
             ServerLevel level = player.getLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
@@ -43,6 +43,20 @@ public class BlockTriggers {
                     .addParameter(ProfessionParameter.THIS_BLOCKSTATE, state)
                     .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(source.getUUID()));
             RewardHandler.handleReward(builder.build());
+        });
+
+        TriggerEvents.SMELT_ITEM_EVENT.register((owner, smeltedItem, recipe, blockEntity) -> {
+            if (blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide) {
+                ServerLevel level = (ServerLevel) blockEntity.getLevel();
+                ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                        .addRandom(level.random)
+                        .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(owner))
+                        .addParameter(ProfessionParameter.ACTION_TYPE, Actions.ON_ITEM_COOK)
+                        .addParameter(ProfessionParameter.ITEM_INVOLVED, smeltedItem)
+                        .addParameter(ProfessionParameter.THIS_BLOCKSTATE, blockEntity.getBlockState())
+                        .addParameter(ProfessionParameter.RECIPE_CRAFTED, recipe);
+                RewardHandler.handleReward(builder.build());
+            }
         });
     }
 }

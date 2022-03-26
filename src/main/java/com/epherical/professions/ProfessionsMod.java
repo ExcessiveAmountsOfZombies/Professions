@@ -7,24 +7,32 @@ import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
 import com.epherical.professions.trigger.UtilityListener;
+import com.epherical.professions.util.PacketIdentifiers;
+import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ProfessionsMod implements ModInitializer {
     public static final String MOD_ID = "professions";
+    public static final ResourceLocation MOD_CHANNEL = new ResourceLocation(MOD_ID, "data");
 
     private static ProfessionsMod mod;
     private ProfessionListener listener;
@@ -57,6 +65,20 @@ public class ProfessionsMod implements ModInitializer {
             EntityTriggers.init(playerManager);
             UtilityListener.init(playerManager);
         });
+
+        ServerPlayNetworking.registerGlobalReceiver(MOD_CHANNEL, (server, player, handler, buf, responseSender) -> {
+            if (buf.readResourceLocation().equals(PacketIdentifiers.OPEN_UI) ) {
+                ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
+                if (pPlayer != null) {
+                    FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
+                    List<Occupation> occupations = pPlayer.getActiveOccupations();
+                    //occupations.addAll(pPlayer.getInactiveOccupations());
+                    PacketIdentifiers.toNetwork(response, occupations);
+                    responseSender.sendPacket(MOD_CHANNEL, response);
+                }
+            }
+        });
+
     }
 
     public static ResourceLocation modID(String name) {

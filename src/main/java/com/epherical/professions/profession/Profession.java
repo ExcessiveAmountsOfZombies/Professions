@@ -3,7 +3,9 @@ package com.epherical.professions.profession;
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.progression.Occupation;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
@@ -11,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -20,6 +23,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
@@ -115,6 +119,12 @@ public class Profession {
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText)));
     }
 
+
+    @NotNull
+    public ProfessionSerializer<Profession> getSerializer() {
+        return ProfessionSerializer.DEFAULT_PROFESSION;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -153,6 +163,33 @@ public class Profession {
         @Override
         public JsonElement serialize(Profession src, Type typeOfSrc, JsonSerializationContext context) {
             return null;
+        }
+
+        @Override
+        public Profession fromServer(FriendlyByteBuf buf) {
+            ResourceLocation location = buf.readResourceLocation();
+            TextColor color = TextColor.parseColor(buf.readUtf());
+            TextColor descColor = TextColor.parseColor(buf.readUtf());
+            String displayName = buf.readUtf();
+            String[] description = new String[buf.readVarInt()];
+            for (int i = 0; i < description.length; i++) {
+                description[i] = buf.readUtf();
+            }
+            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), null, null);
+            profession.setKey(location);
+            return profession;
+        }
+
+        @Override
+        public void toClient(FriendlyByteBuf buf, Profession profession) {
+            buf.writeResourceLocation(profession.key);
+            buf.writeUtf(profession.color.serialize());
+            buf.writeUtf(profession.descriptionColor.serialize());
+            buf.writeUtf(profession.displayName);
+            buf.writeVarInt(profession.description.length);
+            for (String s : profession.description) {
+                buf.writeUtf(s);
+            }
         }
 
         @Override

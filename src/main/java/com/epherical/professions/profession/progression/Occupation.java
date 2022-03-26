@@ -30,6 +30,17 @@ public class Occupation {
         this.slot = slot;
     }
 
+    /**
+     * CLIENT CONSTRUCTOR ONLY
+     */
+    public Occupation(Profession profession, double exp, int maxExp, int level) {
+        this.profession = profession;
+        this.exp = exp;
+        this.maxExp = maxExp;
+        this.level = level;
+        this.slot = OccupationSlot.ACTIVE;
+    }
+
     public boolean isActive() {
         return slot != OccupationSlot.INACTIVE;
     }

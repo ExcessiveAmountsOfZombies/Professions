@@ -3,9 +3,7 @@ package com.epherical.professions.client;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.OccupationScreen;
-import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
-import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.util.PacketIdentifiers;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.netty.buffer.Unpooled;
@@ -18,9 +16,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
@@ -53,18 +51,22 @@ public class ProfessionsClient implements ClientModInitializer {
         });
 
         ClientPlayNetworking.registerGlobalReceiver(ProfessionsMod.MOD_CHANNEL, (client, handler, buf, responseSender) -> {
-            if (buf.readResourceLocation().equals(PacketIdentifiers.RESPOND_UI)) {
+            ResourceLocation location = buf.readResourceLocation();
+            if (location.equals(PacketIdentifiers.OPEN_UI_RESPONSE)) {
                 List<Occupation> occupations = PacketIdentifiers.occupationsFromNetwork(buf);
                 client.execute(() -> {
                     client.setScreen(new OccupationScreen(occupations));
                 });
+            } else if (location.equals(PacketIdentifiers.CLICK_PROFESSION_BUTTON_RESPONSE)) {
+                PacketIdentifiers.readButtonClick(client, buf);
             }
         });
     }
 
-    public void sendOccupationPacket() {
+    // todo: move this
+    public static void sendOccupationPacket() {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeResourceLocation(PacketIdentifiers.OPEN_UI);
+        buf.writeResourceLocation(PacketIdentifiers.OPEN_UI_REQUEST);
         ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
     }
 }

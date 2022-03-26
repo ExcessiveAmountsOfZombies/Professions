@@ -10,6 +10,7 @@ import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.progression.Occupation;
+import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
 import com.epherical.professions.trigger.UtilityListener;
@@ -67,7 +68,8 @@ public class ProfessionsMod implements ModInitializer {
         });
 
         ServerPlayNetworking.registerGlobalReceiver(MOD_CHANNEL, (server, player, handler, buf, responseSender) -> {
-            if (buf.readResourceLocation().equals(PacketIdentifiers.OPEN_UI) ) {
+            ResourceLocation location = buf.readResourceLocation();
+            if (location.equals(PacketIdentifiers.OPEN_UI_REQUEST) ) {
                 ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
                 if (pPlayer != null) {
                     FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
@@ -76,7 +78,14 @@ public class ProfessionsMod implements ModInitializer {
                     PacketIdentifiers.toNetwork(response, occupations);
                     responseSender.sendPacket(MOD_CHANNEL, response);
                 }
+            } else if (location.equals(PacketIdentifiers.CLICK_PROFESSION_BUTTON_REQUEST)) {
+                PacketIdentifiers.readButtonClick(player, buf);
+            } else if (location.equals(PacketIdentifiers.JOIN_BUTTON_REQUEST)) {
+                ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
+                Profession profession = professionLoader.getProfession(buf.readResourceLocation());
+                playerManager.joinOccupation(pPlayer, profession, OccupationSlot.ACTIVE, player);
             }
+
         });
 
     }

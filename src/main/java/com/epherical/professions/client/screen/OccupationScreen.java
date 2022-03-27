@@ -1,12 +1,11 @@
 package com.epherical.professions.client.screen;
 
 import com.epherical.professions.client.widgets.OccupationsList;
-import com.epherical.professions.client.widgets.ProfessionButton;
+import com.epherical.professions.client.widgets.CommandButton;
 import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
-import com.epherical.professions.networking.PacketIdentifiers;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -15,8 +14,9 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,21 +27,28 @@ public class OccupationScreen extends Screen {
     protected int imageWidth = 256;
     protected int imageHeight = 170;
 
+    @Nullable
+    private Screen prevScreen;
     private OccupationsList list;
-    private List<Occupation> occupations;
     private CommandButtons button;
-    private List<Profession> professions;
+    private List<OccupationsList.AbstractEntry> entries;
 
-    // todo: this is ugly and messy and awful
-    public OccupationScreen(List<Occupation> occupations, CommandButtons button, List<Profession> professions) {
+    public OccupationScreen(List<Profession> list, CommandButtons buttons) {
         super(Component.nullToEmpty(""));
-        this.occupations = occupations;
-        this.button = button;
-        this.professions = professions;
+        // todo: create better constructor at some point.
+        this.button = buttons;
+        this.entries = createProfessionEntries(this, list);
     }
 
     public OccupationScreen(List<Occupation> occupations) {
-        this(occupations, null, Collections.emptyList());
+        super(Component.nullToEmpty(""));
+        this.button = null;
+        this.entries = createOccupationEntries(this, occupations);
+    }
+
+    public OccupationScreen addPrevious(Screen prevScreen) {
+        this.prevScreen = prevScreen;
+        return this;
     }
 
     @Override
@@ -54,25 +61,25 @@ public class OccupationScreen extends Screen {
                 (this.height / 2 + 76), // bottom
                 24);
         // row 1
-        addRenderableWidget(new ProfessionButton(this.width / 2 + 43, this.height / 2 - 80, new TextComponent("Join"), button1 -> {
+        addRenderableWidget(new CommandButton(this.width / 2 + 43, this.height / 2 - 80, new TextComponent("Join"), button1 -> {
             ClientHandler.sendButtonPacket(CommandButtons.JOIN);
         }));
-        addRenderableWidget(new ProfessionButton(this.width / 2 + 43 + 38 + 3, this.height / 2 - 80,new TextComponent("Leave"), button1 -> {
+        addRenderableWidget(new CommandButton(this.width / 2 + 43 + 38 + 3, this.height / 2 - 80,new TextComponent("Leave"), button1 -> {
             ClientHandler.sendButtonPacket(CommandButtons.LEAVE);
         }));
         //row 2
-        addRenderableWidget(new ProfessionButton(this.width / 2 + 43, this.height / 2 - 80 + 48 + 3, new TextComponent("Info"), button1 -> {
+        addRenderableWidget(new CommandButton(this.width / 2 + 43, this.height / 2 - 80 + 48 + 3, new TextComponent("Info"), button1 -> {
             ClientHandler.sendButtonPacket(CommandButtons.INFO);
         }));
-        addRenderableWidget(new ProfessionButton(this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,  new TextComponent("Top"), button1 -> {
+        addRenderableWidget(new CommandButton(this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,  new TextComponent("Top"), button1 -> {
             ClientHandler.sendButtonPacket(CommandButtons.TOP);
         }));
         // row 3
-        addRenderableWidget(new ProfessionButton(this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,  new TextComponent("Close"), button1 -> {
-            this.minecraft.setScreen(null);
+        addRenderableWidget(new CommandButton(this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,  new TextComponent("Close"), button1 -> {
+            this.minecraft.setScreen(prevScreen);
         }));
         this.addWidget(list);
-        list.reset(button);
+        list.reset(entries);
     }
 
     @Override
@@ -86,7 +93,7 @@ public class OccupationScreen extends Screen {
 
         Optional<GuiEventListener> element = list.getChildAt(mouseX, mouseY);
 
-        if (occupations.size() == 0 && button == null) {
+        if (entries.size() == 0 && button == null) {
             drawCenteredString(poseStack, font, "You aren't in any professions!", ((this.width - imageWidth) / 2) + 83, ofy + 50, -1);
         }
 
@@ -120,20 +127,24 @@ public class OccupationScreen extends Screen {
         return (this.width - 256) / 2;
     }
 
-    public void setOccupations(List<Occupation> occupations) {
-        this.occupations = occupations;
-    }
-
     @Override
     public boolean isPauseScreen() {
         return false;
     }
 
-    public List<Occupation> getOccupations() {
-        return occupations;
+    public static List<OccupationsList.AbstractEntry> createOccupationEntries(OccupationScreen screen, List<Occupation> occupations) {
+        List<OccupationsList.AbstractEntry> entries = new ArrayList<>();
+        for (Occupation occupation : occupations) {
+            entries.add(new OccupationsList.OccupationEntry(screen, screen.list, screen.minecraft, occupation));
+        }
+        return entries;
     }
 
-    public List<Profession> getProfessions() {
-        return professions;
+    public static List<OccupationsList.AbstractEntry> createProfessionEntries(OccupationScreen screen, List<Profession> professions) {
+        List<OccupationsList.AbstractEntry> entries = new ArrayList<>();
+        for (Profession profession : professions) {
+            entries.add(new OccupationsList.ProfessionEntry(screen, screen.list, screen.minecraft, profession));
+        }
+        return entries;
     }
 }

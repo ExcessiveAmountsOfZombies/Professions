@@ -35,7 +35,7 @@ public class ProfessionsClient implements ClientModInitializer {
             if (occupationMenu.isDown()) {
                 if (client.isLocalServer()) {
                     ProfessionalPlayer player = ProfessionsMod.getInstance().getPlayerManager().getPlayer(client.player.getUUID());
-                    client.setScreen(new OccupationScreen(player.getActiveOccupations()));
+                    client.setScreen(new OccupationScreen(player.getActiveOccupations()).addPrevious(client.screen));
                 } else {
                     ClientHandler.sendOccupationPacket();
                 }

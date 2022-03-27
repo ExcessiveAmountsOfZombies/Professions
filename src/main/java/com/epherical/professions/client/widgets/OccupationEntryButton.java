@@ -14,12 +14,12 @@ import net.minecraft.util.Mth;
 
 import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
 
-public class OccupationButton extends Button {
+public class OccupationEntryButton extends Button {
 
     private final Occupation occupation;
     private final Component name;
 
-    public OccupationButton(Occupation occupation, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
+    public OccupationEntryButton(Occupation occupation, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
         super(i, j, k, l, Component.nullToEmpty(""), onPress, tooltip);
         this.occupation = occupation;
         this.name = new TextComponent(occupation.getProfession().getDisplayName()).setStyle(Style.EMPTY.withColor(occupation.getProfession().getColor()));

@@ -6,16 +6,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
 
-public class ProfessionButton extends Button {
+public class CommandButton extends Button {
 
 
-    public ProfessionButton(int i, int j, Component component, OnPress onPress) {
+    public CommandButton(int i, int j, Component component, OnPress onPress) {
         super(i, j, 38, 48, component, onPress);
     }
 

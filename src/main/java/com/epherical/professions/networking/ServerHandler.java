@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ServerHandler {
     private static final Map<ResourceLocation, Handler> subChannelReceivers = new HashMap<>();
@@ -43,9 +44,15 @@ public class ServerHandler {
     private static void setupButtonHandlers() {
         buttonReceivers.put(CommandButtons.JOIN, (player) -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            PlayerManager playerManager = ProfessionsMod.getInstance().getPlayerManager();
+            ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             buf.writeResourceLocation(PacketIdentifiers.CLICK_PROFESSION_BUTTON_RESPONSE);
             buf.writeEnum(CommandButtons.JOIN);
-            Collection<Profession> professions = ProfessionsMod.getInstance().getProfessionLoader().getProfessions();
+            Collection<Profession> professions = ProfessionsMod.getInstance().getProfessionLoader().getProfessions()
+                    .stream()
+                    .filter(profession -> pPlayer != null && !pPlayer.isOccupationActive(profession))
+                    .toList();
+
             buf.writeVarInt(professions.size());
             for (Profession profession : professions) {
                 // todo; kinda repeats

@@ -24,6 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Poorly named class, it could either be an OccupationList or a ProfessionList, depending on what the user is doing.
+ */
 public class OccupationsList extends ContainerObjectSelectionList<OccupationsList.AbstractEntry> {
 
     private final OccupationScreen parentScreen;
@@ -66,48 +69,30 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
         RenderSystem.disableScissor();
     }
 
-    public void reset(CommandButtons button) {
+    public void reset(List<AbstractEntry> entries) {
         clearEntries();
-        if (button != null) {
-            for (Profession profession : parentScreen.getProfessions()) {
-                addEntry(new ProfessionEntry(parentScreen, this, minecraft, profession));
-            }
-        } else {
-            for (Occupation entry : parentScreen.getOccupations()) {
-                addEntry(new OccupationEntry(parentScreen, this, minecraft, entry));
-            }
+        for (AbstractEntry entry : entries) {
+            addEntry(entry);
         }
-
         setScrollAmount(0.0D);
     }
 
     public abstract static class AbstractEntry extends ContainerObjectSelectionList.Entry<AbstractEntry> {
 
-        public Button getButton() {
-            return null;
-        }
+        public abstract Button getButton();
     }
 
     public static class OccupationEntry extends AbstractEntry {
 
-        private final OccupationScreen parent;
-        private final Minecraft client;
-        private final OccupationsList widget;
-        private final Occupation occupation;
-
-        private OccupationButton button;
+        private OccupationEntryButton button;
         private List<Component> toolTip;
 
         public OccupationEntry(OccupationScreen parent, OccupationsList listingWidget, Minecraft client, Occupation listing) {
-            this.parent = parent;
-            this.client = client;
-            this.widget = listingWidget;
-            this.occupation = listing;
             this.toolTip = new ArrayList<>();
             for (String s : listing.getProfession().getDescription()) {
                 toolTip.add(new TextComponent(s).setStyle(Style.EMPTY.withColor(listing.getProfession().getDescriptionColor())));
             }
-            this.button = new OccupationButton(listing, 0, 0, 154, 24, button1 -> {
+            this.button = new OccupationEntryButton(listing, 0, 0, 154, 24, button1 -> {
 
             }, (button1, poseStack, i, j) -> {
                 parent.renderTooltip(poseStack, toolTip, Optional.empty(), i, j);
@@ -127,7 +112,7 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
             button.render(poseStack, mouseX, mouseY, partialTick);
         }
 
-        public OccupationButton getButton() {
+        public OccupationEntryButton getButton() {
             return button;
         }
 
@@ -139,19 +124,10 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
 
     public static class ProfessionEntry extends AbstractEntry {
 
-        private final OccupationScreen parent;
-        private final Minecraft client;
-        private final OccupationsList widget;
-        private final Profession profession;
-
         private ProfessionEntryButton button;
         private List<Component> toolTip;
 
         public ProfessionEntry(OccupationScreen parent, OccupationsList listingWidget, Minecraft client, Profession profession) {
-            this.parent = parent;
-            this.client = client;
-            this.widget = listingWidget;
-            this.profession = profession;
             this.toolTip = new ArrayList<>();
             for (String s : profession.getDescription()) {
                 toolTip.add(new TextComponent(s).setStyle(Style.EMPTY.withColor(profession.getDescriptionColor())));
@@ -162,7 +138,6 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
             }, (button1, poseStack, i, j) -> {
                 parent.renderTooltip(poseStack, toolTip, Optional.empty(), i, j);
             });
-
         }
 
         @Override

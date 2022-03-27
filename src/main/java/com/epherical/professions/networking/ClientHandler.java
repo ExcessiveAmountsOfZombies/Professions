@@ -47,7 +47,7 @@ public class ClientHandler {
     private static void setupSubChannels() {
         subChannelReceivers.put(PacketIdentifiers.OPEN_UI_RESPONSE, (client, handler, buf, responseSender) -> {
             List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
-            client.execute(() -> client.setScreen(new OccupationScreen(occupations)));
+            client.execute(() -> client.setScreen(new OccupationScreen(occupations).addPrevious(client.screen)));
         });
         subChannelReceivers.put(PacketIdentifiers.CLICK_PROFESSION_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
             CommandButtons button = buf.readEnum(CommandButtons.class);
@@ -78,7 +78,7 @@ public class ClientHandler {
                 professions.add(profession);
             }
             minecraft.execute(() -> {
-                minecraft.setScreen(new OccupationScreen(Collections.emptyList(), CommandButtons.JOIN, professions));
+                minecraft.setScreen(new OccupationScreen(professions, CommandButtons.JOIN).addPrevious(minecraft.screen));
             });
         });
     }

@@ -7,6 +7,7 @@ import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.networking.ServerHandler;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.progression.Occupation;
@@ -14,7 +15,7 @@ import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
 import com.epherical.professions.trigger.UtilityListener;
-import com.epherical.professions.util.PacketIdentifiers;
+import com.epherical.professions.networking.PacketIdentifiers;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
@@ -67,26 +68,8 @@ public class ProfessionsMod implements ModInitializer {
             UtilityListener.init(playerManager);
         });
 
-        ServerPlayNetworking.registerGlobalReceiver(MOD_CHANNEL, (server, player, handler, buf, responseSender) -> {
-            ResourceLocation location = buf.readResourceLocation();
-            if (location.equals(PacketIdentifiers.OPEN_UI_REQUEST) ) {
-                ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
-                if (pPlayer != null) {
-                    FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
-                    List<Occupation> occupations = pPlayer.getActiveOccupations();
-                    //occupations.addAll(pPlayer.getInactiveOccupations());
-                    PacketIdentifiers.toNetwork(response, occupations);
-                    responseSender.sendPacket(MOD_CHANNEL, response);
-                }
-            } else if (location.equals(PacketIdentifiers.CLICK_PROFESSION_BUTTON_REQUEST)) {
-                PacketIdentifiers.readButtonClick(player, buf);
-            } else if (location.equals(PacketIdentifiers.JOIN_BUTTON_REQUEST)) {
-                ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
-                Profession profession = professionLoader.getProfession(buf.readResourceLocation());
-                playerManager.joinOccupation(pPlayer, profession, OccupationSlot.ACTIVE, player);
-            }
+        ServerPlayNetworking.registerGlobalReceiver(MOD_CHANNEL, ServerHandler::receivePacket);
 
-        });
 
     }
 

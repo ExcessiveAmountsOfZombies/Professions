@@ -2,9 +2,10 @@ package com.epherical.professions.client.widgets;
 
 import com.epherical.professions.client.ProfessionsClient;
 import com.epherical.professions.client.screen.OccupationScreen;
+import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
-import com.epherical.professions.util.PacketIdentifiers;
+import com.epherical.professions.networking.PacketIdentifiers;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,7 +19,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.packs.repository.Pack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +67,7 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
         RenderSystem.disableScissor();
     }
 
-    public void reset(PacketIdentifiers.ProfessionButtons button) {
+    public void reset(CommandButtons button) {
         clearEntries();
         if (button != null) {
             for (Profession profession : parentScreen.getProfessions()) {

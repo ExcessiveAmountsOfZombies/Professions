@@ -2,9 +2,10 @@ package com.epherical.professions.client.screen;
 
 import com.epherical.professions.client.widgets.OccupationsList;
 import com.epherical.professions.client.widgets.ProfessionButton;
+import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
-import com.epherical.professions.util.PacketIdentifiers;
+import com.epherical.professions.networking.PacketIdentifiers;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -18,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epherical.professions.util.PacketIdentifiers.ProfessionButtons.*;
 
 public class OccupationScreen extends Screen {
 
@@ -28,11 +28,11 @@ public class OccupationScreen extends Screen {
 
     private OccupationsList list;
     private List<Occupation> occupations;
-    private PacketIdentifiers.ProfessionButtons button;
+    private CommandButtons button;
     private List<Profession> professions;
 
     // todo: this is ugly and messy and awful
-    public OccupationScreen(List<Occupation> occupations, PacketIdentifiers.ProfessionButtons button, List<Profession> professions) {
+    public OccupationScreen(List<Occupation> occupations, CommandButtons button, List<Profession> professions) {
         super(Component.nullToEmpty(""));
         this.occupations = occupations;
         this.button = button;

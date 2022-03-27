@@ -1,6 +1,8 @@
 package com.epherical.professions.profession;
 
 import com.epherical.org.mbertoli.jfep.Parser;
+import com.epherical.professions.ProfessionConstants;
+import com.epherical.professions.networking.PacketIdentifiers;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.progression.Occupation;
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -136,6 +139,19 @@ public class Profession {
     @Override
     public int hashCode() {
         return Objects.hash(key);
+    }
+
+    public static void toNetwork(FriendlyByteBuf buf, List<Occupation> occupations) {
+        buf.writeResourceLocation(PacketIdentifiers.OPEN_UI_RESPONSE);
+        buf.writeVarInt(occupations.size());
+        for (Occupation occupation : occupations) {
+            Profession profession = occupation.getProfession();
+            buf.writeResourceLocation(ProfessionConstants.PROFESSION_SERIALIZER.getKey(profession.getSerializer()));
+            profession.getSerializer().toClient(buf, profession);
+            buf.writeVarInt(occupation.getLevel());
+            buf.writeDouble(occupation.getExp());
+            buf.writeVarInt(occupation.getMaxExp());
+        }
     }
 
     public static class Serializer implements ProfessionSerializer<Profession> {

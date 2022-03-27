@@ -2,6 +2,7 @@ package com.epherical.professions.client.screen;
 
 import com.epherical.professions.client.widgets.OccupationsList;
 import com.epherical.professions.client.widgets.ProfessionButton;
+import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
@@ -54,17 +55,17 @@ public class OccupationScreen extends Screen {
                 24);
         // row 1
         addRenderableWidget(new ProfessionButton(this.width / 2 + 43, this.height / 2 - 80, new TextComponent("Join"), button1 -> {
-            PacketIdentifiers.clickProfessionButton(JOIN);
+            ClientHandler.sendButtonPacket(CommandButtons.JOIN);
         }));
         addRenderableWidget(new ProfessionButton(this.width / 2 + 43 + 38 + 3, this.height / 2 - 80,new TextComponent("Leave"), button1 -> {
-            PacketIdentifiers.clickProfessionButton(LEAVE);
+            ClientHandler.sendButtonPacket(CommandButtons.LEAVE);
         }));
         //row 2
         addRenderableWidget(new ProfessionButton(this.width / 2 + 43, this.height / 2 - 80 + 48 + 3, new TextComponent("Info"), button1 -> {
-            PacketIdentifiers.clickProfessionButton(INFO);
+            ClientHandler.sendButtonPacket(CommandButtons.INFO);
         }));
         addRenderableWidget(new ProfessionButton(this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,  new TextComponent("Top"), button1 -> {
-            PacketIdentifiers.clickProfessionButton(TOP);
+            ClientHandler.sendButtonPacket(CommandButtons.TOP);
         }));
         // row 3
         addRenderableWidget(new ProfessionButton(this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,  new TextComponent("Close"), button1 -> {

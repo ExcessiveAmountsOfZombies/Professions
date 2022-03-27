@@ -37,7 +37,7 @@ public class ProfessionsClient implements ClientModInitializer {
                     ProfessionalPlayer player = ProfessionsMod.getInstance().getPlayerManager().getPlayer(client.player.getUUID());
                     client.setScreen(new OccupationScreen(player.getActiveOccupations()));
                 } else {
-                    sendOccupationPacket();
+                    ClientHandler.sendOccupationPacket();
                 }
 
             }
@@ -48,12 +48,5 @@ public class ProfessionsClient implements ClientModInitializer {
         });
 
         ClientPlayNetworking.registerGlobalReceiver(ProfessionsMod.MOD_CHANNEL, ClientHandler::receivePacket);
-    }
-
-    // todo: move this
-    public static void sendOccupationPacket() {
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeResourceLocation(PacketIdentifiers.OPEN_UI_REQUEST);
-        ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
     }
 }

@@ -1,11 +1,10 @@
 package com.epherical.professions.client.widgets;
 
-import com.epherical.professions.client.ProfessionsClient;
 import com.epherical.professions.client.screen.OccupationScreen;
+import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
-import com.epherical.professions.networking.PacketIdentifiers;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -158,9 +157,8 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
                 toolTip.add(new TextComponent(s).setStyle(Style.EMPTY.withColor(profession.getDescriptionColor())));
             }
             this.button = new ProfessionEntryButton(profession, TextColor.fromLegacyFormat(ChatFormatting.GREEN), 0, 0, 154, 24, button1 -> {
-                PacketIdentifiers.attemptJoin(profession.getKey());
-                ProfessionsClient.sendOccupationPacket();
-                // TODO: send message BACK to server requesting to join this profession
+                ClientHandler.attemptJoinPacket(profession.getKey());
+                ClientHandler.sendOccupationPacket();
             }, (button1, poseStack, i, j) -> {
                 parent.renderTooltip(poseStack, toolTip, Optional.empty(), i, j);
             });

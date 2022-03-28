@@ -53,5 +53,25 @@ public class EntityTriggers {
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, stack);
             RewardHandler.handleReward(builder.build());
         });
+
+        TriggerEvents.BREED_ANIMAL_EVENT.register((player, parent, partner, child) -> {
+            ServerLevel level = player.getLevel();
+            ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                    .addRandom(level.random)
+                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREED_ENTITY)
+                    .addParameter(ProfessionParameter.ENTITY, child);
+            RewardHandler.handleReward(builder.build());
+        });
+
+        TriggerEvents.TAME_ANIMAL_EVENT.register((player, animal) -> {
+            ServerLevel level = player.getLevel();
+            ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                    .addRandom(level.random)
+                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAME_ENTITY)
+                    .addParameter(ProfessionParameter.ENTITY, animal);
+            RewardHandler.handleReward(builder.build());
+        });
     }
 }

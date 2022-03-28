@@ -1,12 +1,14 @@
 package com.epherical.professions.profession.action;
 
 import com.epherical.professions.ProfessionConstants;
+import com.epherical.professions.profession.action.builtin.entity.BreedAction;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
+import com.epherical.professions.profession.action.builtin.entity.TameAction;
 import com.epherical.professions.profession.action.builtin.items.BrewAction;
 import com.epherical.professions.profession.action.builtin.items.CraftingAction;
 import com.epherical.professions.profession.action.builtin.items.EnchantAction;
 import com.epherical.professions.profession.action.builtin.items.FishingAction;
-import com.epherical.professions.profession.action.builtin.KillAction;
+import com.epherical.professions.profession.action.builtin.entity.KillAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
 import com.epherical.professions.profession.action.builtin.items.SmeltItemAction;
@@ -32,8 +34,8 @@ public class Actions {
     public static final ActionType BREW_ITEM = register(modID("brew"), new BrewAction.Serializer(), "Brew Potion");
     public static final ActionType ENCHANT_ITEM = register(modID("enchant"), new EnchantAction.Serializer(), "Enchant");
     // repair action
-    // breed action
-    // taming action
+    public static final ActionType BREED_ENTITY = register(modID("breed"), new BreedAction.Serializer(), "Breed");
+    public static final ActionType TAME_ENTITY = register(modID("tame"), new TameAction.Serializer(), "Tame");
     // villager trading action
 
 

@@ -4,7 +4,10 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
@@ -63,6 +66,18 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<BreedAnimal> BREED_ANIMAL_EVENT = EventFactory.createArrayBacked(BreedAnimal.class, calls -> (player, parent, partner, child) -> {
+        for (BreedAnimal call : calls) {
+            call.onBreed(player, parent, partner, child);
+        }
+    });
+
+    public static final Event<TameAnimal> TAME_ANIMAL_EVENT = EventFactory.createArrayBacked(TameAnimal.class, calls -> (player, animal) -> {
+        for (TameAnimal call : calls) {
+            call.onTame(player, animal);
+        }
+    });
+
 
 
     public interface PlaceBlock {
@@ -112,6 +127,14 @@ public final class TriggerEvents {
          * Event for after the player has enchanted an item.
          */
         void onItemEnchant(ServerPlayer player, ItemStack itemEnchanted, int spentLevels);
+    }
+
+    public interface BreedAnimal {
+        void onBreed(ServerPlayer player, Animal parent, Animal partner, AgeableMob child);
+    }
+
+    public interface TameAnimal {
+        void onTame(ServerPlayer player, Animal animal);
     }
 
 }

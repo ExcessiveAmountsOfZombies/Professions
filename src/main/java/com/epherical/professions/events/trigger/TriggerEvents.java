@@ -8,8 +8,11 @@ import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -78,6 +81,12 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<VillagerTrade> VILLAGER_TRADE_EVENT = EventFactory.createArrayBacked(VillagerTrade.class, calls -> (player, villager, offer) -> {
+        for (VillagerTrade call : calls) {
+            call.onTradeWithVillager(player, villager, offer);
+        }
+    });
+
 
 
     public interface PlaceBlock {
@@ -135,6 +144,10 @@ public final class TriggerEvents {
 
     public interface TameAnimal {
         void onTame(ServerPlayer player, Animal animal);
+    }
+
+    public interface VillagerTrade {
+        void onTradeWithVillager(ServerPlayer player, AbstractVillager villager, MerchantOffer offer);
     }
 
 }

@@ -73,5 +73,19 @@ public class EntityTriggers {
                     .addParameter(ProfessionParameter.ENTITY, animal);
             RewardHandler.handleReward(builder.build());
         });
+
+        TriggerEvents.VILLAGER_TRADE_EVENT.register((player, villager, offer) -> {
+            ServerLevel level = player.getLevel();
+            ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                    .addRandom(level.random)
+                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.VILLAGER_TRADE)
+                    .addParameter(ProfessionParameter.ENTITY, villager)
+                    .addParameter(ProfessionParameter.ITEM_INVOLVED, offer.getCostA());
+            RewardHandler.handleReward(builder.build());
+            builder.addParameter(ProfessionParameter.ITEM_INVOLVED, offer.getCostB());
+            RewardHandler.handleReward(builder.build());
+
+        });
     }
 }

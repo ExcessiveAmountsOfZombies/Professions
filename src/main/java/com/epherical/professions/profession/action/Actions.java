@@ -13,6 +13,7 @@ import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockActi
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
 import com.epherical.professions.profession.action.builtin.items.SmeltItemAction;
 import com.epherical.professions.profession.action.builtin.items.TakeSmeltAction;
+import com.epherical.professions.profession.action.builtin.items.TradeAction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.GsonAdapterFactory;
@@ -36,7 +37,7 @@ public class Actions {
     // repair action
     public static final ActionType BREED_ENTITY = register(modID("breed"), new BreedAction.Serializer(), "Breed");
     public static final ActionType TAME_ENTITY = register(modID("tame"), new TameAction.Serializer(), "Tame");
-    // villager trading action
+    public static final ActionType VILLAGER_TRADE = register(modID("villager_trade"), new TradeAction.Serializer(), "Villager Trade");
 
 
     public static Object createGsonAdapter() {

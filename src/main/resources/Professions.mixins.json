@@ -13,6 +13,7 @@
     "PlaceBlockTriggerMixin",
     "TamingMixin",
     "TntExplosionTriggerMixin",
+    "VillagerTradeMixin",
     "ownables.AbstractFurnaceBlockEntityOwnableMixin",
     "ownables.BrewingStandBlockEntityOwnableMixin"
   ],

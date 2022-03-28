@@ -54,4 +54,8 @@ public class OccupationEntryButton extends Button {
         this.blit(stack, this.x + this.width - 19, this.y + 2, 16, 238, 16, 18);
         this.blit(stack, this.x + this.width - 19, this.y + 2, 16 * 2, 238, progress, 18);
     }
+
+    public Occupation getOccupation() {
+        return occupation;
+    }
 }

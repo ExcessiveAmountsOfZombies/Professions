@@ -2,7 +2,6 @@ package com.epherical.professions.profession;
 
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.ProfessionConstants;
-import com.epherical.professions.networking.PacketIdentifiers;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.progression.Occupation;
@@ -142,11 +141,11 @@ public class Profession {
     }
 
     public static void toNetwork(FriendlyByteBuf buf, List<Occupation> occupations) {
-        buf.writeResourceLocation(PacketIdentifiers.OPEN_UI_RESPONSE);
+        buf.writeResourceLocation(ProfessionConstants.OPEN_UI_RESPONSE);
         buf.writeVarInt(occupations.size());
         for (Occupation occupation : occupations) {
             Profession profession = occupation.getProfession();
-            buf.writeResourceLocation(ProfessionConstants.PROFESSION_SERIALIZER.getKey(profession.getSerializer()));
+            buf.writeResourceLocation(com.epherical.professions.ProfessionConstants.PROFESSION_SERIALIZER.getKey(profession.getSerializer()));
             profession.getSerializer().toClient(buf, profession);
             buf.writeVarInt(occupation.getLevel());
             buf.writeDouble(occupation.getExp());

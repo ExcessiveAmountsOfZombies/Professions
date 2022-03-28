@@ -132,6 +132,10 @@ public class OccupationScreen extends Screen {
         return false;
     }
 
+    public CommandButtons getButton() {
+        return button;
+    }
+
     public static List<OccupationsList.AbstractEntry> createOccupationEntries(OccupationScreen screen, List<Occupation> occupations) {
         List<OccupationsList.AbstractEntry> entries = new ArrayList<>();
         for (Occupation occupation : occupations) {

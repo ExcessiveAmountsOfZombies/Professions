@@ -93,6 +93,11 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
                 toolTip.add(new TextComponent(s).setStyle(Style.EMPTY.withColor(listing.getProfession().getDescriptionColor())));
             }
             this.button = new OccupationEntryButton(listing, 0, 0, 154, 24, button1 -> {
+                if (parent.getButton() != null) {
+                    if (parent.getButton().equals(CommandButtons.LEAVE)) {
+                        ClientHandler.attemptLeavePacket(button.getOccupation().getProfession().getKey());
+                    }
+                }
 
             }, (button1, poseStack, i, j) -> {
                 parent.renderTooltip(poseStack, toolTip, Optional.empty(), i, j);
@@ -132,9 +137,19 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
             for (String s : profession.getDescription()) {
                 toolTip.add(new TextComponent(s).setStyle(Style.EMPTY.withColor(profession.getDescriptionColor())));
             }
-            this.button = new ProfessionEntryButton(profession, TextColor.fromLegacyFormat(ChatFormatting.GREEN), 0, 0, 154, 24, button1 -> {
-                ClientHandler.attemptJoinPacket(profession.getKey());
-                ClientHandler.sendOccupationPacket();
+            this.button = new ProfessionEntryButton(profession, 0, 0, 154, 24, button1 -> {
+                if (parent.getButton() != null) {
+                    switch (parent.getButton()) {
+                        case JOIN -> {
+                            ClientHandler.attemptJoinPacket(profession.getKey());
+                            ClientHandler.sendOccupationPacket();
+                        }
+                        case LEAVE -> {
+                            ClientHandler.attemptLeavePacket(profession.getKey());
+                            ClientHandler.sendOccupationPacket();
+                        }
+                    }
+                }
             }, (button1, poseStack, i, j) -> {
                 parent.renderTooltip(poseStack, toolTip, Optional.empty(), i, j);
             });

@@ -17,10 +17,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 public class ClientHandler {
@@ -45,11 +45,11 @@ public class ClientHandler {
     }
 
     private static void setupSubChannels() {
-        subChannelReceivers.put(PacketIdentifiers.OPEN_UI_RESPONSE, (client, handler, buf, responseSender) -> {
+        subChannelReceivers.put(ProfessionConstants.OPEN_UI_RESPONSE, (client, handler, buf, responseSender) -> {
             List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
-            client.execute(() -> client.setScreen(new OccupationScreen(occupations).addPrevious(client.screen)));
+            client.execute(() -> client.setScreen(new OccupationScreen(occupations)));
         });
-        subChannelReceivers.put(PacketIdentifiers.CLICK_PROFESSION_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
+        subChannelReceivers.put(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
             CommandButtons button = buf.readEnum(CommandButtons.class);
             CommandButtonHandler buttonHandler = buttonReceivers.getOrDefault(button, null);
             if (buttonHandler != null) {
@@ -61,8 +61,14 @@ public class ClientHandler {
     private static void setupButtonSenders() {
         buttonSenders.put(CommandButtons.JOIN, () -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            buf.writeResourceLocation(PacketIdentifiers.CLICK_PROFESSION_BUTTON_REQUEST);
+            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
             buf.writeEnum(CommandButtons.JOIN);
+            ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+        });
+        buttonSenders.put(CommandButtons.LEAVE, () -> {
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
+            buf.writeEnum(CommandButtons.LEAVE);
             ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
         });
     }
@@ -73,13 +79,18 @@ public class ClientHandler {
             List<Profession> professions = new ArrayList<>();
             for (int i = 0; i < size; i++) {
                 ResourceLocation serializer = buf.readResourceLocation();
-                Profession profession = ProfessionConstants.PROFESSION_SERIALIZER.getOptional(serializer).orElseThrow(()
+                Profession profession = com.epherical.professions.ProfessionConstants.PROFESSION_SERIALIZER.getOptional(serializer).orElseThrow(()
                         -> new IllegalArgumentException("Unknown profession serializer " + serializer)).fromServer(buf);
                 professions.add(profession);
             }
             minecraft.execute(() -> {
-                minecraft.setScreen(new OccupationScreen(professions, CommandButtons.JOIN).addPrevious(minecraft.screen));
+                minecraft.setScreen(new OccupationScreen(professions, CommandButtons.JOIN));
             });
+        });
+        buttonReceivers.put(CommandButtons.LEAVE, (minecraft, buf) -> {
+            buf.readResourceLocation();
+            List<Profession> professions = ProfessionSerializer.fromNetwork(buf).stream().map(Occupation::getProfession).collect(Collectors.toList());
+            minecraft.execute(() -> minecraft.setScreen(new OccupationScreen(professions, CommandButtons.LEAVE)));
         });
     }
 
@@ -90,13 +101,21 @@ public class ClientHandler {
 
     public static void attemptJoinPacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeResourceLocation(PacketIdentifiers.JOIN_BUTTON_REQUEST);
+        buf.writeResourceLocation(ProfessionConstants.JOIN_BUTTON_REQUEST);
         buf.writeResourceLocation(location);
         ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
     }
+
     public static void sendOccupationPacket() {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeResourceLocation(PacketIdentifiers.OPEN_UI_REQUEST);
+        buf.writeResourceLocation(ProfessionConstants.OPEN_UI_REQUEST);
+        ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+    }
+
+    public static void attemptLeavePacket(ResourceLocation location) {
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        buf.writeResourceLocation(ProfessionConstants.LEAVE_BUTTON_REQUEST);
+        buf.writeResourceLocation(location);
         ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
     }
 

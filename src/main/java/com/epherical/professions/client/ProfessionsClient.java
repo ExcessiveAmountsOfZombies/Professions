@@ -4,9 +4,7 @@ import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.networking.ClientHandler;
-import com.epherical.professions.networking.PacketIdentifiers;
 import com.mojang.blaze3d.platform.InputConstants;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,7 +13,6 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.network.FriendlyByteBuf;
 import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
@@ -35,7 +32,7 @@ public class ProfessionsClient implements ClientModInitializer {
             if (occupationMenu.isDown()) {
                 if (client.isLocalServer()) {
                     ProfessionalPlayer player = ProfessionsMod.getInstance().getPlayerManager().getPlayer(client.player.getUUID());
-                    client.setScreen(new OccupationScreen(player.getActiveOccupations()).addPrevious(client.screen));
+                    client.setScreen(new OccupationScreen(player.getActiveOccupations()));
                 } else {
                     ClientHandler.sendOccupationPacket();
                 }

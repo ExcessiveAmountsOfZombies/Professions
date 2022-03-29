@@ -7,6 +7,7 @@ import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.networking.ServerHandler;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.trigger.BlockTriggers;
@@ -52,6 +53,8 @@ public class ProfessionsMod implements ModInitializer {
         });
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             dataStorage = new FileStorage(server.getWorldPath(LevelResource.ROOT).resolve("professions/playerdata"));
+            this.dataStorage = ProfessionUtilityEvents.STORAGE_CALLBACK.invoker().setStorage(dataStorage);
+            ProfessionUtilityEvents.STORAGE_FINALIZATION_EVENT.invoker().onFinalization(dataStorage);
             this.playerManager = new PlayerManager(this.dataStorage, server);
             this.listener = new ProfessionListener(this.playerManager);
             ServerPlayConnectionEvents.JOIN.register(this.listener::onPlayerJoin);

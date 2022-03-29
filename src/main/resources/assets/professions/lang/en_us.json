@@ -1,0 +1,13 @@
+{
+  "professions.command.join.error.does_not_exist": "Profession does not exist.",
+  "professions.command.join.error.no_permission": "You do not have permission to join this profession.",
+  "professions.command.join.error.already_joined": "You have already joined this profession.",
+  "professions.command.join.error.max_occupations": "You have already joined the max amount of profressions.",
+  "professions.command.join.success": "You have joined %s.",
+
+  "professions.command.leave.error.does_not_exist": "Profession does not exist.",
+  "professions.command.leave.success": "You have left %s.",
+
+  "professions.level_up.announcement": "%s has leveled up %s to %s.",
+  "professions.level_up.local": "You have leveled up %s to %s."
+}

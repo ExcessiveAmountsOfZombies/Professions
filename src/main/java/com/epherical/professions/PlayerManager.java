@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -38,6 +39,9 @@ public class PlayerManager {
         ProfessionalPlayer pPlayer = players.get(player.getUUID());
         if (pPlayer == null) {
             pPlayer = storage.getUser(player.getUUID());
+            if (pPlayer != null) {
+                pPlayer.setPlayer(player);
+            }
             players.put(player.getUUID(), pPlayer);
         }
     }
@@ -45,18 +49,19 @@ public class PlayerManager {
     public void playerQuit(ServerPlayer player) {
         ProfessionalPlayer pPlayer = players.remove(player.getUUID());
         if (pPlayer != null) {
+            pPlayer.setPlayer(null);
             pPlayer.save(storage);
         }
     }
 
     public void joinOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, OccupationSlot slot, ServerPlayer serverPlayer) {
         if (profession == null) {
-            serverPlayer.sendMessage(new TextComponent("Profession does not exist."), Util.NIL_UUID);
+            serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.error.does_not_exist"), Util.NIL_UUID);
             return;
         }
 
         if (!hasPermission(serverPlayer, profession)) {
-            serverPlayer.sendMessage(new TextComponent("no permission!!"), Util.NIL_UUID);
+            serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.error.no_permission"), Util.NIL_UUID);
             return;
         }
 
@@ -65,26 +70,26 @@ public class PlayerManager {
         }
 
         if (player.alreadyHasOccupation(profession) && player.isOccupationActive(profession)) {
-            serverPlayer.sendMessage(new TextComponent("already joined occupation"), Util.NIL_UUID);
+            serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.error.already_joined"), Util.NIL_UUID);
             return;
         }
 
         if (player.getActiveOccupations().size() >= ProfessionConfig.maxOccupations) {
-            serverPlayer.sendMessage(new TextComponent("already joined max amount of occupations"), Util.NIL_UUID);
+            serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.error.max_occupations"), Util.NIL_UUID);
             return;
         }
 
         if (!player.joinOccupation(profession, slot)) {
             return;
         }
-        serverPlayer.sendMessage(new TextComponent("You have joined an occupation!"), Util.NIL_UUID);
+        serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.success", profession.getDisplayName()), Util.NIL_UUID);
 
         storage.saveUser(player);
     }
 
     public boolean leaveOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, ServerPlayer serverPlayer) {
         if (profession == null) {
-            serverPlayer.sendMessage(new TextComponent("That profession does not exist."), Util.NIL_UUID);
+            serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.error.does_not_exist"), Util.NIL_UUID);
             return false;
         }
 
@@ -96,7 +101,7 @@ public class PlayerManager {
             return false;
         }
         storage.saveUser(player);
-        serverPlayer.sendMessage(new TextComponent("You have left an occupation!"), Util.NIL_UUID);
+        serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.success"), Util.NIL_UUID);
         return true;
     }
 
@@ -108,10 +113,9 @@ public class PlayerManager {
         TranslatableComponent message;
         ServerPlayer sPlayer = server.getPlayerList().getPlayer(player.getUuid());
         if (ProfessionConfig.announceLevelUps) {
-            // todo: colors
-            message = new TranslatableComponent("%s has leveled up %s to %s.", sPlayer.getDisplayName(), occupation.getProfession().getDisplayName(), occupation.getLevel());
+            message = new TranslatableComponent("professions.level_up.announcement", sPlayer.getDisplayName(), occupation.getProfession().getDisplayName(), occupation.getLevel());
         } else {
-            message = new TranslatableComponent("You have leveled up %s to %s.", occupation.getProfession().getDisplayName(), occupation.getLevel());
+            message = new TranslatableComponent("professions.level_up.local", occupation.getProfession().getDisplayName(), occupation.getLevel());
         }
 
         if (ProfessionConfig.announceLevelUps) {
@@ -130,6 +134,10 @@ public class PlayerManager {
             player = storage.getUser(uuid);
         }
         return player;
+    }
+
+    public Collection<ProfessionalPlayer> getPlayers() {
+        return players.values();
     }
 
     @Nullable

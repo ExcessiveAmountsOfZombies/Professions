@@ -84,4 +84,9 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public boolean isDatabase() {
+        return false;
+    }
 }

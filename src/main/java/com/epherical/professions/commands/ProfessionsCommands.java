@@ -37,8 +37,11 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ProfessionsCommands {
 
@@ -113,8 +116,10 @@ public class ProfessionsCommands {
                         .requires(Permissions.require("professions.command.browse", 0))
                         .executes(this::browse))
                 .then(Commands.literal("top")
-                        .requires(commandSourceStack -> false) // todo; luckperms
-                        .executes(this::top)); // todo; finish command
+                        .requires(Permissions.require("professions.command.top", 0))
+                        .then(Commands.argument("occupation", StringArgumentType.string())
+                                .suggests(provider)
+                                .executes(this::top)));
 
 
 
@@ -332,6 +337,63 @@ public class ProfessionsCommands {
     }
 
     private int top(CommandContext<CommandSourceStack> stack) {
+        try {
+            ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+            Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
+
+            if (profession == null) {
+                stack.getSource().sendFailure(new TranslatableComponent("Could not find that profession"));
+                return 0;
+            }
+
+            // if it's not a database, im not going to open all the files to see whose on top, so it will only show
+            // the top players who are online.
+            int messagesPerPage = 12;
+            Collection<ProfessionalPlayer> players = Collections.emptyList();
+            if (!mod.getDataStorage().isDatabase()) {
+                players = mod.getPlayerManager().getPlayers();
+                players = players.stream()
+                        .filter(player -> player.isOccupationActive(profession))
+                        .sorted(Comparator.comparing(player -> player.getOccupation(profession).getLevel()))
+                        .limit(messagesPerPage)
+                        .collect(Collectors.toList());
+            }
+            int messages = players.size();
+
+            int maxPage = Math.max(messages / messagesPerPage, 1);
+            maxPage = messages % messagesPerPage != 0 ? maxPage + 1 : maxPage;
+            // todo: add multiple pages, but for now just display top 12
+            /*int begin = page == 1 ? 0 : Math.min(messages, ((page -1) * messagesPerPage));
+            int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
+
+            if (page > maxPage) {
+                stack.getSource().sendFailure(new TextComponent("That page doesn't exist!"));
+                return 0;
+            }*/
+
+            if (messages == 0) {
+                stack.getSource().sendFailure(new TranslatableComponent("Could not find any players."));
+                return 0;
+            }
+
+            stack.getSource().sendSuccess(new TranslatableComponent("Top %s players with %s enabled", messages, profession.getDisplayName()), false);
+            int position = 1;
+            for (ProfessionalPlayer player : players) {
+                Component playerName;
+                if (player == null) {
+                    playerName = new TextComponent("Unknown");
+                } else {
+                    playerName = player.getPlayer().getDisplayName();
+                }
+                TranslatableComponent msg = new TranslatableComponent("%s. %s level %s and %s experience", position, playerName, player.getOccupation(profession).getLevel(), player.getOccupation(profession).getExp());
+                stack.getSource().sendSuccess(msg, false);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         return 1;
     }
 

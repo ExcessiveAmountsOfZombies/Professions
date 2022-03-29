@@ -12,4 +12,6 @@ public interface Storage<Result, Key> {
     Result createUser(Key uuid);
 
     void saveUser(Result result);
+
+    boolean isDatabase();
 }

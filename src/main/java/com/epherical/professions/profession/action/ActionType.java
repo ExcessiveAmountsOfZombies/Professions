@@ -8,6 +8,10 @@ public class ActionType extends SerializerType<Action> {
 
     private final String displayName;
 
+    /**
+     * @param serializer The serializer that goes with this action.
+     * @param displayName Either a hardcoded string or a translation key.
+     */
     public ActionType(Serializer<? extends Action> serializer, String displayName) {
         super(serializer);
         this.displayName = displayName;

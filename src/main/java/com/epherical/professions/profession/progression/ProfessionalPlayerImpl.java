@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +29,7 @@ import java.util.UUID;
 
 public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     private UUID uuid;
+    private ServerPlayer player;
     private final List<Occupation> occupations;
 
     private volatile boolean dirty = false;
@@ -48,6 +50,15 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    @Override
+    public @Nullable ServerPlayer getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(ServerPlayer player) {
+        this.player = player;
     }
 
     @Override

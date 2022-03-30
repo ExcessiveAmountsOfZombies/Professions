@@ -6,4 +6,9 @@ public class ProfessionConfig {
 
     public static final boolean announceLevelUps = true;
 
+
+    public static void reload() {
+
+    }
+
 }

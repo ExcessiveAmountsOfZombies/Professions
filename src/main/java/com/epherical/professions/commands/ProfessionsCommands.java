@@ -4,6 +4,7 @@ import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
@@ -70,9 +71,15 @@ public class ProfessionsCommands {
     // removexp - removes experience from the player in an occupation - admin command
 
     private void registerCommands(CommandDispatcher<CommandSourceStack> stack) {
-        SuggestionProvider<CommandSourceStack> provider = (context, builder) -> {
+        SuggestionProvider<CommandSourceStack> occupationProvider = (context, builder) -> {
             for (ResourceLocation professionKey : mod.getProfessionLoader().getProfessionKeys()) {
                 builder.suggest("\"" + professionKey.toString() + "\"");
+            }
+            return builder.buildFuture();
+        };
+        SuggestionProvider<CommandSourceStack> playerProvider = (context, builder) -> {
+            for (ServerPlayer player : context.getSource().getServer().getPlayerList().getPlayers()) {
+                builder.suggest(player.getGameProfile().getName());
             }
             return builder.buildFuture();
         };
@@ -84,12 +91,12 @@ public class ProfessionsCommands {
                 .then(Commands.literal("join")
                         .requires(Permissions.require("professions.command.join", 0))
                         .then(Commands.argument("occupation", StringArgumentType.string())
-                                .suggests(provider)
+                                .suggests(occupationProvider)
                                 .executes(this::join)))
                 .then(Commands.literal("leave")
                         .requires(Permissions.require("professions.command.leave", 0))
                         .then(Commands.argument("occupation", StringArgumentType.string())
-                                .suggests(provider)
+                                .suggests(occupationProvider)
                                 .executes(this::leave)))
                 .then(Commands.literal("leaveall")
                         .requires(Permissions.require("professions.command.leaveall", 0))
@@ -97,7 +104,7 @@ public class ProfessionsCommands {
                 .then(Commands.literal("info")
                         .requires(Permissions.require("professions.command.info", 0))
                         .then(Commands.argument("occupation", StringArgumentType.string())
-                                .suggests(provider)
+                                .suggests(occupationProvider)
                                 .executes(this::info)
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                         .executes(this::info))))
@@ -105,12 +112,7 @@ public class ProfessionsCommands {
                         .requires(Permissions.require("professions.command.stats", 0))
                         .executes(this::stats)
                         .then(Commands.argument("player", StringArgumentType.string())
-                                .suggests((context, builder) -> {
-                                    for (ServerPlayer player : context.getSource().getServer().getPlayerList().getPlayers()) {
-                                        builder.suggest(player.getGameProfile().getName());
-                                    }
-                                    return builder.buildFuture();
-                                })
+                                .suggests(playerProvider)
                                 .executes(this::stats)))
                 .then(Commands.literal("browse")
                         .requires(Permissions.require("professions.command.browse", 0))
@@ -118,11 +120,54 @@ public class ProfessionsCommands {
                 .then(Commands.literal("top")
                         .requires(Permissions.require("professions.command.top", 0))
                         .then(Commands.argument("occupation", StringArgumentType.string())
-                                .suggests(provider)
-                                .executes(this::top)));
-
-
-
+                                .suggests(occupationProvider)
+                                .executes(this::top)))
+                .then(Commands.literal("reload")
+                        .requires(commandSourceStack -> true)
+                        .executes(this::reload))
+                .then(Commands.literal("fire")
+                        .requires(Permissions.require("professions.command.fire", 4))
+                        .then(Commands.argument("player", StringArgumentType.string())
+                                .suggests(playerProvider)
+                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                        .suggests(occupationProvider)
+                                        .executes(this::fire))))
+                .then(Commands.literal("fireall")
+                        .requires(Permissions.require("professions.command.fireall", 4))
+                        .then(Commands.argument("player", StringArgumentType.string())
+                                .suggests(playerProvider)
+                                .executes(this::fireAll)))
+                .then(Commands.literal("employ")
+                        .requires(Permissions.require("professions.command.employ", 4))
+                        .then(Commands.argument("player", StringArgumentType.string())
+                                .suggests(playerProvider)
+                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                        .suggests(occupationProvider)
+                                        .executes(this::employ))))
+                .then(Commands.literal("setlevel")
+                        .requires(Permissions.require("professions.command.setlevel", 4))
+                        .then(Commands.argument("player", StringArgumentType.string())
+                                .suggests(playerProvider)
+                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                        .suggests(occupationProvider)
+                                        .then(Commands.argument("level", IntegerArgumentType.integer(1))
+                                                .executes(this::setLevel)))))
+                .then(Commands.literal("givexp")
+                        .requires(Permissions.require("professions.command.givexp", 4))
+                        .then(Commands.argument("player", StringArgumentType.string())
+                                .suggests(playerProvider)
+                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                        .suggests(occupationProvider)
+                                        .then(Commands.argument("xp", IntegerArgumentType.integer(1))
+                                                .executes(this::givexp)))))
+                .then(Commands.literal("removexp")
+                        .requires(Permissions.require("professions.command.removexp", 4))
+                        .then(Commands.argument("player", StringArgumentType.string())
+                                .suggests(playerProvider)
+                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                        .suggests(occupationProvider)
+                                        .then(Commands.argument("xp", IntegerArgumentType.integer(1))
+                                                .executes(this::takexp)))));
         stack.register(command);
     }
 
@@ -253,22 +298,10 @@ public class ProfessionsCommands {
             playerArg = StringArgumentType.getString(stack, "player");
         } catch (IllegalArgumentException ignored) {}
         try {
-            MinecraftServer server = stack.getSource().getServer();
             ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
-            GameProfile profile;
-            if (playerArg.length() > 0) {
-                ServerPlayer otherPlayer = server.getPlayerList().getPlayerByName(playerArg);
-                if (otherPlayer == null) {
-                    profile = ((GameProfileHelper) server.getProfileCache()).getProfileNoLookup(playerArg);
-                } else {
-                    profile = otherPlayer.getGameProfile();
-                }
-                if (profile == null) {
-                    stack.getSource().sendFailure(new TextComponent("Could not find that player! Perhaps they haven't played in a long time?"));
-                    return 0;
-                }
-            } else {
-                profile = commandPlayer.getGameProfile();
+            GameProfile profile = getGameProfile(stack, playerArg);
+            if (profile == null) {
+                return 0;
             }
 
             PlayerManager manager = mod.getPlayerManager();
@@ -376,7 +409,7 @@ public class ProfessionsCommands {
                 return 0;
             }
 
-            stack.getSource().sendSuccess(new TranslatableComponent("Top %s players with %s enabled", messages, profession.getDisplayName()), false);
+            stack.getSource().sendSuccess(new TranslatableComponent("Top online %s players with %s enabled", messages, profession.getDisplayName()), false);
             int position = 1;
             for (ProfessionalPlayer player : players) {
                 Component playerName;
@@ -395,6 +428,80 @@ public class ProfessionsCommands {
 
 
         return 1;
+    }
+
+    private int reload(CommandContext<CommandSourceStack> stack) {
+        ProfessionConfig.reload();
+        return 1;
+    }
+
+    private int fire(CommandContext<CommandSourceStack> stack) {
+        try {
+            String playerArg = StringArgumentType.getString(stack, "player");
+            ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+            ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
+            GameProfile profile = getGameProfile(stack, playerArg);
+            if (profile == null) {
+                return 0;
+            }
+            Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
+            PlayerManager manager = mod.getPlayerManager();
+
+            ProfessionalPlayer player = manager.getPlayer(profile.getId());
+            if (manager.fireFromOccupation(player, profession, commandPlayer)) {
+                commandPlayer.sendMessage(new TextComponent("Successfully fired %s from their occupation."), Util.NIL_UUID);
+            } else {
+                commandPlayer.sendMessage(new TextComponent("Could not fire %s from their occupation."), Util.NIL_UUID);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+
+    private int fireAll(CommandContext<CommandSourceStack> stack) {
+        try {
+            String playerArg = StringArgumentType.getString(stack, "player");
+            ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
+            GameProfile profile = getGameProfile(stack, playerArg);
+            if (profile == null) {
+                return 0;
+            }
+            PlayerManager manager = mod.getPlayerManager();
+            ProfessionalPlayer player = manager.getPlayer(profile.getId());
+            for (Profession profession : mod.getProfessionLoader().getProfessions()) {
+                manager.fireFromOccupation(player, profession, commandPlayer);
+            }
+
+            commandPlayer.sendMessage(new TextComponent("Fired %s from all their occupations."), Util.NIL_UUID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 1;
+    }
+
+
+
+    private GameProfile getGameProfile(CommandContext<CommandSourceStack> stack, String playerArg) throws CommandSyntaxException {
+        MinecraftServer server = stack.getSource().getServer();
+        ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
+        GameProfile profile;
+        if (playerArg.length() > 0) {
+            ServerPlayer otherPlayer = server.getPlayerList().getPlayerByName(playerArg);
+            if (otherPlayer == null) {
+                profile = ((GameProfileHelper) server.getProfileCache()).getProfileNoLookup(playerArg);
+            } else {
+                profile = otherPlayer.getGameProfile();
+            }
+            if (profile == null) {
+                stack.getSource().sendFailure(new TextComponent("Could not find that player! Perhaps they haven't played in a long time?"));
+                return null;
+            }
+        } else {
+            profile = commandPlayer.getGameProfile();
+        }
+        return profile;
     }
 
 }

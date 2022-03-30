@@ -130,6 +130,11 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         return true;
     }
 
+    @Override
+    public boolean fireFromOccupation(Profession profession) {
+        return occupations.remove(getOccupation(profession));
+    }
+
     public List<Occupation> getOccupations() {
         return Collections.unmodifiableList(occupations);
     }

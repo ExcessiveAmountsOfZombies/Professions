@@ -105,11 +105,29 @@ public class PlayerManager {
         return true;
     }
 
+    public boolean fireFromOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, ServerPlayer serverPlayer) {
+        if (profession == null) {
+            serverPlayer.sendMessage(new TranslatableComponent("professions.command.fire.error.does_not_exist"), Util.NIL_UUID);
+            return false;
+        }
+
+        if (player == null) {
+            serverPlayer.sendMessage(new TranslatableComponent("professions.command.fire.error.cant_find_player"), Util.NIL_UUID);
+            return false;
+        }
+
+        if (player.fireFromOccupation(profession)) {
+            storage.saveUser(player);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * central method to send any announcements to the player or server about a player leveling up.
      */
     public void levelUp(ProfessionalPlayer player, Occupation occupation) {
-        // TODO: make it translate
         TranslatableComponent message;
         ServerPlayer sPlayer = server.getPlayerList().getPlayer(player.getUuid());
         if (ProfessionConfig.announceLevelUps) {

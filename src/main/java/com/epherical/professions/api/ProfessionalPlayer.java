@@ -47,6 +47,11 @@ public interface ProfessionalPlayer {
 
     boolean leaveOccupation(Profession profession);
 
+    /**
+     * This removes the occupation from the player, deleting any and all progression the user may have made.
+     */
+    boolean fireFromOccupation(Profession profession);
+
     Occupation getOccupation(Profession profession);
 
     List<Occupation> getActiveOccupations();

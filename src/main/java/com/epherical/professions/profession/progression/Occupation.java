@@ -15,6 +15,7 @@ import net.minecraft.util.GsonHelper;
 
 import java.lang.reflect.Type;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Occupation {
     private final Profession profession;
@@ -110,7 +111,18 @@ public class Occupation {
         return this.profession.isSameProfession(profession);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Occupation that = (Occupation) o;
+        return Double.compare(that.exp, exp) == 0 && level == that.level && profession.equals(that.profession);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(profession, exp, level);
+    }
 
     public static class Serializer implements JsonDeserializer<Occupation>, JsonSerializer<Occupation> {
 

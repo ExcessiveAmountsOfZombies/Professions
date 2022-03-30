@@ -14,7 +14,6 @@ public class UtilityListener {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof PlayerOwnable owned) {
                 owned.professions$setPlacedBy(player);
-                System.out.println("This is now owned by you");
             }
         });
     }

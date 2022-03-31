@@ -1,6 +1,6 @@
 package com.epherical.professions.trigger;
 
-import com.epherical.professions.PlayerManager;
+import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.events.trigger.TriggerEvents;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -11,13 +11,13 @@ import net.minecraft.world.entity.player.Player;
 
 public class EntityTriggers {
 
-    public static void init(PlayerManager manager) {
+    public static void init(ProfessionsMod mod) {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register((world, entity, killedEntity) -> {
             if (entity instanceof Player) {
                 ProfessionContext.Builder builder = new ProfessionContext.Builder(world)
                         .addRandom(world.random)
                         .addParameter(ProfessionParameter.ACTION_TYPE, Actions.KILL_ENTITY)
-                        .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(entity.getUUID()))
+                        .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(entity.getUUID()))
                         .addParameter(ProfessionParameter.ENTITY, killedEntity);
                 RewardHandler.handleReward(builder.build());
             }
@@ -27,7 +27,7 @@ public class EntityTriggers {
             ServerLevel level = player.getLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
-                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.FISH_ACTION)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, stack);
             RewardHandler.handleReward(builder.build());
@@ -37,7 +37,7 @@ public class EntityTriggers {
             ServerLevel level = player.getLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
-                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.CRAFTS_ITEM)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, stack)
                     .addParameter(ProfessionParameter.RECIPE_CRAFTED, recipe);
@@ -48,7 +48,7 @@ public class EntityTriggers {
             ServerLevel level = player.getLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
-                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAKE_COOKED_ITEM)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, stack);
             RewardHandler.handleReward(builder.build());
@@ -58,7 +58,7 @@ public class EntityTriggers {
             ServerLevel level = player.getLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
-                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREED_ENTITY)
                     .addParameter(ProfessionParameter.ENTITY, child);
             RewardHandler.handleReward(builder.build());
@@ -68,7 +68,7 @@ public class EntityTriggers {
             ServerLevel level = player.getLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
-                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAME_ENTITY)
                     .addParameter(ProfessionParameter.ENTITY, animal);
             RewardHandler.handleReward(builder.build());
@@ -78,7 +78,7 @@ public class EntityTriggers {
             ServerLevel level = player.getLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
-                    .addParameter(ProfessionParameter.THIS_PLAYER, manager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.VILLAGER_TRADE)
                     .addParameter(ProfessionParameter.ENTITY, villager)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, offer.getCostA());

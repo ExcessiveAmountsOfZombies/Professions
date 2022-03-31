@@ -67,6 +67,7 @@ public class Occupation {
     public void setLevel(int level, ProfessionalPlayer player) {
         player.needsToBeSaved();
         this.level = level;
+        this.exp = 0;
         resetMaxExperience();
         checkIfLevelUp();
     }

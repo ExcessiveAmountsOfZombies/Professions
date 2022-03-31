@@ -152,7 +152,7 @@ public class ProfessionsCommands {
                                         .suggests(occupationProvider)
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1))
                                                 .executes(this::setLevel)))))
-                .then(Commands.literal("givexp")
+                /*.then(Commands.literal("givexp")
                         .requires(Permissions.require("professions.command.givexp", 4))
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
@@ -167,7 +167,7 @@ public class ProfessionsCommands {
                                 .then(Commands.argument("occupation", StringArgumentType.string())
                                         .suggests(occupationProvider)
                                         .then(Commands.argument("xp", IntegerArgumentType.integer(1))
-                                                .executes(this::takexp)))));
+                                                .executes(this::takexp)))))*/;
         stack.register(command);
     }
 
@@ -474,6 +474,55 @@ public class ProfessionsCommands {
             }
 
             commandPlayer.sendMessage(new TextComponent("Fired %s from all their occupations."), Util.NIL_UUID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 1;
+    }
+
+    private int employ(CommandContext<CommandSourceStack> stack) {
+        try {
+            String playerArg = StringArgumentType.getString(stack, "player");
+            ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+            ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
+            GameProfile profile = getGameProfile(stack, playerArg);
+            if (profile == null) {
+                return 0;
+            }
+            Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
+            PlayerManager manager = mod.getPlayerManager();
+            ProfessionalPlayer player = manager.getPlayer(profile.getId());
+            manager.joinOccupation(player, profession, OccupationSlot.ACTIVE, commandPlayer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+
+    private int setLevel(CommandContext<CommandSourceStack> stack) {
+        try {
+            String playerArg = StringArgumentType.getString(stack, "player");
+            ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+            int level = IntegerArgumentType.getInteger(stack, "level");
+            ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
+            GameProfile profile = getGameProfile(stack, playerArg);
+            if (profile == null) {
+                return 0;
+            }
+
+            Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
+            PlayerManager manager = mod.getPlayerManager();
+            ProfessionalPlayer player = manager.getPlayer(profile.getId());
+
+            if (player != null) {
+                Occupation occupation = player.getOccupation(profession);
+                if (occupation != null) {
+                    occupation.setLevel(level, player);
+                    // todo: send mesage
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

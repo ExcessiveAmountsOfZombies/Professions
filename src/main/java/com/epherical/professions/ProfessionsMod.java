@@ -40,8 +40,11 @@ public class ProfessionsMod implements ModInitializer {
 
     private final ProfessionLoader professionLoader = new ProfessionLoader();
 
+    private boolean startup;
+
     @Override
     public void onInitialize() {
+        startup = true;
         mod = this;
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             this.commands = new ProfessionsCommands(this, dispatcher);
@@ -56,13 +59,13 @@ public class ProfessionsMod implements ModInitializer {
             this.dataStorage = ProfessionUtilityEvents.STORAGE_CALLBACK.invoker().setStorage(dataStorage);
             ProfessionUtilityEvents.STORAGE_FINALIZATION_EVENT.invoker().onFinalization(dataStorage);
             this.playerManager = new PlayerManager(this.dataStorage, server);
-            this.listener = new ProfessionListener(this.playerManager);
-            ServerPlayConnectionEvents.JOIN.register(this.listener::onPlayerJoin);
-            ServerPlayConnectionEvents.DISCONNECT.register(this.listener::onPlayerLeave);
-            BlockTriggers.init(playerManager);
-            EntityTriggers.init(playerManager);
-            UtilityListener.init(playerManager);
         });
+        this.listener = new ProfessionListener();
+        ServerPlayConnectionEvents.JOIN.register(this.listener::onPlayerJoin);
+        ServerPlayConnectionEvents.DISCONNECT.register(this.listener::onPlayerLeave);
+        BlockTriggers.init(this);
+        EntityTriggers.init(this);
+        UtilityListener.init(this);
 
         ServerPlayNetworking.registerGlobalReceiver(MOD_CHANNEL, ServerHandler::receivePacket);
 

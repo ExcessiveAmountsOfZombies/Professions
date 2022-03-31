@@ -6,22 +6,22 @@ import net.minecraft.world.level.storage.loot.SerializerType;
 
 public class ActionType extends SerializerType<Action> {
 
-    private final String displayName;
+    private final String translationKey;
 
     /**
      * @param serializer The serializer that goes with this action.
-     * @param displayName Either a hardcoded string or a translation key.
+     * @param translationKey Either a hardcoded string or a translation key.
      */
-    public ActionType(Serializer<? extends Action> serializer, String displayName) {
+    public ActionType(Serializer<? extends Action> serializer, String translationKey) {
         super(serializer);
-        this.displayName = displayName;
+        this.translationKey = translationKey;
     }
 
     /**
      * see {@link com.epherical.professions.commands.ProfessionsCommands#info(CommandContext)}
      * @return the display name to be shown in chat when players use /professions info
      */
-    public String getDisplayName() {
-        return displayName;
+    public String getTranslationKey() {
+        return translationKey;
     }
 }

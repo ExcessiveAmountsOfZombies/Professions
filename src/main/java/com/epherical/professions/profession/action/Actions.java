@@ -24,28 +24,28 @@ import java.util.function.Predicate;
 import static com.epherical.professions.ProfessionsMod.modID;
 
 public class Actions {
-    public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction.Serializer(), "Break Block");
-    public static final ActionType PLACE_BLOCK = register(modID("place_block"), new PlaceBlockAction.Serializer(), "Place Block");
-    public static final ActionType TNT_DESTROY = register(modID("tnt_destroy"), new TntDestroyAction.Serializer(), "TNT Destroy");
-    public static final ActionType KILL_ENTITY = register(modID("kill_entity"), new KillAction.Serializer(), "Kill");
-    public static final ActionType FISH_ACTION = register(modID("catch_fish"), new FishingAction.Serializer(), "Fishing");
-    public static final ActionType CRAFTS_ITEM = register(modID("craft_item"), new CraftingAction.Serializer(), "Craft");
-    public static final ActionType TAKE_COOKED_ITEM = register(modID("take_smelted_item"), new TakeSmeltAction.Serializer(), "Take Smelted Item");
-    public static final ActionType ON_ITEM_COOK = register(modID("on_item_smelted"), new SmeltItemAction.Serializer(), "Smelt Item");
-    public static final ActionType BREW_ITEM = register(modID("brew"), new BrewAction.Serializer(), "Brew Potion");
-    public static final ActionType ENCHANT_ITEM = register(modID("enchant"), new EnchantAction.Serializer(), "Enchant");
+    public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction.Serializer(), "professions.action.type.break_block");
+    public static final ActionType PLACE_BLOCK = register(modID("place_block"), new PlaceBlockAction.Serializer(), "professions.action.type.place_block");
+    public static final ActionType TNT_DESTROY = register(modID("tnt_destroy"), new TntDestroyAction.Serializer(), "professions.action.type.tnt_destroy");
+    public static final ActionType KILL_ENTITY = register(modID("kill_entity"), new KillAction.Serializer(), "professions.action.type.kill_entity");
+    public static final ActionType FISH_ACTION = register(modID("catch_fish"), new FishingAction.Serializer(), "professions.action.type.catch_fish");
+    public static final ActionType CRAFTS_ITEM = register(modID("craft_item"), new CraftingAction.Serializer(), "professions.action.type.craft_item");
+    public static final ActionType TAKE_COOKED_ITEM = register(modID("take_smelted_item"), new TakeSmeltAction.Serializer(), "professions.action.type.take_smelted_item");
+    public static final ActionType ON_ITEM_COOK = register(modID("on_item_smelted"), new SmeltItemAction.Serializer(), "professions.action.type.on_item_smelted");
+    public static final ActionType BREW_ITEM = register(modID("brew"), new BrewAction.Serializer(), "professions.action.type.brew");
+    public static final ActionType ENCHANT_ITEM = register(modID("enchant"), new EnchantAction.Serializer(), "professions.action.type.enchant");
     // repair action
-    public static final ActionType BREED_ENTITY = register(modID("breed"), new BreedAction.Serializer(), "Breed");
-    public static final ActionType TAME_ENTITY = register(modID("tame"), new TameAction.Serializer(), "Tame");
-    public static final ActionType VILLAGER_TRADE = register(modID("villager_trade"), new TradeAction.Serializer(), "Villager Trade");
+    public static final ActionType BREED_ENTITY = register(modID("breed"), new BreedAction.Serializer(), "professions.action.type.breed");
+    public static final ActionType TAME_ENTITY = register(modID("tame"), new TameAction.Serializer(), "professions.action.type.tame");
+    public static final ActionType VILLAGER_TRADE = register(modID("villager_trade"), new TradeAction.Serializer(), "professions.action.type.villager_trade");
 
 
     public static Object createGsonAdapter() {
         return GsonAdapterFactory.builder(ProfessionConstants.ACTION_TYPE, "action", "action", Action::getType).build();
     }
 
-    public static ActionType register(ResourceLocation id, Serializer<? extends Action> serializer, String displayName) {
-        return Registry.register(ProfessionConstants.ACTION_TYPE, id, new ActionType(serializer, displayName));
+    public static ActionType register(ResourceLocation id, Serializer<? extends Action> serializer, String translationKey) {
+        return Registry.register(ProfessionConstants.ACTION_TYPE, id, new ActionType(serializer, translationKey));
     }
 
     public static <T> Predicate<T> andAllConditions(Predicate<T>[] conditions) {

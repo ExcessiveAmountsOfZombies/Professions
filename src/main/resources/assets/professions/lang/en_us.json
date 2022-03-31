@@ -42,6 +42,7 @@
 
   "professions.command.stats.header": "Stats",
   "professions.command.stats.error.not_in_any_professions": "Join a profession before you can check your stats.",
+  "professions.command.stats.error.other_not_in_any_professions": "%s is not in any professions.",
   "professions.command.stats.percent": "%s Percent",
   "professions.command.stats.level": " Level: %s",
 

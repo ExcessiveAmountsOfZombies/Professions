@@ -243,7 +243,6 @@ public class ProfessionsCommands {
             List<Component> components = new ArrayList<>();
 
             for (ActionType actionType : ProfessionConstants.ACTION_TYPE) {
-                // todo: null checking.
                 Collection<Action> actionsFor = profession.getActions(actionType);
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     components.add(new TranslatableComponent("=-=-=| %s |=-=-=",
@@ -308,14 +307,13 @@ public class ProfessionsCommands {
 
             PlayerManager manager = mod.getPlayerManager();
             ProfessionalPlayer pPlayer = manager.getPlayer(profile.getId());
-            MutableComponent stats = new TextComponent("professions.command.stats.header").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
+            MutableComponent stats = new TranslatableComponent("professions.command.stats.header").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
             MutableComponent headerFooter = new TranslatableComponent("-=-=-=| %s |=-=-=-", stats).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
             List<Component> components = new ArrayList<>();
             components.add(headerFooter);
             if (pPlayer != null) {
-                if (pPlayer.getActiveOccupations().size() == 0) {
-                    // TODO: translations and better colors for all messages ehre
-                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.error.not_in_any_professions").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+                if (pPlayer.getActiveOccupations().size() == 0 && pPlayer.getUuid().equals(commandPlayer.getUUID())) {
+                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.stats.error.not_in_any_professions").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
                     return 1;
                 }
                 for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
@@ -333,10 +331,13 @@ public class ProfessionsCommands {
                     components.add(mainComponent);
                 }
 
-                for (Component component : components) {
-                    commandPlayer.sendMessage(component, Util.NIL_UUID);
+                if (components.size() > 1) {
+                    for (Component component : components) {
+                        commandPlayer.sendMessage(component, Util.NIL_UUID);
+                    }
+                } else {
+                    commandPlayer.sendMessage(new TranslatableComponent("%s is not in any professions.", new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
                 }
-
             } else {
                 commandPlayer.sendMessage(new TranslatableComponent("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             }
@@ -359,7 +360,6 @@ public class ProfessionsCommands {
     private int browse(CommandContext<CommandSourceStack> stack) {
         // -=-=-=-=-=| Browse Professions |=-=-=-=-=-
         // Miner Max Level: 100 <-- hover component the description across the entire thing
-        // TODO: better better
         MutableComponent header = new TranslatableComponent("-=-=-=-=-=| %s |=-=-=-=-=-", new TranslatableComponent("professions.command.browse.header")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
         List<Component> components = new ArrayList<>();

@@ -27,7 +27,6 @@ import java.util.UUID;
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityOwnableMixin extends BlockEntity implements PlayerOwnable {
 
-    @Shadow protected NonNullList<ItemStack> items;
     @Unique UUID professions$placedBy;
 
     public AbstractFurnaceBlockEntityOwnableMixin(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
@@ -48,7 +47,7 @@ public abstract class AbstractFurnaceBlockEntityOwnableMixin extends BlockEntity
     public void onLoad(CompoundTag tag, CallbackInfo ci) {
         if (tag.contains("pf_owid")) {
             // TODO: maybe make this a config option to either have it be persistent or non-persistent.
-            professions$placedBy = tag.getUUID("OwnerID");
+            professions$placedBy = tag.getUUID("pf_owid");
         }
     }
 

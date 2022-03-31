@@ -4,6 +4,7 @@ import com.epherical.octoecon.api.Economy;
 import com.epherical.octoecon.api.event.EconomyEvents;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.commands.ProfessionsCommands;
+import com.epherical.professions.config.CommonConfig;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
@@ -34,6 +35,7 @@ public class ProfessionsMod implements ModInitializer {
     private ProfessionListener listener;
     private PlayerManager playerManager;
     private ProfessionsCommands commands;
+    private CommonConfig config;
 
     private static @Nullable Economy economy;
     private Storage<ProfessionalPlayer, UUID> dataStorage;
@@ -98,5 +100,9 @@ public class ProfessionsMod implements ModInitializer {
 
     public PlayerManager getPlayerManager() {
         return playerManager;
+    }
+
+    public CommonConfig getConfig() {
+        return config;
     }
 }

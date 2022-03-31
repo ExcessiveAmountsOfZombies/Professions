@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.action;
 
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.progression.Occupation;
@@ -81,10 +82,10 @@ public abstract class AbstractAction implements Action {
         MutableComponent mainComponent;
         if (i > 0) {
             mainComponent = new TextComponent("More");
-            style = style.withBold(true).withUnderlined(true).withColor(ChatFormatting.GREEN);
+            style = style.withBold(true).withUnderlined(true).withColor(ProfessionConfig.moreRewards);
             mainComponent.setStyle(style);
         } else {
-            mainComponent = new TextComponent("No more").setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_RED));
+            mainComponent = new TextComponent("No more").setStyle(Style.EMPTY.withColor(ProfessionConfig.noMoreRewards));
         }
         return mainComponent;
     }

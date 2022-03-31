@@ -22,7 +22,6 @@ import java.util.UUID;
 @Mixin(BrewingStandBlockEntity.class)
 public class BrewingStandBlockEntityOwnableMixin implements PlayerOwnable {
 
-    @Shadow private NonNullList<ItemStack> items;
     @Unique UUID professions$placedBy;
 
     @Override
@@ -39,7 +38,8 @@ public class BrewingStandBlockEntityOwnableMixin implements PlayerOwnable {
     public void onLoad(CompoundTag tag, CallbackInfo ci) {
         if (tag.contains("pf_owid")) {
             // TODO: maybe make this a config option to either have it be persistent or non-persistent.
-            professions$placedBy = tag.getUUID("OwnerID");
+            // would need to do a check to see if it's chunk unload or server shutting down, use lifecycle event
+            professions$placedBy = tag.getUUID("pf_owid");
         }
     }
 

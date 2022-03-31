@@ -2,6 +2,7 @@ package com.epherical.professions.profession.rewards.builtin;
 
 import com.epherical.octoecon.api.Currency;
 import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.progression.Occupation;
@@ -34,7 +35,7 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
 
     @Override
     public Component rewardChatInfo() {
-        return new TextComponent(String.format("$%.2f", amount)).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN));
+        return new TextComponent(String.format("$%.2f", amount)).setStyle(Style.EMPTY.withColor(ProfessionConfig.money));
     }
 
     public static class RewardSerializer implements Serializer<PaymentReward> {

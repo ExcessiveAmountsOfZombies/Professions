@@ -1,7 +1,9 @@
 package com.epherical.professions.commands;
 
+import com.epherical.professions.config.ProfessionConfig;
 import com.mojang.brigadier.tree.CommandNode;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -46,13 +48,13 @@ public class CommandUsage<S> {
         if (!deep) {
             if (node.getRedirect() != null) {
                 final String redirect = node.getRedirect().getUsageText();
-                return self.append(ARGUMENT_SEPARATOR + redirect);
+                return self.append(ARGUMENT_SEPARATOR + redirect).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
             } else {
                 final Collection<CommandNode<S>> children = node.getChildren().stream().filter(c -> c.canUse(source)).toList();
                 if (children.size() == 1) {
                     final MutableComponent usage = getSmartUsage(children.iterator().next(), source, childOptional, childOptional);
                     if (usage != null) {
-                        return self.append(ARGUMENT_SEPARATOR).append(usage);
+                        return self.setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(ARGUMENT_SEPARATOR).append(usage.setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)));
                     }
                 } else if (children.size() > 1) {
                     final Set<MutableComponent> childUsage = new LinkedHashSet<>();
@@ -65,7 +67,7 @@ public class CommandUsage<S> {
                     if (childUsage.size() == 1) {
                         final MutableComponent usage = childUsage.iterator().next();
                         return self.append(ARGUMENT_SEPARATOR).append((childOptional
-                                ? new TranslatableComponent(USAGE_OPTIONAL_OPEN + "%s" + USAGE_OPTIONAL_CLOSE, usage): usage));
+                                ? new TranslatableComponent(USAGE_OPTIONAL_OPEN + "%s" + USAGE_OPTIONAL_CLOSE, usage.setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))): usage));
                     } else if (childUsage.size() > 1) {
                         final StringBuilder builder = new StringBuilder(open);
                         int count = 0;
@@ -84,6 +86,6 @@ public class CommandUsage<S> {
                 }
             }
         }
-        return self;
+        return self.setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
     }
 }

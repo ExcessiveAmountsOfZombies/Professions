@@ -2,6 +2,7 @@ package com.epherical.professions.profession;
 
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.ProfessionConstants;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.progression.Occupation;
@@ -45,6 +46,8 @@ public class Profession {
 
     protected ResourceLocation key;
 
+    protected final Component displayComponent;
+
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
                       Parser experienceScalingEquation, Parser incomeScalingEquation) {
         this.color = color;
@@ -55,6 +58,7 @@ public class Profession {
         this.actions = actions;
         this.experienceScalingEquation = experienceScalingEquation;
         this.incomeScalingEquation = incomeScalingEquation;
+        this.displayComponent = new TextComponent(displayName).setStyle(Style.EMPTY.withColor(color));
     }
 
     public int getMaxLevel() {
@@ -63,6 +67,10 @@ public class Profession {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public Component getDisplayComponent() {
+        return displayComponent;
     }
 
     public String[] getDescription() {
@@ -110,14 +118,14 @@ public class Profession {
 
     public Component createBrowseMessage() {
         MutableComponent name = new TextComponent(displayName).setStyle(Style.EMPTY.withColor(color));
-        MutableComponent level = new TextComponent("" + maxLevel).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
+        MutableComponent level = new TextComponent("" + maxLevel).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
         MutableComponent hoverText = new TextComponent("").setStyle(Style.EMPTY.withColor(descriptionColor));
         for (String s : getDescription()) {
             hoverText.append(s);
         }
 
         return new TranslatableComponent("%s. Max Level: %s", name, level)
-                .setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE)
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText)));
     }
 

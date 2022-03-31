@@ -174,7 +174,7 @@ public class ProfessionsCommands {
     private int help(CommandContext<CommandSourceStack> stack) {
         var map = CommandUsage.getSmartUsage(stack.getNodes().get(0).getNode(), stack.getSource());
         for (Map.Entry<CommandNode<CommandSourceStack>, MutableComponent> commandNodeStringEntry : map.entrySet()) {
-            stack.getSource().sendSuccess(new TextComponent("/professions ").append(commandNodeStringEntry.getValue()).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)), false);
+            stack.getSource().sendSuccess(new TextComponent("/professions ").append(commandNodeStringEntry.getValue()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), false);
         }
         return 1;
     }
@@ -245,8 +245,8 @@ public class ProfessionsCommands {
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     // todo: configurable color
                     components.add(new TranslatableComponent("=-=-=| %s |=-=-=",
-                                    new TextComponent(actionType.getDisplayName()).setStyle(Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)))
-                            .setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+                                    new TextComponent(actionType.getDisplayName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
                     for (Action action : actionsFor) {
                         components.addAll(action.displayInformation());
                     }
@@ -263,7 +263,7 @@ public class ProfessionsCommands {
             int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
 
             if (page > maxPage) {
-                stack.getSource().sendFailure(new TextComponent("That page doesn't exist!"));
+                stack.getSource().sendFailure(new TranslatableComponent("That page doesn't exist!").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return 0;
             }
 
@@ -271,14 +271,14 @@ public class ProfessionsCommands {
                 stack.getSource().sendSuccess(component, false);
             }
 
-            MutableComponent previous = new TextComponent("Prev").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)
+            MutableComponent previous = new TranslatableComponent("Prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
                     .withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page-1))));
-            MutableComponent next = new TextComponent("Next").setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)
+            MutableComponent next = new TranslatableComponent("Next").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)
                     .withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page+1))));
 
-            MutableComponent pageComp = new TranslatableComponent("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
+            MutableComponent pageComp = new TranslatableComponent("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
             stack.getSource().sendSuccess(pageComp, false);
 
         } catch (Exception e) {
@@ -306,26 +306,28 @@ public class ProfessionsCommands {
 
             PlayerManager manager = mod.getPlayerManager();
             ProfessionalPlayer pPlayer = manager.getPlayer(profile.getId());
-            MutableComponent stats = new TextComponent("Stats").setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN));
-            MutableComponent headerFooter = new TranslatableComponent("-=-=-=| %s |=-=-=-", stats).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
+            MutableComponent stats = new TextComponent("Stats").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
+            MutableComponent headerFooter = new TranslatableComponent("-=-=-=| %s |=-=-=-", stats).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
             List<Component> components = new ArrayList<>();
             components.add(headerFooter);
             if (pPlayer != null) {
                 if (pPlayer.getActiveOccupations().size() == 0) {
                     // TODO: translations and better colors for all messages ehre
-                    commandPlayer.sendMessage(new TextComponent("Join a profession before you can check your stats!"), Util.NIL_UUID);
+                    commandPlayer.sendMessage(new TranslatableComponent("Join a profession before you can check your stats!").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
                     return 1;
                 }
                 for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
                     double percentage = (activeOccupation.getExp() / activeOccupation.getMaxExp());
-                    double bars = Math.round(percentage * 50); // how many bars should be green.
-                    MutableComponent hoverPercentage = new TextComponent((String.format("%.2f", percentage * 100))).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
+                    double bars = Math.round(percentage * 55); // how many bars should be green.
+                    MutableComponent hoverPercentage = new TextComponent((String.format("%.2f", percentage * 100))).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
                     HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("%s Percent", hoverPercentage));
-                    MutableComponent mainComponent = new TextComponent("").setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE))
-                            .append(new TextComponent("|".repeat((int) bars)).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN).withHoverEvent(event)))
-                            .append(new TextComponent("|".repeat((int) (50 - bars))).setStyle(Style.EMPTY.withColor(ChatFormatting.RED).withHoverEvent(event)))
+                    MutableComponent mainComponent = new TextComponent("").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
+                            .append(new TextComponent("|".repeat((int) bars)).setStyle(Style.EMPTY.withColor(ProfessionConfig.success).withHoverEvent(event)))
+                            .append(new TextComponent("|".repeat((int) (55 - bars))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors).withHoverEvent(event)))
                             .append(new TextComponent(" " + activeOccupation.getProfession().getDisplayName()).setStyle(Style.EMPTY.withColor(activeOccupation.getProfession().getColor()))
-                                    .append(new TextComponent(" Level: " + activeOccupation.getLevel()).setStyle(Style.EMPTY.withColor(ChatFormatting.WHITE))));
+                                    .append(new TranslatableComponent(" Level: %s", new TextComponent("" + activeOccupation.getLevel())
+                                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))));
                     components.add(mainComponent);
                 }
 
@@ -334,7 +336,7 @@ public class ProfessionsCommands {
                 }
 
             } else {
-                commandPlayer.sendMessage(new TextComponent("That player does not exist"), Util.NIL_UUID);
+                commandPlayer.sendMessage(new TranslatableComponent("That player does not exist.").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             }
 
             // -=-=-=| Stats |=-=-=-
@@ -356,7 +358,8 @@ public class ProfessionsCommands {
         // -=-=-=-=-=| Browse Professions |=-=-=-=-=-
         // Miner Max Level: 100 <-- hover component the description across the entire thing
         // TODO: better better
-        MutableComponent header = new TranslatableComponent("-=-=-=-=-=| Browse Professions |=-=-=-=-=-");
+        MutableComponent header = new TranslatableComponent("-=-=-=-=-=| %s |=-=-=-=-=-", new TranslatableComponent("Browse Professions")
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
         List<Component> components = new ArrayList<>();
         components.add(header);
         for (Profession profession : mod.getProfessionLoader().getProfessions()) {
@@ -375,7 +378,7 @@ public class ProfessionsCommands {
             Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
 
             if (profession == null) {
-                stack.getSource().sendFailure(new TranslatableComponent("Could not find that profession"));
+                stack.getSource().sendFailure(new TranslatableComponent("Could not find that profession").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return 0;
             }
 
@@ -405,20 +408,27 @@ public class ProfessionsCommands {
             }*/
 
             if (messages == 0) {
-                stack.getSource().sendFailure(new TranslatableComponent("Could not find any players."));
+                stack.getSource().sendFailure(new TranslatableComponent("Could not find any players.").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return 0;
             }
 
-            stack.getSource().sendSuccess(new TranslatableComponent("Top online %s players with %s enabled", messages, profession.getDisplayName()), false);
+            stack.getSource().sendSuccess(new TranslatableComponent("Top online %s players with %s enabled",
+                    new TextComponent("" + messages).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), profession.getDisplayComponent())
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), false);
             int position = 1;
             for (ProfessionalPlayer player : players) {
                 Component playerName;
                 if (player == null) {
-                    playerName = new TextComponent("Unknown");
+                    playerName = new TranslatableComponent("Unknown");
                 } else {
                     playerName = player.getPlayer().getDisplayName();
                 }
-                TranslatableComponent msg = new TranslatableComponent("%s. %s level %s and %s experience", position, playerName, player.getOccupation(profession).getLevel(), player.getOccupation(profession).getExp());
+                MutableComponent msg = new TranslatableComponent("%s. %s level %s with %s experience",
+                        new TextComponent("" +  position).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                        playerName,
+                        new TextComponent("" + player.getOccupation(profession).getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                        new TextComponent("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
                 stack.getSource().sendSuccess(msg, false);
             }
 
@@ -431,7 +441,12 @@ public class ProfessionsCommands {
     }
 
     private int reload(CommandContext<CommandSourceStack> stack) {
-        ProfessionConfig.reload();
+        try {
+            ProfessionConfig.reload();
+            stack.getSource().sendSuccess(new TranslatableComponent("reloaded config.").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return 1;
     }
 
@@ -449,9 +464,9 @@ public class ProfessionsCommands {
 
             ProfessionalPlayer player = manager.getPlayer(profile.getId());
             if (manager.fireFromOccupation(player, profession, commandPlayer)) {
-                commandPlayer.sendMessage(new TextComponent("Successfully fired %s from their occupation."), Util.NIL_UUID);
+                commandPlayer.sendMessage(new TranslatableComponent("Successfully fired %s from their occupation.").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
             } else {
-                commandPlayer.sendMessage(new TextComponent("Could not fire %s from their occupation."), Util.NIL_UUID);
+                commandPlayer.sendMessage(new TranslatableComponent("Could not fire %s from their occupation.").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -473,7 +488,7 @@ public class ProfessionsCommands {
                 manager.fireFromOccupation(player, profession, commandPlayer);
             }
 
-            commandPlayer.sendMessage(new TextComponent("Fired %s from all their occupations."), Util.NIL_UUID);
+            commandPlayer.sendMessage(new TranslatableComponent("Fired %s from all their occupations.").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -519,10 +534,13 @@ public class ProfessionsCommands {
                 Occupation occupation = player.getOccupation(profession);
                 if (occupation != null) {
                     occupation.setLevel(level, player);
-                    // todo: send mesage
+                    commandPlayer.sendMessage(new TranslatableComponent("Set the level on %s to %s for %s",
+                            occupation.getProfession().getDisplayComponent(),
+                            new TextComponent(String.valueOf(occupation.getLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                            new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -544,7 +562,7 @@ public class ProfessionsCommands {
                 profile = otherPlayer.getGameProfile();
             }
             if (profile == null) {
-                stack.getSource().sendFailure(new TextComponent("Could not find that player! Perhaps they haven't played in a long time?"));
+                stack.getSource().sendFailure(new TranslatableComponent("Could not find that player! Perhaps they haven't played in a long time?").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return null;
             }
         } else {

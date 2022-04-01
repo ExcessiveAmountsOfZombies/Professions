@@ -8,14 +8,17 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 
 import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
 
 public class CommandButton extends Button {
 
+    private final ItemStack stack;
 
-    public CommandButton(int i, int j, Component component, OnPress onPress) {
+    public CommandButton(ItemStack stack, int i, int j, Component component, OnPress onPress) {
         super(i, j, 38, 48, component, onPress);
+        this.stack = stack;
     }
 
     @Override
@@ -42,5 +45,6 @@ public class CommandButton extends Button {
         if (this.isHoveredOrFocused()) {
             this.renderToolTip(poseStack, mouseX, mouseY);
         }
+        minecraft.getItemRenderer().renderGuiItem(stack, (this.x + this.width / 2) - 8, (this.y + (this.height - 28) / 2));
     }
 }

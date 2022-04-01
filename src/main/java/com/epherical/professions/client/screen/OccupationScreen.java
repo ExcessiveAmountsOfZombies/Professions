@@ -2,6 +2,7 @@ package com.epherical.professions.client.screen;
 
 import com.epherical.professions.client.widgets.OccupationsList;
 import com.epherical.professions.client.widgets.CommandButton;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
@@ -12,8 +13,13 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -32,6 +38,11 @@ public class OccupationScreen extends Screen {
     private OccupationsList list;
     private CommandButtons button;
     private List<OccupationsList.AbstractEntry> entries;
+
+    private final MutableComponent NO_ENTRIES = new TranslatableComponent("professions.gui.no_entries")
+            .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+    private final MutableComponent NO_ENTRIES_LEAVE = new TranslatableComponent("professions.gui.no_entries.leave")
+            .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
 
     public OccupationScreen(List<Profession> list, CommandButtons buttons) {
         super(Component.nullToEmpty(""));
@@ -61,21 +72,21 @@ public class OccupationScreen extends Screen {
                 (this.height / 2 + 76), // bottom
                 24);
         // row 1
-        addRenderableWidget(new CommandButton(this.width / 2 + 43, this.height / 2 - 80, new TextComponent("Join"), button1 -> {
+        addRenderableWidget(new CommandButton(new ItemStack(Items.EMERALD), this.width / 2 + 43, this.height / 2 - 80, new TranslatableComponent("professions.gui.join"), button1 -> {
             ClientHandler.sendButtonPacket(CommandButtons.JOIN);
         }));
-        addRenderableWidget(new CommandButton(this.width / 2 + 43 + 38 + 3, this.height / 2 - 80,new TextComponent("Leave"), button1 -> {
+        addRenderableWidget(new CommandButton(new ItemStack(Items.REDSTONE), this.width / 2 + 43 + 38 + 3, this.height / 2 - 80,new TranslatableComponent("professions.gui.leave"), button1 -> {
             ClientHandler.sendButtonPacket(CommandButtons.LEAVE);
         }));
         //row 2
-        addRenderableWidget(new CommandButton(this.width / 2 + 43, this.height / 2 - 80 + 48 + 3, new TextComponent("Info"), button1 -> {
+        addRenderableWidget(new CommandButton(new ItemStack(Items.BOOK), this.width / 2 + 43, this.height / 2 - 80 + 48 + 3, new TranslatableComponent("professions.gui.info"), button1 -> {
             ClientHandler.sendButtonPacket(CommandButtons.INFO);
         }));
-        addRenderableWidget(new CommandButton(this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,  new TextComponent("Top"), button1 -> {
+        addRenderableWidget(new CommandButton(new ItemStack(Items.COMPARATOR), this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,  new TranslatableComponent("professions.gui.top"), button1 -> {
             ClientHandler.sendButtonPacket(CommandButtons.TOP);
         }));
         // row 3
-        addRenderableWidget(new CommandButton(this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,  new TextComponent("Close"), button1 -> {
+        addRenderableWidget(new CommandButton(new ItemStack(Items.BARRIER), this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,  new TranslatableComponent("professions.gui.close"), button1 -> {
             this.minecraft.setScreen(prevScreen);
         }));
         this.addWidget(list);
@@ -93,8 +104,11 @@ public class OccupationScreen extends Screen {
 
         Optional<GuiEventListener> element = list.getChildAt(mouseX, mouseY);
 
-        if (entries.size() == 0 && button == null) {
-            drawCenteredString(poseStack, font, "You aren't in any professions!", ((this.width - imageWidth) / 2) + 83, ofy + 50, -1);
+        if (entries.size() == 0) {
+            drawCenteredString(poseStack, font, NO_ENTRIES, ((this.width - imageWidth) / 2) + 83, ofy + 50, -1);
+            if (button == CommandButtons.LEAVE) {
+                drawCenteredString(poseStack, font, NO_ENTRIES_LEAVE, ((this.width - imageWidth) / 2) + 83, ofy + 70, -1);
+            }
         }
 
         list.render(poseStack, mouseX, mouseY, partialTick);

@@ -12,6 +12,9 @@
   "icon": "assets/Professions/icon.png",
   "environment": "*",
   "entrypoints": {
+    "client": [
+      "com.epherical.professions.client.ProfessionsClient"
+    ],
     "main": [
       "com.epherical.professions.ProfessionsMod"
     ]

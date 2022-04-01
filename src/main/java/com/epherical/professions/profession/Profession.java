@@ -6,15 +6,14 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.progression.Occupation;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -173,8 +172,7 @@ public class Profession {
             String displayName = GsonHelper.getAsString(object, "displayName");
             int maxLevel = GsonHelper.getAsInt(object, "maxLevel");
             Action[] actions = GsonHelper.getAsObject(object, "actions", new Action[0], context, Action[].class);
-            Multimap<ActionType, Action> actionMap = HashMultimap.create();
-            // TODO: order isn't kept anymore, need to fix
+            Multimap<ActionType, Action> actionMap = LinkedHashMultimap.create();
             for (Action action : actions) {
                 actionMap.put(action.getType(), action);
             }

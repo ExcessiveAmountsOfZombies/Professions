@@ -55,6 +55,14 @@
 
   "professions.command.setlevel.success": "Set the level on %s to %s for %s",
 
+  "professions.gui.join": "Join",
+  "professions.gui.leave": "Leave",
+  "professions.gui.info": "Info",
+  "professions.gui.top": "Top",
+  "professions.gui.close": "Close",
+  "professions.gui.no_entries": "You aren't in any professions.",
+  "professions.gui.no_entries.leave": "Go back. (click join)",
+
   "ftbquests.task.professions.profession": "Profession",
   "ftbquests.task.professions.profession.profession": "Profession Key",
   "ftbquests.task.professions.profession.action": "Profession Action (Join/Level)",

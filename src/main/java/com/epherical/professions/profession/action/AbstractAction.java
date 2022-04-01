@@ -11,6 +11,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -64,6 +65,13 @@ public abstract class AbstractAction implements Action {
             map.put(reward.getType(), reward.rewardChatInfo());
         }
         return map;
+    }
+
+    @Override
+    public void serializeDisplayToClient(FriendlyByteBuf buf) {
+        for (Component component : displayInformation()) {
+            buf.writeComponent(component);
+        }
     }
 
     public final Component extraRewardInformation(Map<RewardType, Component> base) {

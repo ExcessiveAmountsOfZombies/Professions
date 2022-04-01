@@ -22,6 +22,8 @@ public class ProfessionConstants {
     public static final ResourceLocation CLICK_PROFESSION_BUTTON_RESPONSE = new ResourceLocation(ProfessionsMod.MOD_ID, "re_pb");
     public static final ResourceLocation JOIN_BUTTON_REQUEST = new ResourceLocation(ProfessionsMod.MOD_ID, "jo_prf");
     public static final ResourceLocation LEAVE_BUTTON_REQUEST = new ResourceLocation(ProfessionsMod.MOD_ID, "le_prf");
+    public static final ResourceLocation INFO_BUTTON_REQUEST = new ResourceLocation(ProfessionsMod.MOD_ID, "inf_prf");
+    public static final ResourceLocation INFO_BUTTON_RESPONSE = new ResourceLocation(ProfessionsMod.MOD_ID, "ret_inf_prf");
 
     public static final ResourceKey<Registry<ProfessionSerializer<?>>> PROFESSION_TYPE_KEY = ResourceKey.createRegistryKey(modID("professions/occupation_type"));
     public static final ResourceKey<Registry<ActionType>> ACTION_TYPE_KEY = ResourceKey.createRegistryKey(modID("professions/actions"));

@@ -106,7 +106,7 @@ public class PlayerManager {
         }
         OccupationEvents.PROFESSION_LEAVE_EVENT.invoker().onProfessionLeave(player, profession, serverPlayer);
         storage.saveUser(player);
-        serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
+        serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
         return true;
     }
 

@@ -44,11 +44,18 @@ public class OccupationScreen extends Screen {
     private final MutableComponent NO_ENTRIES_LEAVE = new TranslatableComponent("professions.gui.no_entries.leave")
             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
 
+    // todo: now we really need to fix the constructor
+    public OccupationScreen(List<Component> list, boolean info) {
+        super(Component.nullToEmpty(""));
+        this.button = null;
+        this.entries = createInfoEntries(this, list);
+    }
+
     public OccupationScreen(List<Profession> list, CommandButtons buttons) {
         super(Component.nullToEmpty(""));
         // todo: create better constructor at some point.
         this.button = buttons;
-        this.entries = createProfessionEntries(this, list);
+        this.entries = createProfessionEntries(this, list, this.button);
     }
 
     public OccupationScreen(List<Occupation> occupations) {
@@ -158,10 +165,21 @@ public class OccupationScreen extends Screen {
         return entries;
     }
 
-    public static List<OccupationsList.AbstractEntry> createProfessionEntries(OccupationScreen screen, List<Profession> professions) {
+    public static List<OccupationsList.AbstractEntry> createProfessionEntries(OccupationScreen screen, List<Profession> professions, CommandButtons command) {
         List<OccupationsList.AbstractEntry> entries = new ArrayList<>();
         for (Profession profession : professions) {
-            entries.add(new OccupationsList.ProfessionEntry(screen, screen.list, screen.minecraft, profession));
+            switch (command) {
+                case JOIN, LEAVE, INFO -> entries.add(new OccupationsList.ProfessionEntry(screen, screen.list, screen.minecraft, profession));
+            }
+
+        }
+        return entries;
+    }
+
+    public static List<OccupationsList.AbstractEntry> createInfoEntries(OccupationScreen screen, List<Component> components) {
+        List<OccupationsList.AbstractEntry> entries = new ArrayList<>();
+        for (Component component : components) {
+            entries.add(new OccupationsList.InfoEntry(screen, screen.list, screen.minecraft, component));
         }
         return entries;
     }

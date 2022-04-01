@@ -4,19 +4,26 @@ import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.profession.Profession;
+import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -51,13 +58,7 @@ public class ServerHandler {
                     .stream()
                     .filter(profession -> pPlayer != null && !pPlayer.isOccupationActive(profession))
                     .toList();
-
-            buf.writeVarInt(professions.size());
-            for (Profession profession : professions) {
-                // todo; kinda repeats
-                buf.writeResourceLocation(com.epherical.professions.ProfessionConstants.PROFESSION_SERIALIZER.getKey(profession.getSerializer()));
-                profession.getSerializer().toClient(buf, profession);
-            }
+            Profession.toNetwork(buf, professions);
             ServerPlayNetworking.send(player, ProfessionsMod.MOD_CHANNEL, buf);
         });
         buttonReceivers.put(CommandButtons.LEAVE, player -> {
@@ -68,9 +69,16 @@ public class ServerHandler {
                 response.writeEnum(CommandButtons.LEAVE);
                 List<Occupation> occupations = pPlayer.getActiveOccupations();
                 //occupations.addAll(pPlayer.getInactiveOccupations());
-                Profession.toNetwork(response, occupations);
+                Occupation.toNetwork(response, occupations);
                 ServerPlayNetworking.send(player, ProfessionsMod.MOD_CHANNEL, response);
             }
+        });
+        buttonReceivers.put(CommandButtons.INFO, player -> {
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE);
+            buf.writeEnum(CommandButtons.INFO);
+            Profession.toNetwork(buf, ProfessionsMod.getInstance().getProfessionLoader().getProfessions());
+            ServerPlayNetworking.send(player, ProfessionsMod.MOD_CHANNEL, buf);
         });
     }
 
@@ -81,7 +89,8 @@ public class ServerHandler {
                 FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
                 List<Occupation> occupations = pPlayer.getActiveOccupations();
                 //occupations.addAll(pPlayer.getInactiveOccupations());
-                Profession.toNetwork(response, occupations);
+                response.writeResourceLocation(ProfessionConstants.OPEN_UI_RESPONSE);
+                Occupation.toNetwork(response, occupations);
                 responseSender.sendPacket(ProfessionsMod.MOD_CHANNEL, response);
             }
         });
@@ -96,6 +105,27 @@ public class ServerHandler {
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             Profession profession = loader.getProfession(buf.readResourceLocation());
             playerManager.leaveOccupation(pPlayer, profession, player);
+        });
+        subChannelReceivers.put(ProfessionConstants.INFO_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
+            ProfessionLoader loader = ProfessionsMod.getInstance().getProfessionLoader();
+            Profession profession = loader.getProfession(buf.readResourceLocation());
+            FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
+            Collection<Component> components = new ArrayList<>();
+            for (ActionType actionType : ProfessionConstants.ACTION_TYPE) {
+                Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
+                if (actionsFor != null && !actionsFor.isEmpty()) {
+                    components.add(new TranslatableComponent("=-=-=| %s |=-=-=",
+                            new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
+                    for (Action action : actionsFor) {
+                        components.addAll(action.displayInformation());
+                    }
+                }
+            }
+            response.writeResourceLocation(ProfessionConstants.INFO_BUTTON_RESPONSE);
+            response.writeVarInt(components.size());
+            components.forEach(response::writeComponent);
+            responseSender.sendPacket(ProfessionsMod.MOD_CHANNEL, response);
         });
         subChannelReceivers.put(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
             CommandButtons buttonClicked = buf.readEnum(CommandButtons.class);

@@ -4,6 +4,7 @@ package com.epherical.professions.profession.action;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public interface Action extends Predicate<ProfessionContext> {
     void handleRewards(ProfessionContext context, Occupation player);
 
     List<Component> displayInformation();
+
+    void serializeDisplayToClient(FriendlyByteBuf buf);
 
     /**
      * Called after it has already been shown the action is successful.

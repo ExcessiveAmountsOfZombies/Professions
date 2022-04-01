@@ -8,7 +8,6 @@ import com.epherical.professions.profession.progression.Occupation;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
@@ -16,7 +15,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
 
 import java.util.ArrayList;
@@ -148,6 +146,9 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
                             ClientHandler.attemptLeavePacket(profession.getKey());
                             ClientHandler.sendOccupationPacket();
                         }
+                        case INFO -> {
+                            ClientHandler.attemptInfoPacket(profession.getKey());
+                        }
                     }
                 }
             }, (button1, poseStack, i, j) -> {
@@ -175,6 +176,41 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
         @Override
         public ProfessionEntryButton getButton() {
             return button;
+        }
+    }
+
+    public static class InfoEntry extends AbstractEntry {
+
+        private final InfoEntryButton button;
+
+        public InfoEntry(OccupationScreen parent, OccupationsList listingWidget, Minecraft client, Component component) {
+            button = new InfoEntryButton(component, 0, 0, 154, 24, button -> {
+
+            }, (button, poseStack, i, j) -> {
+
+            });
+        }
+
+        @Override
+        public Button getButton() {
+            return button;
+        }
+
+        @Override
+        public List<? extends NarratableEntry> narratables() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void render(PoseStack poseStack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
+            button.x = left - 14;
+            button.y = top;
+            button.render(poseStack, mouseX, mouseY, partialTick);
+        }
+
+        @Override
+        public List<? extends GuiEventListener> children() {
+            return ImmutableList.of(button);
         }
     }
 }

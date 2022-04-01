@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.progression;
 
+import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.Profession;
@@ -10,10 +11,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -123,6 +126,16 @@ public class Occupation {
     @Override
     public int hashCode() {
         return Objects.hash(profession, exp, level);
+    }
+
+    public static void toNetwork(FriendlyByteBuf buf, List<Occupation> occupations) {
+        buf.writeVarInt(occupations.size());
+        for (Occupation occupation : occupations) {
+            Profession.toNetwork(buf, occupation.getProfession());
+            buf.writeVarInt(occupation.getLevel());
+            buf.writeDouble(occupation.getExp());
+            buf.writeVarInt(occupation.getMaxExp());
+        }
     }
 
     public static class Serializer implements JsonDeserializer<Occupation>, JsonSerializer<Occupation> {

@@ -14,6 +14,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -147,17 +150,28 @@ public class Profession {
         return Objects.hash(key);
     }
 
-    public static void toNetwork(FriendlyByteBuf buf, List<Occupation> occupations) {
-        buf.writeResourceLocation(ProfessionConstants.OPEN_UI_RESPONSE);
-        buf.writeVarInt(occupations.size());
-        for (Occupation occupation : occupations) {
-            Profession profession = occupation.getProfession();
-            buf.writeResourceLocation(com.epherical.professions.ProfessionConstants.PROFESSION_SERIALIZER.getKey(profession.getSerializer()));
-            profession.getSerializer().toClient(buf, profession);
-            buf.writeVarInt(occupation.getLevel());
-            buf.writeDouble(occupation.getExp());
-            buf.writeVarInt(occupation.getMaxExp());
+    public static void toNetwork(FriendlyByteBuf buf, Profession profession) {
+        buf.writeResourceLocation(ProfessionConstants.PROFESSION_SERIALIZER.getKey(profession.getSerializer()));
+        profession.getSerializer().toClient(buf, profession);
+    }
+
+    public static void toNetwork(FriendlyByteBuf buf, Collection<Profession> professions) {
+        buf.writeVarInt(professions.size());
+        for (Profession profession : professions) {
+            Profession.toNetwork(buf, profession);
         }
+    }
+    @Environment(EnvType.CLIENT)
+    public static List<Profession> fromNetwork(FriendlyByteBuf buf) {
+        int size = buf.readVarInt();
+        List<Profession> professions = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            ResourceLocation serializer = buf.readResourceLocation();
+            Profession profession = com.epherical.professions.ProfessionConstants.PROFESSION_SERIALIZER.getOptional(serializer).orElseThrow(()
+                    -> new IllegalArgumentException("Unknown profession serializer " + serializer)).fromServer(buf);
+            professions.add(profession);
+        }
+        return professions;
     }
 
     public static class Serializer implements ProfessionSerializer<Profession> {

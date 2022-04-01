@@ -53,5 +53,12 @@
 
   "professions.command.reload.success": "Reloaded config.",
 
-  "professions.command.setlevel.success": "Set the level on %s to %s for %s"
+  "professions.command.setlevel.success": "Set the level on %s to %s for %s",
+
+  "ftbquests.task.professions.profession": "Profession",
+  "ftbquests.task.professions.profession.profession": "Profession Key",
+  "ftbquests.task.professions.profession.action": "Profession Action (Join/Level)",
+  "ftbquests.task.professions.profession.level": "Level",
+  "ftbquests.task.professions.profession.join_req": "Join the profession \"%s\"",
+  "ftbquests.task.professions.profession.level_req": "Level the profession \"%s\" to %s"
 }

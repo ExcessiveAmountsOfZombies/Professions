@@ -9,6 +9,12 @@ group = project.maven_group
 repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots"}
     maven { url 'https://jitpack.io' }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -25,6 +31,8 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation 'com.github.ExcessiveAmountsOfZombies:OctoEconomyApi:5137175b1c'
+    modCompileOnly "curse.maven:ftb-quests-fabric-438496:3725770"
+    modCompileOnly "curse.maven:ftb-library-fabric-438495:3725484"
 }
 
 processResources {

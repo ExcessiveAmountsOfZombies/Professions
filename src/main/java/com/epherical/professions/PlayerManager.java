@@ -4,6 +4,7 @@ import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.CommonConfig;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.Storage;
+import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
@@ -84,6 +85,7 @@ public class PlayerManager {
         if (!player.joinOccupation(profession, slot)) {
             return;
         }
+        OccupationEvents.PROFESSION_JOIN_EVENT.invoker().onProfessionJoin(player, profession, slot, player.getPlayer());
         serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
 
         storage.saveUser(player);
@@ -102,6 +104,7 @@ public class PlayerManager {
         if (!player.leaveOccupation(profession)) {
             return false;
         }
+        OccupationEvents.PROFESSION_LEAVE_EVENT.invoker().onProfessionLeave(player, profession, serverPlayer);
         storage.saveUser(player);
         serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
         return true;

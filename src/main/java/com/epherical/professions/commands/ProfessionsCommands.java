@@ -336,7 +336,7 @@ public class ProfessionsCommands {
                         commandPlayer.sendMessage(component, Util.NIL_UUID);
                     }
                 } else {
-                    commandPlayer.sendMessage(new TranslatableComponent("%s is not in any professions.", new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.stats.error.other_not_in_any_professions", new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
                 }
             } else {
                 commandPlayer.sendMessage(new TranslatableComponent("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);

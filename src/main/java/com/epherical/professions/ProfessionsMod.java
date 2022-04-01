@@ -9,17 +9,20 @@ import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.events.ProfessionUtilityEvents;
+import com.epherical.professions.ftb.FTBIntegration;
 import com.epherical.professions.networking.ServerHandler;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
 import com.epherical.professions.trigger.UtilityListener;
+import dev.ftb.mods.ftbquests.quest.task.Task;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.storage.LevelResource;
@@ -70,6 +73,10 @@ public class ProfessionsMod implements ModInitializer {
         UtilityListener.init(this);
 
         ServerPlayNetworking.registerGlobalReceiver(MOD_CHANNEL, ServerHandler::receivePacket);
+
+        if (FabricLoader.getInstance().isModLoaded("ftbquests")) {
+            FTBIntegration.init();
+        }
 
 
     }

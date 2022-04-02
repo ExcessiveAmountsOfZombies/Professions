@@ -9,7 +9,7 @@ import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.events.ProfessionUtilityEvents;
-import com.epherical.professions.ftb.FTBIntegration;
+import com.epherical.professions.integration.ftb.FTBIntegration;
 import com.epherical.professions.networking.ServerHandler;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.trigger.BlockTriggers;
@@ -50,6 +50,8 @@ public class ProfessionsMod implements ModInitializer {
     public void onInitialize() {
         startup = true;
         mod = this;
+        this.config = new CommonConfig(false, "professions.yml");
+        this.config.loadConfig();
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             this.commands = new ProfessionsCommands(this, dispatcher);
         });

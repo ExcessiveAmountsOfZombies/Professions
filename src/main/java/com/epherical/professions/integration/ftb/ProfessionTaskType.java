@@ -1,4 +1,4 @@
-package com.epherical.professions.ftb;
+package com.epherical.professions.integration.ftb;
 
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsMod;

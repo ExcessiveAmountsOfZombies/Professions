@@ -4,21 +4,18 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
 
-public abstract class AbstractEntryButton extends Button {
+public class LevelEntryButton extends AbstractEntryButton {
 
-    protected final Component name;
-
-    public AbstractEntryButton(Component component, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
-        super(i, j, k, l, Component.nullToEmpty(""), onPress, tooltip);
-        this.name = component;
+    public LevelEntryButton(Component component, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
+        super(component, i, j, k, l, onPress, tooltip);
     }
+
 
     @Override
     public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
@@ -35,10 +32,9 @@ public abstract class AbstractEntryButton extends Button {
         this.blit(poseStack, this.x + this.width / 2, this.y, 160 - this.width / 2, 152 + i * 24, this.width / 2, this.height);
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
         int j = this.active ? 16777215 : 10526880;
-        drawCenteredString(poseStack, font, name, this.x + this.width / 2, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        drawString(poseStack, font, name, this.x + 24, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
         if (this.isHoveredOrFocused()) {
             this.renderToolTip(poseStack, mouseX, mouseY);
         }
     }
-
 }

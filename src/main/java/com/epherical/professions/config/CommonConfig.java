@@ -11,6 +11,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
+import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.BufferedWriter;
@@ -87,6 +88,8 @@ public class CommonConfig {
         }
         this.loader = YamlConfigurationLoader.builder()
                 .sink(() -> new BufferedWriter(new FileWriter(file)))
+                .indent(2)
+                .nodeStyle(NodeStyle.BLOCK)
                 .defaultOptions(options -> options.serializers(builder -> builder.registerAll(serializers.build())))
                 .url(path)
                 .build();

@@ -80,6 +80,18 @@ public class ServerHandler {
             Profession.toNetwork(buf, ProfessionsMod.getInstance().getProfessionLoader().getProfessions());
             ServerPlayNetworking.send(player, ProfessionsMod.MOD_CHANNEL, buf);
         });
+        buttonReceivers.put(CommandButtons.TOP, player -> {
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            PlayerManager playerManager = ProfessionsMod.getInstance().getPlayerManager();
+            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE);
+            buf.writeEnum(CommandButtons.TOP);
+            buf.writeVarInt(playerManager.getPlayers().size());
+            for (ProfessionalPlayer singlePlayer : playerManager.getPlayers()) {
+                buf.writeUUID(singlePlayer.getUuid());
+                buf.writeVarInt(singlePlayer.getActiveOccupations().stream().mapToInt(Occupation::getLevel).sum());
+            }
+            ServerPlayNetworking.send(player, ProfessionsMod.MOD_CHANNEL, buf);
+        });
     }
 
     private static void setupSubChannels() {

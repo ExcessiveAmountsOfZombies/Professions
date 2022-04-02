@@ -7,6 +7,7 @@ import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.util.ActionDisplay;
+import com.epherical.professions.util.LevelDisplay;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -49,7 +50,7 @@ public class ClientHandler {
     private static void setupSubChannels() {
         subChannelReceivers.put(ProfessionConstants.OPEN_UI_RESPONSE, (client, handler, buf, responseSender) -> {
             List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
-            client.execute(() -> client.setScreen(new OccupationScreen(occupations)));
+            client.execute(() -> client.setScreen(new OccupationScreen<>(occupations, client, OccupationScreen::createOccupationEntries, null)));
         });
         subChannelReceivers.put(ProfessionConstants.INFO_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
             int size = buf.readVarInt();
@@ -57,7 +58,7 @@ public class ClientHandler {
             for (int i = 0; i < size; i++) {
                 displays.add(ActionDisplay.fromNetwork(buf));
             }
-            client.execute(() -> client.setScreen(new OccupationScreen(displays, true)));
+            client.execute(() -> client.setScreen(new OccupationScreen<>(displays, client, OccupationScreen::createInfoEntries, null)));
         });
         subChannelReceivers.put(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
             CommandButtons button = buf.readEnum(CommandButtons.class);
@@ -87,23 +88,45 @@ public class ClientHandler {
             buf.writeEnum(CommandButtons.INFO);
             ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
         });
+        buttonSenders.put(CommandButtons.TOP, () -> {
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
+            buf.writeEnum(CommandButtons.TOP);
+            ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+        });
     }
 
     private static void setupButtonHandlers() {
         buttonReceivers.put(CommandButtons.JOIN, (minecraft, buf) -> {
             List<Profession> professions = Profession.fromNetwork(buf);
             minecraft.execute(() -> {
-                minecraft.setScreen(new OccupationScreen(professions, CommandButtons.JOIN));
+                minecraft.setScreen(new OccupationScreen<>(professions, minecraft, (screen, client, display) -> {
+                    return OccupationScreen.createProfessionEntries(screen, client, display, CommandButtons.JOIN);
+                }, CommandButtons.JOIN));
             });
         });
         buttonReceivers.put(CommandButtons.LEAVE, (minecraft, buf) -> {
             List<Profession> professions = ProfessionSerializer.fromNetwork(buf).stream().map(Occupation::getProfession).collect(Collectors.toList());
-            minecraft.execute(() -> minecraft.setScreen(new OccupationScreen(professions, CommandButtons.LEAVE)));
+            minecraft.execute(() -> minecraft.setScreen(new OccupationScreen<>(professions, minecraft, (screen, client, display) -> {
+                return OccupationScreen.createProfessionEntries(screen, client, display, CommandButtons.LEAVE);
+            }, CommandButtons.LEAVE)));
         });
         buttonReceivers.put(CommandButtons.INFO, (minecraft, buf) -> {
             List<Profession> professions = Profession.fromNetwork(buf);
             minecraft.execute(() -> {
-                minecraft.setScreen(new OccupationScreen(professions, CommandButtons.INFO));
+                minecraft.setScreen(new OccupationScreen<>(professions, minecraft, (screen, client, display) -> {
+                    return OccupationScreen.createProfessionEntries(screen, client, display, CommandButtons.INFO);
+                }, CommandButtons.INFO));
+            });
+        });
+        buttonReceivers.put(CommandButtons.TOP, (minecraft, buf) -> {
+            int read = buf.readVarInt();
+            List<LevelDisplay> displays = new ArrayList<>();
+            for (int i = 0; i < read; i++) {
+                displays.add(new LevelDisplay(buf.readUUID(), buf.readVarInt()));
+            }
+            minecraft.execute(() -> {
+                minecraft.setScreen(new OccupationScreen<>(displays, minecraft, OccupationScreen::createTopEntries, CommandButtons.TOP));
             });
         });
     }

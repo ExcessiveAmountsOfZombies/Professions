@@ -4,6 +4,7 @@ import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.networking.ClientHandler;
+import com.epherical.professions.profession.progression.Occupation;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -32,7 +33,7 @@ public class ProfessionsClient implements ClientModInitializer {
             if (occupationMenu.isDown()) {
                 if (client.isLocalServer()) {
                     ProfessionalPlayer player = ProfessionsMod.getInstance().getPlayerManager().getPlayer(client.player.getUUID());
-                    client.setScreen(new OccupationScreen(player.getActiveOccupations()));
+                    client.setScreen(new OccupationScreen<>(player.getActiveOccupations(), client, OccupationScreen::createOccupationEntries, null));
                 } else {
                     ClientHandler.sendOccupationPacket();
                 }

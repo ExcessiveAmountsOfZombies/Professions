@@ -61,4 +61,20 @@ public record ItemReward(Item item, int count) implements Reward {
             return new ItemReward(item, count);
         }
     }
+
+    public static class Builder implements Reward.Builder {
+        private Item item;
+        private int count;
+
+        public Builder item(Item item, int count) {
+            this.item = item;
+            this.count = count;
+            return this;
+        }
+
+        @Override
+        public Reward build() {
+            return new ItemReward(item, count);
+        }
+    }
 }

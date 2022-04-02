@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.action.builtin.items;
 
+import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
@@ -22,11 +23,28 @@ public class CraftingAction extends AbstractItemAction {
         return Actions.CRAFTS_ITEM;
     }
 
+    public static Builder craft() {
+        return new Builder();
+    }
+
     public static class Serializer extends AbstractItemAction.Serializer<CraftingAction> {
 
         @Override
         public CraftingAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
             return new CraftingAction(conditions, rewards, deserializeItems(object));
+        }
+    }
+
+    public static class Builder extends AbstractItemAction.Builder<CraftingAction.Builder> {
+
+        @Override
+        protected Builder instance() {
+            return this;
+        }
+
+        @Override
+        public Action build() {
+            return new CraftingAction(this.getConditions(), this.getRewards(), this.items);
         }
     }
 }

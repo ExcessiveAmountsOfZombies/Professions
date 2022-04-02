@@ -9,6 +9,7 @@ public class ProfessionConfig {
 
     public static int maxOccupations = 3;
     public static boolean useBuiltinDatapack = true;
+    public static boolean displayXpAsPercentage = true; // todo: implement
 
     public static boolean clearProgressOnLeave = false;
     public static boolean persistBlockOwnership = true;

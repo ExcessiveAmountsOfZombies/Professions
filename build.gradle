@@ -36,15 +36,28 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
-    filteringCharset "UTF-8"
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "version": version
     }
 }
 loom {
     accessWidenerPath = file("src/main/resources/professions.accesswidener")
+
+    runs {
+        datagen {
+            server()
+
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.modid=professions"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
+
+            runDir "build/datagen"
+        }
+    }
 }
 
 def targetJavaVersion = 17
@@ -76,6 +89,8 @@ jar {
         rename { "${it}_${project.archivesBaseName}" }
     }
 }
+
+
 
 // configure the maven publication
 publishing {

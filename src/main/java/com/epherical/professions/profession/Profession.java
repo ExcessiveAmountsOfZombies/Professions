@@ -9,6 +9,7 @@ import com.epherical.professions.profession.progression.Occupation;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -197,7 +198,27 @@ public class Profession {
 
         @Override
         public JsonElement serialize(Profession src, Type typeOfSrc, JsonSerializationContext context) {
-            return null;
+            JsonObject object = new JsonObject();
+            object.addProperty("type", ProfessionConstants.PROFESSION_SERIALIZER.getKey(ProfessionSerializer.DEFAULT_PROFESSION).toString());
+            object.addProperty("color", src.color.serialize());
+            object.addProperty("descriptionColor", src.color.serialize());
+            JsonArray array = new JsonArray();
+            for (String s : src.description) {
+                array.add(s);
+            }
+            object.add("description", array);
+            object.addProperty("displayName", src.displayName);
+            object.addProperty("maxLevel", src.maxLevel);
+            object.addProperty("experienceSclEquation", src.experienceScalingEquation.getExpression());
+            object.addProperty("incomeSclEquation", src.incomeScalingEquation.getExpression());
+            JsonArray actionArray = new JsonArray();
+            for (Collection<Action> value : src.actions.values()) {
+                for (Action action : value) {
+                    actionArray.add(context.serialize(action));
+                }
+            }
+            object.add("actions", actionArray);
+            return object;
         }
 
         @Override

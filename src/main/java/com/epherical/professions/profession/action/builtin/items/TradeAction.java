@@ -2,6 +2,7 @@ package com.epherical.professions.profession.action.builtin.items;
 
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
+import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
@@ -24,6 +25,10 @@ public class TradeAction extends AbstractItemAction {
         return Actions.VILLAGER_TRADE;
     }
 
+    public static Builder trade() {
+        return new TradeAction.Builder();
+    }
+
     @Override
     public double modifyReward(ProfessionContext context, Reward reward, double base) {
         return context.hasParameter(ProfessionParameter.ITEM_INVOLVED) ? base * context.getParameter(ProfessionParameter.ITEM_INVOLVED).getCount() : base;
@@ -34,6 +39,19 @@ public class TradeAction extends AbstractItemAction {
         @Override
         public TradeAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
             return new TradeAction(conditions, rewards, deserializeItems(object));
+        }
+    }
+
+    public static class Builder extends AbstractItemAction.Builder<TradeAction.Builder> {
+
+        @Override
+        protected Builder instance() {
+            return this;
+        }
+
+        @Override
+        public Action build() {
+            return new TradeAction(this.getConditions(), this.getRewards(), this.items);
         }
     }
 }

@@ -115,6 +115,10 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
         return builder;
     }
 
+    public static JsonElement serialize(Profession profession) {
+        return GSON.toJsonTree(profession);
+    }
+
     public void loadProfessionsFromServer(Iterable<Profession> professions) {
         ImmutableMap.Builder<ResourceLocation, Profession> builder = ImmutableMap.builder();
         for (Profession profession : professions) {

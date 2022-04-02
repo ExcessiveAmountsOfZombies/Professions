@@ -4,10 +4,12 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.AbstractAction;
+import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -21,11 +23,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractItemAction extends AbstractAction {
 
@@ -65,6 +70,15 @@ public abstract class AbstractItemAction extends AbstractAction {
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, allRewardInformation()))));
         }
         return components;
+    }
+
+    public abstract static class Builder<T extends AbstractItemAction.Builder<T>> extends AbstractAction.Builder<T> {
+        protected final List<Item> items = new ArrayList<>();
+
+        public Builder<T> withItem(Item... item) {
+            this.items.addAll(List.of(item));
+            return this;
+        }
     }
 
     public abstract static class Serializer<T extends AbstractItemAction> extends ActionSerializer<T> {

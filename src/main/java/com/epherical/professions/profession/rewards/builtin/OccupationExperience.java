@@ -39,6 +39,10 @@ public record OccupationExperience(double expAmount) implements Reward {
         }
     }
 
+    public static OccupationExperience.Builder builder() {
+        return new OccupationExperience.Builder();
+    }
+
     @Override
     public @NotNull Component rewardChatInfo() {
         return new TextComponent(String.format("%.2fxp", expAmount)).setStyle(Style.EMPTY.withColor(ProfessionConfig.experience));
@@ -55,6 +59,20 @@ public record OccupationExperience(double expAmount) implements Reward {
         public OccupationExperience deserialize(@NotNull JsonObject json, @NotNull JsonDeserializationContext serializationContext) {
             double expAmount = GsonHelper.getAsDouble(json, "amount");
             return new OccupationExperience(expAmount);
+        }
+    }
+
+    public static class Builder implements Reward.Builder {
+        private double exp;
+
+        public Builder exp(double exp) {
+            this.exp = exp;
+            return this;
+        }
+
+        @Override
+        public Reward build() {
+            return new OccupationExperience(exp);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.epherical.professions.profession.action.builtin.items;
 
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
+import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
@@ -24,6 +25,9 @@ public class SmeltItemAction extends AbstractItemAction {
         return Actions.ON_ITEM_COOK;
     }
 
+    public static Builder smelt() {
+       return new Builder();
+    }
 
     @Override
     public double modifyReward(ProfessionContext context, Reward reward, double base) {
@@ -35,6 +39,19 @@ public class SmeltItemAction extends AbstractItemAction {
         @Override
         public SmeltItemAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
             return new SmeltItemAction(conditions, rewards, deserializeItems(object));
+        }
+    }
+
+    public static class Builder extends AbstractItemAction.Builder<SmeltItemAction.Builder> {
+
+        @Override
+        protected Builder instance() {
+            return this;
+        }
+
+        @Override
+        public Action build() {
+            return new SmeltItemAction(this.getConditions(), this.getRewards(), this.items);
         }
     }
 }

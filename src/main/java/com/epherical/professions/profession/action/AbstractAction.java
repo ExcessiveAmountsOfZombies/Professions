@@ -10,8 +10,6 @@ import com.epherical.professions.profession.rewards.Rewards;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -23,6 +21,7 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,12 +102,8 @@ public abstract class AbstractAction implements Action {
 
         @Override
         public void serialize(@NotNull JsonObject json, T value, @NotNull JsonSerializationContext serializationContext) {
-            if (!ArrayUtils.isEmpty(value.conditions)) {
-                json.add("conditions", serializationContext.serialize(value.conditions));
-            }
-            if (!ArrayUtils.isEmpty(value.rewards)) {
-                json.add("rewards", serializationContext.serialize(value.rewards));
-            }
+            json.add("conditions", serializationContext.serialize(value.conditions));
+            json.add("rewards", serializationContext.serialize(value.rewards));
         }
 
         @Override
@@ -124,11 +119,16 @@ public abstract class AbstractAction implements Action {
     }
 
     public abstract static class Builder<T extends AbstractAction.Builder<T>> implements Action.Builder {
-        private final List<ActionCondition> conditions = Lists.newArrayList();
-        private final List<Reward> rewards = Lists.newArrayList();
+        private final List<ActionCondition> conditions = new ArrayList<>();
+        private final List<Reward> rewards = new ArrayList<>();
 
-        public T when(ActionCondition.Builder conditionBuilder) {
+        public T condition(ActionCondition.Builder conditionBuilder) {
             this.conditions.add(conditionBuilder.build());
+            return instance();
+        }
+
+        public T reward(Reward.Builder rewardBuilder) {
+            this.rewards.add(rewardBuilder.build());
             return instance();
         }
 

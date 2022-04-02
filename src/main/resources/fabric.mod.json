@@ -12,6 +12,9 @@
   "icon": "assets/Professions/icon.png",
   "environment": "*",
   "entrypoints": {
+    "fabric-datagen": [
+      "com.epherical.professions.datagen.ProfessionDataGenerator"
+    ],
     "client": [
       "com.epherical.professions.client.ProfessionsClient"
     ],

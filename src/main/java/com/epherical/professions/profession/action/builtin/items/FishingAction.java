@@ -1,14 +1,13 @@
 package com.epherical.professions.profession.action.builtin.items;
 
+import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.core.Registry;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +25,9 @@ public class FishingAction extends AbstractItemAction {
         return Actions.FISH_ACTION;
     }
 
+    public static Builder fish() {
+        return new Builder();
+    }
 
     public static class Serializer extends AbstractItemAction.Serializer<FishingAction> {
 
@@ -37,6 +39,19 @@ public class FishingAction extends AbstractItemAction {
         @Override
         public FishingAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
             return new FishingAction(conditions, rewards, deserializeItems(object));
+        }
+    }
+
+    public static class Builder extends AbstractItemAction.Builder<FishingAction.Builder> {
+
+        @Override
+        protected Builder instance() {
+            return this;
+        }
+
+        @Override
+        public Action build() {
+            return new FishingAction(this.getConditions(), this.getRewards(), this.items);
         }
     }
 }

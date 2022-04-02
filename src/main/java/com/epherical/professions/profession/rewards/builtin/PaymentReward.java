@@ -52,6 +52,10 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
         return new TextComponent(String.format("$%.2f", amount)).setStyle(Style.EMPTY.withColor(ProfessionConfig.money));
     }
 
+    public static PaymentReward.Builder builder() {
+        return new PaymentReward.Builder();
+    }
+
     public static class RewardSerializer implements Serializer<PaymentReward> {
 
         @Override
@@ -59,6 +63,8 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
             json.addProperty("amount", value.amount);
             if (value.currency != null) {
                 json.addProperty("currency", value.currency.getIdentity());
+            } else {
+                json.addProperty("currency", "no:money_found_change_me");
             }
         }
 
@@ -74,6 +80,22 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
                     currency = ProfessionsMod.getEconomy().getDefaultCurrency();
                 }
             }
+            return new PaymentReward(amount, currency);
+        }
+    }
+
+    public static class Builder implements Reward.Builder {
+        private double amount;
+        private Currency currency;
+
+        public Builder money(double amount, Currency currency) {
+            this.amount = amount;
+            this.currency = currency;
+            return this;
+        }
+
+        @Override
+        public Reward build() {
             return new PaymentReward(amount, currency);
         }
     }

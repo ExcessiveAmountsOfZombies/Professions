@@ -1,7 +1,6 @@
 package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.config.CommonConfig;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.events.OccupationEvents;
@@ -135,26 +134,24 @@ public class PlayerManager {
     public void levelUp(ProfessionalPlayer player, Occupation occupation) {
         MutableComponent message;
         ServerPlayer sPlayer = server.getPlayerList().getPlayer(player.getUuid());
-        if (ProfessionConfig.announceLevelUps) {
+        if (sPlayer == null) {
+            return; // this probably won't happen, but if it does, no NPEs.
+        }
+        if (((ProfessionConfig.announceEveryXLevel % occupation.getLevel() == 0)) && ProfessionConfig.announceLevelUps) {
             message = new TranslatableComponent("professions.level_up.announcement",
                     sPlayer.getDisplayName(),
                     occupation.getProfession().getDisplayComponent(),
                     new TextComponent("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
+            server.getPlayerList().broadcastMessage(message, ChatType.SYSTEM, Util.NIL_UUID);
         } else {
             message = new TranslatableComponent("professions.level_up.local",
                     occupation.getProfession().getDisplayComponent(),
                     new TextComponent("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
-        }
-
-        if (ProfessionConfig.announceLevelUps) {
-            server.getPlayerList().broadcastMessage(message, ChatType.SYSTEM, Util.NIL_UUID);
-        } else {
             // todo: maybe multiple ways to send messages? hotbar, chat, toasts, title? for now it's just chat.
             sPlayer.sendMessage(message, Util.NIL_UUID);
         }
-
     }
 
     @Nullable

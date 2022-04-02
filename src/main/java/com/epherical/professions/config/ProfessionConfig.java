@@ -10,7 +10,7 @@ public class ProfessionConfig {
     public static int maxOccupations = 3;
 
     public static boolean announceLevelUps = true;
-    public static int announceEveryXLevel = 0; // todo; implement
+    public static int announceEveryXLevel = 0;
 
     // Color Scheme
     public static TextColor headerBorders = TextColor.parseColor("#6e6e6e");

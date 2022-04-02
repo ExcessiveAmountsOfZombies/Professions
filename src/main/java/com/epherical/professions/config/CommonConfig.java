@@ -2,6 +2,7 @@ package com.epherical.professions.config;
 
 import com.epherical.professions.ProfessionsMod;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.network.chat.TextColor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.configurate.CommentedConfigurationNode;
@@ -74,7 +75,7 @@ public class CommonConfig {
                     }
                 }
             } catch (Exception e) {
-                LOGGER.warn("Could not find an internal config file for {}", configName);
+                LOGGER.warn("Could not find an internal config file for {}. Not to worry, let's try and generate a default.", configName);
             } finally {
                 try {
                     createdFile = createdFile(file);
@@ -151,7 +152,18 @@ public class CommonConfig {
     protected void parseConfig(ConfigurationNode node) {
         version = node.node("version").getInt();
         maxOccupations = node.node("maxOccupations").getInt();
-
+        announceLevelUps = node.node("announce").node("levelUps").getBoolean(announceLevelUps);
+        announceEveryXLevel = node.node("announce").node("every-x-levels").getInt(announceEveryXLevel);
+        maxOccupations = node.node("maxOccupations").getInt();
+        headerBorders = TextColor.parseColor(node.node("colors").node("headerBoarders").getString(headerBorders.serialize()));
+        descriptors = TextColor.parseColor(node.node("colors").node("descriptors").getString(descriptors.serialize()));
+        variables = TextColor.parseColor(node.node("colors").node("variables").getString(variables.serialize()));
+        errors = TextColor.parseColor(node.node("colors").node("errors").getString(errors.serialize()));
+        success = TextColor.parseColor(node.node("colors").node("success").getString(success.serialize()));
+        money = TextColor.parseColor(node.node("colors").node("money").getString(money.serialize()));
+        experience = TextColor.parseColor(node.node("colors").node("exp").getString(experience.serialize()));
+        noMoreRewards = TextColor.parseColor(node.node("colors").node("noMoreRewards").getString(noMoreRewards.serialize()));
+        moreRewards = TextColor.parseColor(node.node("colors").node("moreRewards").getString(moreRewards.serialize()));
     }
 
     private boolean canCreateFile(File file) {

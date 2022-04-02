@@ -14,15 +14,12 @@ import com.epherical.professions.profession.rewards.Rewards;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.Serializer;
 import org.jetbrains.annotations.NotNull;
-
-import java.math.BigDecimal;
 
 
 public record OccupationExperience(double expAmount) implements Reward {

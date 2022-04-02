@@ -1,6 +1,7 @@
 package com.epherical.professions.profession.progression;
 
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.profession.Profession;
@@ -123,8 +124,11 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         if (!this.isOccupationActive(profession)) {
             return false;
         } else {
-            // TODO: config option here. will either determine if it gets slotted as inactive, or entirely removed from the player.
-            getOccupation(profession).setSlot(OccupationSlot.INACTIVE);
+            if (ProfessionConfig.clearProgressOnLeave) {
+                fireFromOccupation(profession);
+            } else {
+                getOccupation(profession).setSlot(OccupationSlot.INACTIVE);
+            }
         }
 
         return true;

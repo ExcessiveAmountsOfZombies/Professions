@@ -35,6 +35,7 @@ public class BlockTriggers {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.PLACE_BLOCK)
+                    .addParameter(ProfessionParameter.BLOCKPOS, pos)
                     .addParameter(ProfessionParameter.THIS_BLOCKSTATE, state)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));
             RewardHandler.handleReward(builder.build());

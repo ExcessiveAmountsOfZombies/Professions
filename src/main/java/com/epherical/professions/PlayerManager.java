@@ -149,7 +149,6 @@ public class PlayerManager {
                     occupation.getProfession().getDisplayComponent(),
                     new TextComponent("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
-            // todo: maybe multiple ways to send messages? hotbar, chat, toasts, title? for now it's just chat.
             sPlayer.sendMessage(message, Util.NIL_UUID);
         }
     }

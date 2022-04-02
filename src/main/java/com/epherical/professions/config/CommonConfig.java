@@ -141,6 +141,12 @@ public class CommonConfig {
             node.node("colors").node("moreRewards").set(moreRewards.serialize())
                     .comment("Used for any messages that involve more rewards (/professions info)");
 
+            // balancing
+            node.node("balancing").node("clearProgressOnLeave").set(clearProgressOnLeave)
+                    .comment("Default: False. Set to true if you want accumulated levels on a profession to be entirely cleared \n" +
+                            "when they leave their profession.");
+
+
 
         } catch (SerializationException e) {
             e.printStackTrace();

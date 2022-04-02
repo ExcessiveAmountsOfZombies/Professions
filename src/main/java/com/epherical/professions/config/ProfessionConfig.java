@@ -9,6 +9,8 @@ public class ProfessionConfig {
 
     public static int maxOccupations = 3;
 
+    public static boolean clearProgressOnLeave = false;
+
     public static boolean announceLevelUps = true;
     public static int announceEveryXLevel = 0;
 

@@ -46,6 +46,8 @@ public class ProfessionsMod implements ModInitializer {
 
     private boolean startup;
 
+    public static boolean isStopping = false;
+
     @Override
     public void onInitialize() {
         startup = true;
@@ -61,10 +63,14 @@ public class ProfessionsMod implements ModInitializer {
             this.economy = economy;
         });
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+            isStopping = false;
             dataStorage = new FileStorage(server.getWorldPath(LevelResource.ROOT).resolve("professions/playerdata"));
             this.dataStorage = ProfessionUtilityEvents.STORAGE_CALLBACK.invoker().setStorage(dataStorage);
             ProfessionUtilityEvents.STORAGE_FINALIZATION_EVENT.invoker().onFinalization(dataStorage);
             this.playerManager = new PlayerManager(this.dataStorage, server);
+        });
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            isStopping = true;
         });
         this.listener = new ProfessionListener();
         ServerPlayConnectionEvents.JOIN.register(this.listener::onPlayerJoin);

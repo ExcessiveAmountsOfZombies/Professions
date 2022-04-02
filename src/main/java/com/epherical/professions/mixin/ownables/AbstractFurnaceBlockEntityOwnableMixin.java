@@ -1,5 +1,7 @@
 package com.epherical.professions.mixin.ownables;
 
+import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.events.trigger.TriggerEvents;
 import com.epherical.professions.util.PlayerOwnable;
 import net.fabricmc.fabric.mixin.item.client.ClientPlayerInteractionManagerMixin;
@@ -46,7 +48,6 @@ public abstract class AbstractFurnaceBlockEntityOwnableMixin extends BlockEntity
     @Inject(method = "load", at = @At("TAIL"))
     public void onLoad(CompoundTag tag, CallbackInfo ci) {
         if (tag.contains("pf_owid")) {
-            // TODO: maybe make this a config option to either have it be persistent or non-persistent.
             professions$placedBy = tag.getUUID("pf_owid");
         }
     }
@@ -54,7 +55,13 @@ public abstract class AbstractFurnaceBlockEntityOwnableMixin extends BlockEntity
     @Inject(method = "saveAdditional", at = @At("TAIL"))
     public void onSave(CompoundTag tag, CallbackInfo ci) {
         if (professions$placedBy != null) {
-            tag.putUUID("pf_owid", professions$placedBy);
+            if (ProfessionsMod.isStopping) {
+                if (ProfessionConfig.persistBlockOwnership) {
+                    tag.putUUID("pf_owid", professions$placedBy);
+                }
+            } else {
+                tag.putUUID("pf_owid", professions$placedBy);
+            }
         }
     }
 

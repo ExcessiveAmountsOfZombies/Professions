@@ -148,6 +148,11 @@ public class CommonConfig {
             node.node("balancing").node("clearProgressOnLeave").set(clearProgressOnLeave)
                     .comment("Default: False. Set to true if you want accumulated levels on a profession to be entirely cleared \n" +
                             "when they leave their profession.");
+            node.node("balancing").node("persistBlockOwnership").set(persistBlockOwnership)
+                    .comment("""
+                            Default: True. When certain blocks are placed, they are registered to a player to allow them to earn experience\s
+                            while not around the block. If this is set to false, any time the server is restarted, it will have to be re-opened\s
+                            to give the player payouts again.""");
 
 
 
@@ -161,9 +166,10 @@ public class CommonConfig {
     protected void parseConfig(ConfigurationNode node) {
         version = node.node("version").getInt();
         maxOccupations = node.node("maxOccupations").getInt();
+
         announceLevelUps = node.node("announce").node("levelUps").getBoolean(announceLevelUps);
         announceEveryXLevel = node.node("announce").node("every-x-levels").getInt(announceEveryXLevel);
-        maxOccupations = node.node("maxOccupations").getInt();
+
         headerBorders = TextColor.parseColor(node.node("colors").node("headerBoarders").getString(headerBorders.serialize()));
         descriptors = TextColor.parseColor(node.node("colors").node("descriptors").getString(descriptors.serialize()));
         variables = TextColor.parseColor(node.node("colors").node("variables").getString(variables.serialize()));
@@ -173,6 +179,9 @@ public class CommonConfig {
         experience = TextColor.parseColor(node.node("colors").node("exp").getString(experience.serialize()));
         noMoreRewards = TextColor.parseColor(node.node("colors").node("noMoreRewards").getString(noMoreRewards.serialize()));
         moreRewards = TextColor.parseColor(node.node("colors").node("moreRewards").getString(moreRewards.serialize()));
+
+        clearProgressOnLeave = node.node("balancing").node("clearProgressOnLeave").getBoolean(clearProgressOnLeave);
+        persistBlockOwnership = node.node("balancing").node("persistBlockOwnership").getBoolean(persistBlockOwnership);
     }
 
     private boolean canCreateFile(File file) {

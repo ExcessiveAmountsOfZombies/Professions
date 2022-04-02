@@ -117,6 +117,10 @@ public class CommonConfig {
             node.node("maxOccupations").set(maxOccupations)
                     .comment("The max amount of occupations a user can have active at a time.\n" +
                     "Default is 3, set to 0 to disable and allow any amount of occupations to be joined.");
+            node.node("useBuiltinDatapack").set(useBuiltinDatapack)
+                    .comment("Default true. If you are a regular user you can ignore this. This is to provide an all in one experience \n" +
+                            "without having to download additional files. Modpack developers looking to create or rebalance their own professions \n" +
+                            "may want to disable this.");
 
             // announcements
             node.node("announce").node("levelUps").set(announceLevelUps)
@@ -164,8 +168,9 @@ public class CommonConfig {
     }
 
     protected void parseConfig(ConfigurationNode node) {
-        version = node.node("version").getInt();
-        maxOccupations = node.node("maxOccupations").getInt();
+        version = node.node("version").getInt(version);
+        maxOccupations = node.node("maxOccupations").getInt(maxOccupations);
+        useBuiltinDatapack = node.node("useBuiltinDatapack").getBoolean(useBuiltinDatapack);
 
         announceLevelUps = node.node("announce").node("levelUps").getBoolean(announceLevelUps);
         announceEveryXLevel = node.node("announce").node("every-x-levels").getInt(announceEveryXLevel);

@@ -5,6 +5,7 @@ import com.epherical.octoecon.api.event.EconomyEvents;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.config.CommonConfig;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
@@ -21,6 +22,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -54,6 +56,10 @@ public class ProfessionsMod implements ModInitializer {
         mod = this;
         this.config = new CommonConfig(false, "professions.yml");
         this.config.loadConfig();
+        if (ProfessionConfig.useBuiltinDatapack) {
+            ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation("professions", "defaults"),  FabricLoader.getInstance().getModContainer("professions").get(), ResourcePackActivationType.DEFAULT_ENABLED);
+        }
+
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             this.commands = new ProfessionsCommands(this, dispatcher);
         });

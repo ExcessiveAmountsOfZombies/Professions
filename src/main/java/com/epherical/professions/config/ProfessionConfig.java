@@ -8,6 +8,7 @@ public class ProfessionConfig {
     public static int version = 1;
 
     public static int maxOccupations = 3;
+    public static boolean useBuiltinDatapack = true;
 
     public static boolean clearProgressOnLeave = false;
     public static boolean persistBlockOwnership = true;

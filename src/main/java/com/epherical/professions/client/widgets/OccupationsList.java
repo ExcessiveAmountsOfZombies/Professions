@@ -13,7 +13,9 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 
@@ -187,7 +189,11 @@ public class OccupationsList extends ContainerObjectSelectionList<OccupationsLis
             button = new InfoEntryButton(component, 0, 0, 154, 24, button -> {
 
             }, (button, poseStack, i, j) -> {
+                List<Component> hoverComp = component.getStyle().getHoverEvent() != null
+                        ? component.getStyle().getHoverEvent().getValue(HoverEvent.Action.SHOW_TEXT).getSiblings()
+                        : List.of(component);
 
+                parent.renderTooltip(poseStack, hoverComp, Optional.empty(), i, j);
             });
         }
 

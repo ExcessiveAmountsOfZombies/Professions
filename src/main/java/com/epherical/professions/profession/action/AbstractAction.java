@@ -67,11 +67,12 @@ public abstract class AbstractAction implements Action {
         return map;
     }
 
-    @Override
-    public void serializeDisplayToClient(FriendlyByteBuf buf) {
-        for (Component component : displayInformation()) {
-            buf.writeComponent(component);
+    public final Component allRewardInformation() {
+        MutableComponent hoverComp = new TextComponent("");
+        for (Component value : getRewardInformation().values()) {
+            hoverComp.append(value);
         }
+        return hoverComp;
     }
 
     public final Component extraRewardInformation(Map<RewardType, Component> base) {

@@ -12,9 +12,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -51,6 +51,18 @@ public abstract class AbstractItemAction extends AbstractAction {
                     map.get(Rewards.PAYMENT_REWARD),
                     map.get(Rewards.EXPERIENCE_REWARD),
                     extraRewardInformation(map))));
+        }
+        return components;
+    }
+
+    @Override
+    public List<Component> clientFriendlyInformation() {
+        List<Component> components = new ArrayList<>();
+        for (Item item : items) {
+            components.add(((TranslatableComponent) item.getDescription())
+                    .setStyle(Style.EMPTY
+                            .withColor(ProfessionConfig.descriptors)
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, allRewardInformation()))));
         }
         return components;
     }

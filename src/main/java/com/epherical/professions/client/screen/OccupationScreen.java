@@ -7,6 +7,7 @@ import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
+import com.epherical.professions.util.ActionDisplay;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -45,7 +46,7 @@ public class OccupationScreen extends Screen {
             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
 
     // todo: now we really need to fix the constructor
-    public OccupationScreen(List<Component> list, boolean info) {
+    public OccupationScreen(List<ActionDisplay> list, boolean info) {
         super(Component.nullToEmpty(""));
         this.button = null;
         this.entries = createInfoEntries(this, list);
@@ -176,10 +177,13 @@ public class OccupationScreen extends Screen {
         return entries;
     }
 
-    public static List<OccupationsList.AbstractEntry> createInfoEntries(OccupationScreen screen, List<Component> components) {
+    public static List<OccupationsList.AbstractEntry> createInfoEntries(OccupationScreen screen, List<ActionDisplay> displays) {
         List<OccupationsList.AbstractEntry> entries = new ArrayList<>();
-        for (Component component : components) {
-            entries.add(new OccupationsList.InfoEntry(screen, screen.list, screen.minecraft, component));
+        for (ActionDisplay display : displays) {
+            entries.add(new OccupationsList.InfoEntry(screen, screen.list, screen.minecraft, display.getHeader()));
+            for (Component component : display.getActionInformation()) {
+                entries.add(new OccupationsList.InfoEntry(screen, screen.list, screen.minecraft, component));
+            }
         }
         return entries;
     }

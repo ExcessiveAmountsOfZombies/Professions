@@ -6,6 +6,7 @@ import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.progression.Occupation;
+import com.epherical.professions.util.ActionDisplay;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -52,11 +53,11 @@ public class ClientHandler {
         });
         subChannelReceivers.put(ProfessionConstants.INFO_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
             int size = buf.readVarInt();
-            List<Component> components = new ArrayList<>();
+            List<ActionDisplay> displays = new ArrayList<>();
             for (int i = 0; i < size; i++) {
-                components.add(buf.readComponent());
+                displays.add(ActionDisplay.fromNetwork(buf));
             }
-            client.execute(() -> client.setScreen(new OccupationScreen(components, true)));
+            client.execute(() -> client.setScreen(new OccupationScreen(displays, true)));
         });
         subChannelReceivers.put(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
             CommandButtons button = buf.readEnum(CommandButtons.class);

@@ -11,11 +11,11 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
+import com.epherical.professions.util.ActionDisplay;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -110,21 +110,19 @@ public class ServerHandler {
             ProfessionLoader loader = ProfessionsMod.getInstance().getProfessionLoader();
             Profession profession = loader.getProfession(buf.readResourceLocation());
             FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
-            Collection<Component> components = new ArrayList<>();
+            Collection<ActionDisplay> displays = new ArrayList<>();
             for (ActionType actionType : ProfessionConstants.ACTION_TYPE) {
                 Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
                 if (actionsFor != null && !actionsFor.isEmpty()) {
-                    components.add(new TranslatableComponent("=-=-=| %s |=-=-=",
+                    ActionDisplay display = new ActionDisplay(new TranslatableComponent("=-=-=| %s |=-=-=",
                             new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
-                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
-                    for (Action action : actionsFor) {
-                        components.addAll(action.displayInformation());
-                    }
+                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), actionsFor);
+                    displays.add(display);
                 }
             }
             response.writeResourceLocation(ProfessionConstants.INFO_BUTTON_RESPONSE);
-            response.writeVarInt(components.size());
-            components.forEach(response::writeComponent);
+            response.writeVarInt(displays.size());
+            displays.forEach(actionDisplay -> actionDisplay.toNetwork(response));
             responseSender.sendPacket(ProfessionsMod.MOD_CHANNEL, response);
         });
         subChannelReceivers.put(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {

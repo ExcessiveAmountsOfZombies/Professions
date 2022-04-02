@@ -16,7 +16,7 @@ public abstract class AbstractEntryButton extends Button {
     private final Component name;
 
     public AbstractEntryButton(Component component, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
-        super(i, j, k, l, Component.nullToEmpty(""), onPress);
+        super(i, j, k, l, Component.nullToEmpty(""), onPress, tooltip);
         this.name = component;
     }
 
@@ -35,7 +35,7 @@ public abstract class AbstractEntryButton extends Button {
         this.blit(poseStack, this.x + this.width / 2, this.y, 160 - this.width / 2, 152 + i * 24, this.width / 2, this.height);
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
         int j = this.active ? 16777215 : 10526880;
-        drawString(poseStack, font, name, this.x + 5, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        drawCenteredString(poseStack, font, name, this.x + this.width / 2, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
         if (this.isHoveredOrFocused()) {
             this.renderToolTip(poseStack, mouseX, mouseY);
         }

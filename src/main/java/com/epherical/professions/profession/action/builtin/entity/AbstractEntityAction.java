@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -45,10 +46,22 @@ public abstract class AbstractEntityAction extends AbstractAction {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
         for (EntityType<?> entity : entities) {
-            components.add(((TranslatableComponent) entity.getDescription()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(new TranslatableComponent(" (%s | %s & %s)",
+            components.add((entity.getDescription().copy()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(new TranslatableComponent(" (%s | %s & %s)",
                     map.get(Rewards.PAYMENT_REWARD),
                     map.get(Rewards.EXPERIENCE_REWARD),
                     extraRewardInformation(map))));
+        }
+        return components;
+    }
+
+    @Override
+    public List<Component> clientFriendlyInformation() {
+        List<Component> components = new ArrayList<>();
+        for (EntityType<?> entity : entities) {
+            components.add((entity.getDescription().copy())
+                    .setStyle(Style.EMPTY
+                            .withColor(ProfessionConfig.descriptors)
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, allRewardInformation()))));
         }
         return components;
     }

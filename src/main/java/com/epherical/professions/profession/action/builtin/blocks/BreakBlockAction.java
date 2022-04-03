@@ -1,6 +1,5 @@
 package com.epherical.professions.profession.action.builtin.blocks;
 
-import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
@@ -10,7 +9,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.Block;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BreakBlockAction extends BasicBlockAbstractAction {
@@ -24,18 +22,19 @@ public class BreakBlockAction extends BasicBlockAbstractAction {
         return Actions.BREAK_BLOCK;
     }
 
-    public static class Builder extends AbstractAction.Builder<BreakBlockAction.Builder> {
-        private List<Block> blocks = new ArrayList<>();
+    public static Builder breakBlock() {
+        return new Builder();
+    }
 
-        public Builder withBlock(Block block) {
-            this.blocks.add(block);
-            return this;
-        }
+    public static class Serializer extends BasicBlockAbstractAction.Serializer<BreakBlockAction> {
 
-        public Builder withBlocks(Block... blocks) {
-            this.blocks.addAll(List.of(blocks));
-            return this;
+        @Override
+        public BreakBlockAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
+            return new BreakBlockAction(conditions, rewards, deserializeBlocks(object));
         }
+    }
+
+    public static class Builder extends BasicBlockAbstractAction.Builder<BreakBlockAction.Builder> {
 
         @Override
         protected Builder instance() {
@@ -45,14 +44,6 @@ public class BreakBlockAction extends BasicBlockAbstractAction {
         @Override
         public Action build() {
             return new BreakBlockAction(this.getConditions(), this.getRewards(), blocks);
-        }
-    }
-
-    public static class Serializer extends BasicBlockAbstractAction.Serializer<BreakBlockAction> {
-
-        @Override
-        public BreakBlockAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
-            return new BreakBlockAction(conditions, rewards, deserializeBlocks(object));
         }
     }
 

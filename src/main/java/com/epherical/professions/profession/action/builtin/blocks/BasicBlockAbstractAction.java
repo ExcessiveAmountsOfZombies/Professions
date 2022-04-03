@@ -65,6 +65,15 @@ public abstract class BasicBlockAbstractAction extends AbstractAction {
         return state != null && blocks.contains(state.getBlock());
     }
 
+    public abstract static class Builder<T extends BasicBlockAbstractAction.Builder<T>> extends AbstractAction.Builder<T> {
+        protected final List<Block> blocks = new ArrayList<>();
+
+        public BasicBlockAbstractAction.Builder<T> block(Block... item) {
+            this.blocks.addAll(List.of(item));
+            return this;
+        }
+    }
+
     public abstract static class Serializer<T extends BasicBlockAbstractAction> extends ActionSerializer<T> {
 
         @Override

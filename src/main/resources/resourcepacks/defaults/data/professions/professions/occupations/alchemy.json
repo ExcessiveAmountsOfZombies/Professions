@@ -1,7 +1,7 @@
 {
   "type": "professions:default",
   "color": "#6816BA",
-  "descriptionColor": "#6816BA",
+  "descriptionColor": "#FFFFFF",
   "description": [
     "Earn money by brewing potions."
   ],

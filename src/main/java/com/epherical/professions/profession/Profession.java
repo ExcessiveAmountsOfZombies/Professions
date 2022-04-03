@@ -201,7 +201,7 @@ public class Profession {
             JsonObject object = new JsonObject();
             object.addProperty("type", ProfessionConstants.PROFESSION_SERIALIZER.getKey(ProfessionSerializer.DEFAULT_PROFESSION).toString());
             object.addProperty("color", src.color.serialize());
-            object.addProperty("descriptionColor", src.color.serialize());
+            object.addProperty("descriptionColor", src.descriptionColor.serialize());
             JsonArray array = new JsonArray();
             for (String s : src.description) {
                 array.add(s);

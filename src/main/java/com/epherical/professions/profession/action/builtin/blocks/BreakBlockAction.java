@@ -5,6 +5,7 @@ import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
+import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.Block;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class BreakBlockAction extends BasicBlockAbstractAction {
 
-    protected BreakBlockAction(ActionCondition[] conditions, Reward[] rewards, List<Block> blocks) {
+    protected BreakBlockAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blocks) {
         super(conditions, rewards, blocks);
     }
 

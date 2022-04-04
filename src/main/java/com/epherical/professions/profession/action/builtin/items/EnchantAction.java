@@ -6,6 +6,7 @@ import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
+import com.epherical.professions.util.ActionEntry;
 import com.epherical.professions.util.EnchantmentContainer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -31,7 +32,7 @@ public class EnchantAction extends AbstractItemAction {
 
     protected final List<EnchantmentContainer> enchantments;
 
-    protected EnchantAction(ActionCondition[] conditions, Reward[] rewards, List<Item> items, List<EnchantmentContainer> enchantments) {
+    protected EnchantAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Item>> items, List<EnchantmentContainer> enchantments) {
         super(conditions, rewards, items);
         this.enchantments = enchantments;
     }

@@ -4,7 +4,6 @@ import com.epherical.octoecon.api.Economy;
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.datapack.ProfessionLoader;
-import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.items.BrewAction;
@@ -22,7 +21,6 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import java.io.IOException;
@@ -109,7 +107,7 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
             ProfessionBuilder builder = ProfessionBuilder.profession(
                             TextColor.parseColor("#03ad31"),
                             TextColor.parseColor("#FFFFFF"),
-                            new String[]{"Earn money by placing blocks"},
+                            new String[]{"Earn money by placing blocks."},
                             "Building", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -158,6 +156,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                                     Blocks.CYAN_STAINED_GLASS_PANE, Blocks.PURPLE_STAINED_GLASS_PANE, Blocks.BLUE_STAINED_GLASS_PANE,
                                     Blocks.BROWN_STAINED_GLASS_PANE, Blocks.GREEN_STAINED_GLASS_PANE, Blocks.RED_STAINED_GLASS_PANE,
                                     Blocks.BLACK_STAINED_GLASS_PANE)
+                            .reward(expReward(1.3))
+                            .reward(moneyReward(1.3))
+                            .build())
+                    .addAction(Actions.PLACE_BLOCK, PlaceBlockAction.place()
+                            .block(BlockTags.WOOL)
                             .reward(expReward(1.3))
                             .reward(moneyReward(1.3))
                             .build());

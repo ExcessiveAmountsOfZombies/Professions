@@ -8,30 +8,38 @@ import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
+import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractItemAction extends AbstractAction {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    protected final List<ActionEntry<Item>> items;
+    @Nullable
+    protected List<Item> realItems;
 
-    protected final List<Item> items;
-
-    protected AbstractItemAction(ActionCondition[] conditions, Reward[] rewards, List<Item> items) {
+    protected AbstractItemAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Item>> items) {
         super(conditions, rewards);
         this.items = items;
     }
@@ -39,14 +47,14 @@ public abstract class AbstractItemAction extends AbstractAction {
     @Override
     public boolean test(ProfessionContext professionContext) {
         ItemStack item = professionContext.getPossibleParameter(ProfessionParameter.ITEM_INVOLVED);
-        return item != null && !item.isEmpty() && items.contains(item.getItem());
+        return item != null && !item.isEmpty() && getRealItems().contains(item.getItem());
     }
 
     @Override
     public List<Component> displayInformation() {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
-        for (Item item : items) {
+        for (Item item : getRealItems()) {
             components.add(((TranslatableComponent) item.getDescription()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(new TranslatableComponent(" (%s | %s & %s)",
                     map.get(Rewards.PAYMENT_REWARD),
                     map.get(Rewards.EXPERIENCE_REWARD),
@@ -58,7 +66,7 @@ public abstract class AbstractItemAction extends AbstractAction {
     @Override
     public List<Component> clientFriendlyInformation() {
         List<Component> components = new ArrayList<>();
-        for (Item item : items) {
+        for (Item item : getRealItems()) {
             components.add(((TranslatableComponent) item.getDescription())
                     .setStyle(Style.EMPTY
                             .withColor(ProfessionConfig.descriptors)
@@ -67,11 +75,26 @@ public abstract class AbstractItemAction extends AbstractAction {
         return components;
     }
 
+    protected List<Item> getRealItems() {
+        if (realItems == null) {
+            realItems = new ArrayList<>();
+            for (ActionEntry<Item> item : items) {
+                realItems.addAll(item.getActionValues(Registry.ITEM));
+            }
+        }
+        return realItems;
+    }
+
     public abstract static class Builder<T extends AbstractItemAction.Builder<T>> extends AbstractAction.Builder<T> {
-        protected final List<Item> items = new ArrayList<>();
+        protected final List<ActionEntry<Item>> items = new ArrayList<>();
 
         public Builder<T> item(Item... item) {
-            this.items.addAll(List.of(item));
+            this.items.add(ActionEntry.of(item));
+            return this;
+        }
+
+        public Builder<T> item(TagKey<Item> item) {
+            this.items.add(ActionEntry.of(item));
             return this;
         }
     }
@@ -82,18 +105,25 @@ public abstract class AbstractItemAction extends AbstractAction {
         public void serialize(@NotNull JsonObject json, T value, @NotNull JsonSerializationContext serializationContext) {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
-            for (Item item : value.items) {
+            for (Item item : value.getRealItems()) {
                 array.add(Registry.ITEM.getKey(item).toString());
             }
             json.add("items", array);
         }
 
-        public List<Item> deserializeItems(JsonObject object) {
+        public List<ActionEntry<Item>> deserializeItems(JsonObject object) {
             JsonArray array = GsonHelper.getAsJsonArray(object, "items");
-            List<Item> items = new ArrayList<>();
+            List<ActionEntry<Item>> items = new ArrayList<>();
             for (JsonElement element : array) {
                 String id = element.getAsString();
-                items.add(Registry.ITEM.get(new ResourceLocation(id)));
+                if (id.startsWith("#")) {
+                    TagKey<Item> key = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(id.substring(1)));
+                    items.add(ActionEntry.of(key));
+                } else {
+                    Registry.ITEM.getOptional(new ResourceLocation(id)).ifPresentOrElse(
+                            item -> items.add(ActionEntry.of(item)),
+                            () -> LOGGER.warn("Attempted to add unknown item {}. Was not added, but will continue processing the list.", id));
+                }
             }
             return items;
         }

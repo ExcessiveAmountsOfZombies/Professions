@@ -6,6 +6,7 @@ import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
+import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.world.item.Item;
@@ -15,7 +16,7 @@ import java.util.List;
 public class BrewAction extends AbstractItemAction {
 
 
-    protected BrewAction(ActionCondition[] conditions, Reward[] rewards, List<Item> items) {
+    protected BrewAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Item>> items) {
         super(conditions, rewards, items);
     }
 

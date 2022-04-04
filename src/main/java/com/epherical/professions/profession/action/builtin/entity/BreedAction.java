@@ -4,6 +4,7 @@ import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
+import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.world.entity.EntityType;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class BreedAction extends AbstractEntityAction {
 
-    protected BreedAction(ActionCondition[] conditions, Reward[] rewards, List<EntityType<?>> types) {
+    protected BreedAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<EntityType<?>>> types) {
         super(conditions, rewards, types);
     }
 

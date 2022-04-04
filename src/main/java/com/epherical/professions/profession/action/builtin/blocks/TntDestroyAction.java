@@ -5,6 +5,7 @@ import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
+import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.Block;
@@ -14,7 +15,7 @@ import java.util.List;
 public class TntDestroyAction extends BasicBlockAbstractAction {
 
 
-    protected TntDestroyAction(ActionCondition[] conditions, Reward[] rewards, List<Block> blockList) {
+    protected TntDestroyAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blockList) {
         super(conditions, rewards, blockList);
     }
 

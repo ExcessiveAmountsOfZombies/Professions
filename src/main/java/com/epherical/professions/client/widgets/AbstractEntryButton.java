@@ -35,7 +35,19 @@ public abstract class AbstractEntryButton extends Button {
         this.blit(poseStack, this.x + this.width / 2, this.y, 160 - this.width / 2, 152 + i * 24, this.width / 2, this.height);
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
         int j = this.active ? 16777215 : 10526880;
-        drawCenteredString(poseStack, font, name, this.x + this.width / 2, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        float divide = font.width(name) / (float) this.width;
+        if ((divide + 0.03) >= 1.0f) {
+            if (divide > 1.0f) {
+                float div = (float) (Math.floor(divide) - divide);
+                divide = 0.95f + div;
+            }
+            poseStack.scale(divide, divide, divide);
+            drawCenteredString(poseStack, font, name, (int) ((this.x + this.width / 2) / divide), (int) ((this.y + (this.height - 8) / 2) / divide), j | Mth.ceil(this.alpha * 255.0F) << 24);
+            poseStack.scale(1/ divide, 1/ divide, 1/ divide);
+        } else {
+            drawCenteredString(poseStack, font, name, this.x + this.width / 2, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        }
+
         if (this.isHoveredOrFocused()) {
             this.renderToolTip(poseStack, mouseX, mouseY);
         }

@@ -1,0 +1,159 @@
+{
+  "type": "professions:default",
+  "color": "#F2A100",
+  "descriptionColor": "#FFFFFF",
+  "description": [
+    "Earn money and experience",
+    "by crafting."
+  ],
+  "displayName": "Crafting",
+  "maxLevel": 100,
+  "experienceSclEquation": "(91+1000)*1.1^(lvl-1)",
+  "incomeSclEquation": "base",
+  "actions": [
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 2.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "#minecraft:wooden_pressure_plates",
+        "#minecraft:banners",
+        "#minecraft:stairs",
+        "#minecraft:fences",
+        "#minecraft:wooden_doors",
+        "#minecraft:wooden_trapdoors",
+        "#minecraft:wooden_buttons"
+      ]
+    },
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 4.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:chest",
+        "minecraft:furnace"
+      ]
+    },
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 6.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 5.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:anvil",
+        "minecraft:jukebox",
+        "minecraft:tnt"
+      ]
+    },
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 3.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 3.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:dispenser",
+        "minecraft:blast_furnace",
+        "minecraft:piston"
+      ]
+    },
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 200.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 200.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:beacon"
+      ]
+    },
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 10.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:iron_door",
+        "minecraft:iron_bars",
+        "minecraft:hopper",
+        "minecraft:cauldron"
+      ]
+    },
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 6.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:comparator",
+        "minecraft:compass",
+        "minecraft:clock",
+        "minecraft:brewing_stand",
+        "#minecraft:beds"
+      ]
+    }
+  ]
+}

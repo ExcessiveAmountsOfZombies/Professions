@@ -55,7 +55,7 @@ public class ProfessionsMod implements ModInitializer {
     public void onInitialize() {
         startup = true;
         mod = this;
-        this.config = new CommonConfig(false, "professions.yml");
+        this.config = new CommonConfig(false, "professions.conf");
         this.config.loadConfig();
         if (ProfessionConfig.useBuiltinDatapack) {
             ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation("professions", "defaults"),  FabricLoader.getInstance().getModContainer("professions").get(), ResourcePackActivationType.DEFAULT_ENABLED);

@@ -73,10 +73,12 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
         public void run(HashCache cache) throws IOException {
             Path path = this.dataGenerator.getOutputFolder();
             ProfessionBuilder alchemy = ProfessionBuilder.profession(
-                    TextColor.parseColor("#6816ba"),
-                    TextColor.parseColor("#FFFFFF"),
-                    new String[]{"Earn money and experience by brewing potions."},
-                    "Alchemy", 100)
+                            TextColor.parseColor("#a100e0"),
+                            TextColor.parseColor("#FFFFFF"),
+                            new String[]{
+                                    "Earn money and experience",
+                                    "by brewing potions."},
+                            "Alchemy", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
                     .addAction(Actions.BREW_ITEM, BrewAction.brew()
@@ -130,9 +132,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(moneyReward(2))
                             .build());
             ProfessionBuilder builder = ProfessionBuilder.profession(
-                            TextColor.parseColor("#03ad31"),
+                            TextColor.parseColor("#f2de00"),
                             TextColor.parseColor("#FFFFFF"),
-                            new String[]{"Earn money by placing blocks."},
+                            new String[]{
+                                    "Earn money and experience",
+                                    "by placing blocks."},
                             "Building", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -204,9 +208,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(moneyReward(1))
                             .build());
             ProfessionBuilder crafting = ProfessionBuilder.profession(
-                            TextColor.parseColor("#d98200"),
+                            TextColor.parseColor("#f2a100"),
                             TextColor.parseColor("#FFFFFF"),
-                            new String[]{"Earn money and experience by crafting."},
+                            new String[]{
+                                    "Earn money and experience",
+                                    "by crafting."},
                             "Crafting", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -254,9 +260,10 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(moneyReward(6))
                             .build());
             ProfessionBuilder enchanting = ProfessionBuilder.profession(
-                            TextColor.parseColor("#d98200"),
+                            TextColor.parseColor("#c9008d"),
                             TextColor.parseColor("#FFFFFF"),
-                            new String[]{"Earn money and experience by enchanting."},
+                            new String[]{"Earn money and experience",
+                                    "by enchanting."},
                             "Enchanting", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -318,9 +325,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                 }
             }
             ProfessionBuilder farming = ProfessionBuilder.profession(
-                            TextColor.parseColor("#d98200"),
+                            TextColor.parseColor("#107d0e"),
                             TextColor.parseColor("#FFFFFF"),
-                            new String[]{"Earn money and experience by farming."},
+                            new String[]{
+                                    "Earn money and experience",
+                                    "by farming."},
                             "Farming", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -376,9 +385,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(moneyReward(5.0))
                             .build());
             ProfessionBuilder fishing = ProfessionBuilder.profession(
-                            TextColor.parseColor("#d98200"),
+                            TextColor.parseColor("#0a91c7"),
                             TextColor.parseColor("#FFFFFF"),
-                            new String[]{"Earn money and experience by fishing."},
+                            new String[]{
+                                    "Earn money and experience",
+                                    "by fishing."},
                             "Fishing", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -388,11 +399,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(expReward(25))
                             .build());
             ProfessionBuilder hunting = ProfessionBuilder.profession(
-                            TextColor.parseColor("#d98200"),
+                            TextColor.parseColor("#a6542e"),
                             TextColor.parseColor("#FFFFFF"),
                             new String[]{
-                                    "Earn money and experience by",
-                                    "hunting animals and killing monsters"},
+                                    "Earn money and experience",
+                                    "by hunting animals and killing monsters."},
                             "Hunting", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -427,10 +438,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(expReward(15))
                             .build());
             ProfessionBuilder mining = ProfessionBuilder.profession(
-                            TextColor.parseColor("#666e63"),
+                            TextColor.parseColor("#666E63"),
                             TextColor.parseColor("#FFFFFF"),
                             new String[]{
-                                    "Earn money and experience by mining ores and minerals"},
+                                    "Earn money and experience",
+                                    "by mining ores and minerals."},
                             "Mining", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -513,10 +525,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(moneyReward(0.5))
                             .build());
             ProfessionBuilder trading = ProfessionBuilder.profession(
-                            TextColor.parseColor("#00FF00"),
+                            TextColor.parseColor("#2dcf08"),
                             TextColor.parseColor("#FFFFFF"),
                             new String[]{
-                                    "Earn money and experience by trading items to villagers."},
+                                    "Earn money and experience",
+                                    "by trading items to villagers."},
                             "Trading", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -546,10 +559,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(expReward(3))
                             .build());
             ProfessionBuilder smithing = ProfessionBuilder.profession(
-                            TextColor.parseColor("#00FF00"),
+                            TextColor.parseColor("#84abad"),
                             TextColor.parseColor("#FFFFFF"),
                             new String[]{
-                                    "Earn money and experience by smithing items."},
+                                    "Earn money and experience",
+                                    "by smithing items." },
                             "Smithing", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -609,10 +623,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(expReward(1.3))
                             .build());
             ProfessionBuilder logging = ProfessionBuilder.profession(
-                            TextColor.parseColor("#00FF00"),
+                            TextColor.parseColor("#9e3011"),
                             TextColor.parseColor("#FFFFFF"),
                             new String[]{
-                                    "Earn money and experience by farming trees."},
+                                    "Earn money and experience",
+                                    "by farming trees." },
                             "Logging", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -621,7 +636,6 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(expReward(1))
                             .reward(moneyReward(1))
                             .build());
-
 
 
             Path alchemyProfession = createPath(path, new ResourceLocation("professions:alchemy"));
@@ -650,7 +664,7 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
 
         private static Path createPath(Path path, ResourceLocation id) {
             String namespace = id.getNamespace();
-            return path.resolve("data/" + namespace + "/professions/" + id.getPath() + ".json");
+            return path.resolve("resourcepacks/defaults/data/" + namespace + "/professions/occupations/" + id.getPath() + ".json");
         }
 
         @Override

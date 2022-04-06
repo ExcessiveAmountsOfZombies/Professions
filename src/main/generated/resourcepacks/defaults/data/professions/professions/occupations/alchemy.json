@@ -1,0 +1,202 @@
+{
+  "type": "professions:default",
+  "color": "#A100E0",
+  "descriptionColor": "#FFFFFF",
+  "description": [
+    "Earn money and experience",
+    "by brewing potions."
+  ],
+  "displayName": "Alchemy",
+  "maxLevel": 100,
+  "experienceSclEquation": "(91+1000)*1.1^(lvl-1)",
+  "incomeSclEquation": "base",
+  "actions": [
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 2.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.5,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:nether_wart"
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 2.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.65,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:redstone",
+        "minecraft:glowstone_dust"
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 4.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:fermented_spider_eye"
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 4.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.85,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:gunpowder"
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 6.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:dragon_breath"
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 0.5
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.25,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:sugar"
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 10.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 5.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:rabbit_foot",
+        "minecraft:turtle_helmet",
+        "minecraft:phantom_membrane"
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 3.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:glistering_melon_slice"
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 2.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.5,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:spider_eye",
+        "minecraft:magma_cream",
+        "minecraft:blaze_powder"
+      ]
+    },
+    {
+      "action": "professions:brew",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 5.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "items": [
+        "minecraft:pufferfish",
+        "minecraft:golden_carrot",
+        "minecraft:ghast_tear"
+      ]
+    }
+  ]
+}

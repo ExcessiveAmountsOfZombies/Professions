@@ -1,0 +1,33 @@
+{
+  "type": "professions:default",
+  "color": "#9E3011",
+  "descriptionColor": "#FFFFFF",
+  "description": [
+    "Earn money and experience",
+    "by farming trees."
+  ],
+  "displayName": "Logging",
+  "maxLevel": 100,
+  "experienceSclEquation": "(91+1000)*1.1^(lvl-1)",
+  "incomeSclEquation": "base",
+  "actions": [
+    {
+      "action": "professions:break_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "blocks": [
+        "#minecraft:logs"
+      ]
+    }
+  ]
+}

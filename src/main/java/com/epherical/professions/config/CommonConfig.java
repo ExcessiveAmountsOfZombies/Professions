@@ -8,11 +8,10 @@ import org.apache.logging.log4j.Logger;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
-import org.spongepowered.configurate.yaml.NodeStyle;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,7 +28,7 @@ public class CommonConfig {
 
     protected static final Logger LOGGER = LogManager.getLogger();
 
-    protected YamlConfigurationLoader loader;
+    protected HoconConfigurationLoader loader;
     protected ConfigurationNode rootNode;
 
     protected final String configName;
@@ -43,7 +42,7 @@ public class CommonConfig {
     }
 
     public CommonConfig(boolean devEnvironment) {
-        this(devEnvironment, "professions.yml");
+        this(devEnvironment, "professions.conf");
     }
 
     public <T, V extends TypeSerializer<T>> void addSerializer(Class<T> clazz, V instance) {
@@ -86,10 +85,8 @@ public class CommonConfig {
                 }
             }
         }
-        this.loader = YamlConfigurationLoader.builder()
+        this.loader = HoconConfigurationLoader.builder()
                 .sink(() -> new BufferedWriter(new FileWriter(file)))
-                .indent(2)
-                .nodeStyle(NodeStyle.BLOCK)
                 .defaultOptions(options -> options.serializers(builder -> builder.registerAll(serializers.build())))
                 .url(path)
                 .build();

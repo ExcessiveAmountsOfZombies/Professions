@@ -30,7 +30,7 @@ dependencies {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-1.18.1:2021.12.19")
     }
-    modImplementation(include("org.spongepowered:configurate-yaml:4.1.2"))
+    modImplementation(include("org.spongepowered:configurate-hocon:4.1.2"))
     modImplementation(include("org.spongepowered:configurate-core:4.1.2"))
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation 'me.lucko:fabric-permissions-api:0.1-SNAPSHOT'
@@ -64,6 +64,16 @@ loom {
             vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
 
             runDir "build/datagen"
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    "src/main/generated"
+            ]
         }
     }
 }

@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 
-public class TntDestroyAction extends BasicBlockAbstractAction {
+public class TntDestroyAction extends BlockAbstactAction {
 
 
     protected TntDestroyAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blockList) {
@@ -28,7 +28,7 @@ public class TntDestroyAction extends BasicBlockAbstractAction {
         return new TntDestroyAction.Builder();
     }
 
-    public static class Serializer extends BasicBlockAbstractAction.Serializer<TntDestroyAction> {
+    public static class Serializer extends BlockAbstactAction.Serializer<TntDestroyAction> {
 
         @Override
         public TntDestroyAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
@@ -36,7 +36,7 @@ public class TntDestroyAction extends BasicBlockAbstractAction {
         }
     }
 
-    public static class Builder extends BasicBlockAbstractAction.Builder<TntDestroyAction.Builder> {
+    public static class Builder extends BlockAbstactAction.Builder<TntDestroyAction.Builder> {
 
         @Override
         protected TntDestroyAction.Builder instance() {

@@ -11,7 +11,7 @@ public class ProfessionConfig {
     public static boolean useBuiltinDatapack = true;
     public static boolean displayXpAsPercentage = true; // todo: implement
     public static boolean allowCreativeModePayments = false;
-    public static boolean logAllActionsInChat = false;
+    public static boolean logInChat = false;
 
     public static boolean clearProgressOnLeave = false;
     public static boolean persistBlockOwnership = true;

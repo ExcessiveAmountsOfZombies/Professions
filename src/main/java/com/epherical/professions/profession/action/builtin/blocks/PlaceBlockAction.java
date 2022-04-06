@@ -3,7 +3,6 @@ package com.epherical.professions.profession.action.builtin.blocks;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
-import com.epherical.professions.profession.action.builtin.items.BrewAction;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.util.ActionEntry;
@@ -13,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 
-public class PlaceBlockAction extends BasicBlockAbstractAction {
+public class PlaceBlockAction extends BlockAbstactAction {
 
 
     protected PlaceBlockAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blocks) {
@@ -29,7 +28,7 @@ public class PlaceBlockAction extends BasicBlockAbstractAction {
         return new PlaceBlockAction.Builder();
     }
 
-    public static class Serializer extends BasicBlockAbstractAction.Serializer<PlaceBlockAction> {
+    public static class Serializer extends BlockAbstactAction.Serializer<PlaceBlockAction> {
 
         @Override
         public PlaceBlockAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
@@ -37,7 +36,7 @@ public class PlaceBlockAction extends BasicBlockAbstractAction {
         }
     }
 
-    public static class Builder extends BasicBlockAbstractAction.Builder<PlaceBlockAction.Builder> {
+    public static class Builder extends BlockAbstactAction.Builder<PlaceBlockAction.Builder> {
 
         @Override
         protected Builder instance() {

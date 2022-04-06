@@ -42,7 +42,11 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
             UUID playerID = context.getParameter(ProfessionParameter.THIS_PLAYER).getUuid();
             UniqueUser user = economy.getOrCreatePlayerAccount(playerID);
             if (user != null) {
-                user.depositMoney(currency, amount, "Professions Action Reward");
+                if (amount > 0) {
+                    user.depositMoney(currency, amount, "Professions Action Reward");
+                } else {
+                    user.withdrawMoney(currency, amount, "Professions Action Penalty");
+                }
                 context.getParameter(ProfessionParameter.ACTION_LOGGER).addMoneyReward(rewardChatInfo());
             }
         }

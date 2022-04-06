@@ -127,8 +127,6 @@ public class CommonConfig {
             node.node("displayXpAsPercentage").set(displayXpAsPercentage)
                     .comment("Will display the /professions stats command either as a percentage of the way to the next level \n" +
                             "or the xp in numbers required for the next level e.g (203/2010). Defaults to percentage.");
-            node.node("logAllActionsInChat").set(logAllActionsInChat)
-                    .comment("Will display every valid action in chat. Defaults to false.");
 
 
             // announcements
@@ -167,6 +165,9 @@ public class CommonConfig {
                             while not around the block. If this is set to false, any time the server is restarted, it will have to be re-opened\s
                             to give the player payouts again.""");
 
+            node.node("actions").node("logInChat").set(logInChat)
+                    .comment("Will display every valid action in chat. Defaults to false, or rather, defaults to action bar messages instead.");
+
 
 
         } catch (SerializationException e) {
@@ -182,7 +183,7 @@ public class CommonConfig {
         useBuiltinDatapack = node.node("useBuiltinDatapack").getBoolean(useBuiltinDatapack);
         displayXpAsPercentage = node.node("displayXpAsPercentage").getBoolean(displayXpAsPercentage);
         allowCreativeModePayments = node.node("allowCreativeModePayments").getBoolean(allowCreativeModePayments);
-        logAllActionsInChat = node.node("logAllActionsInChat").getBoolean(logAllActionsInChat);
+
 
         announceLevelUps = node.node("announce").node("levelUps").getBoolean(announceLevelUps);
         announceEveryXLevel = node.node("announce").node("every-x-levels").getInt(announceEveryXLevel);
@@ -199,6 +200,8 @@ public class CommonConfig {
 
         clearProgressOnLeave = node.node("balancing").node("clearProgressOnLeave").getBoolean(clearProgressOnLeave);
         persistBlockOwnership = node.node("balancing").node("persistBlockOwnership").getBoolean(persistBlockOwnership);
+
+        logInChat = node.node("actions").node("logInChat").getBoolean(logInChat);
     }
 
     private boolean canCreateFile(File file) {

@@ -20,12 +20,8 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -36,13 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BasicBlockAbstractAction extends AbstractAction {
+public abstract class BlockAbstactAction extends AbstractAction {
     private static final Logger LOGGER = LogUtils.getLogger();
     protected final List<ActionEntry<Block>> blocks;
     @Nullable
     protected List<Block> realBlocks;
 
-    protected BasicBlockAbstractAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blockList) {
+    protected BlockAbstactAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blockList) {
         super(conditions, rewards);
         this.blocks = blockList;
     }
@@ -88,21 +84,21 @@ public abstract class BasicBlockAbstractAction extends AbstractAction {
                 && professionContext.getParameter(ProfessionParameter.ACTION_LOGGER).addSubjectOfAction(state.getBlock().getName());
     }
 
-    public abstract static class Builder<T extends BasicBlockAbstractAction.Builder<T>> extends AbstractAction.Builder<T> {
+    public abstract static class Builder<T extends BlockAbstactAction.Builder<T>> extends AbstractAction.Builder<T> {
         protected final List<ActionEntry<Block>> blocks = new ArrayList<>();
 
-        public BasicBlockAbstractAction.Builder<T> block(Block... item) {
+        public BlockAbstactAction.Builder<T> block(Block... item) {
             this.blocks.add(ActionEntry.of(item));
             return this;
         }
 
-        public BasicBlockAbstractAction.Builder<T> block(TagKey<Block> block) {
+        public BlockAbstactAction.Builder<T> block(TagKey<Block> block) {
             this.blocks.add(ActionEntry.of(block));
             return this;
         }
     }
 
-    public abstract static class Serializer<T extends BasicBlockAbstractAction> extends ActionSerializer<T> {
+    public abstract static class Serializer<T extends BlockAbstactAction> extends ActionSerializer<T> {
 
         @Override
         public void serialize(@NotNull JsonObject json, T value, @NotNull JsonSerializationContext serializationContext) {

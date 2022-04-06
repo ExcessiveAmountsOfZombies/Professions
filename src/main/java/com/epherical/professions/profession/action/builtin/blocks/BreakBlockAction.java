@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 
-public class BreakBlockAction extends BasicBlockAbstractAction {
+public class BreakBlockAction extends BlockAbstactAction {
 
     protected BreakBlockAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blocks) {
         super(conditions, rewards, blocks);
@@ -27,7 +27,7 @@ public class BreakBlockAction extends BasicBlockAbstractAction {
         return new Builder();
     }
 
-    public static class Serializer extends BasicBlockAbstractAction.Serializer<BreakBlockAction> {
+    public static class Serializer extends BlockAbstactAction.Serializer<BreakBlockAction> {
 
         @Override
         public BreakBlockAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
@@ -35,7 +35,7 @@ public class BreakBlockAction extends BasicBlockAbstractAction {
         }
     }
 
-    public static class Builder extends BasicBlockAbstractAction.Builder<BreakBlockAction.Builder> {
+    public static class Builder extends BlockAbstactAction.Builder<BreakBlockAction.Builder> {
 
         @Override
         protected Builder instance() {

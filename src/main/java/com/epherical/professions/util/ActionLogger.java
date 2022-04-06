@@ -5,6 +5,7 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.progression.Occupation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -15,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ActionLogger {
 
+    // TODO: bit of a bug, but if multiple occupations have the same action, the chat logger will only display 1 message.
     private static Style BORDER = Style.EMPTY.withColor(ProfessionConfig.headerBorders);
     private static Style VARIABLE = Style.EMPTY.withColor(ProfessionConfig.variables);
     private static Style DESCRIPTOR = Style.EMPTY.withColor(ProfessionConfig.descriptors);
@@ -33,6 +35,9 @@ public class ActionLogger {
     }
 
     public boolean addSubjectOfAction(Component component) {
+        if (message == null) {
+            return false;
+        }
         subject = component.copy().setStyle(VARIABLE);
         return true;
     }
@@ -53,10 +58,13 @@ public class ActionLogger {
 
 
     public void sendMessage(ServerPlayer player) {
-        if (message != null && player != null && ProfessionConfig.logAllActionsInChat) {
-            // todo: add a multiplier to the msg at some point
+        if (message != null && subject != null && player != null) {
             message.append(" ").append(money).append(" | ").append(exp);
-            player.sendMessage(message, Util.NIL_UUID);
+            if (ProfessionConfig.logInChat) {
+                player.sendMessage(message, Util.NIL_UUID);
+            } else {
+                player.sendMessage(message, ChatType.GAME_INFO, Util.NIL_UUID);
+            }
         }
     }
 

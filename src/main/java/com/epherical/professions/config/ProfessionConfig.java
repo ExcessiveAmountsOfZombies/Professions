@@ -15,6 +15,7 @@ public class ProfessionConfig {
 
     public static boolean clearProgressOnLeave = false;
     public static boolean persistBlockOwnership = true;
+    public static long paymentCoolDown = 30L;
 
     public static boolean announceLevelUps = true;
     public static int announceEveryXLevel = 0;

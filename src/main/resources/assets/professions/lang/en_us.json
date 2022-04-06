@@ -55,6 +55,8 @@
 
   "professions.command.setlevel.success": "Set the level on %s to %s for %s",
 
+  "professions.block.cooldown": "This position is on cooldown, wait %s more second(s) before trying again.",
+
   "professions.gui.join": "Join",
   "professions.gui.leave": "Leave",
   "professions.gui.info": "Info",

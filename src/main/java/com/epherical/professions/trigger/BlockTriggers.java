@@ -1,24 +1,48 @@
 package com.epherical.professions.trigger;
 
 import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.events.trigger.TriggerEvents;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.util.EnchantmentContainer;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
 import java.util.Map;
 
 public class BlockTriggers {
+
+    private static final Cache<BlockPos, Instant> cache = CacheBuilder
+            .newBuilder()
+            .expireAfterWrite(Duration.ofSeconds(30))
+            .maximumSize(5000)
+            .build();
+
 
     public static void init(ProfessionsMod mod) {
         PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
             // only ever run on the server.
             if (world instanceof ServerLevel) {
+                Instant placementTime = cache.getIfPresent(pos);
                 ProfessionContext.Builder builder = new ProfessionContext.Builder((ServerLevel) world)
                         .addRandom(world.random)
                         .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREAK_BLOCK)
@@ -26,11 +50,23 @@ public class BlockTriggers {
                         .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                         .addParameter(ProfessionParameter.THIS_BLOCKSTATE, state)
                         .addParameter(ProfessionParameter.TOOL, player.getMainHandItem());
-                RewardHandler.handleReward(builder);
+                if (placementTime != null) {
+                    Instant now = Instant.now();
+                    if (now.isAfter(placementTime)) {
+                        cache.cleanUp();
+                        RewardHandler.handleReward(builder);
+                    } else {
+                        long seconds = Duration.between(now, placementTime).get(ChronoUnit.SECONDS);
+                        sendCooldownMessage((ServerPlayer) player, seconds);
+                    }
+                } else {
+                    RewardHandler.handleReward(builder);
+                }
             }
         });
 
         TriggerEvents.PLACE_BLOCK_EVENT.register((player, state, pos) -> {
+            Instant placementTime = cache.getIfPresent(pos);
             ServerLevel level = player.getLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
@@ -38,7 +74,20 @@ public class BlockTriggers {
                     .addParameter(ProfessionParameter.BLOCKPOS, pos)
                     .addParameter(ProfessionParameter.THIS_BLOCKSTATE, state)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));
-            RewardHandler.handleReward(builder);
+            if (placementTime != null) {
+                Instant now = Instant.now();
+                if (now.isAfter(placementTime)) {
+                    cache.cleanUp();
+                    cache.put(pos, now.plus(ProfessionConfig.paymentCoolDown, ChronoUnit.SECONDS));
+                    RewardHandler.handleReward(builder);
+                } else {
+                    long seconds = Duration.between(now, placementTime).get(ChronoUnit.SECONDS);
+                    sendCooldownMessage(player, seconds);
+                }
+            } else {
+                cache.put(pos, Instant.now().plus(ProfessionConfig.paymentCoolDown, ChronoUnit.SECONDS));
+                RewardHandler.handleReward(builder);
+            }
         });
 
         TriggerEvents.TNT_DESTROY_EVENT.register((source, state) -> {
@@ -98,7 +147,16 @@ public class BlockTriggers {
             RewardHandler.handleReward(builder);
 
         });
+    }
 
-
+    private static void sendCooldownMessage(ServerPlayer player, long seconds) {
+        if (seconds < 0) {
+            seconds = 0;
+        }
+        // need bright colors in the action bar for whatever reason, otherwise would use variables/errors
+        MutableComponent message = new TranslatableComponent("This position is on cooldown, wait %s more second(s) before trying again.",
+                        new TextComponent(String.valueOf(seconds)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+        player.sendMessage(message, ChatType.GAME_INFO, Util.NIL_UUID);
     }
 }

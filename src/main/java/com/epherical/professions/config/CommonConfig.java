@@ -164,6 +164,9 @@ public class CommonConfig {
                             Default: True. When certain blocks are placed, they are registered to a player to allow them to earn experience\s
                             while not around the block. If this is set to false, any time the server is restarted, it will have to be re-opened\s
                             to give the player payouts again.""");
+            node.node("balancing").node("paymentCoolDown").set(paymentCoolDown)
+                    .comment("Default 30 seconds. This determines how long the user will have to wait before they can get paid for an action \n" +
+                            "in the same block position.");
 
             node.node("actions").node("logInChat").set(logInChat)
                     .comment("Will display every valid action in chat. Defaults to false, or rather, defaults to action bar messages instead.");
@@ -200,6 +203,7 @@ public class CommonConfig {
 
         clearProgressOnLeave = node.node("balancing").node("clearProgressOnLeave").getBoolean(clearProgressOnLeave);
         persistBlockOwnership = node.node("balancing").node("persistBlockOwnership").getBoolean(persistBlockOwnership);
+        paymentCoolDown = node.node("balancing").node("paymentCoolDown").getLong(paymentCoolDown);
 
         logInChat = node.node("actions").node("logInChat").getBoolean(logInChat);
     }

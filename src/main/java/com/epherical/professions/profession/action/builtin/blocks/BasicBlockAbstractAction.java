@@ -84,7 +84,8 @@ public abstract class BasicBlockAbstractAction extends AbstractAction {
     @Override
     public boolean test(ProfessionContext professionContext) {
         BlockState state = professionContext.getPossibleParameter(ProfessionParameter.THIS_BLOCKSTATE);
-        return state != null && getRealBlocks().contains(state.getBlock());
+        return state != null && getRealBlocks().contains(state.getBlock())
+                && professionContext.getParameter(ProfessionParameter.ACTION_LOGGER).addSubjectOfAction(state.getBlock().getName());
     }
 
     public abstract static class Builder<T extends BasicBlockAbstractAction.Builder<T>> extends AbstractAction.Builder<T> {

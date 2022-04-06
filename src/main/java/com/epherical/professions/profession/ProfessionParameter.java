@@ -3,6 +3,7 @@ package com.epherical.professions.profession;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.util.EnchantmentContainer;
+import com.epherical.professions.util.ActionLogger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +21,7 @@ public record ProfessionParameter<T>(ResourceLocation name) {
     public static final ProfessionParameter<ItemStack> ITEM_INVOLVED = create("item_involved");
     public static final ProfessionParameter<Recipe<?>> RECIPE_CRAFTED = create("recipe");
     public static final ProfessionParameter<EnchantmentContainer> ENCHANTMENT = create("enchantment");
+    public static final ProfessionParameter<ActionLogger> ACTION_LOGGER = create("action_logger");
 
 
     public static <T> ProfessionParameter<T> create(String id) {

@@ -2,7 +2,7 @@ package com.epherical.professions.trigger;
 
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.events.trigger.TriggerEvents;
-import com.epherical.professions.util.PlayerOwnable;
+import com.epherical.professions.util.mixins.PlayerOwnable;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 

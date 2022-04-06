@@ -10,7 +10,8 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
-import com.epherical.professions.util.GameProfileHelper;
+import com.epherical.professions.util.ActionLogger;
+import com.epherical.professions.util.mixins.GameProfileHelper;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -453,6 +454,7 @@ public class ProfessionsCommands {
     private int reload(CommandContext<CommandSourceStack> stack) {
         try {
             ProfessionConfig.reload();
+            ActionLogger.reloadStyles();
             stack.getSource().sendSuccess(new TranslatableComponent("professions.command.reload.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -567,7 +569,7 @@ public class ProfessionsCommands {
         if (playerArg.length() > 0) {
             ServerPlayer otherPlayer = server.getPlayerList().getPlayerByName(playerArg);
             if (otherPlayer == null) {
-                profile = ((GameProfileHelper) server.getProfileCache()).getProfileNoLookup(playerArg);
+                profile = ((GameProfileHelper) server.getProfileCache()).professions$getProfileNoLookup(playerArg);
             } else {
                 profile = otherPlayer.getGameProfile();
             }

@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -51,7 +52,9 @@ public class EnchantAction extends AbstractItemAction {
             return super.test(professionContext);
         } else {
             EnchantmentContainer container = professionContext.getPossibleParameter(ProfessionParameter.ENCHANTMENT);
-            return container != null && enchantments.contains(container);
+            return container != null && enchantments.contains(container)
+                    && professionContext.getParameter(ProfessionParameter.ACTION_LOGGER)
+                    .addSubjectOfAction(new TextComponent(container.enchantment().getDescriptionId()));
         }
     }
 

@@ -33,6 +33,7 @@ public record OccupationExperience(double expAmount) implements Reward {
     public void giveReward(ProfessionContext context, Action action, Occupation occupation) {
         // if true, player levels up.
         ProfessionalPlayer player = context.getParameter(ProfessionParameter.THIS_PLAYER);
+        context.getParameter(ProfessionParameter.ACTION_LOGGER).addExpReward(rewardChatInfo());
         if (occupation.addExp(action.modifyReward(context, this, expAmount), player)) {
             PlayerManager manager = ProfessionsMod.getInstance().getPlayerManager();
             manager.levelUp(player, occupation);

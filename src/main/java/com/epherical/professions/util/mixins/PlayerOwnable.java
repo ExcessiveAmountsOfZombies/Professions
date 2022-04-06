@@ -1,9 +1,8 @@
-package com.epherical.professions.util;
+package com.epherical.professions.util.mixins;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -19,7 +18,7 @@ public interface PlayerOwnable {
     }
 
     @Nullable
-    default Player getPlayer(Level level) {
+    default Player professions$getPlayer(Level level) {
         if (professions$getPlacedBy() != null) {
             return level.getPlayerByUUID(professions$getPlacedBy());
         }

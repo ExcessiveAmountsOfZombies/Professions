@@ -43,6 +43,7 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
             UniqueUser user = economy.getOrCreatePlayerAccount(playerID);
             if (user != null) {
                 user.depositMoney(currency, amount, "Professions Action Reward");
+                context.getParameter(ProfessionParameter.ACTION_LOGGER).addMoneyReward(rewardChatInfo());
             }
         }
     }

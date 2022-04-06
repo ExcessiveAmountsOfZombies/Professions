@@ -26,7 +26,7 @@ public class BlockTriggers {
                         .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                         .addParameter(ProfessionParameter.THIS_BLOCKSTATE, state)
                         .addParameter(ProfessionParameter.TOOL, player.getMainHandItem());
-                RewardHandler.handleReward(builder.build());
+                RewardHandler.handleReward(builder);
             }
         });
 
@@ -38,7 +38,7 @@ public class BlockTriggers {
                     .addParameter(ProfessionParameter.BLOCKPOS, pos)
                     .addParameter(ProfessionParameter.THIS_BLOCKSTATE, state)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
         });
 
         TriggerEvents.TNT_DESTROY_EVENT.register((source, state) -> {
@@ -48,7 +48,7 @@ public class BlockTriggers {
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TNT_DESTROY)
                     .addParameter(ProfessionParameter.THIS_BLOCKSTATE, state)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(source.getUUID()));
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
         });
 
         TriggerEvents.SMELT_ITEM_EVENT.register((owner, smeltedItem, recipe, blockEntity) -> {
@@ -61,7 +61,7 @@ public class BlockTriggers {
                         .addParameter(ProfessionParameter.ITEM_INVOLVED, smeltedItem)
                         .addParameter(ProfessionParameter.THIS_BLOCKSTATE, blockEntity.getBlockState())
                         .addParameter(ProfessionParameter.RECIPE_CRAFTED, recipe);
-                RewardHandler.handleReward(builder.build());
+                RewardHandler.handleReward(builder);
             }
         });
 
@@ -74,7 +74,7 @@ public class BlockTriggers {
                         .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREW_ITEM)
                         .addParameter(ProfessionParameter.ITEM_INVOLVED, brewingIngredient)
                         .addParameter(ProfessionParameter.THIS_BLOCKSTATE, blockEntity.getBlockState());
-                RewardHandler.handleReward(builder.build());
+                RewardHandler.handleReward(builder);
             }
         });
 
@@ -87,7 +87,7 @@ public class BlockTriggers {
             for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(itemEnchanted).entrySet()) {
                 builder.addParameter(ProfessionParameter.ACTION_TYPE, Actions.ENCHANT_ITEM)
                         .addParameter(ProfessionParameter.ENCHANTMENT, new EnchantmentContainer(entry.getKey(), entry.getValue()));
-                RewardHandler.handleReward(builder.build());
+                RewardHandler.handleReward(builder);
             }
 
             builder = new ProfessionContext.Builder(level)
@@ -95,7 +95,7 @@ public class BlockTriggers {
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.ENCHANT_ITEM)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, itemEnchanted);
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
 
         });
 

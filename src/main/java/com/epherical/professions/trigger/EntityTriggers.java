@@ -28,7 +28,7 @@ public class EntityTriggers {
                             .addParameter(ProfessionParameter.ENTITY, killedEntity);
                 }
             }
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
         });
 
         TriggerEvents.CATCH_FISH_EVENT.register((player, stack) -> {
@@ -38,7 +38,7 @@ public class EntityTriggers {
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.FISH_ACTION)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, stack);
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
         });
 
         TriggerEvents.CRAFT_ITEM_EVENT.register((player, stack, recipe) -> {
@@ -49,7 +49,7 @@ public class EntityTriggers {
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.CRAFTS_ITEM)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, stack)
                     .addParameter(ProfessionParameter.RECIPE_CRAFTED, recipe);
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
         });
 
         TriggerEvents.TAKE_SMELTED_ITEM_EVENT.register((player, stack) -> {
@@ -59,7 +59,7 @@ public class EntityTriggers {
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAKE_COOKED_ITEM)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, stack);
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
         });
 
         TriggerEvents.BREED_ANIMAL_EVENT.register((player, parent, partner, child) -> {
@@ -69,7 +69,7 @@ public class EntityTriggers {
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREED_ENTITY)
                     .addParameter(ProfessionParameter.ENTITY, child);
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
         });
 
         TriggerEvents.TAME_ANIMAL_EVENT.register((player, animal) -> {
@@ -79,7 +79,7 @@ public class EntityTriggers {
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAME_ENTITY)
                     .addParameter(ProfessionParameter.ENTITY, animal);
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
         });
 
         TriggerEvents.VILLAGER_TRADE_EVENT.register((player, villager, offer) -> {
@@ -90,9 +90,9 @@ public class EntityTriggers {
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.VILLAGER_TRADE)
                     .addParameter(ProfessionParameter.ENTITY, villager)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, offer.getCostA());
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
             builder.addParameter(ProfessionParameter.ITEM_INVOLVED, offer.getCostB());
-            RewardHandler.handleReward(builder.build());
+            RewardHandler.handleReward(builder);
 
         });
     }

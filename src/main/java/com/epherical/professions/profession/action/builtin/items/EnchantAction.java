@@ -67,11 +67,11 @@ public class EnchantAction extends AbstractItemAction {
 
     @Override
     public List<Component> displayInformation() {
-        List<Component> components = super.clientFriendlyInformation();
+        List<Component> components = super.displayInformation();
         Map<RewardType, Component> map = getRewardInformation();
         for (EnchantmentContainer enchant : enchantments) {
             components.add(((MutableComponent) enchant.enchantment().getFullname(enchant.level())).setStyle(
-                    Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(new TranslatableComponent(" (%s | %s & %s)",
+                    Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(new TranslatableComponent(" (%s | %s%s)",
                     map.get(Rewards.PAYMENT_REWARD),
                     map.get(Rewards.EXPERIENCE_REWARD),
                     extraRewardInformation(map))));

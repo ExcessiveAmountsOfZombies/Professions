@@ -118,9 +118,16 @@ public class CommonConfig {
                     .comment("The max amount of occupations a user can have active at a time.\n" +
                     "Default is 3, set to 0 to disable and allow any amount of occupations to be joined.");
             node.node("useBuiltinDatapack").set(useBuiltinDatapack)
-                    .comment("Default true. If you are a regular user you can ignore this. This is to provide an all in one experience \n" +
-                            "without having to download additional files. Modpack developers looking to create or rebalance their own professions \n" +
-                            "may want to disable this.");
+                    .comment("""
+                            Default true. If you are a regular user you can ignore this. This is to provide an all in one experience\s
+                            without having to download additional files. Modpack developers looking to create or rebalance their own professions\s
+                            may want to disable this.""");
+            node.node("allowCreativeModePayments").set(allowCreativeModePayments)
+                    .comment("This will allow users in creative mode to get paid or not. Defaults to false.");
+            node.node("displayXpAsPercentage").set(displayXpAsPercentage)
+                    .comment("Will display the /professions stats command either as a percentage of the way to the next level \n" +
+                            "or the xp in numbers required for the next level e.g (203/2010). Defaults to percentage.");
+
 
             // announcements
             node.node("announce").node("levelUps").set(announceLevelUps)
@@ -171,6 +178,8 @@ public class CommonConfig {
         version = node.node("version").getInt(version);
         maxOccupations = node.node("maxOccupations").getInt(maxOccupations);
         useBuiltinDatapack = node.node("useBuiltinDatapack").getBoolean(useBuiltinDatapack);
+        displayXpAsPercentage = node.node("displayXpAsPercentage").getBoolean(displayXpAsPercentage);
+        allowCreativeModePayments = node.node("allowCreativeModePayments").getBoolean(allowCreativeModePayments);
 
         announceLevelUps = node.node("announce").node("levelUps").getBoolean(announceLevelUps);
         announceEveryXLevel = node.node("announce").node("every-x-levels").getInt(announceEveryXLevel);

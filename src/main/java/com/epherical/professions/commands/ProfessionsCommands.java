@@ -319,8 +319,16 @@ public class ProfessionsCommands {
                 for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
                     double percentage = (activeOccupation.getExp() / activeOccupation.getMaxExp());
                     double bars = Math.round(percentage * 55); // how many bars should be green.
-                    MutableComponent hoverPercentage = new TextComponent((String.format("%.2f", percentage * 100))).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
-                    HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("professions.command.stats.percent", hoverPercentage));
+                    MutableComponent progression;
+                    if (ProfessionConfig.displayXpAsPercentage) {
+                        progression = new TextComponent((String.format("%.1f", percentage * 100) + "%")).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+                    } else {
+                        progression = new TranslatableComponent("%s/%s exp",
+                                new TextComponent((String.format("%.1f", activeOccupation.getExp()))).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                                new TextComponent(String.valueOf(activeOccupation.getMaxExp())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
+                    }
+                    HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_TEXT, progression);
                     MutableComponent mainComponent = new TextComponent("").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
                             .append(new TextComponent("|".repeat((int) bars)).setStyle(Style.EMPTY.withColor(ProfessionConfig.success).withHoverEvent(event)))
                             .append(new TextComponent("|".repeat((int) (55 - bars))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors).withHoverEvent(event)))

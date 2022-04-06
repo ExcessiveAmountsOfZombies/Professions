@@ -52,7 +52,7 @@ public abstract class BasicBlockAbstractAction extends AbstractAction {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
         for (Block block : getRealBlocks()) {
-            components.add(block.getName().setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(new TranslatableComponent(" (%s | %s & %s)",
+            components.add(block.getName().setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(new TranslatableComponent(" (%s | %s%s)",
                     map.get(Rewards.PAYMENT_REWARD),
                     map.get(Rewards.EXPERIENCE_REWARD),
                     extraRewardInformation(map))));

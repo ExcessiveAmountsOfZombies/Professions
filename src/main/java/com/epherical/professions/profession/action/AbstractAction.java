@@ -89,11 +89,11 @@ public abstract class AbstractAction implements Action {
         style = style.withHoverEvent(hoverEvent);
         MutableComponent mainComponent;
         if (i > 0) {
-            mainComponent = new TextComponent("More");
+            mainComponent = new TextComponent(" & More");
             style = style.withBold(true).withUnderlined(true).withColor(ProfessionConfig.moreRewards);
             mainComponent.setStyle(style);
         } else {
-            mainComponent = new TextComponent("No more").setStyle(Style.EMPTY.withColor(ProfessionConfig.noMoreRewards));
+            mainComponent = new TextComponent("").setStyle(Style.EMPTY.withColor(ProfessionConfig.noMoreRewards));
         }
         return mainComponent;
     }

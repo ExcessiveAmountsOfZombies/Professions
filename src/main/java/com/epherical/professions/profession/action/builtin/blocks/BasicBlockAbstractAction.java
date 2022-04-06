@@ -107,8 +107,8 @@ public abstract class BasicBlockAbstractAction extends AbstractAction {
         public void serialize(@NotNull JsonObject json, T value, @NotNull JsonSerializationContext serializationContext) {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
-            for (Block block : value.getRealBlocks()) {
-                array.add(Registry.BLOCK.getKey(block).toString());
+            for (ActionEntry<Block> block : value.blocks) {
+                array.addAll(block.serialize(Registry.BLOCK));
             }
             json.add("blocks", array);
         }

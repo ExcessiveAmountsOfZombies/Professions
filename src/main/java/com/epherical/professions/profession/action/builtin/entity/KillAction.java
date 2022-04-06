@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.action.builtin.entity;
 
+import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
@@ -22,11 +23,28 @@ public class KillAction extends AbstractEntityAction {
         return Actions.KILL_ENTITY;
     }
 
+    public static Builder kill() {
+        return new Builder();
+    }
+
     public static class Serializer extends AbstractEntityAction.Serializer<KillAction> {
 
         @Override
         public KillAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
             return new KillAction(conditions, rewards, deserializeEntities(object));
+        }
+    }
+
+    public static class Builder extends AbstractEntityAction.Builder<Builder> {
+
+        @Override
+        protected Builder instance() {
+            return this;
+        }
+
+        @Override
+        public Action build() {
+            return new KillAction(this.getConditions(), this.getRewards(), this.entries);
         }
     }
 }

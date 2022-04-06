@@ -24,7 +24,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -85,14 +84,28 @@ public abstract class AbstractEntityAction extends AbstractAction {
         return realEntities;
     }
 
+    public abstract static class Builder<T extends AbstractEntityAction.Builder<T>> extends AbstractAction.Builder<T> {
+        protected final List<ActionEntry<EntityType<?>>> entries = new ArrayList<>();
+
+        public Builder<T> entity(EntityType<?>... entityType) {
+            this.entries.add(ActionEntry.of(entityType));
+            return this;
+        }
+
+        public Builder<T> entity(TagKey<EntityType<?>> type) {
+            this.entries.add(ActionEntry.of(type));
+            return this;
+        }
+    }
+
     public abstract static class Serializer<T extends AbstractEntityAction> extends ActionSerializer<T> {
 
         @Override
         public void serialize(@NotNull JsonObject json, T value, @NotNull JsonSerializationContext serializationContext) {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
-            for (EntityType<?> entityType : value.getRealEntities()) {
-                array.add(Registry.ENTITY_TYPE.getKey(entityType).toString());
+            for (ActionEntry<EntityType<?>> entity : value.entities) {
+                array.addAll(entity.serialize(Registry.ENTITY_TYPE));
             }
             json.add("entities", array);
         }

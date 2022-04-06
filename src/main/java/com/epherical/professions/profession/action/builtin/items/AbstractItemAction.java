@@ -105,8 +105,8 @@ public abstract class AbstractItemAction extends AbstractAction {
         public void serialize(@NotNull JsonObject json, T value, @NotNull JsonSerializationContext serializationContext) {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
-            for (Item item : value.getRealItems()) {
-                array.add(Registry.ITEM.getKey(item).toString());
+            for (ActionEntry<Item> item : value.items) {
+                array.addAll(item.serialize(Registry.ITEM));
             }
             json.add("items", array);
         }

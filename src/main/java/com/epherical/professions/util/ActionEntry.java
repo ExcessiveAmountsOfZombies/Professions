@@ -1,5 +1,8 @@
 package com.epherical.professions.util;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -33,6 +36,14 @@ public class ActionEntry<T> {
         return values;
     }
 
+    public JsonArray serialize(Registry<T> registry) {
+        JsonArray array = new JsonArray();
+        for (Value<T> actionValue : actionValues) {
+            array.add(actionValue.serializable(registry));
+        }
+        return array;
+    }
+
     private void pullValues(Registry<T> registry) {
         if (this.values == null) {
             this.values = Arrays.stream(actionValues)
@@ -61,6 +72,8 @@ public class ActionEntry<T> {
 
     private interface Value<T> {
         Collection<T> getValues(Registry<T> registry);
+
+        String serializable(Registry<T> registry);
     }
 
     record TagEntry<T>(TagKey<T> entry) implements Value<T> {
@@ -71,6 +84,11 @@ public class ActionEntry<T> {
             registry.getTagOrEmpty(entry).forEach(tHolder -> list.add(tHolder.value()));
             return list;
         }
+
+        @Override
+        public String serializable(Registry<T> registry) {
+            return "#" + entry.location();
+        }
     }
 
     record SingleEntry<T>(T entry) implements Value<T> {
@@ -78,6 +96,11 @@ public class ActionEntry<T> {
         @Override
         public Collection<T> getValues(Registry<T> registry) {
             return Collections.singleton(entry);
+        }
+
+        @Override
+        public String serializable(Registry<T> registry) {
+            return registry.getKey(entry).toString();
         }
     }
 }

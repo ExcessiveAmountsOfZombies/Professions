@@ -15,6 +15,13 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        url = uri("https://maven.pkg.github.com/ExcessiveAmountsOfZombies/OctoEconomyApi")
+        credentials {
+            username = project.findProperty("gpr.user")
+            password = project.findProperty("gpr.key")
+        }
+    }
 }
 
 dependencies {
@@ -30,6 +37,7 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation("com.epherical.octo-economy-api:octoeconomyapi:1.0.1")
     modImplementation 'com.github.ExcessiveAmountsOfZombies:OctoEconomyApi:5137175b1c'
     modCompileOnly "curse.maven:ftb-quests-fabric-438496:3725770"
     modCompileOnly "curse.maven:ftb-library-fabric-438495:3725484"

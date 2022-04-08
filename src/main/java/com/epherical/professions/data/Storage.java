@@ -7,9 +7,9 @@ public interface Storage<Result, Key> {
     boolean hasUser(Key uuid);
 
     @Nullable
-    Result getUser(Key uuid);
+    Result getUser(@Nullable Key uuid);
 
-    Result createUser(Key uuid);
+    Result createUser(@Nullable Key uuid);
 
     void saveUser(Result result);
 

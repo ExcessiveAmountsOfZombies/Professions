@@ -44,8 +44,8 @@ public abstract class AbstractFurnaceBlockEntityOwnableMixin extends BlockEntity
 
     @Inject(method = "load", at = @At("TAIL"))
     public void onLoad(CompoundTag tag, CallbackInfo ci) {
-        if (tag.contains("pf_owid")) {
-            professions$placedBy = tag.getUUID("pf_owid");
+        if (tag.contains("professions_owid")) {
+            professions$placedBy = tag.getUUID("professions_owid");
         }
     }
 
@@ -54,10 +54,10 @@ public abstract class AbstractFurnaceBlockEntityOwnableMixin extends BlockEntity
         if (professions$placedBy != null) {
             if (ProfessionsMod.isStopping) {
                 if (ProfessionConfig.persistBlockOwnership) {
-                    tag.putUUID("pf_owid", professions$placedBy);
+                    tag.putUUID("professions_owid", professions$placedBy);
                 }
             } else {
-                tag.putUUID("pf_owid", professions$placedBy);
+                tag.putUUID("professions_owid", professions$placedBy);
             }
         }
     }

@@ -123,7 +123,7 @@ public class ProfessionsCommands {
                                 .suggests(occupationProvider)
                                 .executes(this::top)))
                 .then(Commands.literal("reload")
-                        .requires(commandSourceStack -> true)
+                        .requires(Permissions.require("professions.command.reload", 4))
                         .executes(this::reload))
                 .then(Commands.literal("fire")
                         .requires(Permissions.require("professions.command.fire", 4))

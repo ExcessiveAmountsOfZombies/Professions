@@ -34,6 +34,7 @@ public class ActionLogger {
         message = new TranslatableComponent("[%s] %s", new TextComponent("PR").setStyle(VARIABLE), occupation.getProfession().getDisplayComponent()).setStyle(BORDER);
     }
 
+    // todo: fix this, very poor design honestly
     public boolean addSubjectOfAction(Component component) {
         if (message == null) {
             return false;

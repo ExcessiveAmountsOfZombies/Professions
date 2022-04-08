@@ -4,14 +4,12 @@ import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.networking.ClientHandler;
-import com.epherical.professions.profession.progression.Occupation;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
@@ -39,10 +37,6 @@ public class ProfessionsClient implements ClientModInitializer {
                 }
 
             }
-        });
-
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            ProfessionsMod.getInstance().getProfessionLoader().clearProfessions();
         });
 
         ClientPlayNetworking.registerGlobalReceiver(ProfessionsMod.MOD_CHANNEL, ClientHandler::receivePacket);

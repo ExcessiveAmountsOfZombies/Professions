@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import org.jetbrains.annotations.Nullable;
 
 public class ActionLogger {
 
@@ -25,10 +24,11 @@ public class ActionLogger {
     private static Style EXP = Style.EMPTY.withColor(ProfessionConfig.experience);
 
     private MutableComponent message;
-    private MutableComponent subject;
 
     private Component money = new TextComponent("$0.0").setStyle(MONEY);
     private Component exp = new TextComponent("0.0xp").setStyle(EXP);
+
+    private boolean actionAdded = false;
 
 
     public void startMessage(Occupation occupation) {
@@ -36,8 +36,11 @@ public class ActionLogger {
     }
 
     public void addAction(Action action, Component component) {
-        MutableComponent type = new TranslatableComponent(action.getType().getTranslationKey()).setStyle(DESCRIPTOR);
-        message.append(" ").append(component.copy().withStyle(VARIABLE).withStyle(ChatFormatting.UNDERLINE).withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, type))));
+        if (!actionAdded) {
+            MutableComponent type = new TranslatableComponent(action.getType().getTranslationKey()).setStyle(DESCRIPTOR);
+            message.append(" ").append(component.copy().withStyle(VARIABLE).withStyle(ChatFormatting.UNDERLINE).withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, type))));
+            actionAdded = true;
+        }
     }
 
     public void addMoneyReward(Component component) {
@@ -50,7 +53,7 @@ public class ActionLogger {
 
 
     public void sendMessage(ServerPlayer player) {
-        if (message != null && subject != null && player != null) {
+        if (message != null && player != null) {
             message.append(" ").append(money).append(" | ").append(exp);
             if (ProfessionConfig.logInChat) {
                 player.sendMessage(message, Util.NIL_UUID);

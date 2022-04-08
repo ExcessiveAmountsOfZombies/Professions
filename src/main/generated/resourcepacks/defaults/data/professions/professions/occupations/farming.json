@@ -15,62 +15,7 @@
       "action": "professions:break_block",
       "conditions": [
         {
-          "condition": "professions:block_state_matches_any",
-          "properties": {
-            "age": "7"
-          }
-        }
-      ],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 1.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "no:money_found_change_me"
-        }
-      ],
-      "blocks": [
-        "minecraft:wheat",
-        "minecraft:potatoes",
-        "minecraft:carrots"
-      ]
-    },
-    {
-      "action": "professions:break_block",
-      "conditions": [
-        {
-          "condition": "professions:block_state_matches_any",
-          "properties": {
-            "age": "7"
-          }
-        }
-      ],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 1.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "no:money_found_change_me"
-        }
-      ],
-      "blocks": [
-        "#minecraft:crops"
-      ]
-    },
-    {
-      "action": "professions:break_block",
-      "conditions": [
-        {
-          "condition": "professions:block_state_matches_any",
-          "properties": {
-            "age": "3"
-          }
+          "condition": "professions:crop_fully_grown"
         }
       ],
       "rewards": [
@@ -117,37 +62,10 @@
       "action": "professions:break_block",
       "conditions": [
         {
-          "condition": "professions:block_state_matches",
-          "block": "minecraft:beetroots",
-          "properties": {
-            "age": "3"
-          }
-        }
-      ],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 1.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "no:money_found_change_me"
-        }
-      ],
-      "blocks": [
-        "minecraft:beetroots"
-      ]
-    },
-    {
-      "action": "professions:break_block",
-      "conditions": [
-        {
-          "condition": "professions:block_state_matches",
-          "block": "minecraft:sugar_cane",
-          "properties": {
-            "age": "10"
-          }
+          "condition": "professions:blockstate_int_range",
+          "min": 10,
+          "max": 15,
+          "property": "age"
         }
       ],
       "rewards": [

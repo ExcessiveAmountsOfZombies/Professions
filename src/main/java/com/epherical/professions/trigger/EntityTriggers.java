@@ -27,8 +27,8 @@ public class EntityTriggers {
                     builder.addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(entity.getUUID()))
                             .addParameter(ProfessionParameter.ENTITY, killedEntity);
                 }
+                RewardHandler.handleReward(builder);
             }
-            RewardHandler.handleReward(builder);
         });
 
         TriggerEvents.CATCH_FISH_EVENT.register((player, stack) -> {

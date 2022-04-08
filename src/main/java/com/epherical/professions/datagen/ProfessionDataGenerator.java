@@ -19,7 +19,7 @@ import com.epherical.professions.profession.action.builtin.items.SmeltItemAction
 import com.epherical.professions.profession.action.builtin.items.TakeSmeltAction;
 import com.epherical.professions.profession.action.builtin.items.TradeAction;
 import com.epherical.professions.profession.conditions.builtin.BlockStatePropertyAnyCondition;
-import com.epherical.professions.profession.conditions.builtin.BlockStatePropertyCondition;
+import com.epherical.professions.profession.conditions.builtin.FullyGrownCropCondition;
 import com.epherical.professions.profession.conditions.builtin.ToolMatcher;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.builtin.OccupationExperience;
@@ -334,26 +334,8 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
                     .addAction(Actions.BREAK_BLOCK, BreakBlockAction.breakBlock()
-                            .block(Blocks.WHEAT, Blocks.POTATOES, Blocks.CARROTS)
-                            .condition(BlockStatePropertyAnyCondition.checkProperties()
-                                    .properties(StatePropertiesPredicate.Builder.properties()
-                                            .hasProperty(BlockStateProperties.AGE_7, 7)))
-                            .reward(expReward(1))
-                            .reward(moneyReward(1))
-                            .build())
-                    .addAction(Actions.BREAK_BLOCK, BreakBlockAction.breakBlock()
                             .block(BlockTags.CROPS)
-                            .condition(BlockStatePropertyAnyCondition.checkProperties()
-                                    .properties(StatePropertiesPredicate.Builder.properties()
-                                            .hasProperty(BlockStateProperties.AGE_7, 7)))
-                            .reward(expReward(1))
-                            .reward(moneyReward(1))
-                            .build())
-                    .addAction(Actions.BREAK_BLOCK, BreakBlockAction.breakBlock()
-                            .block(BlockTags.CROPS)
-                            .condition(BlockStatePropertyAnyCondition.checkProperties()
-                                    .properties(StatePropertiesPredicate.Builder.properties()
-                                            .hasProperty(BlockStateProperties.AGE_3, 3)))
+                            .condition(FullyGrownCropCondition::new)
                             .reward(expReward(1))
                             .reward(moneyReward(1))
                             .build())
@@ -366,18 +348,7 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(moneyReward(1))
                             .build())
                     .addAction(Actions.BREAK_BLOCK, BreakBlockAction.breakBlock()
-                            .block(Blocks.BEETROOTS)
-                            .condition(BlockStatePropertyCondition.checkProperties(Blocks.BEETROOTS)
-                                    .properties(StatePropertiesPredicate.Builder.properties()
-                                            .hasProperty(BlockStateProperties.AGE_3, 3)))
-                            .reward(expReward(1))
-                            .reward(moneyReward(1))
-                            .build())
-                    .addAction(Actions.BREAK_BLOCK, BreakBlockAction.breakBlock()
                             .block(Blocks.SUGAR_CANE)
-                            .condition(BlockStatePropertyCondition.checkProperties(Blocks.SUGAR_CANE)
-                                    .properties(StatePropertiesPredicate.Builder.properties()
-                                            .hasProperty(SugarCaneBlock.AGE, 10)))
                             .reward(expReward(0.75))
                             .reward(moneyReward(0.75))
                             .build())

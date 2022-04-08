@@ -13,7 +13,6 @@ import com.epherical.professions.profession.conditions.ActionConditions;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -25,8 +24,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -117,13 +114,5 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
 
     public static JsonElement serialize(Profession profession) {
         return GSON.toJsonTree(profession);
-    }
-
-    public void loadProfessionsFromServer(Iterable<Profession> professions) {
-        ImmutableMap.Builder<ResourceLocation, Profession> builder = ImmutableMap.builder();
-        for (Profession profession : professions) {
-            builder.put(profession.getKey(), profession);
-        }
-        this.professionMap = builder.build();
     }
 }

@@ -44,6 +44,56 @@
         {
           "condition": "professions:block_state_matches_any",
           "properties": {
+            "age": "7"
+          }
+        }
+      ],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "blocks": [
+        "#minecraft:crops"
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "conditions": [
+        {
+          "condition": "professions:block_state_matches_any",
+          "properties": {
+            "age": "3"
+          }
+        }
+      ],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "no:money_found_change_me"
+        }
+      ],
+      "blocks": [
+        "#minecraft:crops"
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "conditions": [
+        {
+          "condition": "professions:block_state_matches_any",
+          "properties": {
             "age": "2"
           }
         }

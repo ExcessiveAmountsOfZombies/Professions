@@ -46,8 +46,8 @@ public abstract class AbstractEntityAction extends AbstractAction {
     @Override
     public boolean test(ProfessionContext professionContext) {
         Entity entity = professionContext.getPossibleParameter(ProfessionParameter.ENTITY);
-        return entity != null && getRealEntities().contains(entity.getType())
-                && professionContext.getParameter(ProfessionParameter.ACTION_LOGGER).addSubjectOfAction(entity.getType().getDescription());
+        logAction(professionContext, entity != null ? entity.getType().getDescription() : Component.nullToEmpty(""));
+        return entity != null && getRealEntities().contains(entity.getType());
     }
 
     @Override

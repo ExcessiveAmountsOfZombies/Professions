@@ -1,6 +1,7 @@
 package com.epherical.professions.data;
 
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.profession.progression.NullOccupation;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.ProfessionalPlayerImpl;
 import com.google.gson.Gson;
@@ -20,6 +21,7 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
             .setPrettyPrinting().disableHtmlEscaping()
             .registerTypeAdapter(ProfessionalPlayerImpl.class, new ProfessionalPlayerImpl.Serializer())
             .registerTypeAdapter(Occupation.class, new Occupation.Serializer())
+            .registerTypeAdapter(NullOccupation.class, new NullOccupation.Serializer())
             .create();
 
     private final Path basePath;

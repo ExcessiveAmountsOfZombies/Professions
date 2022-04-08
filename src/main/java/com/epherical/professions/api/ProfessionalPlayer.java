@@ -20,7 +20,7 @@ public interface ProfessionalPlayer {
 
     void setPlayer(ServerPlayer player);
 
-    void handleAction(ProfessionContext context);
+    void handleAction(ProfessionContext context, ServerPlayer player);
 
     /**
      * Manually save the player using an indicated storage method.

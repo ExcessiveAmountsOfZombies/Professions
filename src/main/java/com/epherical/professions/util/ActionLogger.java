@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Nullable;
 
 public class ActionLogger {
 
@@ -34,19 +35,9 @@ public class ActionLogger {
         message = new TranslatableComponent("[%s] %s", new TextComponent("PR").setStyle(VARIABLE), occupation.getProfession().getDisplayComponent()).setStyle(BORDER);
     }
 
-    // todo: fix this, very poor design honestly
-    public boolean addSubjectOfAction(Component component) {
-        if (message == null) {
-            return false;
-        }
-        subject = component.copy().setStyle(VARIABLE);
-        return true;
-    }
-
-    public void addAction(Action action) {
-        MutableComponent component = new TranslatableComponent(action.getType().getTranslationKey()).setStyle(DESCRIPTOR);
-        message.append(" ").append(subject.withStyle(ChatFormatting.UNDERLINE).withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component))))
-                        .append(" ->");
+    public void addAction(Action action, Component component) {
+        MutableComponent type = new TranslatableComponent(action.getType().getTranslationKey()).setStyle(DESCRIPTOR);
+        message.append(" ").append(component.copy().withStyle(VARIABLE).withStyle(ChatFormatting.UNDERLINE).withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, type))));
     }
 
     public void addMoneyReward(Component component) {

@@ -3,11 +3,8 @@ package com.epherical.professions.profession.rewards;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.progression.Occupation;
-import com.epherical.professions.profession.rewards.builtin.OccupationExperience;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 public interface Reward {
     RewardType getType();

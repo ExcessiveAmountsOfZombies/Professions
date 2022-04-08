@@ -2,6 +2,7 @@ package com.epherical.professions.profession.action;
 
 
 import com.epherical.professions.profession.ProfessionContext;
+import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import net.minecraft.network.chat.Component;
@@ -13,7 +14,9 @@ public interface Action extends Predicate<ProfessionContext> {
 
     ActionType getType();
 
-    void handleRewards(ProfessionContext context, Occupation player);
+    boolean handleAction(ProfessionContext context, Occupation player);
+
+    void giveRewards(ProfessionContext context, Occupation occupation);
 
     List<Component> displayInformation();
 
@@ -23,6 +26,10 @@ public interface Action extends Predicate<ProfessionContext> {
      * Called after it has already been shown the action is successful.
      */
     double modifyReward(ProfessionContext context, Reward reward, double base);
+
+    default void logAction(ProfessionContext context, Component component) {
+        context.getParameter(ProfessionParameter.ACTION_LOGGER).addAction(this, component);
+    }
 
     @FunctionalInterface
     interface Builder {

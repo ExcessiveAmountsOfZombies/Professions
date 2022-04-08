@@ -8,6 +8,7 @@ import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.util.ActionLogger;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonDeserializationContext;
@@ -63,15 +64,19 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     }
 
     @Override
-    public void handleAction(ProfessionContext context) {
+    public void handleAction(ProfessionContext context, ServerPlayer player) {
         OccupationEvents.BEFORE_ACTION_HANDLED_EVENT.invoker().onHandleAction(context, this);
         for (Occupation occupation : occupations) {
             if (occupation.isActive()) {
                 Collection<Action> actions = occupation.getProfession().getActions(context.getParameter(ProfessionParameter.ACTION_TYPE));
                 if (actions != null && !actions.isEmpty()) {
-                    context.getParameter(ProfessionParameter.ACTION_LOGGER).startMessage(occupation);
+                    ActionLogger logger = context.getParameter(ProfessionParameter.ACTION_LOGGER);
+                    logger.startMessage(occupation);
                     for (Action action : actions) {
-                        action.handleRewards(context, occupation);
+                        if (action.handleAction(context, occupation)) {
+                            action.giveRewards(context, occupation);
+                            logger.sendMessage(player);
+                        }
                     }
                 }
             }

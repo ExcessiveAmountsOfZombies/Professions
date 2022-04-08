@@ -9,6 +9,8 @@ import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.epherical.professions.util.ActionEntry;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -31,6 +33,7 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class BlockAbstactAction extends AbstractAction {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -80,8 +83,8 @@ public abstract class BlockAbstactAction extends AbstractAction {
     @Override
     public boolean test(ProfessionContext professionContext) {
         BlockState state = professionContext.getPossibleParameter(ProfessionParameter.THIS_BLOCKSTATE);
-        return state != null && getRealBlocks().contains(state.getBlock())
-                && professionContext.getParameter(ProfessionParameter.ACTION_LOGGER).addSubjectOfAction(state.getBlock().getName());
+        logAction(professionContext, state != null ? state.getBlock().getName() : Component.nullToEmpty(""));
+        return state != null && getRealBlocks().contains(state.getBlock());
     }
 
     public abstract static class Builder<T extends BlockAbstactAction.Builder<T>> extends AbstractAction.Builder<T> {

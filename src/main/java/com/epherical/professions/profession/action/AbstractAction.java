@@ -40,11 +40,8 @@ public abstract class AbstractAction implements Action {
     }
 
     @Override
-    public final void handleRewards(ProfessionContext context, Occupation occupation) {
-        if (this.predicate.test(context) && test(context)) {
-            context.getParameter(ProfessionParameter.ACTION_LOGGER).addAction(this);
-            giveRewards(context, occupation);
-        }
+    public final boolean handleAction(ProfessionContext context, Occupation occupation) {
+        return this.predicate.test(context) && test(context);
     }
 
     public abstract boolean test(ProfessionContext professionContext);

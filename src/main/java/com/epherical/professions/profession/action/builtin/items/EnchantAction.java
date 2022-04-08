@@ -52,9 +52,8 @@ public class EnchantAction extends AbstractItemAction {
             return super.test(professionContext);
         } else {
             EnchantmentContainer container = professionContext.getPossibleParameter(ProfessionParameter.ENCHANTMENT);
-            return container != null && enchantments.contains(container)
-                    && professionContext.getParameter(ProfessionParameter.ACTION_LOGGER)
-                    .addSubjectOfAction(new TextComponent(container.enchantment().getDescriptionId()));
+            logAction(professionContext, container != null ? new TextComponent(container.enchantment().getDescriptionId()) : Component.nullToEmpty(""));
+            return container != null && enchantments.contains(container);
         }
     }
 

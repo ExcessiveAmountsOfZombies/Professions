@@ -1,6 +1,5 @@
 package com.epherical.professions.profession.progression;
 
-import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.Profession;
@@ -11,9 +10,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.mojang.logging.LogUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
+import org.slf4j.Logger;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class Occupation {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final Profession profession;
     private double exp;
     private int level;
@@ -144,10 +146,15 @@ public class Occupation {
         @Override
         public Occupation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject object = json.getAsJsonObject();
-            Profession profession = ProfessionsMod.getInstance().getProfessionLoader().getProfession(new ResourceLocation(GsonHelper.getAsString(object, "prof")));
+            String id = GsonHelper.getAsString(object, "prof");
+            Profession profession = ProfessionsMod.getInstance().getProfessionLoader().getProfession(new ResourceLocation(id));
             double exp = GsonHelper.getAsInt(object, "exp");
             int level = GsonHelper.getAsInt(object, "lvl");
             OccupationSlot active = OccupationSlot.valueOf(GsonHelper.getAsString(object, "slot").toUpperCase(Locale.ROOT));
+            if (profession == null) {
+                LOGGER.warn("Could not find profession {}. Will load the profession but it can't be interacted with.", id);
+                return new NullOccupation(GsonHelper.getAsString(object, "prof"), exp, level, active);
+            }
             return new Occupation(profession, exp, level, active);
         }
 

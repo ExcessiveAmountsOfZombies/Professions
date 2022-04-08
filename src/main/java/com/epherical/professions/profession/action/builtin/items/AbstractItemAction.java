@@ -47,8 +47,8 @@ public abstract class AbstractItemAction extends AbstractAction {
     @Override
     public boolean test(ProfessionContext professionContext) {
         ItemStack item = professionContext.getPossibleParameter(ProfessionParameter.ITEM_INVOLVED);
-        return item != null && !item.isEmpty() && getRealItems().contains(item.getItem())
-                && professionContext.getParameter(ProfessionParameter.ACTION_LOGGER).addSubjectOfAction(item.getDisplayName());
+        logAction(professionContext, item != null ? item.getDisplayName() : Component.nullToEmpty(""));
+        return item != null && !item.isEmpty() && getRealItems().contains(item.getItem());
     }
 
     @Override

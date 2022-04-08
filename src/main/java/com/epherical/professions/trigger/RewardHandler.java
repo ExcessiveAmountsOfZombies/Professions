@@ -19,7 +19,7 @@ public class RewardHandler {
             return;
         }
 
-        pPlayer.handleAction(context);
+        pPlayer.handleAction(context, player);
         context.getParameter(ProfessionParameter.ACTION_LOGGER).sendMessage(player);
     }
 }

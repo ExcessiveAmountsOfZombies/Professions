@@ -18,7 +18,7 @@
         {
           "reward": "professions:payment",
           "amount": 8.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",
@@ -41,7 +41,7 @@
         {
           "reward": "professions:payment",
           "amount": 12.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",
@@ -63,7 +63,7 @@
         {
           "reward": "professions:payment",
           "amount": 15.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",
@@ -85,7 +85,7 @@
         {
           "reward": "professions:payment",
           "amount": 100.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",
@@ -103,7 +103,7 @@
         {
           "reward": "professions:payment",
           "amount": 600.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",
@@ -121,7 +121,7 @@
         {
           "reward": "professions:payment",
           "amount": 15.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",

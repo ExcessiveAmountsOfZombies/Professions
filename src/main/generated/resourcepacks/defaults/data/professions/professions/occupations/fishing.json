@@ -18,7 +18,7 @@
         {
           "reward": "professions:payment",
           "amount": 25.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",

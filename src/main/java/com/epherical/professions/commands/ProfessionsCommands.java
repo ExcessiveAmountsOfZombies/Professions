@@ -258,7 +258,7 @@ public class ProfessionsCommands {
             int messages = components.size();
             int messagesPerPage = 12;
             int maxPage = Math.max(messages / messagesPerPage, 1);
-            maxPage = messages % messagesPerPage != 0 ? maxPage + 1 : maxPage;
+            maxPage = (messages % messagesPerPage != 0) && messages > messagesPerPage ? maxPage + 1 : maxPage;
             // =-=-=| Break Block |=-=-=
             // =-=-=| Prev curPage/maxPage Next |=-=-=
             int begin = page == 1 ? 0 : Math.min(messages, ((page -1) * messagesPerPage));

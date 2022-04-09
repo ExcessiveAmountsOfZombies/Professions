@@ -41,6 +41,15 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
         if (economy != null) {
             UUID playerID = context.getParameter(ProfessionParameter.THIS_PLAYER).getUuid();
             UniqueUser user = economy.getOrCreatePlayerAccount(playerID);
+            Currency currency = this.currency;
+            if (ProfessionConfig.overrideCurrencyID) {
+                currency = economy.getCurrency(new ResourceLocation(ProfessionConfig.overriddenCurrencyID));
+                if (currency == null) {
+                    LOGGER.warn("You overrode the currency in the datapack, but an override currency could not be found! If this was a mistake, go in the config");
+                    LOGGER.warn("And change 'overrideCurrencyID' to false!");
+                    throw new RuntimeException("payment could not be processed.");
+                }
+            }
             if (user != null) {
                 if (amount > 0) {
                     user.depositMoney(currency, amount, "Professions Action Reward");
@@ -69,7 +78,7 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
             if (value.currency != null) {
                 json.addProperty("currency", value.currency.getIdentity());
             } else {
-                json.addProperty("currency", "no:money_found_change_me");
+                json.addProperty("currency", "eights_economy:dollars");
             }
         }
 
@@ -81,7 +90,7 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
                 String currencyString = GsonHelper.getAsString(json, "currency");
                 currency = ProfessionsMod.getEconomy().getCurrency(new ResourceLocation(currencyString));
                 if (currency == null) {
-                    LOGGER.warn("PaymentReward used was a null currency {}. Using default currency of {}", currencyString, ProfessionsMod.getEconomy().getDefaultCurrency());
+                    LOGGER.warn("PaymentReward used was a null currency {}. Using default currency of {}", currencyString, ProfessionsMod.getEconomy().getDefaultCurrency().getIdentity());
                     currency = ProfessionsMod.getEconomy().getDefaultCurrency();
                 }
             }

@@ -22,7 +22,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -58,7 +58,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.3,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -83,7 +83,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.5,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -111,7 +111,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.25,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -133,7 +133,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.5,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -162,7 +162,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.3,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -215,7 +215,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.3,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -233,7 +233,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [

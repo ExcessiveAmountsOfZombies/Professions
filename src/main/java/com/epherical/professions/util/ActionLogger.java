@@ -32,7 +32,9 @@ public class ActionLogger {
 
 
     public void startMessage(Occupation occupation) {
-        message = new TranslatableComponent("[%s] %s", new TextComponent("PR").setStyle(VARIABLE), occupation.getProfession().getDisplayComponent()).setStyle(BORDER);
+        if (!actionAdded) {
+            message = new TranslatableComponent("[%s] %s", new TextComponent("PR").setStyle(VARIABLE), occupation.getProfession().getDisplayComponent()).setStyle(BORDER);
+        }
     }
 
     public void addAction(Action action, Component component) {

@@ -22,7 +22,7 @@
         {
           "reward": "professions:payment",
           "amount": 0.5,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -40,7 +40,7 @@
         {
           "reward": "professions:payment",
           "amount": 0.65,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -59,7 +59,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -77,7 +77,7 @@
         {
           "reward": "professions:payment",
           "amount": 0.85,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -95,7 +95,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -113,7 +113,7 @@
         {
           "reward": "professions:payment",
           "amount": 0.25,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -131,7 +131,7 @@
         {
           "reward": "professions:payment",
           "amount": 5.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -151,7 +151,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -169,7 +169,7 @@
         {
           "reward": "professions:payment",
           "amount": 0.5,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -189,7 +189,7 @@
         {
           "reward": "professions:payment",
           "amount": 2.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [

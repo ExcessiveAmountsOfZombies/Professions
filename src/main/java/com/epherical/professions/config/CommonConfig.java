@@ -125,6 +125,13 @@ public class CommonConfig {
                     .comment("Will display the /professions stats command either as a percentage of the way to the next level \n" +
                             "or the xp in numbers required for the next level e.g (203/2010). Defaults to percentage.");
 
+            node.node("currency").node("overrideCurrencyID").set(overrideCurrencyID)
+                    .comment("If you want, you can set this to true and it will override\n" +
+                    "the currency in the datapack to be whatever is set in 'overridenCurrencyID'");
+            node.node("currency").node("overriddenCurrencyID").set(overriddenCurrencyID)
+                    .comment("By default this is eights_economy:dollars, the default currency in EightsEconomyP. If you have a different\n" +
+                            "currency you want to use, do <namespace>:<path> if you know what it is.");
+
 
             // announcements
             node.node("announce").node("levelUps").set(announceLevelUps)
@@ -184,6 +191,8 @@ public class CommonConfig {
         displayXpAsPercentage = node.node("displayXpAsPercentage").getBoolean(displayXpAsPercentage);
         allowCreativeModePayments = node.node("allowCreativeModePayments").getBoolean(allowCreativeModePayments);
 
+        overrideCurrencyID = node.node("currency").node("overrideCurrencyID").getBoolean(overrideCurrencyID);
+        overriddenCurrencyID = node.node("currency").node("overridenCurrencyID").getString(overriddenCurrencyID);
 
         announceLevelUps = node.node("announce").node("levelUps").getBoolean(announceLevelUps);
         announceEveryXLevel = node.node("announce").node("every-x-levels").getInt(announceEveryXLevel);

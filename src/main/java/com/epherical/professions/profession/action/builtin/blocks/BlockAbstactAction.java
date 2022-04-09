@@ -120,7 +120,6 @@ public abstract class BlockAbstactAction extends AbstractAction {
                 String blockID = element.getAsString();
                 if (blockID.startsWith("#")) {
                     TagKey<Block> blockTagKey = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(blockID.substring(1)));
-                    // TODO: first load wont have any tags loaded, so we'll have to fix this somehow.
                     blocks.add(ActionEntry.of(blockTagKey));
                 } else {
                     Registry.BLOCK.getOptional(new ResourceLocation(blockID)).ifPresentOrElse(

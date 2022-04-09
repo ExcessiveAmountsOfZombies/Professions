@@ -22,7 +22,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [

@@ -26,7 +26,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -51,7 +51,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -60,14 +60,7 @@
     },
     {
       "action": "professions:break_block",
-      "conditions": [
-        {
-          "condition": "professions:blockstate_int_range",
-          "min": 10,
-          "max": 15,
-          "property": "age"
-        }
-      ],
+      "conditions": [],
       "rewards": [
         {
           "reward": "professions:occupation_exp",
@@ -76,7 +69,7 @@
         {
           "reward": "professions:payment",
           "amount": 0.75,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -94,7 +87,7 @@
         {
           "reward": "professions:payment",
           "amount": 1.3,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [
@@ -109,7 +102,7 @@
         {
           "reward": "professions:payment",
           "amount": 0.85,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",
@@ -132,7 +125,7 @@
         {
           "reward": "professions:payment",
           "amount": 5.0,
-          "currency": "no:money_found_change_me"
+          "currency": "eights_economy:dollars"
         }
       ],
       "entities": [

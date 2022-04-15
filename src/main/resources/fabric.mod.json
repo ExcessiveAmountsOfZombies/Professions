@@ -7,9 +7,14 @@
   "authors": [
     "Thonk"
   ],
-  "contact": {},
+  "contact": {
+    "sources": "https://github.com/ExcessiveAmountsOfZombies/Professions",
+    "issues": "https://github.com/ExcessiveAmountsOfZombies/Professions/issues",
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/professions-fabric",
+    "irc": "https://discord.gg/GZjtAn3F6W"
+  },
   "license": "LGPL-3.0",
-  "icon": "assets/Professions/icon.png",
+  "icon": "assets/professions/icon.png",
   "environment": "*",
   "entrypoints": {
     "fabric-datagen": [

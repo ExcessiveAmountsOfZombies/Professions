@@ -76,6 +76,11 @@ public abstract class AbstractItemAction extends AbstractAction {
         return components;
     }
 
+    @Override
+    public boolean internalCondition(ProfessionContext context) {
+        return true;
+    }
+
     protected List<Item> getRealItems() {
         if (realItems == null) {
             realItems = new ArrayList<>();

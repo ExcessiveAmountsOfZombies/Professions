@@ -51,6 +51,11 @@ public abstract class AbstractEntityAction extends AbstractAction {
     }
 
     @Override
+    public boolean internalCondition(ProfessionContext context) {
+        return true;
+    }
+
+    @Override
     public List<Component> displayInformation() {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();

@@ -9,19 +9,25 @@ import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.epherical.professions.util.ActionEntry;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
@@ -30,16 +36,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public abstract class BlockAbstactAction extends AbstractAction {
     private static final Logger LOGGER = LogUtils.getLogger();
     protected final List<ActionEntry<Block>> blocks;
     @Nullable
     protected List<Block> realBlocks;
+
+    protected static final Cache<BlockPos, Instant> cache = CacheBuilder
+            .newBuilder()
+            .expireAfterWrite(Duration.ofSeconds(30))
+            .maximumSize(5000)
+            .build();
 
     protected BlockAbstactAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blockList) {
         super(conditions, rewards);
@@ -85,6 +99,34 @@ public abstract class BlockAbstactAction extends AbstractAction {
         BlockState state = professionContext.getPossibleParameter(ProfessionParameter.THIS_BLOCKSTATE);
         logAction(professionContext, state != null ? state.getBlock().getName() : Component.nullToEmpty(""));
         return state != null && getRealBlocks().contains(state.getBlock());
+    }
+
+    @Override
+    public boolean internalCondition(ProfessionContext context) {
+        Instant placementTime = cache.getIfPresent(context.getParameter(ProfessionParameter.BLOCKPOS));
+        if (placementTime != null) {
+            Instant now = Instant.now();
+            if (now.isAfter(placementTime)) {
+                cache.cleanUp();
+                return true;
+            } else {
+                long seconds = Duration.between(now, placementTime).get(ChronoUnit.SECONDS);
+                sendCooldownMessage(context.getParameter(ProfessionParameter.THIS_PLAYER).getPlayer(), seconds);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void sendCooldownMessage(ServerPlayer player, long seconds) {
+        if (seconds < 0) {
+            seconds = 0;
+        }
+        // need bright colors in the action bar for whatever reason, otherwise would use variables/errors
+        MutableComponent message = new TranslatableComponent("professions.block.cooldown",
+                new TextComponent(String.valueOf(seconds)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+        player.sendMessage(message, ChatType.GAME_INFO, Util.NIL_UUID);
     }
 
     public abstract static class Builder<T extends BlockAbstactAction.Builder<T>> extends AbstractAction.Builder<T> {

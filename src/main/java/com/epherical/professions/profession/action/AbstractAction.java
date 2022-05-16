@@ -41,10 +41,17 @@ public abstract class AbstractAction implements Action {
 
     @Override
     public final boolean handleAction(ProfessionContext context, Occupation occupation) {
-        return this.predicate.test(context) && test(context);
+        return this.predicate.test(context) && test(context) && internalCondition(context);
     }
 
     public abstract boolean test(ProfessionContext professionContext);
+
+    /**
+     * Any type of internal condition that must be met, this is meant as a system that is not datapackable, but could have config options.
+     * @param context context to be passed
+     * @return true if it passes, false otherwise.
+     */
+    public abstract boolean internalCondition(ProfessionContext context);
 
     public final void giveRewards(ProfessionContext context, Occupation occupation) {
         for (Reward reward : rewards) {

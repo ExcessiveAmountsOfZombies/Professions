@@ -1,5 +1,8 @@
 package com.epherical.professions.profession.action.builtin.blocks;
 
+import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.profession.ProfessionContext;
+import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
@@ -10,6 +13,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.Block;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class PlaceBlockAction extends BlockAbstactAction {
@@ -26,6 +31,15 @@ public class PlaceBlockAction extends BlockAbstactAction {
 
     public static PlaceBlockAction.Builder place() {
         return new PlaceBlockAction.Builder();
+    }
+
+    @Override
+    public boolean internalCondition(ProfessionContext context) {
+        if (super.internalCondition(context)) {
+            cache.put(context.getParameter(ProfessionParameter.BLOCKPOS), Instant.now().plus(ProfessionConfig.paymentCoolDown, ChronoUnit.SECONDS));
+            return true;
+        }
+        return false;
     }
 
     public static class Serializer extends BlockAbstactAction.Serializer<PlaceBlockAction> {

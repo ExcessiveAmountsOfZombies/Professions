@@ -1,7 +1,7 @@
 package com.epherical.professions.networking;
 
+import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionConstants;
-import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
@@ -16,7 +16,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -74,25 +73,25 @@ public class ClientHandler {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
             buf.writeEnum(CommandButtons.JOIN);
-            ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+            ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
         });
         buttonSenders.put(CommandButtons.LEAVE, () -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
             buf.writeEnum(CommandButtons.LEAVE);
-            ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+            ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
         });
         buttonSenders.put(CommandButtons.INFO, () -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
             buf.writeEnum(CommandButtons.INFO);
-            ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+            ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
         });
         buttonSenders.put(CommandButtons.TOP, () -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
             buf.writeEnum(CommandButtons.TOP);
-            ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+            ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
         });
     }
 
@@ -139,28 +138,28 @@ public class ClientHandler {
     public static void sendOccupationPacket() {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeResourceLocation(ProfessionConstants.OPEN_UI_REQUEST);
-        ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+        ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
     public static void attemptJoinPacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeResourceLocation(ProfessionConstants.JOIN_BUTTON_REQUEST);
         buf.writeResourceLocation(location);
-        ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+        ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
     public static void attemptLeavePacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeResourceLocation(ProfessionConstants.LEAVE_BUTTON_REQUEST);
         buf.writeResourceLocation(location);
-        ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+        ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
     public static void attemptInfoPacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeResourceLocation(ProfessionConstants.INFO_BUTTON_REQUEST);
         buf.writeResourceLocation(location);
-        ClientPlayNetworking.send(ProfessionsMod.MOD_CHANNEL, buf);
+        ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
     public interface CommandButtonHandler {

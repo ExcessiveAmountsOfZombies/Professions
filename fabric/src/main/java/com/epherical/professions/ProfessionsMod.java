@@ -16,7 +16,6 @@ import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
 import com.epherical.professions.trigger.UtilityListener;
-import com.epherical.professions.util.ActionLogger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -33,8 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public class ProfessionsMod implements ModInitializer {
-    public static final String MOD_ID = "professions";
-    public static final ResourceLocation MOD_CHANNEL = new ResourceLocation(MOD_ID, "data");
 
     private static ProfessionsMod mod;
     private ProfessionListener listener;

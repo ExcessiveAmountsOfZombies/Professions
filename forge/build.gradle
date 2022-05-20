@@ -76,7 +76,7 @@ minecraft {
 }
 
 processResources {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.processResources.dependsOn(project(":common").tasks.processResources)

@@ -15,4 +15,13 @@ subprojects {
 
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+
+    repositories {
+        mavenCentral()
+        maven { url "https://repo.spongepowered.org/repository/maven-public/"}
+    }
+
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
 }

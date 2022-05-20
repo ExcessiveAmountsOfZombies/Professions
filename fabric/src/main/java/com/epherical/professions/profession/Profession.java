@@ -1,6 +1,7 @@
 package com.epherical.professions.profession;
 
 import com.epherical.org.mbertoli.jfep.Parser;
+import com.epherical.professions.FabricConstants;
 import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.action.Action;
@@ -151,7 +152,7 @@ public class Profession {
     }
 
     public static void toNetwork(FriendlyByteBuf buf, Profession profession) {
-        buf.writeResourceLocation(ProfessionConstants.PROFESSION_SERIALIZER.getKey(profession.getSerializer()));
+        buf.writeResourceLocation(FabricConstants.PROFESSION_SERIALIZER.getKey(profession.getSerializer()));
         profession.getSerializer().toClient(buf, profession);
     }
 
@@ -167,7 +168,7 @@ public class Profession {
         List<Profession> professions = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             ResourceLocation serializer = buf.readResourceLocation();
-            Profession profession = ProfessionConstants.PROFESSION_SERIALIZER.getOptional(serializer).orElseThrow(()
+            Profession profession = FabricConstants.PROFESSION_SERIALIZER.getOptional(serializer).orElseThrow(()
                     -> new IllegalArgumentException("Unknown profession serializer " + serializer)).fromServer(buf);
             professions.add(profession);
         }
@@ -198,7 +199,7 @@ public class Profession {
         @Override
         public JsonElement serialize(Profession src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
-            object.addProperty("type", ProfessionConstants.PROFESSION_SERIALIZER.getKey(ProfessionSerializer.DEFAULT_PROFESSION).toString());
+            object.addProperty("type", FabricConstants.PROFESSION_SERIALIZER.getKey(ProfessionSerializer.DEFAULT_PROFESSION).toString());
             object.addProperty("color", src.color.serialize());
             object.addProperty("descriptionColor", src.descriptionColor.serialize());
             JsonArray array = new JsonArray();

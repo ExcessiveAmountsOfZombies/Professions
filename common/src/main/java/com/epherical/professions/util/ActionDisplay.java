@@ -23,7 +23,6 @@ public class ActionDisplay {
         }
     }
 
-    @Environment(EnvType.CLIENT)
     public ActionDisplay(Component header, List<Component> actions) {
         // dumb way to avoid erasure
         this.header = header;
@@ -44,7 +43,6 @@ public class ActionDisplay {
         actionInformation.forEach(buf::writeComponent);
     }
 
-    @Environment(EnvType.CLIENT)
     public static ActionDisplay fromNetwork(FriendlyByteBuf buf) {
         int size = buf.readVarInt() - 1;
         Component header = buf.readComponent();

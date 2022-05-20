@@ -1,7 +1,7 @@
 package com.epherical.professions.profession;
 
-import com.epherical.professions.ProfessionConstants;
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.Constants;
+import com.epherical.professions.FabricConstants;
 import com.epherical.professions.profession.progression.Occupation;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface ProfessionSerializer<T extends Profession> extends JsonDeserializer<T>, JsonSerializer<T> {
-    ProfessionSerializer<Profession> DEFAULT_PROFESSION = registerSerializer(ProfessionsMod.modID("default"), new Profession.Serializer());
+    ProfessionSerializer<Profession> DEFAULT_PROFESSION = registerSerializer(Constants.modID("default"), new Profession.Serializer());
 
     T fromServer(FriendlyByteBuf buf);
 
@@ -29,7 +29,7 @@ public interface ProfessionSerializer<T extends Profession> extends JsonDeserial
     Class<T> getType();
 
     static <S extends ProfessionSerializer<T>, T extends Profession> S registerSerializer(ResourceLocation id, S serializer) {
-        return Registry.register(ProfessionConstants.PROFESSION_SERIALIZER, id, serializer);
+        return Registry.register(FabricConstants.PROFESSION_SERIALIZER, id, serializer);
     }
 
     @Environment(EnvType.CLIENT)
@@ -38,7 +38,7 @@ public interface ProfessionSerializer<T extends Profession> extends JsonDeserial
         List<Occupation> occupations = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             ResourceLocation serializer = buf.readResourceLocation();
-            Profession profession = ProfessionConstants.PROFESSION_SERIALIZER.getOptional(serializer).orElseThrow(() -> {
+            Profession profession = FabricConstants.PROFESSION_SERIALIZER.getOptional(serializer).orElseThrow(() -> {
                 return new IllegalArgumentException("Unknown profession serializer " + serializer);
             }).fromServer(buf);
             int level = buf.readVarInt();

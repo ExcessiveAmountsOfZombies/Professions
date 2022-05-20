@@ -1,8 +1,6 @@
 package com.epherical.professions.util;
 
 import com.epherical.professions.profession.action.Action;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 

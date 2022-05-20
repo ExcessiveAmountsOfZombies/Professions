@@ -157,7 +157,7 @@ public class OccupationScreen<T> extends Screen {
         List<ProfessionsListingWidget.AbstractEntry> entries = new ArrayList<>();
         for (Profession profession : professions) {
             switch (command) {
-                case CommandButtons.JOIN, CommandButtons.LEAVE, CommandButtons.INFO -> entries.add(new ProfessionsListingWidget.ProfessionEntry(screen, screen.list, minecraft, profession));
+                case JOIN, LEAVE, INFO -> entries.add(new ProfessionsListingWidget.ProfessionEntry(screen, screen.list, minecraft, profession));
             }
 
         }

@@ -13,6 +13,5 @@ pluginManagement {
 }
 rootProject.name = "professions"
 
-include 'common'
 include 'fabric'
 include 'forge'

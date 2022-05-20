@@ -5,7 +5,6 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
-buildDir = rootProject.buildDir
 archivesBaseName = archives_base_name
 
 repositories {
@@ -37,6 +36,10 @@ dependencies {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-1.18.1:2021.12.19")
     }
+    println getRootProject().name
+    shade(getRootProject())
+    compileOnly(getRootProject())
+    implementation(getRootProject())
     modImplementation(include("org.spongepowered:configurate-hocon:4.1.2"))
     modImplementation(include("org.spongepowered:configurate-core:4.1.2"))
     include("com.typesafe:config:1.4.1")
@@ -50,10 +53,6 @@ dependencies {
     modImplementation(include("com.epherical.octo-economy-api:octoeconomyapi:1.0.1"))
     modCompileOnly "curse.maven:ftb-quests-fabric-438496:3725770"
     modCompileOnly "curse.maven:ftb-library-fabric-438495:3725484"
-
-    shade project(":common")
-    implementation(project(":common"))
-    compileOnly(project(":common"))
 }
 
 processResources {
@@ -64,7 +63,7 @@ processResources {
         expand "version": version
     }
 }
-tasks.processResources.dependsOn(project(":common").tasks.processResources)
+tasks.processResources.dependsOn(getRootProject().tasks.processResources)
 
 loom {
     accessWidenerPath = file("src/main/resources/professions.accesswidener")
@@ -100,7 +99,7 @@ tasks.withType(JavaCompile).configureEach {
     // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
     // If Javadoc is generated, this must be specified in that task too.
     it.options.encoding = "UTF-8"
-    source(project(":common").sourceSets.main.allSource)
+    source(getRootProject().sourceSets.main.allSource)
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         it.options.release = targetJavaVersion
     }

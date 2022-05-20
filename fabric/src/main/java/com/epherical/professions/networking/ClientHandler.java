@@ -1,7 +1,6 @@
 package com.epherical.professions.networking;
 
 import com.epherical.professions.Constants;
-import com.epherical.professions.FabricConstants;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;

@@ -5,7 +5,6 @@ import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.networking.ClientHandler;
-import com.epherical.professions.networking.PacketHandler;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;

@@ -142,15 +142,15 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             this.button = new ProfessionEntryButton(profession, 0, 0, 154, 24, button1 -> {
                 if (parent.getButton() != null) {
                     switch (parent.getButton()) {
-                        case CommandButtons.JOIN -> {
+                        case JOIN -> {
                             ClientHandler.attemptJoinPacket(profession.getKey());
                             ClientHandler.sendOccupationPacket();
                         }
-                        case CommandButtons.LEAVE -> {
+                        case LEAVE -> {
                             ClientHandler.attemptLeavePacket(profession.getKey());
                             ClientHandler.sendOccupationPacket();
                         }
-                        case CommandButtons.INFO -> {
+                        case INFO -> {
                             ClientHandler.attemptInfoPacket(profession.getKey());
                         }
                     }

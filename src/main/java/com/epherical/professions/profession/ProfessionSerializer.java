@@ -5,8 +5,6 @@ import com.epherical.professions.FabricConstants;
 import com.epherical.professions.profession.progression.Occupation;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +30,6 @@ public interface ProfessionSerializer<T extends Profession> extends JsonDeserial
         return Registry.register(FabricConstants.PROFESSION_SERIALIZER, id, serializer);
     }
 
-    @Environment(EnvType.CLIENT)
     static List<Occupation> fromNetwork(FriendlyByteBuf buf) {
         int size = buf.readVarInt();
         List<Occupation> occupations = new ArrayList<>();

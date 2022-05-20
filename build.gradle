@@ -1,18 +1,18 @@
-allprojects {
-    version = mod_version
-    group = maven_group
-
-    configurations {
-        compileClasspath
-    }
+plugins {
+    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
 }
 
-subprojects {
+allprojects {
     apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'idea'
+    version = mod_version
+    group = maven_group
 
+}
+
+subprojects {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 
@@ -23,5 +23,23 @@ subprojects {
 
     tasks.withType(GenerateModuleMetadata) {
         enabled = false
+    }
+}
+
+minecraft {
+    version(minecraft_version)
+}
+
+dependencies {
+    compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    "src/main/generated"
+            ]
+        }
     }
 }

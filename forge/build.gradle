@@ -17,7 +17,6 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
 archivesBaseName = archives_base_name + "-" + minecraft_version + "-FORGE"
-buildDir = rootProject.buildDir
 
 configurations {
     shade
@@ -36,7 +35,7 @@ minecraft {
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             // Recommended logging level for the console //property 'forge.logging.console.level', 'debug'
-            args '--mod', 'professions', '--all', '--output', file('src/generated/resources/'), '--existing', project(":common").file('src/main/resources/')
+            args '--mod', 'professions', '--all', '--output', file('src/generated/resources/'), '--existing', getRootProject().file('src/main/resources/')
             mods {
                 professions {
                     source sourceSets.main
@@ -65,7 +64,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'professions', '--all', '--output', file('src/generated/resources/'), '--existing', project(":common").file('src/main/resources/')
+            args '--mod', 'professions', '--all', '--output', file('src/generated/resources/'), '--existing', getRootProject().file('src/main/resources/')
             mods {
                 professions {
                     source sourceSets.main
@@ -79,12 +78,12 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.processResources.dependsOn(project(":common").tasks.processResources)
+tasks.processResources.dependsOn(getRootProject().tasks.processResources)
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.0.15'
-    implementation project(":common")
-    shade project(":common")
+    implementation(getRootProject())
+    shade(getRootProject())
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 

@@ -1,6 +1,5 @@
 package com.epherical.professions.profession.action;
 
-import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
@@ -21,7 +20,7 @@ import net.minecraft.world.level.storage.loot.Serializer;
 
 import java.util.function.Predicate;
 
-import static com.epherical.professions.ProfessionsMod.modID;
+import static com.epherical.professions.Constants.modID;
 
 public class Actions {
     public static final ActionType BREAK_BLOCK = register(modID("break_block"), new BreakBlockAction.Serializer(), "professions.action.type.break_block");

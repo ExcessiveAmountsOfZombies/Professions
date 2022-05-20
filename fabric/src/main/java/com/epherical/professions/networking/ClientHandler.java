@@ -1,7 +1,7 @@
 package com.epherical.professions.networking;
 
 import com.epherical.professions.Constants;
-import com.epherical.professions.ProfessionConstants;
+import com.epherical.professions.FabricConstants;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
@@ -47,11 +47,11 @@ public class ClientHandler {
     }
 
     private static void setupSubChannels() {
-        subChannelReceivers.put(ProfessionConstants.OPEN_UI_RESPONSE, (client, handler, buf, responseSender) -> {
+        subChannelReceivers.put(Constants.OPEN_UI_RESPONSE, (client, handler, buf, responseSender) -> {
             List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
             client.execute(() -> client.setScreen(new OccupationScreen<>(occupations, client, OccupationScreen::createOccupationEntries, null)));
         });
-        subChannelReceivers.put(ProfessionConstants.INFO_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
+        subChannelReceivers.put(Constants.INFO_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
             int size = buf.readVarInt();
             List<ActionDisplay> displays = new ArrayList<>();
             for (int i = 0; i < size; i++) {
@@ -59,7 +59,7 @@ public class ClientHandler {
             }
             client.execute(() -> client.setScreen(new OccupationScreen<>(displays, client, OccupationScreen::createInfoEntries, null)));
         });
-        subChannelReceivers.put(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
+        subChannelReceivers.put(Constants.CLICK_PROFESSION_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
             CommandButtons button = buf.readEnum(CommandButtons.class);
             CommandButtonHandler buttonHandler = buttonReceivers.getOrDefault(button, null);
             if (buttonHandler != null) {
@@ -71,25 +71,25 @@ public class ClientHandler {
     private static void setupButtonSenders() {
         buttonSenders.put(CommandButtons.JOIN, () -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
+            buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_REQUEST);
             buf.writeEnum(CommandButtons.JOIN);
             ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
         });
         buttonSenders.put(CommandButtons.LEAVE, () -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
+            buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_REQUEST);
             buf.writeEnum(CommandButtons.LEAVE);
             ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
         });
         buttonSenders.put(CommandButtons.INFO, () -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
+            buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_REQUEST);
             buf.writeEnum(CommandButtons.INFO);
             ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
         });
         buttonSenders.put(CommandButtons.TOP, () -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST);
+            buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_REQUEST);
             buf.writeEnum(CommandButtons.TOP);
             ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
         });
@@ -137,27 +137,27 @@ public class ClientHandler {
 
     public static void sendOccupationPacket() {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeResourceLocation(ProfessionConstants.OPEN_UI_REQUEST);
+        buf.writeResourceLocation(Constants.OPEN_UI_REQUEST);
         ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
     public static void attemptJoinPacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeResourceLocation(ProfessionConstants.JOIN_BUTTON_REQUEST);
+        buf.writeResourceLocation(Constants.JOIN_BUTTON_REQUEST);
         buf.writeResourceLocation(location);
         ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
     public static void attemptLeavePacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeResourceLocation(ProfessionConstants.LEAVE_BUTTON_REQUEST);
+        buf.writeResourceLocation(Constants.LEAVE_BUTTON_REQUEST);
         buf.writeResourceLocation(location);
         ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
     public static void attemptInfoPacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeResourceLocation(ProfessionConstants.INFO_BUTTON_REQUEST);
+        buf.writeResourceLocation(Constants.INFO_BUTTON_REQUEST);
         buf.writeResourceLocation(location);
         ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }

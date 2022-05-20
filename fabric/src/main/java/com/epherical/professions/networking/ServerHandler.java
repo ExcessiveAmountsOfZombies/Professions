@@ -1,7 +1,8 @@
 package com.epherical.professions.networking;
 
+import com.epherical.professions.Constants;
 import com.epherical.professions.PlayerManager;
-import com.epherical.professions.ProfessionConstants;
+import com.epherical.professions.FabricConstants;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
@@ -52,78 +53,78 @@ public class ServerHandler {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             PlayerManager playerManager = ProfessionsMod.getInstance().getPlayerManager();
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
-            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE);
+            buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_RESPONSE);
             buf.writeEnum(CommandButtons.JOIN);
             Collection<Profession> professions = ProfessionsMod.getInstance().getProfessionLoader().getProfessions()
                     .stream()
                     .filter(profession -> pPlayer != null && !pPlayer.isOccupationActive(profession))
                     .toList();
             Profession.toNetwork(buf, professions);
-            ServerPlayNetworking.send(player, ProfessionsMod.MOD_CHANNEL, buf);
+            ServerPlayNetworking.send(player, Constants.MOD_CHANNEL, buf);
         });
         buttonReceivers.put(CommandButtons.LEAVE, player -> {
             ProfessionalPlayer pPlayer = ProfessionsMod.getInstance().getPlayerManager().getPlayer(player.getUUID());
             if (pPlayer != null) {
                 FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
-                response.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE);
+                response.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_RESPONSE);
                 response.writeEnum(CommandButtons.LEAVE);
                 List<Occupation> occupations = pPlayer.getActiveOccupations();
                 //occupations.addAll(pPlayer.getInactiveOccupations());
                 Occupation.toNetwork(response, occupations);
-                ServerPlayNetworking.send(player, ProfessionsMod.MOD_CHANNEL, response);
+                ServerPlayNetworking.send(player, Constants.MOD_CHANNEL, response);
             }
         });
         buttonReceivers.put(CommandButtons.INFO, player -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE);
+            buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_RESPONSE);
             buf.writeEnum(CommandButtons.INFO);
             Profession.toNetwork(buf, ProfessionsMod.getInstance().getProfessionLoader().getProfessions());
-            ServerPlayNetworking.send(player, ProfessionsMod.MOD_CHANNEL, buf);
+            ServerPlayNetworking.send(player, Constants.MOD_CHANNEL, buf);
         });
         buttonReceivers.put(CommandButtons.TOP, player -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             PlayerManager playerManager = ProfessionsMod.getInstance().getPlayerManager();
-            buf.writeResourceLocation(ProfessionConstants.CLICK_PROFESSION_BUTTON_RESPONSE);
+            buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_RESPONSE);
             buf.writeEnum(CommandButtons.TOP);
             buf.writeVarInt(playerManager.getPlayers().size());
             for (ProfessionalPlayer singlePlayer : playerManager.getPlayers()) {
                 buf.writeUUID(singlePlayer.getUuid());
                 buf.writeVarInt(singlePlayer.getActiveOccupations().stream().mapToInt(Occupation::getLevel).sum());
             }
-            ServerPlayNetworking.send(player, ProfessionsMod.MOD_CHANNEL, buf);
+            ServerPlayNetworking.send(player, Constants.MOD_CHANNEL, buf);
         });
     }
 
     private static void setupSubChannels() {
-        subChannelReceivers.put(ProfessionConstants.OPEN_UI_REQUEST, (server, player, handler, buf, responseSender, playerManager) -> {
+        subChannelReceivers.put(Constants.OPEN_UI_REQUEST, (server, player, handler, buf, responseSender, playerManager) -> {
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             if (pPlayer != null) {
                 FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
                 List<Occupation> occupations = pPlayer.getActiveOccupations();
                 //occupations.addAll(pPlayer.getInactiveOccupations());
-                response.writeResourceLocation(ProfessionConstants.OPEN_UI_RESPONSE);
+                response.writeResourceLocation(Constants.OPEN_UI_RESPONSE);
                 Occupation.toNetwork(response, occupations);
-                responseSender.sendPacket(ProfessionsMod.MOD_CHANNEL, response);
+                responseSender.sendPacket(Constants.MOD_CHANNEL, response);
             }
         });
-        subChannelReceivers.put(ProfessionConstants.JOIN_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
+        subChannelReceivers.put(Constants.JOIN_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
             ProfessionLoader loader = ProfessionsMod.getInstance().getProfessionLoader();
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             Profession profession = loader.getProfession(buf.readResourceLocation());
             playerManager.joinOccupation(pPlayer, profession, OccupationSlot.ACTIVE, player);
         });
-        subChannelReceivers.put(ProfessionConstants.LEAVE_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
+        subChannelReceivers.put(Constants.LEAVE_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
             ProfessionLoader loader = ProfessionsMod.getInstance().getProfessionLoader();
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             Profession profession = loader.getProfession(buf.readResourceLocation());
             playerManager.leaveOccupation(pPlayer, profession, player);
         });
-        subChannelReceivers.put(ProfessionConstants.INFO_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
+        subChannelReceivers.put(Constants.INFO_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
             ProfessionLoader loader = ProfessionsMod.getInstance().getProfessionLoader();
             Profession profession = loader.getProfession(buf.readResourceLocation());
             FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
             Collection<ActionDisplay> displays = new ArrayList<>();
-            for (ActionType actionType : ProfessionConstants.ACTION_TYPE) {
+            for (ActionType actionType : FabricConstants.ACTION_TYPE) {
                 Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     ActionDisplay display = new ActionDisplay(new TranslatableComponent("=-=-=| %s |=-=-=",
@@ -132,12 +133,12 @@ public class ServerHandler {
                     displays.add(display);
                 }
             }
-            response.writeResourceLocation(ProfessionConstants.INFO_BUTTON_RESPONSE);
+            response.writeResourceLocation(Constants.INFO_BUTTON_RESPONSE);
             response.writeVarInt(displays.size());
             displays.forEach(actionDisplay -> actionDisplay.toNetwork(response));
-            responseSender.sendPacket(ProfessionsMod.MOD_CHANNEL, response);
+            responseSender.sendPacket(Constants.MOD_CHANNEL, response);
         });
-        subChannelReceivers.put(ProfessionConstants.CLICK_PROFESSION_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
+        subChannelReceivers.put(Constants.CLICK_PROFESSION_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
             CommandButtons buttonClicked = buf.readEnum(CommandButtons.class);
             CommandButtonHandler buttonHandler = buttonReceivers.getOrDefault(buttonClicked, null);
             if (buttonHandler != null) {

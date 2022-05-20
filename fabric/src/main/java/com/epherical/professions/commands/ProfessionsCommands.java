@@ -1,7 +1,6 @@
 package com.epherical.professions.commands;
 
 import com.epherical.professions.PlayerManager;
-import com.epherical.professions.ProfessionConstants;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
@@ -233,7 +232,8 @@ public class ProfessionsCommands {
         ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
         try {
             page = IntegerArgumentType.getInteger(stack, "page");
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
 
         try {
             Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
@@ -247,7 +247,7 @@ public class ProfessionsCommands {
                 Collection<Action> actionsFor = profession.getActions(actionType);
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     components.add(new TranslatableComponent("=-=-=| %s |=-=-=",
-                                    new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                            new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
                     for (Action action : actionsFor) {
                         components.addAll(action.displayInformation());
@@ -261,7 +261,7 @@ public class ProfessionsCommands {
             maxPage = (messages % messagesPerPage != 0) && messages > messagesPerPage ? maxPage + 1 : maxPage;
             // =-=-=| Break Block |=-=-=
             // =-=-=| Prev curPage/maxPage Next |=-=-=
-            int begin = page == 1 ? 0 : Math.min(messages, ((page -1) * messagesPerPage));
+            int begin = page == 1 ? 0 : Math.min(messages, ((page - 1) * messagesPerPage));
             int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
 
             if (page > maxPage) {
@@ -275,10 +275,10 @@ public class ProfessionsCommands {
 
             MutableComponent previous = new TranslatableComponent("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
                     .withUnderlined(true)
-                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page-1))));
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page - 1))));
             MutableComponent next = new TranslatableComponent("professions.command.next").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)
                     .withUnderlined(true)
-                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page+1))));
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page + 1))));
 
             MutableComponent pageComp = new TranslatableComponent("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
             stack.getSource().sendSuccess(pageComp, false);
@@ -298,7 +298,8 @@ public class ProfessionsCommands {
         String playerArg = "";
         try {
             playerArg = StringArgumentType.getString(stack, "player");
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
         try {
             ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
             GameProfile profile = getGameProfile(stack, playerArg);
@@ -435,7 +436,7 @@ public class ProfessionsCommands {
                     playerName = player.getPlayer().getDisplayName();
                 }
                 MutableComponent msg = new TranslatableComponent("professions.command.top.position",
-                        new TextComponent("" +  position).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                        new TextComponent("" + position).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
                         playerName,
                         new TextComponent("" + player.getOccupation(profession).getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
                         new TextComponent("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
@@ -559,7 +560,6 @@ public class ProfessionsCommands {
 
         return 1;
     }
-
 
 
     private GameProfile getGameProfile(CommandContext<CommandSourceStack> stack, String playerArg) throws CommandSyntaxException {

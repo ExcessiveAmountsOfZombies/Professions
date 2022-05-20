@@ -83,17 +83,13 @@ public class ProfessionsMod implements ModInitializer {
         EntityTriggers.init(this);
         UtilityListener.init(this);
 
-        ServerPlayNetworking.registerGlobalReceiver(MOD_CHANNEL, ServerHandler::receivePacket);
+        ServerPlayNetworking.registerGlobalReceiver(Constants.MOD_CHANNEL, ServerHandler::receivePacket);
 
         if (FabricLoader.getInstance().isModLoaded("ftbquests")) {
             FTBIntegration.init();
         }
 
 
-    }
-
-    public static ResourceLocation modID(String name) {
-        return new ResourceLocation(MOD_ID, name);
     }
 
     private static ProfessionSerializer<?> init() {

@@ -1,8 +1,8 @@
 package com.epherical.professions.datapack;
 
 import com.epherical.professions.PlayerManager;
-import com.epherical.professions.FabricConstants;
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionsFabric;
+import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
@@ -53,7 +53,7 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
             JsonObject jsonObject = GsonHelper.convertToJsonObject(jsonElement, "profession");
             if (jsonObject.has("type")) {
                 ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "type"));
-                ProfessionSerializer<? extends Profession> nullable = FabricConstants.PROFESSION_SERIALIZER.get(type);
+                ProfessionSerializer<? extends Profession> nullable = RegistryConstants.PROFESSION_SERIALIZER.get(type);
                 nullable = nullable != null ? nullable : ProfessionSerializer.DEFAULT_PROFESSION;
                 Profession profession = GSON.fromJson(jsonElement, nullable.getType());
                 profession.setKey(location);
@@ -62,10 +62,10 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
         });
         this.professionMap = builder.build();
 
-        PlayerManager manager = ProfessionsMod.getInstance().getPlayerManager();
+        PlayerManager manager = ProfessionsFabric.getInstance().getPlayerManager();
         // this will be null when it first loads.
         if (manager != null) {
-            ProfessionsMod.getInstance().getPlayerManager().reload();
+            ProfessionsFabric.getInstance().getPlayerManager().reload();
         }
     }
 

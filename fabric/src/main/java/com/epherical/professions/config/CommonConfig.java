@@ -1,6 +1,6 @@
 package com.epherical.professions.config;
 
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.Constants;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.TextColor;
 import org.apache.logging.log4j.LogManager;
@@ -55,7 +55,7 @@ public class CommonConfig {
 
 
     public boolean loadConfig() {
-        File configDirectory = new File(FabricLoader.getInstance().getConfigDir().toFile(), ProfessionsMod.MOD_ID);
+        File configDirectory = new File(FabricLoader.getInstance().getConfigDir().toFile(), Constants.MOD_ID);
         File file = new File(configDirectory, configName);
 
         boolean createdFile = false;

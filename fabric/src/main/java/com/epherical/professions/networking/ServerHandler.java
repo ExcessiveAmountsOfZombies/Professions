@@ -2,8 +2,8 @@ package com.epherical.professions.networking;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.PlayerManager;
-import com.epherical.professions.FabricConstants;
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionsFabric;
+import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.datapack.ProfessionLoader;
@@ -35,7 +35,7 @@ public class ServerHandler {
     private static final Map<CommandButtons, CommandButtonHandler> buttonReceivers = new HashMap<>();
 
     public static void receivePacket(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl listener, FriendlyByteBuf buf, PacketSender responseSender) {
-        PlayerManager playerManager = ProfessionsMod.getInstance().getPlayerManager();
+        PlayerManager playerManager = ProfessionsFabric.getInstance().getPlayerManager();
         ResourceLocation subChannel = buf.readResourceLocation();
         Handler handler = subChannelReceivers.getOrDefault(subChannel, null);
         if (handler != null) {
@@ -51,11 +51,11 @@ public class ServerHandler {
     private static void setupButtonHandlers() {
         buttonReceivers.put(CommandButtons.JOIN, (player) -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            PlayerManager playerManager = ProfessionsMod.getInstance().getPlayerManager();
+            PlayerManager playerManager = ProfessionsFabric.getInstance().getPlayerManager();
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_RESPONSE);
             buf.writeEnum(CommandButtons.JOIN);
-            Collection<Profession> professions = ProfessionsMod.getInstance().getProfessionLoader().getProfessions()
+            Collection<Profession> professions = ProfessionsFabric.getInstance().getProfessionLoader().getProfessions()
                     .stream()
                     .filter(profession -> pPlayer != null && !pPlayer.isOccupationActive(profession))
                     .toList();
@@ -63,7 +63,7 @@ public class ServerHandler {
             ServerPlayNetworking.send(player, Constants.MOD_CHANNEL, buf);
         });
         buttonReceivers.put(CommandButtons.LEAVE, player -> {
-            ProfessionalPlayer pPlayer = ProfessionsMod.getInstance().getPlayerManager().getPlayer(player.getUUID());
+            ProfessionalPlayer pPlayer = ProfessionsFabric.getInstance().getPlayerManager().getPlayer(player.getUUID());
             if (pPlayer != null) {
                 FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
                 response.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_RESPONSE);
@@ -78,12 +78,12 @@ public class ServerHandler {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_RESPONSE);
             buf.writeEnum(CommandButtons.INFO);
-            Profession.toNetwork(buf, ProfessionsMod.getInstance().getProfessionLoader().getProfessions());
+            Profession.toNetwork(buf, ProfessionsFabric.getInstance().getProfessionLoader().getProfessions());
             ServerPlayNetworking.send(player, Constants.MOD_CHANNEL, buf);
         });
         buttonReceivers.put(CommandButtons.TOP, player -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-            PlayerManager playerManager = ProfessionsMod.getInstance().getPlayerManager();
+            PlayerManager playerManager = ProfessionsFabric.getInstance().getPlayerManager();
             buf.writeResourceLocation(Constants.CLICK_PROFESSION_BUTTON_RESPONSE);
             buf.writeEnum(CommandButtons.TOP);
             buf.writeVarInt(playerManager.getPlayers().size());
@@ -108,23 +108,23 @@ public class ServerHandler {
             }
         });
         subChannelReceivers.put(Constants.JOIN_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
-            ProfessionLoader loader = ProfessionsMod.getInstance().getProfessionLoader();
+            ProfessionLoader loader = ProfessionsFabric.getInstance().getProfessionLoader();
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             Profession profession = loader.getProfession(buf.readResourceLocation());
             playerManager.joinOccupation(pPlayer, profession, OccupationSlot.ACTIVE, player);
         });
         subChannelReceivers.put(Constants.LEAVE_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
-            ProfessionLoader loader = ProfessionsMod.getInstance().getProfessionLoader();
+            ProfessionLoader loader = ProfessionsFabric.getInstance().getProfessionLoader();
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             Profession profession = loader.getProfession(buf.readResourceLocation());
             playerManager.leaveOccupation(pPlayer, profession, player);
         });
         subChannelReceivers.put(Constants.INFO_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
-            ProfessionLoader loader = ProfessionsMod.getInstance().getProfessionLoader();
+            ProfessionLoader loader = ProfessionsFabric.getInstance().getProfessionLoader();
             Profession profession = loader.getProfession(buf.readResourceLocation());
             FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
             Collection<ActionDisplay> displays = new ArrayList<>();
-            for (ActionType actionType : FabricConstants.ACTION_TYPE) {
+            for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
                 Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     ActionDisplay display = new ActionDisplay(new TranslatableComponent("=-=-=| %s |=-=-=",

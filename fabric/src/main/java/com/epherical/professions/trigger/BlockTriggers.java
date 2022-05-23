@@ -1,6 +1,6 @@
 package com.epherical.professions.trigger;
 
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.events.trigger.TriggerEvents;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class BlockTriggers {
 
-    public static void init(ProfessionsMod mod) {
+    public static void init(ProfessionsFabric mod) {
         PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
             // only ever run on the server.
             if (world instanceof ServerLevel) {

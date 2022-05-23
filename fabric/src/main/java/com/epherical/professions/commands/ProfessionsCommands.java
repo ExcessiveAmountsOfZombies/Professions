@@ -1,7 +1,8 @@
 package com.epherical.professions.commands;
 
+import com.epherical.professions.ProfessionsFabric;
+import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.PlayerManager;
-import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
@@ -45,9 +46,9 @@ import java.util.stream.Collectors;
 
 public class ProfessionsCommands {
 
-    private final ProfessionsMod mod;
+    private final ProfessionsFabric mod;
 
-    public ProfessionsCommands(ProfessionsMod mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher) {
+    public ProfessionsCommands(ProfessionsFabric mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher) {
         this.mod = mod;
         registerCommands(stackCommandDispatcher);
     }
@@ -243,7 +244,7 @@ public class ProfessionsCommands {
             }
             List<Component> components = new ArrayList<>();
 
-            for (ActionType actionType : ProfessionConstants.ACTION_TYPE) {
+            for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
                 Collection<Action> actionsFor = profession.getActions(actionType);
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     components.add(new TranslatableComponent("=-=-=| %s |=-=-=",

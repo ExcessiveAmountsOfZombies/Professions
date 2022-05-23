@@ -1,6 +1,6 @@
 package com.epherical.professions.mixin.ownables;
 
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.events.trigger.TriggerEvents;
 import com.epherical.professions.util.mixins.PlayerOwnable;
@@ -43,7 +43,7 @@ public class BrewingStandBlockEntityOwnableMixin implements PlayerOwnable {
     @Inject(method = "saveAdditional", at = @At("TAIL"))
     public void onSave(CompoundTag tag, CallbackInfo ci) {
         if (professions$placedBy != null) {
-            if (ProfessionsMod.isStopping) {
+            if (ProfessionsFabric.isStopping) {
                 if (ProfessionConfig.persistBlockOwnership) {
                     tag.putUUID("pf_owid", professions$placedBy);
                 }

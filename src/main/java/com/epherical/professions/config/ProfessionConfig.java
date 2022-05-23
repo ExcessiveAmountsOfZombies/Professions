@@ -1,6 +1,5 @@
 package com.epherical.professions.config;
 
-import com.epherical.professions.ProfessionsMod;
 import net.minecraft.network.chat.TextColor;
 
 public class ProfessionConfig {
@@ -37,7 +36,7 @@ public class ProfessionConfig {
 
 
     public static void reload() {
-        ProfessionsMod.getInstance().getConfig().reloadConfig();
+        //ProfessionsMod.getInstance().getConfig().reloadConfig();
     }
 
 }

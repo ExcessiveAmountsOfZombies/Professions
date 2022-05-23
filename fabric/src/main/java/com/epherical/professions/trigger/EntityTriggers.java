@@ -1,6 +1,6 @@
 package com.epherical.professions.trigger;
 
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.events.trigger.TriggerEvents;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
 
 public class EntityTriggers {
 
-    public static void init(ProfessionsMod mod) {
+    public static void init(ProfessionsFabric mod) {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register((world, entity, killedEntity) -> {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(world)
                     .addRandom(world.random)

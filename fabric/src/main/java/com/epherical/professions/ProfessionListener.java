@@ -8,7 +8,7 @@ public class ProfessionListener {
 
     public void onPlayerJoin(ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) {
         try {
-            ProfessionsMod.getInstance().getPlayerManager().playerJoined(handler.getPlayer());
+            ProfessionsFabric.getInstance().getPlayerManager().playerJoined(handler.getPlayer());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -17,7 +17,7 @@ public class ProfessionListener {
 
     public void onPlayerLeave(ServerGamePacketListenerImpl handler, MinecraftServer server) {
         try {
-            ProfessionsMod.getInstance().getPlayerManager().playerQuit(handler.getPlayer());
+            ProfessionsFabric.getInstance().getPlayerManager().playerQuit(handler.getPlayer());
         } catch (Exception e) {
             e.printStackTrace();
         }

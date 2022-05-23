@@ -1,7 +1,7 @@
 package com.epherical.professions.client;
 
 import com.epherical.professions.Constants;
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.networking.ClientHandler;
@@ -31,7 +31,7 @@ public class ProfessionsClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (occupationMenu.isDown()) {
                 if (client.isLocalServer()) {
-                    ProfessionalPlayer player = ProfessionsMod.getInstance().getPlayerManager().getPlayer(client.player.getUUID());
+                    ProfessionalPlayer player = ProfessionsFabric.getInstance().getPlayerManager().getPlayer(client.player.getUUID());
                     client.setScreen(new OccupationScreen<>(player.getActiveOccupations(), client, OccupationScreen::createOccupationEntries, null));
                 } else {
                     ClientHandler.sendOccupationPacket();

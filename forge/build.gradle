@@ -40,6 +40,9 @@ minecraft {
                 professions {
                     source sourceSets.main
                 }
+                root {
+                    source getRootProject().sourceSets.main
+                }
             }
         }
 
@@ -85,6 +88,11 @@ dependencies {
     implementation(getRootProject())
     shade(getRootProject())
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    source(getRootProject().sourceSets.main.allSource)
 }
 
 shadowJar {

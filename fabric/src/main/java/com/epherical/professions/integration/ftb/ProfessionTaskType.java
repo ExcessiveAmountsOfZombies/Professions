@@ -1,7 +1,7 @@
 package com.epherical.professions.integration.ftb;
 
 import com.epherical.professions.PlayerManager;
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
@@ -107,7 +107,7 @@ public class ProfessionTaskType extends BooleanTask {
 
     @Override
     public boolean canSubmit(TeamData teamData, ServerPlayer serverPlayer) {
-        ProfessionsMod mod = ProfessionsMod.getInstance();
+        ProfessionsFabric mod = ProfessionsFabric.getInstance();
         PlayerManager manager = mod.getPlayerManager();
         Profession profession = mod.getProfessionLoader().getProfession(professionKey);
         ProfessionalPlayer player = manager.getPlayer(serverPlayer.getUUID());

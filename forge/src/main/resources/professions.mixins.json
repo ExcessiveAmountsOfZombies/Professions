@@ -4,7 +4,9 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "professions.refmap.json",
   "mixins": [
-    "EnchantmentMixin"
+    "ProfessionsOwnableBrewingStandMixin",
+    "EnchantmentMixin",
+    "ProfessionsOwnableAbstractFurnaceMixin"
   ],
   "minVersion": "0.8"
 }

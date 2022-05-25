@@ -5,8 +5,10 @@
   "refmap": "professions.refmap.json",
   "mixins": [
     "EnchantmentMixin",
+    "GameProfileCacheMixin",
     "ProfessionsOwnableAbstractFurnaceMixin",
     "ProfessionsOwnableBrewingStandMixin",
+    "StatePropertiesPredicateMixin",
     "VillagerTradeMixin"
   ],
   "minVersion": "0.8"

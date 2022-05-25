@@ -36,10 +36,9 @@ dependencies {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-1.18.1:2021.12.19")
     }
-    println getRootProject().name
-    shade(getRootProject())
-    compileOnly(getRootProject())
-    implementation(getRootProject())
+    shade(rootProject)
+    compileOnly(rootProject)
+    implementation(rootProject)
     modImplementation(include("org.spongepowered:configurate-hocon:4.1.2"))
     modImplementation(include("org.spongepowered:configurate-core:4.1.2"))
     include("com.typesafe:config:1.4.1")
@@ -63,7 +62,7 @@ processResources {
         expand "version": version
     }
 }
-tasks.processResources.dependsOn(getRootProject().tasks.processResources)
+tasks.processResources.dependsOn(rootProject.tasks.processResources)
 
 loom {
     accessWidenerPath = file("src/main/resources/professions.accesswidener")
@@ -99,7 +98,7 @@ tasks.withType(JavaCompile).configureEach {
     // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
     // If Javadoc is generated, this must be specified in that task too.
     it.options.encoding = "UTF-8"
-    source(getRootProject().sourceSets.main.allSource)
+    source(rootProject.sourceSets.main.allSource)
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         it.options.release = targetJavaVersion
     }

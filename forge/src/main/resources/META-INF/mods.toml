@@ -25,7 +25,7 @@ Professions that earn you configurable rewards.
    mandatory=true #mandatory
    versionRange="[37,)" #mandatory
    ordering="NONE"
-   side="BOTH"
+   side="SERVER"
 # Here's another dependency
 [[dependencies.professions]]
    modId="minecraft"

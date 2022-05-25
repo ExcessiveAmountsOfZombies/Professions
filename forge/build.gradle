@@ -33,15 +33,12 @@ minecraft {
             property 'legacyClassPath', '{minecraft_classpath}'
             arg "-mixin.config=professions.mixins.json"
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             // Recommended logging level for the console //property 'forge.logging.console.level', 'debug'
-            args '--mod', 'professions', '--all', '--output', file('src/generated/resources/'), '--existing', getRootProject().file('src/main/resources/')
+            args '--mod', 'professions', '--all', '--output', file('src/generated/resources/'), '--existing', rootProject.file('src/main/resources/')
             mods {
                 professions {
-                    source sourceSets.main
-                }
-                root {
-                    source getRootProject().sourceSets.main
+                    sources(sourceSets.main, rootProject.sourceSets.main)
                 }
             }
         }
@@ -54,7 +51,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             mods {
                 professions {
-                    source sourceSets.main
+                    sources(sourceSets.main, rootProject.sourceSets.main)
                 }
             }
         }
@@ -67,10 +64,10 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'professions', '--all', '--output', file('src/generated/resources/'), '--existing', getRootProject().file('src/main/resources/')
+            args '--mod', 'professions', '--all', '--output', file('src/generated/resources/'), '--existing', rootProject.file('src/main/resources/')
             mods {
                 professions {
-                    source sourceSets.main
+                    sources(sourceSets.main, rootProject.sourceSets.main)
                 }
             }
         }
@@ -81,18 +78,18 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.processResources.dependsOn(getRootProject().tasks.processResources)
+tasks.processResources.dependsOn(rootProject.tasks.processResources)
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.0.15'
-    implementation(getRootProject())
-    shade(getRootProject())
+    implementation(rootProject)
+    shade(rootProject)
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
-    source(getRootProject().sourceSets.main.allSource)
+    source(rootProject.sourceSets.main.allSource)
 }
 
 shadowJar {

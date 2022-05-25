@@ -28,7 +28,7 @@ public class RegistryConstants {
     public static final ResourceKey<Registry<RewardType>> REWARD_KEY = ResourceKey.createRegistryKey(modID("professions/rewards"));
 
 
-    public static IForgeRegistry<ProfessionSerializer<? extends Profession>> PROFESSION_SERIALIZER;
+    public static IForgeRegistry<ProfessionSerializer<?>> PROFESSION_SERIALIZER;
     public static IForgeRegistry<ActionType> ACTION_TYPE;
     public static IForgeRegistry<ActionConditionType> ACTION_CONDITION_TYPE;
     public static IForgeRegistry<RewardType> REWARDS;

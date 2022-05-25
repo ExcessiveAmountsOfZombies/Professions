@@ -1,8 +1,8 @@
 package com.epherical.professions.util;
 
 import com.epherical.professions.Constants;
-import com.epherical.professions.util.mixins.PlayerOwnable;
-import com.epherical.professions.util.mixins.PlayerOwnableImpl;
+import com.epherical.professions.capability.PlayerOwnable;
+import com.epherical.professions.capability.impl.PlayerOwnableImpl;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

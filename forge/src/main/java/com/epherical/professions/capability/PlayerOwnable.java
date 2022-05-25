@@ -1,4 +1,4 @@
-package com.epherical.professions.util.mixins;
+package com.epherical.professions.capability;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;

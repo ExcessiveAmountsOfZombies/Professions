@@ -29,7 +29,6 @@ public class RegistryConstants {
 
 
     public static IForgeRegistry<ProfessionSerializer<? extends Profession>> PROFESSION_SERIALIZER;
-    // TODO: these might cause problems
     public static IForgeRegistry<ActionType> ACTION_TYPE;
     public static IForgeRegistry<ActionConditionType> ACTION_CONDITION_TYPE;
     public static IForgeRegistry<RewardType> REWARDS;

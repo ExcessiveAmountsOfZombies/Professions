@@ -6,16 +6,12 @@ import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.util.EnchantmentContainer;
-import com.epherical.professions.util.mixins.PlayerOwnable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -27,7 +23,6 @@ import java.util.Map;
 public class BlockTriggers {
 
     private final ProfessionsForge mod;
-    public static Capability<PlayerOwnable> OWNING_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
 
     public BlockTriggers(ProfessionsForge mod) {
         this.mod = mod;

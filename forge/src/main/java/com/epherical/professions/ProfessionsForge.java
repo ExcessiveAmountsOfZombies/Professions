@@ -10,9 +10,13 @@ import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.networking.NetworkHandler;
 import com.epherical.professions.triggers.ProfessionListener;
 import com.epherical.professions.util.PlayerOwnableProvider;
-import com.epherical.professions.util.mixins.PlayerOwnable;
+import com.epherical.professions.capability.PlayerOwnable;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraft.world.level.block.entity.CampfireBlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -23,25 +27,30 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Mod("professions")
 public class ProfessionsForge {
 
     private static ProfessionsForge mod;
-    //private ProfessionListener listener;
     private PlayerManager playerManager;
     private ProfessionsCommands commands;
     private Config config;
 
     private Storage<ProfessionalPlayer, UUID> dataStorage;
+    private Set<Class<?>> capHolders = new HashSet<>();
 
     private ProfessionLoader professionLoader;
     private NetworkHandler handler;
@@ -55,6 +64,8 @@ public class ProfessionsForge {
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonInit);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::sendMessages);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::readMessages);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(RegistryConstants::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(config::initConfig);
 
@@ -76,6 +87,25 @@ public class ProfessionsForge {
     private void clientInit(FMLClientSetupEvent event) {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ProfessionsClientForge::initClient);
         MinecraftForge.EVENT_BUS.register(new ProfessionsClientForge());
+    }
+
+    private void sendMessages(InterModEnqueueEvent event) {
+        // very specific, but also the fastest 'in code' that doesn't rely on if/else statements.
+        // if there is a better way that is more general that'd be great, but I'm not sure of one.
+        InterModComms.sendTo(Constants.MOD_ID, "regCap", () -> BrewingStandBlockEntity.class);
+        InterModComms.sendTo(Constants.MOD_ID, "regCap", () -> BlastFurnaceBlockEntity.class);
+        InterModComms.sendTo(Constants.MOD_ID, "regCap", () -> CampfireBlockEntity.class);
+        InterModComms.sendTo(Constants.MOD_ID, "regCap", () -> FurnaceBlockEntity.class);
+
+    }
+
+    private void readMessages(InterModProcessEvent event) {
+        event.getIMCStream(s -> s.equals("regCap")).forEach(imcMessage -> {
+            Object supplier = imcMessage.messageSupplier().get();
+            if (supplier instanceof Class<?> clazz) {
+                capHolders.add(clazz);
+            }
+        });
     }
 
     @SubscribeEvent
@@ -105,9 +135,10 @@ public class ProfessionsForge {
 
     @SubscribeEvent
     public void attachCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
-        PlayerOwnableProvider provider = new PlayerOwnableProvider();
-        event.addCapability(PlayerOwnableProvider.ID, provider);
-        System.out.println(event.getObject());
+        if (capHolders.contains(event.getObject().getClass())) {
+            PlayerOwnableProvider provider = new PlayerOwnableProvider();
+            event.addCapability(PlayerOwnableProvider.ID, provider);
+        }
     }
 
 

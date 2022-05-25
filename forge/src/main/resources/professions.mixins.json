@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "professions.refmap.json",
   "mixins": [
+    "EnchantmentMixin"
   ],
   "minVersion": "0.8"
 }

@@ -27,6 +27,8 @@ public class ProfPermissions {
     public static final PermissionNode<Boolean> EMPLOY = new PermissionNode<>(Constants.MOD_ID, "command.employ", PermissionTypes.BOOLEAN, ProfPermissions::defaultOp);
     public static final PermissionNode<Boolean> SET_LEVEL = new PermissionNode<>(Constants.MOD_ID, "command.setlevel", PermissionTypes.BOOLEAN, ProfPermissions::defaultOp);
 
+    public static final PermissionNode<Boolean> CREATIVE_PAYMENT = new PermissionNode<>(Constants.MOD_ID, "reward.creative", PermissionTypes.BOOLEAN, ProfPermissions::defaultOp);
+
     @SubscribeEvent
     public void registerPermissions(PermissionGatherEvent.Nodes event) {
         event.addNodes(HELP, JOIN, LEAVE, LEAVE_ALL, INFO, STATS, BROWSE, TOP,

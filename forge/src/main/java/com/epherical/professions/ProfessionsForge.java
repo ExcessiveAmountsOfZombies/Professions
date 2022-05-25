@@ -8,10 +8,16 @@ import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.networking.NetworkHandler;
+import com.epherical.professions.triggers.ProfessionListener;
+import com.epherical.professions.util.PlayerOwnableProvider;
+import com.epherical.professions.util.mixins.PlayerOwnable;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -53,6 +59,7 @@ public class ProfessionsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(config::initConfig);
 
         MinecraftForge.EVENT_BUS.register(new ProfPermissions());
+        MinecraftForge.EVENT_BUS.register(new ProfessionListener());
         MinecraftForge.EVENT_BUS.register(this);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getConfigSpec());
@@ -89,6 +96,18 @@ public class ProfessionsForge {
     @SubscribeEvent
     public void registerCommands(RegisterCommandsEvent event) {
         commands = new ProfessionsCommands(this, event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.register(PlayerOwnable.class);
+    }
+
+    @SubscribeEvent
+    public void attachCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
+        PlayerOwnableProvider provider = new PlayerOwnableProvider();
+        event.addCapability(PlayerOwnableProvider.ID, provider);
+        System.out.println(event.getObject());
     }
 
 

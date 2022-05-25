@@ -82,7 +82,7 @@ public abstract class AbstractAction implements Action {
         int i = 0;
         MutableComponent hoverComponent = new TextComponent("");
         for (Map.Entry<RewardType, Component> entry : base.entrySet()) {
-            if (/*entry.getKey().equals(Rewards.PAYMENT_REWARD) ||*/ entry.getKey().equals(Rewards.EXPERIENCE_REWARD)) {
+            if (/*entry.getKey().equals(Rewards.PAYMENT_REWARD) ||*/ entry.getKey().equals(Rewards.EXPERIENCE_REWARD.get())) {
                 continue;
             }
             hoverComponent.append(entry.getValue()).append("\n");

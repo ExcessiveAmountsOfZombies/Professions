@@ -60,9 +60,9 @@ public abstract class AbstractEntityAction extends AbstractAction {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
         for (EntityType<?> entity : getRealEntities()) {
-            components.add((entity.getDescription().copy()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(new TranslatableComponent(" (%s | %s%s)",
+            components.add((entity.getDescription().copy()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(new TranslatableComponent(" (%s%s)",
                     //map.get(Rewards.PAYMENT_REWARD),
-                    map.get(Rewards.EXPERIENCE_REWARD),
+                    map.get(Rewards.EXPERIENCE_REWARD.get()),
                     extraRewardInformation(map))));
         }
         return components;

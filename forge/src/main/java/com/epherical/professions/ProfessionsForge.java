@@ -8,6 +8,8 @@ import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.networking.NetworkHandler;
+import com.epherical.professions.triggers.BlockTriggers;
+import com.epherical.professions.triggers.EntityTriggers;
 import com.epherical.professions.triggers.ProfessionListener;
 import com.epherical.professions.util.PlayerOwnableProvider;
 import com.epherical.professions.capability.PlayerOwnable;
@@ -71,6 +73,8 @@ public class ProfessionsForge {
 
         MinecraftForge.EVENT_BUS.register(new ProfPermissions());
         MinecraftForge.EVENT_BUS.register(new ProfessionListener());
+        MinecraftForge.EVENT_BUS.register(new BlockTriggers(this));
+        MinecraftForge.EVENT_BUS.register(new EntityTriggers(this));
         MinecraftForge.EVENT_BUS.register(this);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getConfigSpec());

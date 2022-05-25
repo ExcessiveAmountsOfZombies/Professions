@@ -1,7 +1,9 @@
 package com.epherical.professions.triggers;
 
 import com.epherical.professions.ProfessionsForge;
+import com.epherical.professions.events.BrewPotionEvent;
 import com.epherical.professions.events.EnchantedItemEvent;
+import com.epherical.professions.events.SmeltItemEvent;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Actions;
@@ -10,15 +12,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class BlockTriggers {
 
@@ -77,6 +81,42 @@ public class BlockTriggers {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onSmeltItem(SmeltItemEvent event) {
+        BlockEntity blockEntity = event.getBlockEntity();
+        ItemStack smeltedItem = event.getSmeltedItem();
+        UUID owner = event.getOwner();
+        Recipe<?> recipe = event.getRecipe();
+        if (blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide) {
+            ServerLevel level = (ServerLevel) blockEntity.getLevel();
+            ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                    .addRandom(level.random)
+                    .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(owner))
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.ON_ITEM_COOK.get())
+                    .addParameter(ProfessionParameter.ITEM_INVOLVED, smeltedItem)
+                    .addParameter(ProfessionParameter.THIS_BLOCKSTATE, blockEntity.getBlockState())
+                    .addParameter(ProfessionParameter.RECIPE_CRAFTED, recipe);
+            RewardHandler.handleReward(builder);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onBrew(BrewPotionEvent event) {
+        BlockEntity blockEntity = event.getBlockEntity();
+        UUID owner = event.getPlacedBy();
+        ItemStack brewingIngredient = event.getBrewingIngredient();
+        if (blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide) {
+            ServerLevel level = (ServerLevel) blockEntity.getLevel();
+            ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
+                    .addRandom(level.random)
+                    .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(owner))
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREW_ITEM.get())
+                    .addParameter(ProfessionParameter.ITEM_INVOLVED, brewingIngredient)
+                    .addParameter(ProfessionParameter.THIS_BLOCKSTATE, blockEntity.getBlockState());
+            RewardHandler.handleReward(builder);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEnchant(EnchantedItemEvent event) {
         ServerLevel level = event.getPlayer().getLevel();
         ServerPlayer player = event.getPlayer();
@@ -97,11 +137,6 @@ public class BlockTriggers {
                 .addParameter(ProfessionParameter.ACTION_TYPE, Actions.ENCHANT_ITEM.get())
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, itemEnchanted);
         RewardHandler.handleReward(builder);
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onBrew(PlayerBrewedPotionEvent event) {
-
     }
 
 }

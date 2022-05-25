@@ -29,7 +29,7 @@ public class Config {
 
     private final ForgeConfigSpec.ConfigValue<Boolean> clearProgressOnLeave;
     private ForgeConfigSpec.ConfigValue<Boolean> persistBlockOwnership;
-    private final ForgeConfigSpec.ConfigValue<Long> paymentCoolDown;
+    private final ForgeConfigSpec.ConfigValue<Integer> paymentCoolDown;
 
     private final ForgeConfigSpec.ConfigValue<Boolean> logInChat;
 
@@ -83,7 +83,7 @@ public class Config {
         //persistBlockOwnership = builder.comment("");
         paymentCoolDown = builder.comment("Default 30 seconds. This determines how long the user will have to wait before they can get paid for an action",
                         "in the same block position.")
-                .define("paymentCoolDown", ProfessionConfig.paymentCoolDown);
+                .define("paymentCoolDown", (int) ProfessionConfig.paymentCoolDown);
         builder.pop();
         builder.comment("Actions").push("actions");
         logInChat = builder.comment("Will display every valid action in chat. Defaults to false, or rather, defaults to action bar messages instead.")

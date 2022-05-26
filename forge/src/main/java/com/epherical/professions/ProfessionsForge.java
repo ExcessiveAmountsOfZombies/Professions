@@ -4,6 +4,7 @@ import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClientForge;
 import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.config.Config;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
@@ -13,7 +14,12 @@ import com.epherical.professions.triggers.EntityTriggers;
 import com.epherical.professions.triggers.ProfessionListener;
 import com.epherical.professions.util.PlayerOwnableProvider;
 import com.epherical.professions.capability.PlayerOwnable;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.level.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
@@ -23,6 +29,7 @@ import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -30,6 +37,7 @@ import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -38,10 +46,12 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.resource.PathResourcePack;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Mod("professions")
 public class ProfessionsForge {
@@ -70,6 +80,7 @@ public class ProfessionsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::readMessages);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(RegistryConstants::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(config::initConfig);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addPacks);
 
         MinecraftForge.EVENT_BUS.register(new ProfPermissions());
         MinecraftForge.EVENT_BUS.register(new ProfessionListener());
@@ -145,6 +156,20 @@ public class ProfessionsForge {
         }
     }
 
+    public void addPacks(AddPackFindersEvent event) {
+        if (event.getPackType() == PackType.SERVER_DATA) {
+            if (ProfessionConfig.useBuiltinDatapack) { // since we are loading a server datapack, I think this is called after the configs have loaded.
+                event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
+                    packConsumer.accept(packConstructor.create("default_professions", Component.nullToEmpty("Default Professions"),
+                            true, () -> new PathResourcePack("default_professions",
+                                    ModList.get().getModFileById(Constants.MOD_ID).getFile().getFilePath().resolve("optional")),
+                            new PackMetadataSection(Component.nullToEmpty("Default Professions"), 1),
+                            Pack.Position.BOTTOM,
+                            PackSource.WORLD, false));
+                });
+            }
+        }
+    }
 
     public static ProfessionsForge getInstance() {
         return mod;

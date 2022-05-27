@@ -12,6 +12,7 @@ import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.integration.ftb.FTBIntegration;
 import com.epherical.professions.networking.ServerHandler;
+import com.epherical.professions.profession.ProfessionEditorSerializer;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
@@ -92,8 +93,9 @@ public class ProfessionsFabric implements ModInitializer {
 
     }
 
-    private static ProfessionSerializer<?> init() {
-        return ProfessionSerializer.DEFAULT_PROFESSION;
+    private static void init() {
+        var init = ProfessionSerializer.DEFAULT_PROFESSION;
+        var clazz = ProfessionEditorSerializer.APPEND_EDITOR;
     }
 
     public static Economy getEconomy() {

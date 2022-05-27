@@ -68,7 +68,6 @@ public class NetworkHandler {
             PlayerManager playerManager = ProfessionsForge.getInstance().getPlayerManager();
             ProfessionLoader loader = ProfessionsForge.getInstance().getProfessionLoader();
             ServerPlayer player = context.getSender();
-            // todo: see why this isn't working too, this happens when we r -> join -> click any profession
             if (attempt.subChannel.equals(JOIN_BUTTON_REQUEST)) {
                 ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
                 Profession profession = loader.getProfession(attempt.professionKey);

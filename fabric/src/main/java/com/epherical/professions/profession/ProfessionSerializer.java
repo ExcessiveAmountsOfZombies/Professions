@@ -12,8 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ProfessionSerializer<T extends Profession> extends JsonDeserializer<T>, JsonSerializer<T> {
-    ProfessionSerializer<Profession> DEFAULT_PROFESSION = registerSerializer(Constants.modID("default"), new Profession.Serializer());
+public interface ProfessionSerializer<T extends Profession, V extends ProfessionBuilder> extends JsonDeserializer<V>, JsonSerializer<T> {
+    ProfessionSerializer<Profession, ProfessionBuilder> DEFAULT_PROFESSION = registerSerializer(Constants.modID("default"), new Profession.Serializer());
 
     T fromServer(FriendlyByteBuf buf);
 
@@ -24,9 +24,11 @@ public interface ProfessionSerializer<T extends Profession> extends JsonDeserial
 
     //T deserialize(ResourceLocation id, JsonObject profession);
 
+    Class<V> getBuilderType();
+
     Class<T> getType();
 
-    static <S extends ProfessionSerializer<T>, T extends Profession> S registerSerializer(ResourceLocation id, S serializer) {
+    static <S extends ProfessionSerializer<T, V>, T extends Profession, V extends ProfessionBuilder> S registerSerializer(ResourceLocation id, S serializer) {
         return Registry.register(RegistryConstants.PROFESSION_SERIALIZER, id, serializer);
     }
 

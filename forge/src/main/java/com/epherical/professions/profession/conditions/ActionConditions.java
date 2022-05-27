@@ -30,7 +30,6 @@ public class ActionConditions {
     // advancement condition
 
     public static Object createGsonAdapter() {
-        // TODO: this might cause issues
         return GsonAdapterFactory.builder(RegistryConstants.ACTION_CONDITION_TYPE.getSlaveMap(modID("conditions"), MappedRegistry.class), "condition", "condition", ActionCondition::getType).build();
     }
 

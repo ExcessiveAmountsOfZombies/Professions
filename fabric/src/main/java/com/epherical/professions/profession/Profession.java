@@ -6,8 +6,6 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
@@ -61,6 +59,12 @@ public class Profession {
         this.experienceScalingEquation = experienceScalingEquation;
         this.incomeScalingEquation = incomeScalingEquation;
         this.displayComponent = new TextComponent(displayName).setStyle(Style.EMPTY.withColor(color));
+    }
+
+    public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
+                      Parser experienceScalingEquation, Parser incomeScalingEquation, ResourceLocation key) {
+        this(color, descriptionColor, description, displayName, maxLevel, actions, experienceScalingEquation, incomeScalingEquation);
+        this.key = key;
     }
 
     public int getMaxLevel() {
@@ -133,7 +137,7 @@ public class Profession {
 
 
     @NotNull
-    public ProfessionSerializer<Profession> getSerializer() {
+    public ProfessionSerializer<Profession, ProfessionBuilder> getSerializer() {
         return ProfessionSerializer.DEFAULT_PROFESSION;
     }
 
@@ -174,25 +178,28 @@ public class Profession {
         return professions;
     }
 
-    public static class Serializer implements ProfessionSerializer<Profession> {
+    public static class Serializer implements ProfessionSerializer<Profession, ProfessionBuilder> {
 
 
         @Override
-        public Profession deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public ProfessionBuilder deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject object = GsonHelper.convertToJsonObject(json, "profession object");
             TextColor professionColor = TextColor.parseColor(GsonHelper.getAsString(object, "color", "#FF0000"));
             TextColor descriptionColor = TextColor.parseColor(GsonHelper.getAsString(object, "descriptionColor", "#FFFFFF"));
             String[] description = GsonHelper.getAsObject(object, "description", context, String[].class);
             String displayName = GsonHelper.getAsString(object, "displayName");
             int maxLevel = GsonHelper.getAsInt(object, "maxLevel");
+            ProfessionBuilder builder = ProfessionBuilder.profession(
+                    professionColor, descriptionColor, description, displayName, maxLevel);
             Action[] actions = GsonHelper.getAsObject(object, "actions", new Action[0], context, Action[].class);
-            Multimap<ActionType, Action> actionMap = LinkedHashMultimap.create();
             for (Action action : actions) {
-                actionMap.put(action.getType(), action);
+                builder.addAction(action.getType(), action);
             }
             Parser experienceScaling = new Parser(GsonHelper.getAsString(object, "experienceSclEquation"));
             Parser incomeScaling = new Parser(GsonHelper.getAsString(object, "incomeSclEquation"));
-            return new Profession(professionColor, descriptionColor, description, displayName, maxLevel, actionMap.asMap(), experienceScaling, incomeScaling);
+            builder.setExperienceScalingEquation(experienceScaling);
+            builder.setIncomeScalingEquation(incomeScaling);
+            return builder;
         }
 
         @Override
@@ -245,6 +252,11 @@ public class Profession {
             for (String s : profession.description) {
                 buf.writeUtf(s);
             }
+        }
+
+        @Override
+        public Class<ProfessionBuilder> getBuilderType() {
+            return ProfessionBuilder.class;
         }
 
         @Override

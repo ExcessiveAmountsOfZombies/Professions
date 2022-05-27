@@ -4,6 +4,7 @@ import com.epherical.octoecon.api.Economy;
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;

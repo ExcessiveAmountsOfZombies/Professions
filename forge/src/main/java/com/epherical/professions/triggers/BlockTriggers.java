@@ -59,7 +59,7 @@ public class BlockTriggers {
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.PLACE_BLOCK.get())
                     .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
-                    .addParameter(ProfessionParameter.THIS_BLOCKSTATE, event.getPlacedBlock()) // todo: test
+                    .addParameter(ProfessionParameter.THIS_BLOCKSTATE, event.getPlacedBlock())
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));
             RewardHandler.handleReward(builder);
         }

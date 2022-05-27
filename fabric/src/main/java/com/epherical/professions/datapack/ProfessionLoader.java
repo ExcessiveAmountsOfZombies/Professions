@@ -5,18 +5,24 @@ import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.profession.Profession;
+import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.conditions.ActionConditions;
+import com.epherical.professions.profession.editor.Editor;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.Rewards;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +36,7 @@ import org.slf4j.Logger;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProfessionLoader extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -47,20 +54,41 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
         professionMap = null;
 
-        ImmutableMap.Builder<ResourceLocation, Profession> builder = ImmutableMap.builder();
+        Map<ResourceLocation, ProfessionBuilder> temp = Maps.newHashMap();
+        Multimap<ResourceLocation, Editor> editsMade = HashMultimap.create();
 
         object.forEach((location, jsonElement) -> {
             JsonObject jsonObject = GsonHelper.convertToJsonObject(jsonElement, "profession");
             if (jsonObject.has("type")) {
                 ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "type"));
-                ProfessionSerializer<? extends Profession> nullable = RegistryConstants.PROFESSION_SERIALIZER.get(type);
+                ProfessionSerializer<? extends Profession, ? extends ProfessionBuilder> nullable = RegistryConstants.PROFESSION_SERIALIZER.get(type);
                 nullable = nullable != null ? nullable : ProfessionSerializer.DEFAULT_PROFESSION;
-                Profession profession = GSON.fromJson(jsonElement, nullable.getType());
+                ProfessionBuilder profession = GSON.fromJson(jsonElement, nullable.getBuilderType());
                 profession.setKey(location);
-                builder.put(location, profession);
+                temp.put(location, profession);
+            } else if (jsonObject.has("function_type")) {
+                ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "function_type"));
+                Editor editor = RegistryConstants.PROFESSION_EDITOR_SERIALIZER.getOptional(type)
+                        .orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported editor type '" + type + "'"))
+                        .deserialize(jsonObject, GSON);
+                editor.setLocation(location);
+                editsMade.put(editor.getProfessionKey(), editor);
             }
         });
-        this.professionMap = builder.build();
+        // TODO: there should probably be some sort of editing order.
+        for (Map.Entry<ResourceLocation, ProfessionBuilder> entry : temp.entrySet()) {
+            // we will simply ignore any professions that don't exist.
+            ResourceLocation key = entry.getKey();
+            if (key != null) {
+                for (Editor editor : editsMade.get(entry.getKey())) {
+                    editor.applyEdit(entry.getValue());
+                }
+            }
+        }
+        Map<ResourceLocation, Profession> result = temp.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().build()));
+        this.professionMap = ImmutableMap.copyOf(result);
 
         PlayerManager manager = ProfessionsFabric.getInstance().getPlayerManager();
         // this will be null when it first loads.
@@ -107,7 +135,7 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
                 .registerTypeHierarchyAdapter(Reward.class, Rewards.createGsonAdapter())
                 .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
                 .registerTypeHierarchyAdapter(Action.class, Actions.createGsonAdapter())
-                .registerTypeAdapter(Profession.class, new Profession.Serializer());
+                .registerTypeAdapter(ProfessionBuilder.class, new Profession.Serializer());
         ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;
     }

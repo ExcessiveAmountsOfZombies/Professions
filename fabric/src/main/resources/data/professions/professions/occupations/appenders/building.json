@@ -1,0 +1,39 @@
+{
+  "function_type": "professions:append",
+  "to_edit_profession_key": "professions:building",
+  "actions": [
+    {
+      "action": "professions:place_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.1
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.1,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "blocks": [
+        "minecraft:white_concrete",
+        "minecraft:orange_concrete",
+        "minecraft:magenta_concrete",
+        "minecraft:light_blue_concrete",
+        "minecraft:yellow_concrete",
+        "minecraft:lime_concrete",
+        "minecraft:pink_concrete",
+        "minecraft:gray_concrete",
+        "minecraft:light_gray_concrete",
+        "minecraft:cyan_concrete",
+        "minecraft:purple_concrete",
+        "minecraft:blue_concrete",
+        "minecraft:brown_concrete",
+        "minecraft:green_concrete",
+        "minecraft:red_concrete",
+        "minecraft:black_concrete"
+      ]
+    }
+  ]
+}

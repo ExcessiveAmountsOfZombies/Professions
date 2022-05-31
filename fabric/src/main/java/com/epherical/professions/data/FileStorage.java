@@ -1,8 +1,12 @@
 package com.epherical.professions.data;
 
+import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.NullOccupation;
 import com.epherical.professions.profession.progression.Occupation;
+import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.progression.ProfessionalPlayerImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -76,6 +80,11 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
             return null;
         }
         ProfessionalPlayerImpl player = new ProfessionalPlayerImpl(uuid);
+        if (ProfessionConfig.autoJoinProfessions) {
+            for (Profession profession : ProfessionsFabric.getInstance().getProfessionLoader().getProfessions()) {
+                player.joinOccupation(profession, OccupationSlot.ACTIVE);
+            }
+        }
         try (FileWriter writer = new FileWriter(resolve(uuid).toFile())) {
             GSON.toJson(player, ProfessionalPlayerImpl.class, writer);
             player.resetMaxExperience();

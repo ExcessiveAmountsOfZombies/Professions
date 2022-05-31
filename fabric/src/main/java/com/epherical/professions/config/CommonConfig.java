@@ -98,8 +98,17 @@ public class CommonConfig {
             e.printStackTrace();
         }
         try {
+            int currentConfigVersion = version;
             this.rootNode = loader.load();
             parseConfig(rootNode);
+            int value = this.rootNode.node("version").getInt();
+            if (value != currentConfigVersion) {
+                LOGGER.info("Upgrading professions config from {} to {}", version, currentConfigVersion);
+                version = currentConfigVersion;
+                this.loader.save(generateConfig(CommentedConfigurationNode.root()));
+                this.rootNode = loader.load();
+                parseConfig(rootNode);
+            }
         } catch (ConfigurateException e) {
             e.printStackTrace();
             return false;
@@ -114,6 +123,14 @@ public class CommonConfig {
             node.node("maxOccupations").set(maxOccupations)
                     .comment("The max amount of occupations a user can have active at a time.\n" +
                     "Default is 3, set to 0 to disable and allow any amount of occupations to be joined.");
+
+            node.node("autoJoinProfessions").set(autoJoinProfessions)
+                    .comment("Default false. If set to true, when the player joins the server, they will join *ALL* \n" +
+                            "possible professions, disregarding 'maxOccupations'.");
+            node.node("preventLeavingProfession").set(preventLeavingProfession)
+                    .comment("Default false. If set to true, will prevent the player from leaving any profession. \n" +
+                            "Good for enforcing a progression system");
+
             node.node("useBuiltinDatapack").set(useBuiltinDatapack)
                     .comment("""
                             Default true. If you are a regular user you can ignore this. This is to provide an all in one experience\s
@@ -188,6 +205,8 @@ public class CommonConfig {
         version = node.node("version").getInt(version);
         maxOccupations = node.node("maxOccupations").getInt(maxOccupations);
         useBuiltinDatapack = node.node("useBuiltinDatapack").getBoolean(useBuiltinDatapack);
+        autoJoinProfessions = node.node("autoJoinProfessions").getBoolean(autoJoinProfessions);
+        preventLeavingProfession = node.node("preventLeavingProfession").getBoolean(preventLeavingProfession);
         displayXpAsPercentage = node.node("displayXpAsPercentage").getBoolean(displayXpAsPercentage);
         allowCreativeModePayments = node.node("allowCreativeModePayments").getBoolean(allowCreativeModePayments);
 

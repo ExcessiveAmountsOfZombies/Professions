@@ -62,7 +62,6 @@ public class ProfessionsFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // TODO: add config option for autojoin, and also ability to prevent leaving of professions
         startup = true;
         mod = this;
         this.config = new CommonConfig(false, "professions.conf");

@@ -96,6 +96,11 @@ public class PlayerManager {
             return false;
         }
 
+        if (ProfessionConfig.preventLeavingProfession && !Permissions.check(serverPlayer, "professions.bypass.leave_prevention")) {
+            serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.error.disabled_in_config").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            return false;
+        }
+
         if (player == null) {
             return false;
         }

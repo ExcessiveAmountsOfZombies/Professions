@@ -20,6 +20,7 @@
   "professions.command.join.success": "You have joined %s.",
 
   "professions.command.leave.error.does_not_exist": "Profession does not exist.",
+  "professions.command.leave.error.disabled_in_config": "Could not leave profession as leaving is disabled in the config.",
   "professions.command.leave.success": "You have left %s.",
 
   "professions.command.fire.error.does_not_exist": "Profession does not exist.",

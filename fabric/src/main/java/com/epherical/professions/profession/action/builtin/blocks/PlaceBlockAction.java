@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class PlaceBlockAction extends BlockAbstactAction {
+public class PlaceBlockAction extends BlockAbstractAction {
 
 
     protected PlaceBlockAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blocks) {
@@ -42,7 +42,7 @@ public class PlaceBlockAction extends BlockAbstactAction {
         return false;
     }
 
-    public static class Serializer extends BlockAbstactAction.Serializer<PlaceBlockAction> {
+    public static class Serializer extends BlockAbstractAction.Serializer<PlaceBlockAction> {
 
         @Override
         public PlaceBlockAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
@@ -50,7 +50,7 @@ public class PlaceBlockAction extends BlockAbstactAction {
         }
     }
 
-    public static class Builder extends BlockAbstactAction.Builder<Builder> {
+    public static class Builder extends BlockAbstractAction.Builder<Builder> {
 
         @Override
         protected Builder instance() {

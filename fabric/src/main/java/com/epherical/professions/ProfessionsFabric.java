@@ -11,6 +11,7 @@ import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.integration.ftb.FTBIntegration;
+import com.epherical.professions.loot.UnlockCondition;
 import com.epherical.professions.networking.ServerHandler;
 import com.epherical.professions.profession.ProfessionEditorSerializer;
 import com.epherical.professions.profession.ProfessionSerializer;
@@ -20,16 +21,25 @@ import com.epherical.professions.trigger.UtilityListener;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder;
+import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.mixin.loot.table.LootSupplierBuilderHooks;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.Serializer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ProfessionsFabric implements ModInitializer {
@@ -48,9 +58,11 @@ public class ProfessionsFabric implements ModInitializer {
     private boolean startup;
 
     public static boolean isStopping = false;
+    public static final LootItemConditionType UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
 
     @Override
     public void onInitialize() {
+        // TODO: add config option for autojoin, and also ability to prevent leaving of professions
         startup = true;
         mod = this;
         this.config = new CommonConfig(false, "professions.conf");
@@ -77,6 +89,17 @@ public class ProfessionsFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             isStopping = true;
         });
+        LootTableLoadingCallback.EVENT.register((resourceManager, manager, id, supplier, setter) -> {
+            List<LootPool> pools = ((LootSupplierBuilderHooks) supplier).getPools();
+            // this is probably really awful to do, adding our condition check to EVERY SINGLE lootpool in the game.
+            if (!pools.isEmpty()) {
+                for (int i = 0; i < pools.size(); i++) {
+                    FabricLootPoolBuilder builder = FabricLootPoolBuilder.of(pools.get(i));
+                    builder.conditionally(UnlockCondition::new);
+                    pools.set(i, builder.build());
+                }
+            }
+        });
         this.listener = new ProfessionListener();
         ServerPlayConnectionEvents.JOIN.register(this.listener::onPlayerJoin);
         ServerPlayConnectionEvents.DISCONNECT.register(this.listener::onPlayerLeave);
@@ -96,6 +119,10 @@ public class ProfessionsFabric implements ModInitializer {
     private static void init() {
         var init = ProfessionSerializer.DEFAULT_PROFESSION;
         var clazz = ProfessionEditorSerializer.APPEND_EDITOR;
+    }
+
+    public static LootItemConditionType registerLootCondition(String id, Serializer<? extends LootItemCondition> serializer) {
+        return Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation(Constants.MOD_ID, id), new LootItemConditionType(serializer));
     }
 
     public static Economy getEconomy() {

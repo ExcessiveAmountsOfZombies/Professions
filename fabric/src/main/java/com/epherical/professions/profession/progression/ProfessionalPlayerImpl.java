@@ -1,14 +1,18 @@
 package com.epherical.professions.profession.progression;
 
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.api.UnlockableData;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
+import com.epherical.professions.profession.UnlockableDataImpl;
 import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.util.ActionLogger;
+import com.epherical.professions.util.Tristate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonDeserializationContext;
@@ -158,6 +162,17 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     public List<Occupation> getInactiveOccupations() {
         return getOccupations(false);
     }
+
+    @Override
+    public UnlockableData getUnlockableData(Object object) {
+        for (Occupation activeOccupation : getActiveOccupations()) {
+            if (activeOccupation.getData().canUse(object) != Tristate.UNKNOWN) {
+                return activeOccupation.getData();
+            }
+        }
+        return null;
+    }
+
 
     private List<Occupation> getOccupations(boolean active) {
         ImmutableList.Builder<Occupation> occ = ImmutableList.builder();

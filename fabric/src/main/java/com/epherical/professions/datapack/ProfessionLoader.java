@@ -14,6 +14,8 @@ import com.epherical.professions.profession.conditions.ActionConditions;
 import com.epherical.professions.profession.editor.Editor;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.Rewards;
+import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.Unlocks;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -135,6 +137,7 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
                 .registerTypeHierarchyAdapter(Reward.class, Rewards.createGsonAdapter())
                 .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
                 .registerTypeHierarchyAdapter(Action.class, Actions.createGsonAdapter())
+                .registerTypeHierarchyAdapter(Unlock.class, Unlocks.createGsonAdapter())
                 .registerTypeAdapter(ProfessionBuilder.class, new Profession.Serializer());
         ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;

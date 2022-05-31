@@ -3,6 +3,7 @@ package com.epherical.professions.profession;
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.unlock.Unlock;
 import com.google.common.collect.LinkedHashMultimap;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,7 @@ public class ProfessionBuilder {
     protected int maxLevel;
 
     protected LinkedHashMultimap<ActionType, Action> actions;
+    protected LinkedHashMultimap<Class<?>, Unlock<?>> unlocks;
     protected Parser experienceScalingEquation;
     protected Parser incomeScalingEquation;
 
@@ -28,6 +30,7 @@ public class ProfessionBuilder {
         this.displayName = displayName;
         this.maxLevel = maxLevel;
         this.actions = LinkedHashMultimap.create();
+        this.unlocks = LinkedHashMultimap.create();
     }
 
     public static ProfessionBuilder profession(TextColor professionColor, TextColor descriptionColor, String[] description, String displayName, int maxLevel) {
@@ -46,6 +49,11 @@ public class ProfessionBuilder {
 
     public ProfessionBuilder addAction(ActionType type, Action action) {
         this.actions.put(type, action);
+        return this;
+    }
+
+    public ProfessionBuilder addUnlock(Class<?> type, Unlock<?> unlock) {
+        this.unlocks.put(type, unlock);
         return this;
     }
 
@@ -94,6 +102,7 @@ public class ProfessionBuilder {
     }
 
     public Profession build() {
-        return new Profession(professionColor, descriptionColor, description, displayName, maxLevel, actions.asMap(), experienceScalingEquation, incomeScalingEquation, key);
+        return new Profession(professionColor, descriptionColor, description, displayName, maxLevel,
+                actions.asMap(), unlocks.asMap(), experienceScalingEquation, incomeScalingEquation, key);
     }
 }

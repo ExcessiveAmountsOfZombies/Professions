@@ -5,6 +5,8 @@ import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockType;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -41,6 +43,7 @@ public class Profession {
     protected final String displayName;
     protected final int maxLevel;
     protected final Map<ActionType, Collection<Action>> actions;
+    protected final Map<Class<?>, Collection<Unlock<?>>> unlocks;
     protected final Parser experienceScalingEquation;
     protected final Parser incomeScalingEquation;
 
@@ -49,21 +52,22 @@ public class Profession {
     protected final Component displayComponent;
 
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
-                      Parser experienceScalingEquation, Parser incomeScalingEquation) {
+                      Map<Class<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation) {
         this.color = color;
         this.description = description;
         this.descriptionColor = descriptionColor;
         this.displayName = displayName;
         this.maxLevel = maxLevel;
         this.actions = actions;
+        this.unlocks = unlocks;
         this.experienceScalingEquation = experienceScalingEquation;
         this.incomeScalingEquation = incomeScalingEquation;
         this.displayComponent = new TextComponent(displayName).setStyle(Style.EMPTY.withColor(color));
     }
 
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
-                      Parser experienceScalingEquation, Parser incomeScalingEquation, ResourceLocation key) {
-        this(color, descriptionColor, description, displayName, maxLevel, actions, experienceScalingEquation, incomeScalingEquation);
+                      Map<Class<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation, ResourceLocation key) {
+        this(color, descriptionColor, description, displayName, maxLevel, actions, unlocks, experienceScalingEquation, incomeScalingEquation);
         this.key = key;
     }
 
@@ -93,6 +97,10 @@ public class Profession {
 
     public Map<ActionType, Collection<Action>> getActions() {
         return actions;
+    }
+
+    public Map<Class<?>, Collection<Unlock<?>>> getUnlocks() {
+        return unlocks;
     }
 
     @Nullable
@@ -195,6 +203,10 @@ public class Profession {
             for (Action action : actions) {
                 builder.addAction(action.getType(), action);
             }
+            Unlock<?>[] unlocks = GsonHelper.getAsObject(object, "unlocks", new Unlock[0], context, Unlock[].class);
+            for (Unlock<?> unlock : unlocks) {
+                builder.addUnlock(unlock.getClassType(), unlock);
+            }
             Parser experienceScaling = new Parser(GsonHelper.getAsString(object, "experienceSclEquation"));
             Parser incomeScaling = new Parser(GsonHelper.getAsString(object, "incomeSclEquation"));
             builder.setExperienceScalingEquation(experienceScaling);
@@ -224,6 +236,13 @@ public class Profession {
                 }
             }
             object.add("actions", actionArray);
+            JsonArray unlockArray = new JsonArray();
+            for (Collection<Unlock<?>> value : src.unlocks.values()) {
+                for (Unlock<?> unlock : value) {
+                    unlockArray.add(context.serialize(unlock));
+                }
+            }
+            object.add("unlocks", unlockArray);
             return object;
         }
 
@@ -237,7 +256,7 @@ public class Profession {
             for (int i = 0; i < description.length; i++) {
                 description[i] = buf.readUtf();
             }
-            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), null, null);
+            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), ImmutableMap.of(), null, null);
             profession.setKey(location);
             return profession;
         }

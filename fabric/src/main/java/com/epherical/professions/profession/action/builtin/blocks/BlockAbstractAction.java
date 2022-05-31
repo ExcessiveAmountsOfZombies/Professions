@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BlockAbstactAction extends AbstractAction {
+public abstract class BlockAbstractAction extends AbstractAction {
     private static final Logger LOGGER = LogUtils.getLogger();
     protected final List<ActionEntry<Block>> blocks;
     @Nullable
@@ -55,7 +55,7 @@ public abstract class BlockAbstactAction extends AbstractAction {
             .maximumSize(5000)
             .build();
 
-    protected BlockAbstactAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blockList) {
+    protected BlockAbstractAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Block>> blockList) {
         super(conditions, rewards);
         this.blocks = blockList;
     }
@@ -143,7 +143,7 @@ public abstract class BlockAbstactAction extends AbstractAction {
         }
     }
 
-    public abstract static class Serializer<T extends BlockAbstactAction> extends ActionSerializer<T> {
+    public abstract static class Serializer<T extends BlockAbstractAction> extends ActionSerializer<T> {
 
         @Override
         public void serialize(@NotNull JsonObject json, T value, @NotNull JsonSerializationContext serializationContext) {
@@ -155,7 +155,7 @@ public abstract class BlockAbstactAction extends AbstractAction {
             json.add("blocks", array);
         }
 
-        public List<ActionEntry<Block>> deserializeBlocks(JsonObject object) {
+        public static List<ActionEntry<Block>> deserializeBlocks(JsonObject object) {
             JsonArray array = GsonHelper.getAsJsonArray(object, "blocks");
             List<ActionEntry<Block>> blocks = new ArrayList<>();
             for (JsonElement element : array) {

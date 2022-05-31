@@ -5,9 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.Block;
@@ -31,7 +29,7 @@ public abstract class TntExplosionTriggerMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))
     public void onExploded(boolean spawnParticles, CallbackInfo ci, boolean bl, ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList, Iterator var4, BlockPos blockPos, BlockState blockState, Block block) {
         if (getSourceMob() != null && getSourceMob() instanceof ServerPlayer) {
-            TriggerEvents.TNT_DESTROY_EVENT.invoker().onTNTDestroy((ServerPlayer) getSourceMob(), blockState);
+            TriggerEvents.TNT_DESTROY_EVENT.invoker().onTNTDestroy((ServerPlayer) getSourceMob(), blockState, blockPos);
         }
     }
 }

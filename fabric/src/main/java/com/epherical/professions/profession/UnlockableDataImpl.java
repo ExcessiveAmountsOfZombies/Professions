@@ -3,6 +3,7 @@ package com.epherical.professions.profession;
 import com.epherical.professions.api.UnlockableData;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.util.Tristate;
 
 import java.util.Collection;
@@ -18,7 +19,7 @@ public class UnlockableDataImpl implements UnlockableData {
     public UnlockableDataImpl(Occupation occupation) {
         this.occupation = occupation;
         this.unlocks = new HashMap<>();
-        for (Map.Entry<Class<?>, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
+        for (Map.Entry<UnlockType, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
             for (Unlock<?> unlock : entry.getValue()) {
                 for (Unlock.Singular<?> singular : unlock.convertToSingle()) {
                     unlocks.put(singular.getObject(), singular);

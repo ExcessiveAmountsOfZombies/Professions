@@ -27,9 +27,9 @@ public final class TriggerEvents {
         }
     });
 
-    public static final Event<TNTDestroy> TNT_DESTROY_EVENT = EventFactory.createArrayBacked(TNTDestroy.class, calls -> (source, state) -> {
+    public static final Event<TNTDestroy> TNT_DESTROY_EVENT = EventFactory.createArrayBacked(TNTDestroy.class, calls -> (source, state, blockPos) -> {
         for (TNTDestroy call : calls) {
-            call.onTNTDestroy(source, state);
+            call.onTNTDestroy(source, state, blockPos);
         }
     });
 
@@ -97,7 +97,7 @@ public final class TriggerEvents {
     }
 
     public interface TNTDestroy {
-        void onTNTDestroy(ServerPlayer source, BlockState state);
+        void onTNTDestroy(ServerPlayer source, BlockState state, BlockPos pos);
     }
 
     public interface CatchFish {

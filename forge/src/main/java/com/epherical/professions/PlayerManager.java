@@ -18,9 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.security.Permissions;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 

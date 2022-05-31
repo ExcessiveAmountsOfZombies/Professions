@@ -76,9 +76,9 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
                 Collection<Action> actions = occupation.getProfession().getActions(context.getParameter(ProfessionParameter.ACTION_TYPE));
                 if (actions != null && !actions.isEmpty()) {
                     ActionLogger logger = context.getParameter(ProfessionParameter.ACTION_LOGGER);
-                    logger.startMessage(occupation);
                     for (Action action : actions) {
                         if (action.handleAction(context, occupation)) {
+                            logger.startMessage(occupation);
                             action.giveRewards(context, occupation);
                             logger.sendMessage(player);
                         }

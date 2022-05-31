@@ -19,7 +19,7 @@ public class UnlockableDataImpl implements UnlockableData {
     public UnlockableDataImpl(Occupation occupation) {
         this.occupation = occupation;
         this.unlocks = new HashMap<>();
-        for (Map.Entry<UnlockType, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
+        for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
             for (Unlock<?> unlock : entry.getValue()) {
                 for (Unlock.Singular<?> singular : unlock.convertToSingle()) {
                     unlocks.put(singular.getObject(), singular);
@@ -29,12 +29,30 @@ public class UnlockableDataImpl implements UnlockableData {
     }
 
     @Override
+    public <T> Unlock.Singular<T> getUnlock(T object) {
+        return (Unlock.Singular<T>) unlocks.get(object);
+    }
+
+    @Override
     public <T> Tristate canUse(T object) {
         Unlock.Singular<T> singular = (Unlock.Singular<T>) unlocks.get(object);
         if (singular == null) {
             return Tristate.UNKNOWN;
         }
         return singular.isLocked(object, occupation.getLevel());
+    }
+
+    @Override
+    public <T> Tristate canUse(Unlock.Singular<T> unlock, T object) {
+        if (unlock == null) {
+            return Tristate.UNKNOWN;
+        }
+        return unlock.isLocked(object, occupation.getLevel());
+    }
+
+    @Override
+    public Occupation getOccupation() {
+        return occupation;
     }
 
     @Override

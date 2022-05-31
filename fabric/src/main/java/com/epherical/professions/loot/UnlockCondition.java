@@ -3,20 +3,27 @@ package com.epherical.professions.loot;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.api.UnlockableData;
+import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.Util;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-
-import static com.epherical.professions.util.Tristate.UNKNOWN;
 
 
 public class UnlockCondition implements LootItemCondition {
@@ -34,6 +41,8 @@ public class UnlockCondition implements LootItemCondition {
             if (player == null || player.getActiveOccupations().size() == 0) {
                 return true; // don't affect the loot if it's not relevant
             }
+            MutableComponent msg = new TextComponent("");
+            int level = 0;
             boolean canUseTool = true, canDropEntity = true, canDropBlock = true;
             /*ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
             if (tool != null && !tool.isEmpty()) {
@@ -47,19 +56,38 @@ public class UnlockCondition implements LootItemCondition {
 
             BlockState blockBroken = context.getParamOrNull(LootContextParams.BLOCK_STATE);
             if (blockBroken != null) {
-                canDropBlock = canUse(player, Unlocks.BLOCK_UNLOCK, blockBroken.getBlock());
+                Pair<Unlock.Singular<Block>, Boolean> pair = canUse(player, Unlocks.BLOCK_UNLOCK, blockBroken.getBlock());
+                if (pair.getFirst() != null) {
+                    level = pair.getFirst().getUnlockLevel();
+                }
+                canDropBlock = pair.getSecond();
+                msg = blockBroken.getBlock().getName();
             }
-            return canUseTool && canDropEntity && canDropBlock;
+            if (!(canUseTool && canDropEntity && canDropBlock)) {
+                serverPlayer.sendMessage(new TranslatableComponent("You must be level %s before you can receive drops from %s.",
+                        new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                        msg.setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))
+                        ).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+                return false;
+            }
         }
         return true;
     }
 
-    private <T> boolean canUse(ProfessionalPlayer player, UnlockType<T> type, T object) {
+    private <T> Pair<Unlock.Singular<T>, Boolean> canUse(ProfessionalPlayer player, UnlockType<T> type, T object) {
         UnlockableData data = player.getUnlockableData(type, object);
-        if (data == null || data.canUse(object) == UNKNOWN) {
-            return true;
+        if (data == null) {
+            return Pair.of(null, true);
         }
-        return data.canUse(object).valid();
+        Unlock.Singular<T> unlock = data.getUnlock(object);
+        if (unlock == null) {
+            return Pair.of(null, true);
+        }
+        if (data.canUse(unlock, object).valid()) {
+            return Pair.of(unlock, true);
+        }
+
+        return Pair.of(unlock, false);
     }
 
     public static Builder builder() {

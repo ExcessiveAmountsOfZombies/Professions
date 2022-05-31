@@ -18,7 +18,7 @@ public class ProfessionBuilder {
     protected int maxLevel;
 
     protected LinkedHashMultimap<ActionType, Action> actions;
-    protected LinkedHashMultimap<UnlockType, Unlock<?>> unlocks;
+    protected LinkedHashMultimap<UnlockType<?>, Unlock<?>> unlocks;
     protected Parser experienceScalingEquation;
     protected Parser incomeScalingEquation;
 

@@ -24,23 +24,26 @@ public class ActionLogger {
     private static Style EXP = Style.EMPTY.withColor(ProfessionConfig.experience);
 
     private MutableComponent message;
+    private MutableComponent actionPortion;
 
     private Component money = new TextComponent("$0.0").setStyle(MONEY);
     private Component exp = new TextComponent("0.0xp").setStyle(EXP);
 
     private boolean actionAdded = false;
+    private boolean msgAdded = false;
 
 
     public void startMessage(Occupation occupation) {
-        if (!actionAdded) {
+        if (!msgAdded) {
             message = new TranslatableComponent("[%s] %s", new TextComponent("PR").setStyle(VARIABLE), occupation.getProfession().getDisplayComponent()).setStyle(BORDER);
+            msgAdded = true;
         }
     }
 
     public void addAction(Action action, Component component) {
         if (!actionAdded) {
             MutableComponent type = new TranslatableComponent(action.getType().getTranslationKey()).setStyle(DESCRIPTOR);
-            message.append(" ").append(component.copy().withStyle(VARIABLE).withStyle(ChatFormatting.UNDERLINE).withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, type))));
+            actionPortion = new TextComponent(" ").append(component.copy().withStyle(VARIABLE).withStyle(ChatFormatting.UNDERLINE).withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, type))));
             actionAdded = true;
         }
     }
@@ -56,7 +59,7 @@ public class ActionLogger {
 
     public void sendMessage(ServerPlayer player) {
         if (message != null && player != null) {
-            message.append(" ").append(money).append(" | ").append(exp);
+            message.append(actionPortion).append(" ").append(money).append(" | ").append(exp);
             if (ProfessionConfig.logInChat) {
                 player.sendMessage(message, Util.NIL_UUID);
             } else {

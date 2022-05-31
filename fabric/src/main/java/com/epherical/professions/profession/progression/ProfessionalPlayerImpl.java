@@ -11,6 +11,7 @@ import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.UnlockableDataImpl;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.util.ActionLogger;
 import com.epherical.professions.util.Tristate;
 import com.google.common.collect.ImmutableList;
@@ -163,8 +164,9 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         return getOccupations(false);
     }
 
-    @Override
-    public UnlockableData getUnlockableData(Object object) {
+    @Override // passing the unlockType but not doing anything with it might be silly, but it lets us enforce typed data.
+    // so other people coding know what they're sending/need to send
+    public <T> UnlockableData getUnlockableData(UnlockType<T> unlockType, T object) {
         for (Occupation activeOccupation : getActiveOccupations()) {
             if (activeOccupation.getData().canUse(object) != Tristate.UNKNOWN) {
                 return activeOccupation.getData();

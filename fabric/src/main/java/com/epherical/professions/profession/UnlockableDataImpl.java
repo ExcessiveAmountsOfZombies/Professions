@@ -1,6 +1,5 @@
 package com.epherical.professions.profession;
 
-import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.api.UnlockableData;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
@@ -10,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class UnlockableDataImpl implements UnlockableData {
     private final Occupation occupation;
@@ -28,11 +28,6 @@ public class UnlockableDataImpl implements UnlockableData {
     }
 
     @Override
-    public ProfessionalPlayer getPlayer() {
-        return null;
-    }
-
-    @Override
     public <T> Tristate canUse(T object) {
         Unlock.Singular<T> singular = (Unlock.Singular<T>) unlocks.get(object);
         if (singular == null) {
@@ -48,7 +43,7 @@ public class UnlockableDataImpl implements UnlockableData {
 
     @Override
     public List<Unlock.Singular<?>> getUnlockedKnowledge() {
-        return null;
+        return unlocks.values().stream().filter(singular -> singular.getUnlockLevel() <= occupation.getLevel()).collect(Collectors.toList());
     }
 
 }

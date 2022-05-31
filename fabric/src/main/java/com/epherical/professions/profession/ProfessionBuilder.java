@@ -4,6 +4,7 @@ import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockType;
 import com.google.common.collect.LinkedHashMultimap;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +18,7 @@ public class ProfessionBuilder {
     protected int maxLevel;
 
     protected LinkedHashMultimap<ActionType, Action> actions;
-    protected LinkedHashMultimap<Class<?>, Unlock<?>> unlocks;
+    protected LinkedHashMultimap<UnlockType, Unlock<?>> unlocks;
     protected Parser experienceScalingEquation;
     protected Parser incomeScalingEquation;
 
@@ -52,7 +53,7 @@ public class ProfessionBuilder {
         return this;
     }
 
-    public ProfessionBuilder addUnlock(Class<?> type, Unlock<?> unlock) {
+    public ProfessionBuilder addUnlock(UnlockType type, Unlock<?> unlock) {
         this.unlocks.put(type, unlock);
         return this;
     }

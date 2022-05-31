@@ -6,6 +6,7 @@ import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockType;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +60,5 @@ public interface ProfessionalPlayer {
 
     List<Occupation> getInactiveOccupations();
 
-    // TODO: need a better way to enforce types, currently it could be an item, entity, or block.
-    //  but we have no way of knowing what is actually being passed.
-    UnlockableData getUnlockableData(Object obj);
+    <T> UnlockableData getUnlockableData(UnlockType<T> unlockType, T object);
 }

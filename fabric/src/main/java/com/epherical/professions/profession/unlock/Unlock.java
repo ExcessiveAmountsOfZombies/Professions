@@ -11,9 +11,7 @@ public interface Unlock<T> {
 
     int getUnlockLevel();
 
-    UnlockType getType();
-
-    Class<T> getClassType();
+    UnlockType<T> getType();
 
     List<Singular<T>> convertToSingle();
 
@@ -26,9 +24,11 @@ public interface Unlock<T> {
 
         Tristate isLocked(T object, int level);
 
-        UnlockType getType();
+        UnlockType<T> getType();
 
         T getObject();
+
+        int getUnlockLevel();
 
     }
 

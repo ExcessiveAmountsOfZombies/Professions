@@ -43,7 +43,7 @@ public class Profession {
     protected final String displayName;
     protected final int maxLevel;
     protected final Map<ActionType, Collection<Action>> actions;
-    protected final Map<Class<?>, Collection<Unlock<?>>> unlocks;
+    protected final Map<UnlockType, Collection<Unlock<?>>> unlocks;
     protected final Parser experienceScalingEquation;
     protected final Parser incomeScalingEquation;
 
@@ -52,7 +52,7 @@ public class Profession {
     protected final Component displayComponent;
 
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
-                      Map<Class<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation) {
+                      Map<UnlockType, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation) {
         this.color = color;
         this.description = description;
         this.descriptionColor = descriptionColor;
@@ -66,7 +66,7 @@ public class Profession {
     }
 
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
-                      Map<Class<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation, ResourceLocation key) {
+                      Map<UnlockType, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation, ResourceLocation key) {
         this(color, descriptionColor, description, displayName, maxLevel, actions, unlocks, experienceScalingEquation, incomeScalingEquation);
         this.key = key;
     }
@@ -99,7 +99,7 @@ public class Profession {
         return actions;
     }
 
-    public Map<Class<?>, Collection<Unlock<?>>> getUnlocks() {
+    public Map<UnlockType, Collection<Unlock<?>>> getUnlocks() {
         return unlocks;
     }
 
@@ -205,7 +205,7 @@ public class Profession {
             }
             Unlock<?>[] unlocks = GsonHelper.getAsObject(object, "unlocks", new Unlock[0], context, Unlock[].class);
             for (Unlock<?> unlock : unlocks) {
-                builder.addUnlock(unlock.getClassType(), unlock);
+                builder.addUnlock(unlock.getType(), unlock);
             }
             Parser experienceScaling = new Parser(GsonHelper.getAsString(object, "experienceSclEquation"));
             Parser incomeScaling = new Parser(GsonHelper.getAsString(object, "incomeSclEquation"));

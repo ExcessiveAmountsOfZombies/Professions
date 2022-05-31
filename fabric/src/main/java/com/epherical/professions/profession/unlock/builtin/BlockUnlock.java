@@ -49,11 +49,6 @@ public class BlockUnlock implements Unlock<Block> {
     }
 
     @Override
-    public Class<Block> getClassType() {
-        return Block.class;
-    }
-
-    @Override
     public List<Singular<Block>> convertToSingle() {
         List<Singular<Block>> list = new ArrayList<>();
         for (Block realBlock : getRealBlocks()) {
@@ -84,6 +79,11 @@ public class BlockUnlock implements Unlock<Block> {
         @Override
         public Block getObject() {
             return block;
+        }
+
+        @Override
+        public int getUnlockLevel() {
+            return level;
         }
     }
 

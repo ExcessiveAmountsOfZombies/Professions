@@ -3,6 +3,8 @@ package com.epherical.professions.loot;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.api.UnlockableData;
+import com.epherical.professions.profession.unlock.UnlockType;
+import com.epherical.professions.profession.unlock.Unlocks;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -34,7 +36,7 @@ public class UnlockCondition implements LootItemCondition {
                 return true; // don't affect the loot if it's not relevant
             }
             boolean canUseTool = true, canDropEntity = true, canDropBlock = true;
-            ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
+            /*ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
             if (tool != null && !tool.isEmpty()) {
                 canUseTool = canUse(player, tool.getItem());
             }
@@ -42,23 +44,23 @@ public class UnlockCondition implements LootItemCondition {
             Entity killedEntity = context.getParamOrNull(LootContextParams.KILLER_ENTITY);
             if (killedEntity != null) {
                 canDropEntity = canUse(player, killedEntity);
-            }
+            }*/
 
             BlockState blockBroken = context.getParamOrNull(LootContextParams.BLOCK_STATE);
             if (blockBroken != null) {
-                canDropBlock = canUse(player, blockBroken.getBlock());
+                canDropBlock = canUse(player, Unlocks.BLOCK_UNLOCK, blockBroken.getBlock());
             }
             return canUseTool && canDropEntity && canDropBlock;
         }
         return true;
     }
 
-    private boolean canUse(ProfessionalPlayer player, Object type) {
-        UnlockableData data = player.getUnlockableData(type);
-        if (data == null || data.canUse(type) == UNKNOWN) {
+    private <T> boolean canUse(ProfessionalPlayer player, UnlockType<T> type, T object) {
+        UnlockableData data = player.getUnlockableData(type, object);
+        if (data == null || data.canUse(object) == UNKNOWN) {
             return true;
         }
-        return data.canUse(type).valid();
+        return data.canUse(object).valid();
     }
 
     public static Builder builder() {

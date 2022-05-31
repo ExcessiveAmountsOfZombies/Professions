@@ -23,7 +23,7 @@ public class RegistryConstants {
     public static final ResourceKey<Registry<ActionType>> ACTION_TYPE_KEY = ResourceKey.createRegistryKey(modID("professions/actions"));
     public static final ResourceKey<Registry<ActionConditionType>> ACTION_CONDITION_KEY = ResourceKey.createRegistryKey(modID("professions/conditions"));
     public static final ResourceKey<Registry<RewardType>> REWARD_KEY = ResourceKey.createRegistryKey(modID("professions/rewards"));
-    public static final ResourceKey<Registry<UnlockType>> UNLOCK_KEY = ResourceKey.createRegistryKey(modID("professions/unlocks"));
+    public static final ResourceKey<Registry<UnlockType<?>>> UNLOCK_KEY = ResourceKey.createRegistryKey(modID("professions/unlocks"));
 
     public static final Registry<ProfessionSerializer<? extends Profession, ?>> PROFESSION_SERIALIZER = FabricRegistryBuilder.from(new MappedRegistry<>(PROFESSION_TYPE_KEY,
             Lifecycle.experimental(), null)).buildAndRegister();
@@ -35,6 +35,6 @@ public class RegistryConstants {
             Lifecycle.experimental(), null)).buildAndRegister();
     public static final Registry<RewardType> REWARDS = FabricRegistryBuilder.from(new MappedRegistry<>(REWARD_KEY,
             Lifecycle.experimental(), null)).buildAndRegister();
-    public static final Registry<UnlockType> UNLOCKS = FabricRegistryBuilder.from(new MappedRegistry<>(UNLOCK_KEY,
+    public static final Registry<UnlockType<?>> UNLOCKS = FabricRegistryBuilder.from(new MappedRegistry<>(UNLOCK_KEY,
             Lifecycle.experimental(), null)).buildAndRegister();
 }

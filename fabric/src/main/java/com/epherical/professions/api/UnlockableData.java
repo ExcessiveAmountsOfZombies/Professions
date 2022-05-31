@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface UnlockableData {
 
-    ProfessionalPlayer getPlayer();
-
     <T> Tristate canUse(T object);
 
     Collection<Unlock.Singular<?>> getUnlockables();

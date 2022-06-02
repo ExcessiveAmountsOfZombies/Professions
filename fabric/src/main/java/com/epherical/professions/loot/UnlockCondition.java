@@ -2,11 +2,10 @@ package com.epherical.professions.loot;
 
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.api.UnlockableData;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.unlock.Unlock;
-import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
+import com.epherical.professions.util.ProfessionUtil;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -56,7 +55,7 @@ public class UnlockCondition implements LootItemCondition {
 
             BlockState blockBroken = context.getParamOrNull(LootContextParams.BLOCK_STATE);
             if (blockBroken != null) {
-                Pair<Unlock.Singular<Block>, Boolean> pair = canUse(player, Unlocks.BLOCK_UNLOCK, blockBroken.getBlock());
+                Pair<Unlock.Singular<Block>, Boolean> pair = ProfessionUtil.canUse(player, Unlocks.BLOCK_UNLOCK, blockBroken.getBlock());
                 if (pair.getFirst() != null) {
                     level = pair.getFirst().getUnlockLevel();
                 }
@@ -67,27 +66,11 @@ public class UnlockCondition implements LootItemCondition {
                 serverPlayer.sendMessage(new TranslatableComponent("You must be level %s before you can receive drops from %s.",
                         new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
                         msg.setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))
-                        ).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+                ).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
                 return false;
             }
         }
         return true;
-    }
-
-    private <T> Pair<Unlock.Singular<T>, Boolean> canUse(ProfessionalPlayer player, UnlockType<T> type, T object) {
-        UnlockableData data = player.getUnlockableData(type, object);
-        if (data == null) {
-            return Pair.of(null, true);
-        }
-        Unlock.Singular<T> unlock = data.getUnlock(object);
-        if (unlock == null) {
-            return Pair.of(null, true);
-        }
-        if (data.canUse(unlock, object).valid()) {
-            return Pair.of(unlock, true);
-        }
-
-        return Pair.of(unlock, false);
     }
 
     public static Builder builder() {
@@ -105,7 +88,8 @@ public class UnlockCondition implements LootItemCondition {
     public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<UnlockCondition> {
 
         @Override
-        public void serialize(JsonObject json, UnlockCondition value, JsonSerializationContext serializationContext) {}
+        public void serialize(JsonObject json, UnlockCondition value, JsonSerializationContext serializationContext) {
+        }
 
         @Override
         public UnlockCondition deserialize(JsonObject json, JsonDeserializationContext serializationContext) {

@@ -16,7 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ActionLogger {
 
-    // TODO: bit of a bug, but if multiple occupations have the same action, the chat logger will only display 1 message.
     private static Style BORDER = Style.EMPTY.withColor(ProfessionConfig.headerBorders);
     private static Style VARIABLE = Style.EMPTY.withColor(ProfessionConfig.variables);
     private static Style DESCRIPTOR = Style.EMPTY.withColor(ProfessionConfig.descriptors);

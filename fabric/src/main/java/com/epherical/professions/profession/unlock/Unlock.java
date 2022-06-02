@@ -5,6 +5,9 @@ import com.epherical.professions.util.Tristate;
 
 import java.util.List;
 
+/**
+ * Represents a un/deserialized unlock. It could have one entry, or many. Can hold tags or values or both.
+ */
 public interface Unlock<T> {
 
     boolean isLocked(T object, int level);
@@ -20,6 +23,9 @@ public interface Unlock<T> {
         Unlock<T> build();
     }
 
+    /**
+     * A single value from an unlock. Unlocks should not duplicate, so we can represent them with singular objects.
+     */
     interface Singular<T> {
 
         Tristate isLocked(T object, int level);

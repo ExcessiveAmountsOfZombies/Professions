@@ -116,7 +116,7 @@ public abstract class AbstractItemAction extends AbstractAction {
             json.add("items", array);
         }
 
-        public List<ActionEntry<Item>> deserializeItems(JsonObject object) {
+        public static List<ActionEntry<Item>> deserializeItems(JsonObject object) {
             JsonArray array = GsonHelper.getAsJsonArray(object, "items");
             List<ActionEntry<Item>> items = new ArrayList<>();
             for (JsonElement element : array) {

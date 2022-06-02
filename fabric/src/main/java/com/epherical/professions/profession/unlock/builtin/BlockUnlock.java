@@ -44,7 +44,7 @@ public class BlockUnlock implements Unlock<Block> {
     }
 
     @Override
-    public UnlockType getType() {
+    public UnlockType<Block> getType() {
         return Unlocks.BLOCK_UNLOCK;
     }
 
@@ -72,7 +72,7 @@ public class BlockUnlock implements Unlock<Block> {
         }
 
         @Override
-        public UnlockType getType() {
+        public UnlockType<Block> getType() {
             return Unlocks.BLOCK_UNLOCK;
         }
 

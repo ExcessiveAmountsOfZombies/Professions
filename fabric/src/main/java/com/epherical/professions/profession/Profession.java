@@ -271,6 +271,14 @@ public class Profession {
             for (String s : profession.description) {
                 buf.writeUtf(s);
             }
+            /*buf.writeMap(profession.getUnlocks(), (buf1, unlockType) -> {
+                buf.writeResourceLocation(RegistryConstants.UNLOCKS.getKey(unlockType));
+            }, (buf1, unlocks1) -> {
+                buf.writeVarInt(unlocks1.size());
+                for (Unlock<?> unlock : unlocks1) {
+
+                }
+            });*/
         }
 
         @Override

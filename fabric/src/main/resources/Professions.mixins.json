@@ -11,6 +11,7 @@
     "FurnaceCraftingMixin",
     "GameProfileCacheMixin",
     "PlaceBlockTriggerMixin",
+    "InventoryBreakSpeedMixin",
     "StatePropertiesPredicateMixin",
     "TamingMixin",
     "TntExplosionTriggerMixin",

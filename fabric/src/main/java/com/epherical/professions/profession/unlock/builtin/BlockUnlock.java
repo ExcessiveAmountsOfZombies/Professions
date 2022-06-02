@@ -2,6 +2,7 @@ package com.epherical.professions.profession.unlock.builtin;
 
 import com.epherical.professions.profession.action.builtin.blocks.BlockAbstractAction;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ActionEntry;
@@ -11,6 +12,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
@@ -55,6 +57,11 @@ public class BlockUnlock implements Unlock<Block> {
             list.add(new Single(realBlock, level));
         }
         return list;
+    }
+
+    @Override
+    public UnlockSerializer<?> getSerializer() {
+        return UnlockSerializer.BLOCK_UNLOCK;
     }
 
     public static class Single implements Singular<Block> {
@@ -122,7 +129,7 @@ public class BlockUnlock implements Unlock<Block> {
         }
     }
 
-    public static class UnlockSerializer implements Serializer<BlockUnlock> {
+    public static class JsonSerializer implements Serializer<BlockUnlock> {
 
         @Override
         public void serialize(JsonObject json, BlockUnlock value, JsonSerializationContext serializationContext) {
@@ -140,6 +147,30 @@ public class BlockUnlock implements Unlock<Block> {
             int level = GsonHelper.getAsInt(json, "level");
             return new BlockUnlock(blocks, level);
         }
+    }
+
+    public static class NetworkSerializer implements UnlockSerializer<BlockUnlock> {
+
+        @Override
+        public BlockUnlock fromNetwork(FriendlyByteBuf buf) {
+            int unlockLevel = buf.readVarInt();
+            int arraySize = buf.readVarInt();
+            List<ActionEntry<Block>> entries = new ArrayList<>();
+            for (int i = 0; i < arraySize; i++) {
+                entries.addAll(ActionEntry.fromNetwork(buf, Registry.BLOCK));
+            }
+            return new BlockUnlock(entries, unlockLevel);
+        }
+
+        @Override
+        public void toNetwork(FriendlyByteBuf buf, BlockUnlock unlock) {
+            buf.writeVarInt(unlock.level);
+            buf.writeVarInt(unlock.blocks.size());
+            for (ActionEntry<Block> block : unlock.blocks) {
+                block.toNetwork(buf, Registry.BLOCK);
+            }
+        }
+
     }
 
 }

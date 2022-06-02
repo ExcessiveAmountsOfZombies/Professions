@@ -6,6 +6,7 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
@@ -247,16 +248,29 @@ public class Profession {
         }
 
         @Override
-        public Profession fromServer(FriendlyByteBuf buf) {
-            ResourceLocation location = buf.readResourceLocation();
-            TextColor color = TextColor.parseColor(buf.readUtf());
-            TextColor descColor = TextColor.parseColor(buf.readUtf());
-            String displayName = buf.readUtf();
-            String[] description = new String[buf.readVarInt()];
+        public Profession fromServer(FriendlyByteBuf buffer) {
+            ResourceLocation location = buffer.readResourceLocation();
+            TextColor color = TextColor.parseColor(buffer.readUtf());
+            TextColor descColor = TextColor.parseColor(buffer.readUtf());
+            String displayName = buffer.readUtf();
+            String[] description = new String[buffer.readVarInt()];
             for (int i = 0; i < description.length; i++) {
-                description[i] = buf.readUtf();
+                description[i] = buffer.readUtf();
             }
-            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), ImmutableMap.of(), null, null);
+            Map<UnlockType<?>, Collection<Unlock<?>>> map = buffer.readMap(buf -> {
+                return RegistryConstants.UNLOCKS.get(buf.readResourceLocation());
+            }, buf -> {
+                int size = buf.readVarInt();
+                Collection<Unlock<?>> unlocks = new ArrayList<>();
+                for (int i = 0; i < size; i++) {
+                    UnlockSerializer<?> serializer = RegistryConstants.UNLOCK_TYPE.get(buf.readResourceLocation());
+                    if (serializer != null) {
+                        unlocks.add(serializer.fromNetwork(buf));
+                    }
+                }
+                return unlocks;
+            });
+            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), ImmutableMap.copyOf(map), null, null);
             profession.setKey(location);
             return profession;
         }
@@ -271,14 +285,15 @@ public class Profession {
             for (String s : profession.description) {
                 buf.writeUtf(s);
             }
-            /*buf.writeMap(profession.getUnlocks(), (buf1, unlockType) -> {
+            buf.writeMap(profession.getUnlocks(), (buf1, unlockType) -> {
                 buf.writeResourceLocation(RegistryConstants.UNLOCKS.getKey(unlockType));
             }, (buf1, unlocks1) -> {
                 buf.writeVarInt(unlocks1.size());
-                for (Unlock<?> unlock : unlocks1) {
-
+                for (Unlock unlock : unlocks1) {
+                    buf.writeResourceLocation(RegistryConstants.UNLOCK_TYPE.getKey(unlock.getSerializer()));
+                    unlock.getSerializer().toNetwork(buf, unlock); // todo: figure out generics
                 }
-            });*/
+            });
         }
 
         @Override

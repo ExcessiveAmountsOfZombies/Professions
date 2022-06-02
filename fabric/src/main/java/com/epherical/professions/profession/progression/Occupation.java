@@ -49,7 +49,7 @@ public class Occupation {
         this.maxExp = maxExp;
         this.level = level;
         this.slot = OccupationSlot.ACTIVE;
-        this.data = null;
+        this.data = new UnlockableDataImpl(this);
     }
 
     public boolean isActive() {

@@ -2,6 +2,7 @@ package com.epherical.professions.util;
 
 import com.google.gson.JsonArray;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +48,28 @@ public class ActionEntry<T> {
                     .flatMap(value -> value.getValues(registry).stream())
                     .distinct().collect(Collectors.toList());
         }
+    }
+
+    public void toNetwork(FriendlyByteBuf buf, Registry<T> registry) {
+
+        buf.writeCollection(Arrays.asList(actionValues), (buf1, tValue) -> {
+            Collection<T> values = tValue.getValues(registry);
+            buf.writeVarInt(values.size());
+            for (T value : values) {
+                buf.writeVarInt(registry.getId(value));
+            }
+        });
+    }
+
+    public static <T> List<ActionEntry<T>> fromNetwork(FriendlyByteBuf buf, Registry<T> registry) {
+        return buf.readList(buf1 -> {
+            List<T> values = new ArrayList<>();
+            int collectionSize = buf1.readVarInt();
+            for (int i = 0; i < collectionSize; i++) {
+                values.add(registry.byId(buf.readVarInt()));
+            }
+            return of(values.stream());
+        });
     }
 
     public static <T> ActionEntry<T> of(TagKey<T> tag) {

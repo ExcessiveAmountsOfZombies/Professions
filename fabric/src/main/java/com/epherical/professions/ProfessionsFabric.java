@@ -15,6 +15,7 @@ import com.epherical.professions.loot.UnlockCondition;
 import com.epherical.professions.networking.ServerHandler;
 import com.epherical.professions.profession.ProfessionEditorSerializer;
 import com.epherical.professions.profession.ProfessionSerializer;
+import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
 import com.epherical.professions.trigger.UtilityListener;
@@ -62,6 +63,14 @@ public class ProfessionsFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        // TODO: Synchronize occupations on login and resend them whenever the mod reloads on the server.
+        //  packets to look at the menu will still be sent normally, but without unlock data, this is because levels!
+
+        // TODO; clear the data occupation data when the player logs out
+
+        // TODO; send mining fatigue to players that are not synchronized, should be able to just send a packet of it maybe??
+        //  it could cause issues if we aren't careful, like overriding guardian temple fatigue
+        
         startup = true;
         mod = this;
         this.config = new CommonConfig(false, "professions.conf");
@@ -111,13 +120,15 @@ public class ProfessionsFabric implements ModInitializer {
         if (FabricLoader.getInstance().isModLoaded("ftbquests")) {
             FTBIntegration.init();
         }
-
-
+        // just create a playerManager, if it's on the client we don't need the two parameters. Otherwise, it'll be overridden when the server starts.
+        playerManager = new PlayerManager(null, null);
     }
 
     private static void init() {
+        // dumb way to load classes, it'll change later
         var init = ProfessionSerializer.DEFAULT_PROFESSION;
         var clazz = ProfessionEditorSerializer.APPEND_EDITOR;
+        var bozo = UnlockSerializer.BLOCK_UNLOCK;
     }
 
     public static LootItemConditionType registerLootCondition(String id, Serializer<? extends LootItemCondition> serializer) {

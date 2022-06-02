@@ -38,7 +38,8 @@ public abstract class InventoryBreakSpeedMixin {
         ItemStack item = this.items.get(this.selected);
         Pair<Unlock.Singular<Item>, Boolean> pair = ProfessionUtil.canUse(player, Unlocks.TOOL_UNLOCK, item.getItem());
         if (!pair.getSecond()) {
-            cir.setReturnValue(item.getDestroySpeed(state) / 8);
+            // equivalent of mining fatigue 2
+            cir.setReturnValue(item.getDestroySpeed(state) * 0.0027F);
         }
     }
 }

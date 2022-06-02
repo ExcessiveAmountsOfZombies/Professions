@@ -7,8 +7,11 @@ import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
+import com.epherical.professions.profession.progression.ProfessionalPlayerImpl;
 import com.google.common.collect.Maps;
 import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.MutableComponent;
@@ -21,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -54,6 +58,11 @@ public class PlayerManager {
             pPlayer.setPlayer(null);
             pPlayer.save(storage);
         }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public void playerClientQuit(UUID uuid) {
+        players.remove(uuid);
     }
 
     public void joinOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, OccupationSlot slot, ServerPlayer serverPlayer) {
@@ -161,7 +170,7 @@ public class PlayerManager {
     @Nullable
     public ProfessionalPlayer getPlayer(@NotNull UUID uuid) {
         ProfessionalPlayer player = players.get(uuid);
-        if (player == null) {
+        if (player == null && storage != null) {
             player = storage.getUser(uuid);
         }
         return player;
@@ -191,5 +200,10 @@ public class PlayerManager {
     private boolean hasPermission(ServerPlayer player, Profession profession) {
         String profKey = profession.getKey().toString().replaceAll(":", ".");
         return Permissions.check(player, "professions.join", 0) && Permissions.check(player, "professions.start." + profKey.toLowerCase(Locale.ROOT), 0);
+    }
+
+    @Environment(EnvType.CLIENT)
+    public void addClientPlayer(UUID player, List<Occupation> occupationList) {
+        players.put(player, new ProfessionalPlayerImpl(occupationList));
     }
 }

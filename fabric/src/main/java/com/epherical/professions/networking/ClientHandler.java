@@ -1,6 +1,7 @@
 package com.epherical.professions.networking;
 
 import com.epherical.professions.Constants;
+import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
@@ -48,6 +49,7 @@ public class ClientHandler {
     private static void setupSubChannels() {
         subChannelReceivers.put(Constants.OPEN_UI_RESPONSE, (client, handler, buf, responseSender) -> {
             List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
+            ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(client.player.getUUID(), occupations);
             client.execute(() -> client.setScreen(new OccupationScreen<>(occupations, client, OccupationScreen::createOccupationEntries, null)));
         });
         subChannelReceivers.put(Constants.INFO_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {

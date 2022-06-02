@@ -6,7 +6,7 @@ import com.epherical.professions.util.Tristate;
 import java.util.List;
 
 /**
- * Represents a un/deserialized unlock. It could have one entry, or many. Can hold tags or values or both.
+ * Represents a(n) un/deserialized unlock. It could have one entry, or many. Can hold tags or values or both.
  */
 public interface Unlock<T> {
 
@@ -17,6 +17,8 @@ public interface Unlock<T> {
     UnlockType<T> getType();
 
     List<Singular<T>> convertToSingle();
+
+    UnlockSerializer<?> getSerializer();
 
     @FunctionalInterface
     interface Builder<T> {

@@ -2,6 +2,7 @@ package com.epherical.professions.profession.unlock.builtin;
 
 import com.epherical.professions.profession.action.builtin.items.AbstractItemAction;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ActionEntry;
@@ -11,6 +12,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -55,6 +57,11 @@ public class ToolUnlock implements Unlock<Item> {
             list.add(new ToolUnlock.Single(realBlock, level));
         }
         return list;
+    }
+
+    @Override
+    public UnlockSerializer<?> getSerializer() {
+        return UnlockSerializer.TOOL_UNLOCK;
     }
 
     protected Set<Item> convertToReal() {
@@ -122,7 +129,7 @@ public class ToolUnlock implements Unlock<Item> {
         }
     }
 
-    public static class UnlockSerializer implements Serializer<ToolUnlock> {
+    public static class JsonSerializer implements Serializer<ToolUnlock> {
 
         @Override
         public void serialize(JsonObject json, ToolUnlock value, JsonSerializationContext serializationContext) {
@@ -139,6 +146,29 @@ public class ToolUnlock implements Unlock<Item> {
             List<ActionEntry<Item>> items = AbstractItemAction.Serializer.deserializeItems(json);
             int level = GsonHelper.getAsInt(json, "level");
             return new ToolUnlock(items, level);
+        }
+    }
+
+    public static class NetworkSerializer implements UnlockSerializer<ToolUnlock> {
+
+        @Override
+        public ToolUnlock fromNetwork(FriendlyByteBuf buf) {
+            int unlockLevel = buf.readVarInt();
+            int arraySize = buf.readVarInt();
+            List<ActionEntry<Item>> entries = new ArrayList<>();
+            for (int i = 0; i < arraySize; i++) {
+                entries.addAll(ActionEntry.fromNetwork(buf, Registry.ITEM));
+            }
+            return new ToolUnlock(entries, unlockLevel);
+        }
+
+        @Override
+        public void toNetwork(FriendlyByteBuf buf, ToolUnlock unlock) {
+            buf.writeVarInt(unlock.level);
+            buf.writeVarInt(unlock.items.size());
+            for (ActionEntry<Item> block : unlock.items) {
+                block.toNetwork(buf, Registry.ITEM);
+            }
         }
     }
 }

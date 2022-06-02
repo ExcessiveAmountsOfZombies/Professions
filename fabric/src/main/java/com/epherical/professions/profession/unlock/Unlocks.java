@@ -13,8 +13,8 @@ import net.minecraft.world.level.storage.loot.Serializer;
 import static com.epherical.professions.Constants.modID;
 
 public class Unlocks {
-    public static final UnlockType<Block> BLOCK_UNLOCK = register(modID("block"), new BlockUnlock.UnlockSerializer());
-    public static final UnlockType<Item> TOOL_UNLOCK = register(modID("tool"), new ToolUnlock.UnlockSerializer());
+    public static final UnlockType<Block> BLOCK_UNLOCK = register(modID("block"), new BlockUnlock.JsonSerializer());
+    public static final UnlockType<Item> TOOL_UNLOCK = register(modID("tool"), new ToolUnlock.JsonSerializer());
 
 
     public static Object createGsonAdapter() {

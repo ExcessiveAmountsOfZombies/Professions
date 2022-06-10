@@ -10,6 +10,22 @@
   "maxLevel": 100,
   "experienceSclEquation": "(91+1000)*1.1^(lvl-1)",
   "incomeSclEquation": "base",
+  "unlocks": [
+    {
+      "unlock": "professions:block",
+      "level": 2,
+      "blocks": [
+        "#minecraft:iron_ores"
+      ]
+    },
+    {
+      "unlock": "professions:tool",
+      "level": 2,
+      "items": [
+        "minecraft:diamond_pickaxe"
+      ]
+    }
+  ],
   "actions": [
     {
       "action": "professions:break_block",

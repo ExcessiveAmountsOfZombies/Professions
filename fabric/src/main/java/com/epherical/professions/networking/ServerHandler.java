@@ -70,7 +70,7 @@ public class ServerHandler {
                 response.writeEnum(CommandButtons.LEAVE);
                 List<Occupation> occupations = pPlayer.getActiveOccupations();
                 //occupations.addAll(pPlayer.getInactiveOccupations());
-                Occupation.toNetwork(response, occupations);
+                Occupation.toNetwork(response, occupations, false);
                 ServerPlayNetworking.send(player, Constants.MOD_CHANNEL, response);
             }
         });
@@ -103,7 +103,7 @@ public class ServerHandler {
                 List<Occupation> occupations = pPlayer.getActiveOccupations();
                 //occupations.addAll(pPlayer.getInactiveOccupations());
                 response.writeResourceLocation(Constants.OPEN_UI_RESPONSE);
-                Occupation.toNetwork(response, occupations);
+                Occupation.toNetwork(response, occupations, false);
                 responseSender.sendPacket(Constants.MOD_CHANNEL, response);
             }
         });
@@ -145,6 +145,21 @@ public class ServerHandler {
                 buttonHandler.handle(player);
             }
         });
+        subChannelReceivers.put(Constants.SYNCHRONIZE_RESPONSE, (server, player, listener, buf, responseSender, playerManager) -> {
+            FriendlyByteBuf syncData = new FriendlyByteBuf(Unpooled.buffer());
+            List<Occupation> occupations = playerManager.synchronizePlayer(player);
+            if (occupations.size() != 0) {
+                syncData.writeResourceLocation(Constants.SYNCHRONIZE_DATA);
+                Occupation.toNetwork(syncData, occupations, true);
+                responseSender.sendPacket(Constants.MOD_CHANNEL, syncData);
+            }
+        });
+    }
+
+    public static void sendSyncRequest(ServerPlayer player) {
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        buf.writeResourceLocation(Constants.SYNCHRONIZE_REQUEST);
+        ServerPlayNetworking.send(player, Constants.MOD_CHANNEL, buf);
     }
 
     public interface Handler {

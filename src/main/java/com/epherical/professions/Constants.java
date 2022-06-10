@@ -14,6 +14,9 @@ public class Constants {
     public static final ResourceLocation LEAVE_BUTTON_REQUEST = new ResourceLocation(MOD_ID, "le_prf");
     public static final ResourceLocation INFO_BUTTON_REQUEST = new ResourceLocation(MOD_ID, "inf_prf");
     public static final ResourceLocation INFO_BUTTON_RESPONSE = new ResourceLocation(MOD_ID, "ret_inf_prf");
+    public static final ResourceLocation SYNCHRONIZE_REQUEST = new ResourceLocation(MOD_ID, "sync_req");
+    public static final ResourceLocation SYNCHRONIZE_RESPONSE = new ResourceLocation(MOD_ID, "sync_rep");
+    public static final ResourceLocation SYNCHRONIZE_DATA = new ResourceLocation(MOD_ID, "sync_data");
 
     public static ResourceLocation modID(String name) {
         return new ResourceLocation(MOD_ID, name);

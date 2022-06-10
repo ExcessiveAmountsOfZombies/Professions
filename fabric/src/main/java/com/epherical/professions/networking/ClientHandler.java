@@ -49,7 +49,7 @@ public class ClientHandler {
     private static void setupSubChannels() {
         subChannelReceivers.put(Constants.OPEN_UI_RESPONSE, (client, handler, buf, responseSender) -> {
             List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
-            ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(client.player.getUUID(), occupations);
+            //ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(client.player.getUUID(), occupations);
             client.execute(() -> client.setScreen(new OccupationScreen<>(occupations, client, OccupationScreen::createOccupationEntries, null)));
         });
         subChannelReceivers.put(Constants.INFO_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
@@ -66,6 +66,15 @@ public class ClientHandler {
             if (buttonHandler != null) {
                 buttonHandler.commandButtonClicked(client, buf);
             }
+        });
+        subChannelReceivers.put(Constants.SYNCHRONIZE_REQUEST, (client, handler, buf, responseSender) -> {
+            FriendlyByteBuf buf1 = new FriendlyByteBuf(Unpooled.buffer());
+            buf1.writeResourceLocation(Constants.SYNCHRONIZE_RESPONSE);
+            responseSender.sendPacket(Constants.MOD_CHANNEL, buf1);
+        });
+        subChannelReceivers.put(Constants.SYNCHRONIZE_DATA, (client, handler, buf, responseSender) -> {
+            List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
+            ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(client.player.getUUID(), occupations);
         });
     }
 

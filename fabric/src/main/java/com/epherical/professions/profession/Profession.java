@@ -163,15 +163,15 @@ public class Profession {
         return Objects.hash(key);
     }
 
-    public static void toNetwork(FriendlyByteBuf buf, Profession profession) {
+    public static void toNetwork(FriendlyByteBuf buf, Profession profession, boolean sendUnlocks) {
         buf.writeResourceLocation(RegistryConstants.PROFESSION_SERIALIZER.getKey(profession.getSerializer()));
-        profession.getSerializer().toClient(buf, profession);
+        profession.getSerializer().toClient(buf, profession, sendUnlocks);
     }
 
     public static void toNetwork(FriendlyByteBuf buf, Collection<Profession> professions) {
         buf.writeVarInt(professions.size());
         for (Profession profession : professions) {
-            Profession.toNetwork(buf, profession);
+            Profession.toNetwork(buf, profession, false);
         }
     }
     @Environment(EnvType.CLIENT)
@@ -276,7 +276,7 @@ public class Profession {
         }
 
         @Override
-        public void toClient(FriendlyByteBuf buf, Profession profession) {
+        public void toClient(FriendlyByteBuf buf, Profession profession, boolean sendUnlocks) {
             buf.writeResourceLocation(profession.key);
             buf.writeUtf(profession.color.serialize());
             buf.writeUtf(profession.descriptionColor.serialize());
@@ -285,15 +285,17 @@ public class Profession {
             for (String s : profession.description) {
                 buf.writeUtf(s);
             }
-            buf.writeMap(profession.getUnlocks(), (buf1, unlockType) -> {
-                buf.writeResourceLocation(RegistryConstants.UNLOCKS.getKey(unlockType));
-            }, (buf1, unlocks1) -> {
-                buf.writeVarInt(unlocks1.size());
-                for (Unlock unlock : unlocks1) {
-                    buf.writeResourceLocation(RegistryConstants.UNLOCK_TYPE.getKey(unlock.getSerializer()));
-                    unlock.getSerializer().toNetwork(buf, unlock); // todo: figure out generics
-                }
-            });
+            if (sendUnlocks) {
+                buf.writeMap(profession.getUnlocks(), (buf1, unlockType) -> {
+                    buf.writeResourceLocation(RegistryConstants.UNLOCKS.getKey(unlockType));
+                }, (buf1, unlocks1) -> {
+                    buf.writeVarInt(unlocks1.size());
+                    for (Unlock unlock : unlocks1) {
+                        buf.writeResourceLocation(RegistryConstants.UNLOCK_TYPE.getKey(unlock.getSerializer()));
+                        unlock.getSerializer().toNetwork(buf, unlock); // todo: figure out generics
+                    }
+                });
+            }
         }
 
         @Override

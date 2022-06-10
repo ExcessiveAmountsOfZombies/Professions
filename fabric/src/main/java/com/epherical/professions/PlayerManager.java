@@ -4,11 +4,13 @@ import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.events.OccupationEvents;
+import com.epherical.professions.networking.ServerHandler;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.progression.ProfessionalPlayerImpl;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,14 +26,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerManager {
 
     private final Map<UUID, ProfessionalPlayer> players = Maps.newHashMap();
+    private final Set<UUID> synchronizedPlayers = Sets.newHashSet();
 
     private final Storage<ProfessionalPlayer, UUID> storage;
     private final MinecraftServer server;
@@ -50,19 +55,16 @@ public class PlayerManager {
             }
             players.put(player.getUUID(), pPlayer);
         }
+        ServerHandler.sendSyncRequest(player);
     }
 
     public void playerQuit(ServerPlayer player) {
         ProfessionalPlayer pPlayer = players.remove(player.getUUID());
+        synchronizedPlayers.remove(player.getUUID());
         if (pPlayer != null) {
             pPlayer.setPlayer(null);
             pPlayer.save(storage);
         }
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void playerClientQuit(UUID uuid) {
-        players.remove(uuid);
     }
 
     public void joinOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, OccupationSlot slot, ServerPlayer serverPlayer) {
@@ -191,6 +193,7 @@ public class PlayerManager {
 
     public void reload() {
         if (server != null) {
+            synchronizedPlayers.clear();
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 playerJoined(player);
             }
@@ -202,8 +205,21 @@ public class PlayerManager {
         return Permissions.check(player, "professions.join", 0) && Permissions.check(player, "professions.start." + profKey.toLowerCase(Locale.ROOT), 0);
     }
 
+    public List<Occupation> synchronizePlayer(ServerPlayer player) {
+        if (synchronizedPlayers.contains(player.getUUID())) {
+            return Collections.emptyList(); // don't need to send the data if it's already been sent and nothing has changed.
+        }
+        synchronizedPlayers.add(player.getUUID());
+        return players.get(player.getUUID()).getActiveOccupations();
+    }
+
     @Environment(EnvType.CLIENT)
     public void addClientPlayer(UUID player, List<Occupation> occupationList) {
         players.put(player, new ProfessionalPlayerImpl(occupationList));
+    }
+
+    @Environment(EnvType.CLIENT)
+    public void playerClientQuit(UUID uuid) {
+        players.remove(uuid);
     }
 }

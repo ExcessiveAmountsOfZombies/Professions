@@ -139,10 +139,10 @@ public class Occupation {
         return Objects.hash(profession, exp, level);
     }
 
-    public static void toNetwork(FriendlyByteBuf buf, List<Occupation> occupations) {
+    public static void toNetwork(FriendlyByteBuf buf, List<Occupation> occupations, boolean sendUnlocks) {
         buf.writeVarInt(occupations.size());
         for (Occupation occupation : occupations) {
-            Profession.toNetwork(buf, occupation.getProfession());
+            Profession.toNetwork(buf, occupation.getProfession(), sendUnlocks);
             buf.writeVarInt(occupation.getLevel());
             buf.writeDouble(occupation.getExp());
             buf.writeVarInt(occupation.getMaxExp());

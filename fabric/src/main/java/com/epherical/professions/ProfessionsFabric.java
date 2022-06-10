@@ -63,11 +63,6 @@ public class ProfessionsFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // TODO: Synchronize occupations on login and resend them whenever the mod reloads on the server.
-        //  packets to look at the menu will still be sent normally, but without unlock data, this is because levels!
-
-        // TODO; clear the data occupation data when the player logs out
-
         // TODO; send mining fatigue to players that are not synchronized, should be able to just send a packet of it maybe??
         //  it could cause issues if we aren't careful, like overriding guardian temple fatigue
         

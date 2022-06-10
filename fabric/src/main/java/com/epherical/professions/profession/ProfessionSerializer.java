@@ -20,7 +20,7 @@ public interface ProfessionSerializer<T extends Profession, V extends Profession
     /**
      * Servers that don't enforce players having the same mods should serialize to DEFAULT_PROFESSION so no errors occur on the client.
      */
-    void toClient(FriendlyByteBuf buf, T profession);
+    void toClient(FriendlyByteBuf buf, T profession, boolean sendUnlocks);
 
     //T deserialize(ResourceLocation id, JsonObject profession);
 

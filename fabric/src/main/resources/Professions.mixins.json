@@ -11,13 +11,15 @@
     "FurnaceCraftingMixin",
     "GameProfileCacheMixin",
     "PlaceBlockTriggerMixin",
-    "InventoryBreakSpeedMixin",
     "StatePropertiesPredicateMixin",
     "TamingMixin",
     "TntExplosionTriggerMixin",
     "VillagerTradeMixin",
     "ownables.AbstractFurnaceBlockEntityOwnableMixin",
-    "ownables.BrewingStandBlockEntityOwnableMixin"
+    "ownables.BrewingStandBlockEntityOwnableMixin",
+    "sync.InventoryBreakSpeedMixin",
+    "sync.ServerLevelMixin",
+    "sync.ServerPlayerGameModeMixin"
   ],
   "client": [
   ],

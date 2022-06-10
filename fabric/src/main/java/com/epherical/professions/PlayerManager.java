@@ -213,6 +213,14 @@ public class PlayerManager {
         return players.get(player.getUUID()).getActiveOccupations();
     }
 
+    public boolean isSynchronized(ServerPlayer player) {
+        return synchronizedPlayers.contains(player.getUUID());
+    }
+
+    public boolean isSynchronized(UUID uuid) {
+        return synchronizedPlayers.contains(uuid);
+    }
+
     @Environment(EnvType.CLIENT)
     public void addClientPlayer(UUID player, List<Occupation> occupationList) {
         players.put(player, new ProfessionalPlayerImpl(occupationList));

@@ -28,6 +28,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.impl.event.interaction.InteractionEventsRouter;
 import net.fabricmc.fabric.mixin.loot.table.LootSupplierBuilderHooks;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;

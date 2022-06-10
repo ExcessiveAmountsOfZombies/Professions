@@ -1,4 +1,4 @@
-package com.epherical.professions.mixin;
+package com.epherical.professions.mixin.sync;
 
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
@@ -38,7 +38,6 @@ public abstract class InventoryBreakSpeedMixin {
         ItemStack item = this.items.get(this.selected);
         Pair<Unlock.Singular<Item>, Boolean> pair = ProfessionUtil.canUse(player, Unlocks.TOOL_UNLOCK, item.getItem());
         if (!pair.getSecond()) {
-            // equivalent of mining fatigue 2
             cir.setReturnValue(item.getDestroySpeed(state) * 0.0027F);
         }
     }

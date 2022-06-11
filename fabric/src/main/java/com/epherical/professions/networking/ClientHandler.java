@@ -77,7 +77,9 @@ public class ClientHandler {
         });
         subChannelReceivers.put(Constants.SYNCHRONIZE_DATA, (client, handler, buf, responseSender) -> {
             List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
-            ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(UUID.fromString(client.getUser().getUuid()), occupations);
+            if (!client.hasSingleplayerServer()) {
+                ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(UUID.fromString(client.getUser().getUuid()), occupations);
+            }
         });
     }
 

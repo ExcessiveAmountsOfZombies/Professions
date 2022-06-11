@@ -63,7 +63,9 @@ public class ProfessionsClient implements ClientModInitializer {
             }
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            ProfessionsFabric.getInstance().getPlayerManager().playerClientQuit(client.player.getUUID());
+            if (!client.hasSingleplayerServer()) {
+                ProfessionsFabric.getInstance().getPlayerManager().playerClientQuit(client.player.getUUID());
+            }
         });
         ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
             Minecraft minecraft = Minecraft.getInstance();

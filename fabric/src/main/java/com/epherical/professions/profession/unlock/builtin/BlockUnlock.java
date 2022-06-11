@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.unlock.builtin;
 
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.builtin.blocks.BlockAbstractAction;
 import com.epherical.professions.profession.unlock.Unlock;
@@ -7,7 +8,6 @@ import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ActionEntry;
-import com.epherical.professions.util.Tristate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -15,6 +15,9 @@ import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
@@ -80,6 +83,14 @@ public class BlockUnlock implements Unlock<Block> {
         @Override
         public Component getProfessionDisplay() {
             return professionDisplay;
+        }
+
+        @Override
+        public Component createUnlockComponent() {
+            return new TranslatableComponent("Unlock drops for %s at level %s",
+                    getObject().getName().setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                    new TextComponent(String.valueOf(getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
     }
 

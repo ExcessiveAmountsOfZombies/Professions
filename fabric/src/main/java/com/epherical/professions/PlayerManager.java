@@ -18,6 +18,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
@@ -171,11 +172,24 @@ public class PlayerManager {
             sPlayer.sendMessage(message, Util.NIL_UUID);
         }
         List<Component> components = new ArrayList<>();
-        occupation.getData().getUnlockables().stream()
+        // TODO: size limit
+        occupation.getData().getUnlockables()
+                .stream()
                 .filter(singular -> singular.getUnlockLevel() > oldLevel && singular.getUnlockLevel() <= occupation.getLevel())
-                .forEach(singular -> {
-
-                });
+                .forEach(singular -> components.add(singular.createUnlockComponent()));
+        if (components.size() > 0) {
+            MutableComponent megaComponent = new TextComponent("=-=Rewards=-=\n").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
+            for (Component component : components) {
+                megaComponent.append("  ").append(component).append("\n");
+            }
+            megaComponent.append(new TextComponent("=-=-=-=-=-=-=")).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
+            MutableComponent unlockMessage = new TranslatableComponent("You have unlocked %s new abilities for %s. Hover this message to see them!",
+                    new TextComponent(String.valueOf(components.size())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                    occupation.getProfession().getDisplayComponent())
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, megaComponent)));
+            sPlayer.sendMessage(unlockMessage, Util.NIL_UUID);
+        }
     }
 
     @Nullable

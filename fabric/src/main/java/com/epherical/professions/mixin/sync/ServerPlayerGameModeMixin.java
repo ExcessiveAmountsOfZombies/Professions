@@ -24,8 +24,6 @@ public class ServerPlayerGameModeMixin {
 
     @Shadow private boolean hasDelayedDestroy;
 
-    @Shadow private boolean isDestroyingBlock;
-
     @Inject(method = "handleBlockBreakAction",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V", ordinal = 3))
     public void professions$breakAborted(BlockPos blockPos, ServerboundPlayerActionPacket.Action action, Direction direction, int i, CallbackInfo ci) {
@@ -37,8 +35,14 @@ public class ServerPlayerGameModeMixin {
         SyncEvents.ABORTED_BLOCK_DESTROY_EVENT.invoker().onBlockDestroyAborted(blockPos, this.player, this.level.getBlockState(blockPos), this.level, action);
     }
 
+    /**
+     * Because we can't perfectly stop vanilla clients, they may be able to get partially through breaking a block, and if they do manage to break it,
+     * the server turns on hasDelayedDestroy, which will continue incrementing block break progress even if the player stops. as long as the player
+     * continues to hold the item that's 'locked' this is fine, but not ideal, but if they swap to their hand, or an unlocked item, the block will break.
+     * So if we know they've delayDestroyed a block, and they did it with a locked item, we can just set hasDelayedDestroy to false.
+     */
     @Inject(method = "tick", at = @At("HEAD"))
-    public void onTick(CallbackInfo ci) {
+    public void professions$onTick(CallbackInfo ci) {
         if (hasDelayedDestroy && UtilityListener.playerDestroyedWithLockedItem.remove(player.getUUID())) {
             hasDelayedDestroy = false;
         }

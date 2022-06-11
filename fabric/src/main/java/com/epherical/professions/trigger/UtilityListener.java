@@ -37,6 +37,7 @@ public class UtilityListener {
     private static Map<UUID, MobEffectInstance> EFFECTS = Maps.newHashMap();
     private static Map<Integer, Runnable> runnables = new HashMap<>();
     private static Set<UUID> playersDestroying = new HashSet<>();
+    // for cancelling hasDelayedDestroy in ServerPlayerGameModeMixin.
     public static Set<UUID> playerDestroyedWithLockedItem = new HashSet<>();
 
     public static void init(ProfessionsFabric mod) {
@@ -80,25 +81,24 @@ public class UtilityListener {
                 // so that the block doesn't break when the player swaps slots.
                 if (playersDestroying.contains(player.getUUID())) {
                     runnables.put(level.getServer().getTickCount() + 5, () -> {
+                        // in 5 ticks we will remove the mining fatigue and update the fatigue to resynchronize the server determined fatigue, if it exists.
                         removeMobEffect(player);
                         updateMobEffect(player);
                     });
+                    if (!checkIfUnlockisGood(player)) {
+                        playerDestroyedWithLockedItem.add(player.getUUID());
+                    }
                     playersDestroying.remove(player.getUUID());
                 } else {
-                    ProfessionalPlayer professionalPlayer = ProfessionsFabric.getInstance().getPlayerManager().getPlayer(player.getUUID());
-                    if (professionalPlayer == null) {
-                        return;
-                    }
-                    ItemStack item = player.getMainHandItem();
-                    Pair<Unlock.Singular<Item>, Boolean> pair = ProfessionUtil.canUse(professionalPlayer, Unlocks.TOOL_UNLOCK, item.getItem());
-                    if (!pair.getSecond()) {
+                    // now that the player has no fatigue, and they're STILL activating STOP_DB, we add the mob effect, and also cancel
+                    // hasDelayedDestroy by adding the player to playerDestroyedWithLockedItem.
+                    if (!checkIfUnlockisGood(player)) {
                         addMobEffect(player);
                         playerDestroyedWithLockedItem.add(player.getUUID());
                         playersDestroying.remove(player.getUUID());
                     }
                 }
             }
-            //  ALSO need to find a way to disable the hasDelayedDestroy
         });
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
@@ -127,5 +127,15 @@ public class UtilityListener {
         if (instance != null) {
             player.connection.send(new ClientboundUpdateMobEffectPacket(player.getId(), instance));
         }
+    }
+
+    private static boolean checkIfUnlockisGood(ServerPlayer player) {
+        ProfessionalPlayer professionalPlayer = ProfessionsFabric.getInstance().getPlayerManager().getPlayer(player.getUUID());
+        if (professionalPlayer == null) {
+            return true;
+        }
+        ItemStack item = player.getMainHandItem();
+        Pair<Unlock.Singular<Item>, Boolean> pair = ProfessionUtil.canUse(professionalPlayer, Unlocks.TOOL_UNLOCK, item.getItem());
+        return pair.getSecond();
     }
 }

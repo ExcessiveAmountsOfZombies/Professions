@@ -21,7 +21,7 @@ public class UnlockableDataImpl implements UnlockableData {
         this.unlocks = new HashMap<>();
         for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
             for (Unlock<?> unlock : entry.getValue()) {
-                for (Unlock.Singular<?> singular : unlock.convertToSingle()) {
+                for (Unlock.Singular<?> singular : unlock.convertToSingle(occupation.getProfession())) {
                     unlocks.put(singular.getObject(), singular);
                 }
             }

@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.unlock.builtin;
 
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.builtin.blocks.BlockAbstractAction;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockSerializer;
@@ -13,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
@@ -51,10 +53,10 @@ public class BlockUnlock implements Unlock<Block> {
     }
 
     @Override
-    public List<Singular<Block>> convertToSingle() {
+    public List<Singular<Block>> convertToSingle(Profession profession) {
         List<Singular<Block>> list = new ArrayList<>();
         for (Block realBlock : getRealBlocks()) {
-            list.add(new Single(realBlock, level));
+            list.add(new Single(realBlock, level, profession.getDisplayComponent()));
         }
         return list;
     }
@@ -67,10 +69,12 @@ public class BlockUnlock implements Unlock<Block> {
     public static class Single implements Singular<Block> {
         protected final Block block;
         protected final int level;
+        protected final Component professionDisplay;
 
-        public Single(Block block, int level) {
+        public Single(Block block, int level, Component professionDisplay) {
             this.block = block;
             this.level = level;
+            this.professionDisplay = professionDisplay;
         }
 
         @Override
@@ -91,6 +95,11 @@ public class BlockUnlock implements Unlock<Block> {
         @Override
         public int getUnlockLevel() {
             return level;
+        }
+
+        @Override
+        public Component getProfessionDisplay() {
+            return professionDisplay;
         }
     }
 

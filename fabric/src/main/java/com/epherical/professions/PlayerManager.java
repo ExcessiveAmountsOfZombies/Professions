@@ -14,6 +14,7 @@ import com.google.common.collect.Sets;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.MutableComponent;
@@ -218,7 +219,7 @@ public class PlayerManager {
     }
 
     public boolean isSynchronized(UUID uuid) {
-        return synchronizedPlayers.contains(uuid);
+        return synchronizedPlayers.contains(uuid) || FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
 
     @Environment(EnvType.CLIENT)

@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -257,19 +258,22 @@ public class Profession {
             for (int i = 0; i < description.length; i++) {
                 description[i] = buffer.readUtf();
             }
-            Map<UnlockType<?>, Collection<Unlock<?>>> map = buffer.readMap(buf -> {
-                return RegistryConstants.UNLOCKS.get(buf.readResourceLocation());
-            }, buf -> {
-                int size = buf.readVarInt();
-                Collection<Unlock<?>> unlocks = new ArrayList<>();
-                for (int i = 0; i < size; i++) {
-                    UnlockSerializer<?> serializer = RegistryConstants.UNLOCK_TYPE.get(buf.readResourceLocation());
-                    if (serializer != null) {
-                        unlocks.add(serializer.fromNetwork(buf));
+            Map<UnlockType<?>, Collection<Unlock<?>>> map = new HashMap<>();
+            if (buffer.readBoolean()) {
+                map = buffer.readMap(buf -> {
+                    return RegistryConstants.UNLOCKS.get(buf.readResourceLocation());
+                }, buf -> {
+                    int size = buf.readVarInt();
+                    Collection<Unlock<?>> unlocks = new ArrayList<>();
+                    for (int i = 0; i < size; i++) {
+                        UnlockSerializer<?> serializer = RegistryConstants.UNLOCK_TYPE.get(buf.readResourceLocation());
+                        if (serializer != null) {
+                            unlocks.add(serializer.fromNetwork(buf));
+                        }
                     }
-                }
-                return unlocks;
-            });
+                    return unlocks;
+                });
+            }
             Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), ImmutableMap.copyOf(map), null, null);
             profession.setKey(location);
             return profession;
@@ -285,6 +289,7 @@ public class Profession {
             for (String s : profession.description) {
                 buf.writeUtf(s);
             }
+            buf.writeBoolean(sendUnlocks);
             if (sendUnlocks) {
                 buf.writeMap(profession.getUnlocks(), (buf1, unlockType) -> {
                     buf.writeResourceLocation(RegistryConstants.UNLOCKS.getKey(unlockType));

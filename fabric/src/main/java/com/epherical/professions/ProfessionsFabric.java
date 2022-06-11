@@ -64,8 +64,6 @@ public class ProfessionsFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // TODO; send mining fatigue to players that are not synchronized, should be able to just send a packet of it maybe??
-        //  it could cause issues if we aren't careful, like overriding guardian temple fatigue
         
         startup = true;
         mod = this;

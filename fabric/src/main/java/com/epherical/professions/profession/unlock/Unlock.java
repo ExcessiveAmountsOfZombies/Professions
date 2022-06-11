@@ -1,7 +1,9 @@
 package com.epherical.professions.profession.unlock;
 
 
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.util.Tristate;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ public interface Unlock<T> {
 
     UnlockType<T> getType();
 
-    List<Singular<T>> convertToSingle();
+    List<Singular<T>> convertToSingle(Profession profession);
 
     UnlockSerializer<?> getSerializer();
 
@@ -37,6 +39,8 @@ public interface Unlock<T> {
         T getObject();
 
         int getUnlockLevel();
+
+        Component getProfessionDisplay();
 
     }
 

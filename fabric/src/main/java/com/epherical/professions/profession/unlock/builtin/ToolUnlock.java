@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.unlock.builtin;
 
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.builtin.items.AbstractItemAction;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockSerializer;
@@ -13,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -51,10 +53,10 @@ public class ToolUnlock implements Unlock<Item> {
     }
 
     @Override
-    public List<Singular<Item>> convertToSingle() {
+    public List<Singular<Item>> convertToSingle(Profession profession) {
         List<Singular<Item>> list = new ArrayList<>();
         for (Item realBlock : convertToReal()) {
-            list.add(new ToolUnlock.Single(realBlock, level));
+            list.add(new ToolUnlock.Single(realBlock, level, profession.getDisplayComponent()));
         }
         return list;
     }
@@ -77,10 +79,12 @@ public class ToolUnlock implements Unlock<Item> {
     public static class Single implements Singular<Item> {
         protected final Item item;
         protected final int level;
+        protected final Component professionDisplay;
 
-        public Single(Item item, int level) {
+        public Single(Item item, int level, Component professionDisplay) {
             this.item = item;
             this.level = level;
+            this.professionDisplay = professionDisplay;
         }
 
         @Override
@@ -101,6 +105,11 @@ public class ToolUnlock implements Unlock<Item> {
         @Override
         public int getUnlockLevel() {
             return level;
+        }
+
+        @Override
+        public Component getProfessionDisplay() {
+            return professionDisplay;
         }
     }
 

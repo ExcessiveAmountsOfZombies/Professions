@@ -90,7 +90,8 @@ sourceSets {
     main {
         resources {
             srcDirs += [
-                    "src/main/generated"
+                    "src/main/generated",
+                    rootProject.sourceSets.main.resources
             ]
         }
     }

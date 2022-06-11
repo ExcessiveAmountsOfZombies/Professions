@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
@@ -68,13 +69,15 @@ public class ClientHandler {
             }
         });
         subChannelReceivers.put(Constants.SYNCHRONIZE_REQUEST, (client, handler, buf, responseSender) -> {
-            FriendlyByteBuf buf1 = new FriendlyByteBuf(Unpooled.buffer());
-            buf1.writeResourceLocation(Constants.SYNCHRONIZE_RESPONSE);
-            responseSender.sendPacket(Constants.MOD_CHANNEL, buf1);
+            if (!client.isLocalServer()) {
+                FriendlyByteBuf buf1 = new FriendlyByteBuf(Unpooled.buffer());
+                buf1.writeResourceLocation(Constants.SYNCHRONIZE_RESPONSE);
+                responseSender.sendPacket(Constants.MOD_CHANNEL, buf1);
+            }
         });
         subChannelReceivers.put(Constants.SYNCHRONIZE_DATA, (client, handler, buf, responseSender) -> {
             List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
-            ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(client.player.getUUID(), occupations);
+            ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(UUID.fromString(client.getUser().getUuid()), occupations);
         });
     }
 

@@ -34,9 +34,10 @@ public record OccupationExperience(double expAmount) implements Reward {
         // if true, player levels up.
         ProfessionalPlayer player = context.getParameter(ProfessionParameter.THIS_PLAYER);
         context.getParameter(ProfessionParameter.ACTION_LOGGER).addExpReward(rewardChatInfo());
+        int currentLevel = occupation.getLevel();
         if (occupation.addExp(action.modifyReward(context, this, expAmount), player)) {
             PlayerManager manager = ProfessionsFabric.getInstance().getPlayerManager();
-            manager.levelUp(player, occupation);
+            manager.levelUp(player, occupation, currentLevel);
         }
     }
 

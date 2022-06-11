@@ -76,40 +76,15 @@ public class ToolUnlock implements Unlock<Item> {
         return real;
     }
 
-    public static class Single implements Singular<Item> {
-        protected final Item item;
-        protected final int level;
-        protected final Component professionDisplay;
+    public static class Single extends AbstractSingle<Item> {
 
         public Single(Item item, int level, Component professionDisplay) {
-            this.item = item;
-            this.level = level;
-            this.professionDisplay = professionDisplay;
-        }
-
-        @Override
-        public Tristate isLocked(Item object, int level) {
-            return (level >= this.level && item.equals(object)) ? Tristate.TRUE : Tristate.FALSE;
+            super(item, level, professionDisplay);
         }
 
         @Override
         public UnlockType<Item> getType() {
             return Unlocks.TOOL_UNLOCK;
-        }
-
-        @Override
-        public Item getObject() {
-            return item;
-        }
-
-        @Override
-        public int getUnlockLevel() {
-            return level;
-        }
-
-        @Override
-        public Component getProfessionDisplay() {
-            return professionDisplay;
         }
     }
 

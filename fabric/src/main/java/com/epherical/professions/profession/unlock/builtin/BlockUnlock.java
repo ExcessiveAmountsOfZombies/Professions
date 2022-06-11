@@ -66,35 +66,15 @@ public class BlockUnlock implements Unlock<Block> {
         return UnlockSerializer.BLOCK_UNLOCK;
     }
 
-    public static class Single implements Singular<Block> {
-        protected final Block block;
-        protected final int level;
-        protected final Component professionDisplay;
+    public static class Single extends AbstractSingle<Block> {
 
         public Single(Block block, int level, Component professionDisplay) {
-            this.block = block;
-            this.level = level;
-            this.professionDisplay = professionDisplay;
-        }
-
-        @Override
-        public Tristate isLocked(Block object, int level) {
-            return (level >= this.level && block.equals(object)) ? Tristate.TRUE : Tristate.FALSE;
+            super(block, level, professionDisplay);
         }
 
         @Override
         public UnlockType<Block> getType() {
             return Unlocks.BLOCK_UNLOCK;
-        }
-
-        @Override
-        public Block getObject() {
-            return block;
-        }
-
-        @Override
-        public int getUnlockLevel() {
-            return level;
         }
 
         @Override

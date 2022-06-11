@@ -17,6 +17,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
@@ -26,6 +27,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -148,7 +150,7 @@ public class PlayerManager {
     /**
      * central method to send any announcements to the player or server about a player leveling up.
      */
-    public void levelUp(ProfessionalPlayer player, Occupation occupation) {
+    public void levelUp(ProfessionalPlayer player, Occupation occupation, int oldLevel) {
         MutableComponent message;
         ServerPlayer sPlayer = server.getPlayerList().getPlayer(player.getUuid());
         if (sPlayer == null) {
@@ -168,6 +170,12 @@ public class PlayerManager {
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
             sPlayer.sendMessage(message, Util.NIL_UUID);
         }
+        List<Component> components = new ArrayList<>();
+        occupation.getData().getUnlockables().stream()
+                .filter(singular -> singular.getUnlockLevel() > oldLevel && singular.getUnlockLevel() <= occupation.getLevel())
+                .forEach(singular -> {
+
+                });
     }
 
     @Nullable

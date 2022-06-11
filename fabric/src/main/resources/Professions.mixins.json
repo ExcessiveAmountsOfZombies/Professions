@@ -18,7 +18,6 @@
     "ownables.AbstractFurnaceBlockEntityOwnableMixin",
     "ownables.BrewingStandBlockEntityOwnableMixin",
     "sync.InventoryBreakSpeedMixin",
-    "sync.ServerLevelMixin",
     "sync.ServerPlayerGameModeMixin"
   ],
   "client": [

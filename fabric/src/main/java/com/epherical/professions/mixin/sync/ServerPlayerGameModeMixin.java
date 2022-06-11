@@ -1,6 +1,7 @@
 package com.epherical.professions.mixin.sync;
 
 import com.epherical.professions.events.SyncEvents;
+import com.epherical.professions.trigger.UtilityListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -38,12 +39,9 @@ public class ServerPlayerGameModeMixin {
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void onTick(CallbackInfo ci) {
-        //System.out.println("delayed destroy " + hasDelayedDestroy + " or isDest " + isDestroyingBlock);
-    }
-
-    @Inject(method = "handleBlockBreakAction", at = @At(value = "HEAD"))
-    public void brocheck(BlockPos blockPos, ServerboundPlayerActionPacket.Action action, Direction direction, int i, CallbackInfo ci) {
-        System.out.println(action);
+        if (hasDelayedDestroy && UtilityListener.playerDestroyedWithLockedItem.remove(player.getUUID())) {
+            hasDelayedDestroy = false;
+        }
     }
 
 }

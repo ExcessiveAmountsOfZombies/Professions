@@ -53,7 +53,7 @@ public class ProfessionBuilder {
         return this;
     }
 
-    public ProfessionBuilder addUnlock(UnlockType type, Unlock<?> unlock) {
+    public ProfessionBuilder addUnlock(UnlockType<?> type, Unlock<?> unlock) {
         this.unlocks.put(type, unlock);
         return this;
     }

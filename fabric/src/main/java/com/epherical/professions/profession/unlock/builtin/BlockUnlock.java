@@ -104,21 +104,25 @@ public class BlockUnlock implements Unlock<Block> {
         return realBlocks;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder implements Unlock.Builder<Block> {
         protected final List<ActionEntry<Block>> blocks = new ArrayList<>();
         protected int level = 2;
 
-        public Unlock.Builder<Block> block(Block... item) {
+        public Builder block(Block... item) {
             this.blocks.add(ActionEntry.of(item));
             return this;
         }
 
-        public Unlock.Builder<Block> item(TagKey<Block> item) {
+        public Builder tag(TagKey<Block> item) {
             this.blocks.add(ActionEntry.of(item));
             return this;
         }
 
-        public Unlock.Builder<Block> level(int level) {
+        public Builder level(int level) {
             this.level = level;
             return this;
         }

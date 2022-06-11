@@ -6,11 +6,13 @@ import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionBuilder;
+import com.epherical.professions.profession.ProfessionEditorSerializer;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.conditions.ActionConditions;
+import com.epherical.professions.profession.editor.Append;
 import com.epherical.professions.profession.editor.Editor;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.Rewards;
@@ -138,12 +140,18 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
                 .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
                 .registerTypeHierarchyAdapter(Action.class, Actions.createGsonAdapter())
                 .registerTypeHierarchyAdapter(Unlock.class, Unlocks.createGsonAdapter())
-                .registerTypeAdapter(ProfessionBuilder.class, new Profession.Serializer());
+                .registerTypeAdapter(Append.class, ProfessionEditorSerializer.APPEND_EDITOR)
+                .registerTypeAdapter(Profession.class, ProfessionSerializer.DEFAULT_PROFESSION)
+                .registerTypeAdapter(ProfessionBuilder.class, ProfessionSerializer.DEFAULT_PROFESSION);
         ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;
     }
 
     public static JsonElement serialize(Profession profession) {
         return GSON.toJsonTree(profession);
+    }
+
+    public static JsonElement serialize(Editor unlock) {
+        return GSON.toJsonTree(unlock);
     }
 }

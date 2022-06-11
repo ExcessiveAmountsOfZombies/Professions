@@ -219,7 +219,7 @@ public class Profession {
         @Override
         public JsonElement serialize(Profession src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
-            object.addProperty("type", RegistryConstants.PROFESSION_SERIALIZER.getKey(ProfessionSerializer.DEFAULT_PROFESSION).toString());
+            object.addProperty("type", RegistryConstants.PROFESSION_SERIALIZER.getKey(src.getSerializer()).toString());
             object.addProperty("color", src.color.serialize());
             object.addProperty("descriptionColor", src.descriptionColor.serialize());
             JsonArray array = new JsonArray();

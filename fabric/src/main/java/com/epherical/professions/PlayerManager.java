@@ -178,14 +178,13 @@ public class PlayerManager {
                 .filter(singular -> singular.getUnlockLevel() > oldLevel && singular.getUnlockLevel() <= occupation.getLevel())
                 .forEach(singular -> components.add(singular.createUnlockComponent()));
         if (components.size() > 0) {
-            MutableComponent megaComponent = new TextComponent("=-=Rewards=-=\n").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
+            MutableComponent megaComponent = new TranslatableComponent("professions.level_up.rewards").append("\n").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
             for (Component component : components) {
                 megaComponent.append("  ").append(component).append("\n");
             }
             megaComponent.append(new TextComponent("=-=-=-=-=-=-=")).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-            MutableComponent unlockMessage = new TranslatableComponent("You have unlocked %s new abilities for %s. Hover this message to see them!",
-                    new TextComponent(String.valueOf(components.size())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                    occupation.getProfession().getDisplayComponent())
+            MutableComponent unlockMessage = new TranslatableComponent("professions.level_up.unlock",
+                    new TextComponent(String.valueOf(components.size())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, megaComponent)));
             sPlayer.sendMessage(unlockMessage, Util.NIL_UUID);

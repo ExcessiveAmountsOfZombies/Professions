@@ -8,7 +8,6 @@ import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ActionEntry;
-import com.epherical.professions.util.Tristate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -81,6 +80,10 @@ public class ToolUnlock implements Unlock<Item> {
         return real;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Single extends AbstractSingle<Item> {
 
         public Single(Item item, int level, Component professionDisplay) {
@@ -105,17 +108,17 @@ public class ToolUnlock implements Unlock<Item> {
         protected final List<ActionEntry<Item>> blocks = new ArrayList<>();
         protected int level = 2;
 
-        public Unlock.Builder<Item> block(Item... item) {
+        public Builder item(Item... item) {
             this.blocks.add(ActionEntry.of(item));
             return this;
         }
 
-        public Unlock.Builder<Item> item(TagKey<Item> item) {
+        public Builder tag(TagKey<Item> item) {
             this.blocks.add(ActionEntry.of(item));
             return this;
         }
 
-        public Unlock.Builder<Item> level(int level) {
+        public Builder level(int level) {
             this.level = level;
             return this;
         }

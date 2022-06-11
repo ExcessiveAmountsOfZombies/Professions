@@ -1,6 +1,7 @@
 {
   "function_type": "professions:append",
   "to_edit_profession_key": "professions:building",
+  "unlocks": [],
   "actions": [
     {
       "action": "professions:place_block",

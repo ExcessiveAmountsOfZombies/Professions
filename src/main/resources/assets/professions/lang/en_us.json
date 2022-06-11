@@ -32,6 +32,8 @@
 
   "professions.level_up.announcement": "%s has leveled up %s to %s.",
   "professions.level_up.local": "You have leveled up %s to %s.",
+  "professions.level_up.rewards": "=-=Rewards=-=",
+  "professions.level_up.unlock": "You have unlocked %s new abilities. Hover this message to see them!",
 
   "professions.command.error.profession_does_not_exist": "Could not find that profession.",
   "professions.command.error.missing_page": "That pages doesn't exist.",

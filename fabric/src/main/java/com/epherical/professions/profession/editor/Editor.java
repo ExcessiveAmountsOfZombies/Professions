@@ -1,10 +1,10 @@
 package com.epherical.professions.profession.editor;
 
 import com.epherical.professions.profession.ProfessionBuilder;
+import com.epherical.professions.profession.ProfessionEditorSerializer;
 import net.minecraft.resources.ResourceLocation;
 
 public interface Editor {
-    // TODO: add data generators for editors
 
     ResourceLocation getProfessionKey();
 
@@ -20,4 +20,6 @@ public interface Editor {
     ResourceLocation getLocationOfEdit();
 
     void applyEdit(ProfessionBuilder builder);
+
+    ProfessionEditorSerializer<?> getType();
 }

@@ -1,0 +1,70 @@
+{
+  "function_type": "professions:append",
+  "to_edit_profession_key": "professions:mining",
+  "actions": [],
+  "unlocks": [
+    {
+      "unlock": "professions:block",
+      "blocks": [
+        "#minecraft:iron_ores"
+      ],
+      "level": 5
+    },
+    {
+      "unlock": "professions:block",
+      "blocks": [
+        "#minecraft:redstone_ores"
+      ],
+      "level": 5
+    },
+    {
+      "unlock": "professions:block",
+      "blocks": [
+        "#minecraft:coal_ores"
+      ],
+      "level": 3
+    },
+    {
+      "unlock": "professions:block",
+      "blocks": [
+        "#minecraft:copper_ores"
+      ],
+      "level": 3
+    },
+    {
+      "unlock": "professions:block",
+      "blocks": [
+        "#minecraft:gold_ores"
+      ],
+      "level": 10
+    },
+    {
+      "unlock": "professions:block",
+      "blocks": [
+        "minecraft:nether_quartz_ore"
+      ],
+      "level": 10
+    },
+    {
+      "unlock": "professions:block",
+      "blocks": [
+        "#minecraft:lapis_ores"
+      ],
+      "level": 10
+    },
+    {
+      "unlock": "professions:block",
+      "blocks": [
+        "#minecraft:diamond_ores"
+      ],
+      "level": 20
+    },
+    {
+      "unlock": "professions:block",
+      "blocks": [
+        "#minecraft:emerald_ores"
+      ],
+      "level": 20
+    }
+  ]
+}

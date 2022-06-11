@@ -1,9 +1,12 @@
 package com.epherical.professions.profession.editor;
 
+import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.ProfessionEditorSerializer;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockType;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
@@ -26,12 +29,14 @@ public class Append implements Editor {
 
     private final ResourceLocation editKey;
     protected final Map<ActionType, Collection<Action>> actions;
+    protected final Map<UnlockType<?>, Collection<Unlock<?>>> unlocks;
     private ResourceLocation editLocation;
 
 
-    public Append(ResourceLocation editKey, Map<ActionType, Collection<Action>> actions) {
+    public Append(ResourceLocation editKey, Map<ActionType, Collection<Action>> actions, Map<UnlockType<?>, Collection<Unlock<?>>> unlocks) {
         this.editKey = editKey;
         this.actions = actions;
+        this.unlocks = unlocks;
     }
 
 
@@ -57,6 +62,16 @@ public class Append implements Editor {
                 builder.addAction(entry.getKey(), action);
             }
         }
+        for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : unlocks.entrySet()) {
+            for (Unlock<?> unlock : entry.getValue()) {
+                builder.addUnlock(entry.getKey(), unlock);
+            }
+        }
+    }
+
+    @Override
+    public ProfessionEditorSerializer<?> getType() {
+        return ProfessionEditorSerializer.APPEND_EDITOR;
     }
 
     public static class Serializer implements ProfessionEditorSerializer<Append> {
@@ -70,12 +85,18 @@ public class Append implements Editor {
             for (Action action : actions) {
                 actionMap.put(action.getType(), action);
             }
-            return new Append(appendKey, actionMap.asMap());
+            Unlock<?>[] unlocks = gson.fromJson(GsonHelper.getAsJsonArray(object, "unlocks"), Unlock[].class);
+            Multimap<UnlockType<?>, Unlock<?>> unlockMap = LinkedHashMultimap.create();
+            for (Unlock<?> unlock : unlocks) {
+                unlockMap.put(unlock.getType(), unlock);
+            }
+            return new Append(appendKey, actionMap.asMap(), unlockMap.asMap());
         }
 
         @Override
         public JsonElement serialize(Append src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
+            object.addProperty("function_type", RegistryConstants.PROFESSION_EDITOR_SERIALIZER.getKey(src.getType()).toString());
             object.addProperty("to_edit_profession_key", src.editKey.toString());
             JsonArray actionArray = new JsonArray();
             for (Collection<Action> value : src.actions.values()) {
@@ -84,6 +105,13 @@ public class Append implements Editor {
                 }
             }
             object.add("actions", actionArray);
+            JsonArray unlockArray = new JsonArray();
+            for (Collection<Unlock<?>> value : src.unlocks.values()) {
+                for (Unlock<?> unlock : value) {
+                    unlockArray.add(context.serialize(unlock));
+                }
+            }
+            object.add("unlocks", unlockArray);
             return object;
         }
 
@@ -91,5 +119,38 @@ public class Append implements Editor {
         public Class<Append> getType() {
             return Append.class;
         }
+    }
+
+    public static class Builder {
+        protected ResourceLocation professionToEdit;
+        protected LinkedHashMultimap<UnlockType<?>, Unlock<?>> unlocks;
+        protected LinkedHashMultimap<ActionType, Action> actions;
+        //protected ResourceLocation key;  skip this for now, might need it like in ProfessionBuilder later though. maybe we deserialize directly to builder?
+
+
+        private Builder(ResourceLocation professionToEdit) {
+            this.professionToEdit = professionToEdit;
+            this.unlocks = LinkedHashMultimap.create();
+            this.actions = LinkedHashMultimap.create();
+        }
+
+        public static Builder appender(ResourceLocation professionToEdit) {
+            return new Builder(professionToEdit);
+        }
+
+        public Builder addUnlock(UnlockType<?> type, Unlock<?> unlock) {
+            this.unlocks.put(type, unlock);
+            return this;
+        }
+
+        public Builder addAction(ActionType type, Action action) {
+            this.actions.put(type, action);
+            return this;
+        }
+
+        public Append build() {
+            return new Append(professionToEdit, actions.asMap(), unlocks.asMap());
+        }
+
     }
 }

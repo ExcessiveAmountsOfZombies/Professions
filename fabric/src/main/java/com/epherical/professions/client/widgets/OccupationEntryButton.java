@@ -2,7 +2,12 @@ package com.epherical.professions.client.widgets;
 
 import com.epherical.professions.profession.progression.Occupation;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
@@ -50,9 +55,36 @@ public class OccupationEntryButton extends Button {
 
     private void drawProgression(PoseStack stack) {
         double percentage = occupation.getExp() / occupation.getMaxExp();
-        int progress = (int) (percentage * 16);
-        this.blit(stack, this.x + this.width - 19, this.y + 2, 16, 238, 16, 18);
-        this.blit(stack, this.x + this.width - 19, this.y + 2, 16 * 2, 238, progress, 18);
+        int progress = (int) (percentage * 360);
+
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+        bufferBuilder.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+
+        int segments = 360 + 90;
+        double twoPI = Math.PI * 2;
+
+        double innerRad = 6;
+        double outerRad = innerRad + 3;
+
+        double centerX = this.x + this.width - 11.2;
+        double centerY = this.y + 12;
+
+        for (int j = 90; j < segments; j++) {
+            double sin = Math.sin(-(j * twoPI / 360));
+            double cos = Math.cos(-(j * twoPI / 360));
+
+            if (j >= (progress + 90)) {
+                bufferBuilder.vertex(centerX + (innerRad * cos), centerY + (innerRad * sin), getBlitOffset()).color(56, 56, 56, 255).endVertex();
+                bufferBuilder.vertex(centerX + (outerRad * cos), centerY + (outerRad * sin), getBlitOffset()).color(56, 56, 56, 255).endVertex();
+            } else {
+                bufferBuilder.vertex(centerX + (innerRad * cos), centerY + (innerRad * sin), getBlitOffset()).color(52, 235, 64, 255).endVertex();
+                bufferBuilder.vertex(centerX + (outerRad * cos), centerY + (outerRad * sin), getBlitOffset()).color(52, 235, 64, 255).endVertex();
+            }
+        }
+        bufferBuilder.end();
+        BufferUploader.end(bufferBuilder);
+
     }
 
     public Occupation getOccupation() {

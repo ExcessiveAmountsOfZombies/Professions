@@ -42,6 +42,8 @@ public interface Unlock<T> {
 
         Component getProfessionDisplay();
 
+        Profession getProfession();
+
         Component createUnlockComponent();
 
     }

@@ -59,7 +59,7 @@ public class BlockUnlock implements Unlock<Block> {
     public List<Singular<Block>> convertToSingle(Profession profession) {
         List<Singular<Block>> list = new ArrayList<>();
         for (Block realBlock : getRealBlocks()) {
-            list.add(new Single(realBlock, level, profession.getDisplayComponent()));
+            list.add(new Single(realBlock, level, profession));
         }
         return list;
     }
@@ -71,18 +71,13 @@ public class BlockUnlock implements Unlock<Block> {
 
     public static class Single extends AbstractSingle<Block> {
 
-        public Single(Block block, int level, Component professionDisplay) {
+        public Single(Block block, int level, Profession professionDisplay) {
             super(block, level, professionDisplay);
         }
 
         @Override
         public UnlockType<Block> getType() {
             return Unlocks.BLOCK_UNLOCK;
-        }
-
-        @Override
-        public Component getProfessionDisplay() {
-            return professionDisplay;
         }
 
         @Override

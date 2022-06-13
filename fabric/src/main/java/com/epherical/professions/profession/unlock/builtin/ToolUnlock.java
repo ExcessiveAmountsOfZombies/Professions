@@ -60,7 +60,7 @@ public class ToolUnlock implements Unlock<Item> {
     public List<Singular<Item>> convertToSingle(Profession profession) {
         List<Singular<Item>> list = new ArrayList<>();
         for (Item realBlock : convertToReal()) {
-            list.add(new ToolUnlock.Single(realBlock, level, profession.getDisplayComponent()));
+            list.add(new ToolUnlock.Single(realBlock, level, profession));
         }
         return list;
     }
@@ -86,7 +86,7 @@ public class ToolUnlock implements Unlock<Item> {
 
     public static class Single extends AbstractSingle<Item> {
 
-        public Single(Item item, int level, Component professionDisplay) {
+        public Single(Item item, int level, Profession professionDisplay) {
             super(item, level, professionDisplay);
         }
 

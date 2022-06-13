@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.unlock.builtin;
 
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.util.Tristate;
 import net.minecraft.network.chat.Component;
@@ -7,12 +8,12 @@ import net.minecraft.network.chat.Component;
 public abstract class AbstractSingle<T> implements Unlock.Singular<T> {
     protected final T value;
     protected final int level;
-    protected final Component professionDisplay;
+    protected final Profession profession;
 
-    public AbstractSingle(T value, int level, Component professionDisplay) {
+    public AbstractSingle(T value, int level, Profession profession) {
         this.value = value;
         this.level = level;
-        this.professionDisplay = professionDisplay;
+        this.profession = profession;
     }
 
     @Override
@@ -31,7 +32,12 @@ public abstract class AbstractSingle<T> implements Unlock.Singular<T> {
     }
 
     @Override
+    public Profession getProfession() {
+        return profession;
+    }
+
+    @Override
     public Component getProfessionDisplay() {
-        return professionDisplay;
+        return profession.getDisplayComponent();
     }
 }

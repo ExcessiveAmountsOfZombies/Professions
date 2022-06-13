@@ -55,7 +55,10 @@ public class OccupationEntryButton extends Button {
 
     private void drawProgression(PoseStack stack) {
         double percentage = occupation.getExp() / occupation.getMaxExp();
-        int progress = (int) (percentage * 360);
+        int progress = (int) (percentage * 16);
+        this.blit(stack, this.x + this.width - 19, this.y + 2, 16, 238, 16, 18);
+        this.blit(stack, this.x + this.width - 19, this.y + 2, 16 * 2, 238, progress, 18);
+        /*int progress = (int) (percentage * 360);
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
@@ -83,7 +86,7 @@ public class OccupationEntryButton extends Button {
             }
         }
         bufferBuilder.end();
-        BufferUploader.end(bufferBuilder);
+        BufferUploader.end(bufferBuilder);*/
 
     }
 

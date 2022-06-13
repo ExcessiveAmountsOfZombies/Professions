@@ -22,6 +22,8 @@ public class EntityTriggers {
                     if (!mob.isBaby()) {
                         builder.addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(entity.getUUID()))
                                 .addParameter(ProfessionParameter.ENTITY, killedEntity);
+                    } else {
+                        return;
                     }
                 } else {
                     builder.addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(entity.getUUID()))

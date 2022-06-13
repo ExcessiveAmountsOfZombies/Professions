@@ -36,6 +36,15 @@ public record ProfessionContext(ServerLevel level, Random random, Map<Profession
         return level;
     }
 
+    @Override
+    public String toString() {
+        return "ProfessionContext{" +
+                "level=" + level +
+                ", random=" + random +
+                ", parameters=" + parameters +
+                '}';
+    }
+
     public static class Builder {
         private final ServerLevel level;
         private final Map<ProfessionParameter<?>, Object> parameters = Maps.newIdentityHashMap();

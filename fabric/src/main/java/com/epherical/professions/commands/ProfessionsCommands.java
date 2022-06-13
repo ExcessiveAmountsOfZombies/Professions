@@ -21,6 +21,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.logging.LogUtils;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
@@ -35,6 +36,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +49,7 @@ import java.util.stream.Collectors;
 public class ProfessionsCommands {
 
     private final ProfessionsFabric mod;
+    private final Logger LOGGER = LogUtils.getLogger();
 
     public ProfessionsCommands(ProfessionsFabric mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher) {
         this.mod = mod;
@@ -81,6 +84,12 @@ public class ProfessionsCommands {
             for (ServerPlayer player : context.getSource().getServer().getPlayerList().getPlayers()) {
                 builder.suggest(player.getGameProfile().getName());
             }
+            return builder.buildFuture();
+        };
+        SuggestionProvider<CommandSourceStack> actionProvider = (context, builder) -> {
+            RegistryConstants.ACTION_TYPE.keySet().forEach(location -> {
+                builder.suggest(location.toString());
+            });
             return builder.buildFuture();
         };
 
@@ -152,6 +161,12 @@ public class ProfessionsCommands {
                                         .suggests(occupationProvider)
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1))
                                                 .executes(this::setLevel)))))
+                .then(Commands.literal("admin")
+                        .then(Commands.literal("checkexp")
+                        .requires(Permissions.require("professions.command.admin.checkexp", 4))
+                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                        .suggests(occupationProvider)
+                                        .executes(this::checkExp))))
                 /*.then(Commands.literal("givexp")
                         .requires(Permissions.require("professions.command.givexp", 4))
                         .then(Commands.argument("player", StringArgumentType.string())
@@ -582,6 +597,28 @@ public class ProfessionsCommands {
             profile = commandPlayer.getGameProfile();
         }
         return profile;
+    }
+
+    private int checkExp(CommandContext<CommandSourceStack> stack) {
+        ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+        try {
+            Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
+            if (profession == null) {
+                stack.getSource().sendFailure(new TextComponent("Could not find that profession"));
+                return 0;
+            }
+            int start = 1;
+            int max = Math.min(profession.getMaxLevel(), 100);
+            LOGGER.info("CSV experience check");
+            LOGGER.info("Level,Experience");
+            for (int i = start; i <= max; i++) {
+                LOGGER.info("{},{}", i, (int) profession.getExperienceForLevel(i));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 1;
     }
 
 }

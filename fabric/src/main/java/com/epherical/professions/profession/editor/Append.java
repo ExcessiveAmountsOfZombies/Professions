@@ -143,8 +143,18 @@ public class Append implements Editor {
             return this;
         }
 
+        public Builder addUnlock(UnlockType<?> type, Unlock.Builder<?> builder) {
+            this.unlocks.put(type, builder.build());
+            return this;
+        }
+
         public Builder addAction(ActionType type, Action action) {
             this.actions.put(type, action);
+            return this;
+        }
+
+        public Builder addAction(ActionType type, Action.Builder builder) {
+            this.actions.put(type, builder.build());
             return this;
         }
 

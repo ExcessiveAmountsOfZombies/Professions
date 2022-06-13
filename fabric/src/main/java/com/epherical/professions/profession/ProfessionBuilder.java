@@ -53,8 +53,18 @@ public class ProfessionBuilder {
         return this;
     }
 
+    public ProfessionBuilder addAction(ActionType type, Action.Builder action) {
+        this.actions.put(type, action.build());
+        return this;
+    }
+
     public ProfessionBuilder addUnlock(UnlockType<?> type, Unlock<?> unlock) {
         this.unlocks.put(type, unlock);
+        return this;
+    }
+
+    public ProfessionBuilder addUnlock(UnlockType<?> type, Unlock.Builder<?> unlock) {
+        this.unlocks.put(type, unlock.build());
         return this;
     }
 

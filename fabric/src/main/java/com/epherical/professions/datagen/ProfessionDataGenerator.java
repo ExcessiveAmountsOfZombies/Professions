@@ -7,7 +7,6 @@ import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionBuilder;
-import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
@@ -578,7 +577,7 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             TextColor.parseColor("#FFFFFF"),
                             new String[]{
                                     "Earn money and experience",
-                                    "by smithing items." },
+                                    "by smithing items."},
                             "Smithing", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())
@@ -642,7 +641,7 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             TextColor.parseColor("#FFFFFF"),
                             new String[]{
                                     "Earn money and experience",
-                                    "by farming trees." },
+                                    "by farming trees."},
                             "Logging", 100)
                     .addExperienceScaling(defaultLevelParser())
                     .incomeScaling(defaultIncomeParser())

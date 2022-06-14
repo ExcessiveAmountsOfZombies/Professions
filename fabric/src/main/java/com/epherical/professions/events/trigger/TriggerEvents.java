@@ -5,11 +5,8 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -88,7 +85,6 @@ public final class TriggerEvents {
     });
 
 
-
     public interface PlaceBlock {
         /**
          * This event is already assumed to take place on the server, no side checks are needed.
@@ -110,8 +106,9 @@ public final class TriggerEvents {
          * <br>
          * This event is called for every 'craft' the player does. If a player crafts 64 emerald blocks,
          * this event will be called 64 times.
+         *
          * @param player The player who crafted the item.
-         * @param stack The item that was crafted
+         * @param stack  The item that was crafted
          */
         void onCraftItem(ServerPlayer player, ItemStack stack, Recipe<?> recipe);
     }

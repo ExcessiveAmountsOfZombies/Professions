@@ -30,7 +30,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.*;
+import static net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK;
+import static net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK;
 
 public class UtilityListener {
 
@@ -102,7 +103,8 @@ public class UtilityListener {
         });
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            runnables.getOrDefault(server.getTickCount(), () -> {}).run();
+            runnables.getOrDefault(server.getTickCount(), () -> {
+            }).run();
             runnables.remove(server.getTickCount());
         });
     }

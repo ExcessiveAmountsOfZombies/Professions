@@ -17,8 +17,8 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -127,8 +127,8 @@ public class ServerHandler {
             for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
                 Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
                 if (actionsFor != null && !actionsFor.isEmpty()) {
-                    ActionDisplay display = new ActionDisplay(new TranslatableComponent("=-=-=| %s |=-=-=",
-                            new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                    ActionDisplay display = new ActionDisplay(Component.translatable("=-=-=| %s |=-=-=",
+                                    Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), actionsFor);
                     displays.add(display);
                 }

@@ -15,7 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FurnaceResultSlot.class)
 public class FurnaceCraftingMixin {
 
-    @Shadow @Final private Player player;
+    @Shadow
+    @Final
+    private Player player;
 
     @Inject(method = "checkTakeAchievements", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;awardUsedRecipesAndPopExperience(Lnet/minecraft/server/level/ServerPlayer;)V"))
     public void whenItemTaken(ItemStack stack, CallbackInfo ci) {

@@ -11,7 +11,7 @@ import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -55,12 +55,12 @@ public class PlayerManager {
 
     public void joinOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, OccupationSlot slot, ServerPlayer serverPlayer) {
         if (profession == null) {
-            serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendMessage(Component.translatable("professions.command.join.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             return;
         }
 
         if (!hasPermission(serverPlayer, profession)) {
-            serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.error.no_permission").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendMessage(Component.translatable("professions.command.join.error.no_permission").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             return;
         }
 
@@ -69,12 +69,12 @@ public class PlayerManager {
         }
 
         if (player.alreadyHasOccupation(profession) && player.isOccupationActive(profession)) {
-            serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.error.already_joined").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendMessage(Component.translatable("professions.command.join.error.already_joined").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             return;
         }
 
         if (player.getActiveOccupations().size() >= ProfessionConfig.maxOccupations) {
-            serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.error.max_occupations").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendMessage(Component.translatable("professions.command.join.error.max_occupations").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             return;
         }
 
@@ -82,14 +82,14 @@ public class PlayerManager {
             return;
         }
         //OccupationEvents.PROFESSION_JOIN_EVENT.invoker().onProfessionJoin(player, profession, slot, player.getPlayer());
-        serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
+        serverPlayer.sendMessage(Component.translatable("professions.command.join.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
 
         storage.saveUser(player);
     }
 
     public boolean leaveOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, ServerPlayer serverPlayer) {
         if (profession == null) {
-            serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendMessage(Component.translatable("professions.command.leave.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             return false;
         }
 
@@ -102,18 +102,18 @@ public class PlayerManager {
         }
         //OccupationEvents.PROFESSION_LEAVE_EVENT.invoker().onProfessionLeave(player, profession, serverPlayer);
         storage.saveUser(player);
-        serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
+        serverPlayer.sendMessage(Component.translatable("professions.command.leave.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
         return true;
     }
 
     public boolean fireFromOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, ServerPlayer serverPlayer) {
         if (profession == null) {
-            serverPlayer.sendMessage(new TranslatableComponent("professions.command.fire.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendMessage(Component.translatable("professions.command.fire.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             return false;
         }
 
         if (player == null) {
-            serverPlayer.sendMessage(new TranslatableComponent("professions.command.fire.error.cant_find_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendMessage(Component.translatable("professions.command.fire.error.cant_find_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             return false;
         }
 
@@ -135,16 +135,16 @@ public class PlayerManager {
             return; // this probably won't happen, but if it does, no NPEs.
         }
         if (((ProfessionConfig.announceEveryXLevel % occupation.getLevel() == 0)) && ProfessionConfig.announceLevelUps) {
-            message = new TranslatableComponent("professions.level_up.announcement",
+            message = Component.translatable("professions.level_up.announcement",
                     sPlayer.getDisplayName(),
                     occupation.getProfession().getDisplayComponent(),
-                    new TextComponent("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                    Component.literal("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
             server.getPlayerList().broadcastMessage(message, ChatType.SYSTEM, Util.NIL_UUID);
         } else {
-            message = new TranslatableComponent("professions.level_up.local",
+            message = Component.translatable("professions.level_up.local",
                     occupation.getProfession().getDisplayComponent(),
-                    new TextComponent("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                    Component.literal("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
             sPlayer.sendMessage(message, Util.NIL_UUID);
         }

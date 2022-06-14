@@ -1,7 +1,7 @@
 package com.epherical.professions.client.screen;
 
-import com.epherical.professions.client.widgets.ProfessionsListingWidget;
 import com.epherical.professions.client.widgets.CommandButton;
+import com.epherical.professions.client.widgets.ProfessionsListingWidget;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.networking.CommandButtons;
@@ -18,7 +18,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -42,9 +41,9 @@ public class OccupationScreen<T> extends Screen {
     private CommandButtons button;
     private List<ProfessionsListingWidget.AbstractEntry> entries;
 
-    private final MutableComponent NO_ENTRIES = new TranslatableComponent("professions.gui.no_entries")
+    private final MutableComponent NO_ENTRIES = Component.translatable("professions.gui.no_entries")
             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
-    private final MutableComponent NO_ENTRIES_LEAVE = new TranslatableComponent("professions.gui.no_entries.leave")
+    private final MutableComponent NO_ENTRIES_LEAVE = Component.translatable("professions.gui.no_entries.leave")
             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
 
     public OccupationScreen(List<T> list, Minecraft minecraft, OccupationListCreator<T> creator, CommandButtons buttons) {
@@ -69,21 +68,21 @@ public class OccupationScreen<T> extends Screen {
                 24);
         // row 1
         addRenderableWidget(new CommandButton(new ItemStack(Items.EMERALD), this.width / 2 + 43, this.height / 2 - 80,
-                new TranslatableComponent("professions.gui.join"),
+                Component.translatable("professions.gui.join"),
                 button1 -> ClientHandler.sendButtonPacket(CommandButtons.JOIN)));
         addRenderableWidget(new CommandButton(new ItemStack(Items.REDSTONE), this.width / 2 + 43 + 38 + 3, this.height / 2 - 80,
-                new TranslatableComponent("professions.gui.leave"),
+                Component.translatable("professions.gui.leave"),
                 button1 -> ClientHandler.sendButtonPacket(CommandButtons.LEAVE)));
         //row 2
         addRenderableWidget(new CommandButton(new ItemStack(Items.BOOK), this.width / 2 + 43, this.height / 2 - 80 + 48 + 3,
-                new TranslatableComponent("professions.gui.info"),
+                Component.translatable("professions.gui.info"),
                 button1 -> ClientHandler.sendButtonPacket(CommandButtons.INFO)));
         addRenderableWidget(new CommandButton(new ItemStack(Items.AMETHYST_SHARD), this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,
-                new TranslatableComponent("professions.gui.top"),
+                Component.translatable("professions.gui.top"),
                 button1 -> ClientHandler.sendButtonPacket(CommandButtons.TOP)));
         // row 3
         addRenderableWidget(new CommandButton(new ItemStack(Items.BARRIER), this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,
-                new TranslatableComponent("professions.gui.close"),
+                Component.translatable("professions.gui.close"),
                 button1 -> this.minecraft.setScreen(prevScreen)));
         this.addWidget(list);
         list.reset(entries);

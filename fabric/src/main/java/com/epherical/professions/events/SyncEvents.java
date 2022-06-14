@@ -12,11 +12,10 @@ public class SyncEvents {
 
     public static final Event<AbortDestroyBlockEvent> ABORTED_BLOCK_DESTROY_EVENT = EventFactory.createArrayBacked(AbortDestroyBlockEvent.class, calls ->
             (pos, player, state, level, action) -> {
-        for (AbortDestroyBlockEvent call : calls) {
-            call.onBlockDestroyAborted(pos, player, state, level, action);
-        }
-    });
-
+                for (AbortDestroyBlockEvent call : calls) {
+                    call.onBlockDestroyAborted(pos, player, state, level, action);
+                }
+            });
 
 
     public interface AbortDestroyBlockEvent {

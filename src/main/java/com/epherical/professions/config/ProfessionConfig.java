@@ -36,7 +36,6 @@ public class ProfessionConfig {
     public static TextColor moreRewards = TextColor.parseColor("#99ff00");
 
 
-
     public static void reload() {
         //ProfessionsMod.getInstance().getConfig().reloadConfig();
     }

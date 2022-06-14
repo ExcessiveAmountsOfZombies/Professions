@@ -20,8 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,10 +62,10 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
     public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         double d = this.minecraft.getWindow().getGuiScale();
         RenderSystem.enableScissor(
-                (int)((double)(this.getRowLeft() - 25) * d),
-                (int)((double)(this.height - this.y1) * d + 2),
-                (int)((double)(this.getScrollbarPosition() + 6) * d),
-                (int)((double)(this.height - (this.height - this.y1) - this.y0 - 4) * d));
+                (int) ((double) (this.getRowLeft() - 25) * d),
+                (int) ((double) (this.height - this.y1) * d + 2),
+                (int) ((double) (this.getScrollbarPosition() + 6) * d),
+                (int) ((double) (this.height - (this.height - this.y1) - this.y0 - 4) * d));
         super.render(poseStack, mouseX, mouseY, partialTick);
         RenderSystem.disableScissor();
     }
@@ -105,7 +103,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
         public OccupationEntry(OccupationScreen<?> parent, ProfessionsListingWidget listingWidget, Minecraft client, Occupation listing) {
             this.toolTip = new ArrayList<>();
             for (String s : listing.getProfession().getDescription()) {
-                toolTip.add(new TextComponent(s).setStyle(Style.EMPTY.withColor(listing.getProfession().getDescriptionColor())));
+                toolTip.add(Component.literal(s).setStyle(Style.EMPTY.withColor(listing.getProfession().getDescriptionColor())));
             }
             this.button = new OccupationEntryButton(listing, 0, 0, 154, 24, button1 -> {
                 if (parent.getButton() != null) {
@@ -137,7 +135,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
         public ProfessionEntry(OccupationScreen<?> parent, ProfessionsListingWidget listingWidget, Minecraft client, Profession profession) {
             this.toolTip = new ArrayList<>();
             for (String s : profession.getDescription()) {
-                toolTip.add(new TextComponent(s).setStyle(Style.EMPTY.withColor(profession.getDescriptionColor())));
+                toolTip.add(Component.literal(s).setStyle(Style.EMPTY.withColor(profession.getDescriptionColor())));
             }
             this.button = new ProfessionEntryButton(profession, 0, 0, 154, 24, button1 -> {
                 if (parent.getButton() != null) {
@@ -207,10 +205,10 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
         public LevelEntry(OccupationScreen<?> parent, ProfessionsListingWidget listingWidget, Minecraft client, UUID uuid, int level) {
             PlayerInfo info = client.player.connection.getPlayerInfo(uuid);
             this.info = info;
-            this.level = new TranslatableComponent("professions.command.stats.level",
-                    new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+            this.level = Component.translatable("professions.command.stats.level",
+                            Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-            button = new LevelEntryButton(new TextComponent(info.getProfile().getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), 0, 0, 154, 24, button -> {
+            button = new LevelEntryButton(Component.literal(info.getProfile().getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), 0, 0, 154, 24, button -> {
             }, (button, poseStack, i, j) -> {
             });
         }
@@ -227,7 +225,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             RenderSystem.disableBlend();
             int color = this.button.active ? 16777215 : 10526880;
             drawCenteredString(poseStack, Minecraft.getInstance().font, level,
-                    (this.button.x + 35 + this.button.getWidth() / 2) , this.button.y + (this.button.getHeight() - 8) / 2, color | Mth.ceil(255.0F) << 24);
+                    (this.button.x + 35 + this.button.getWidth() / 2), this.button.y + (this.button.getHeight() - 8) / 2, color | Mth.ceil(255.0F) << 24);
         }
 
         @Override

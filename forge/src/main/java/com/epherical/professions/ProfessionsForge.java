@@ -5,7 +5,6 @@ import com.epherical.professions.client.ProfessionsClientForge;
 import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.config.Config;
 import com.epherical.professions.config.ProfessionConfig;
-import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.networking.NetworkHandler;
@@ -78,7 +77,7 @@ public class ProfessionsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::sendMessages);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::readMessages);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(RegistryConstants::createRegistries);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeRegConstants::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(config::initConfig);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addPacks);
 

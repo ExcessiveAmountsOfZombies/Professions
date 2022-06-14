@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -25,21 +25,21 @@ public class ActionLogger {
 
     private MutableComponent message;
 
-    private Component money = new TextComponent("$0.0").setStyle(MONEY);
-    private Component exp = new TextComponent("0.0xp").setStyle(EXP);
+    private Component money = Component.literal("$0.0").setStyle(MONEY);
+    private Component exp = Component.literal("0.0xp").setStyle(EXP);
 
     private boolean actionAdded = false;
 
 
     public void startMessage(Occupation occupation) {
         if (!actionAdded) {
-            message = new TranslatableComponent("[%s] %s", new TextComponent("PR").setStyle(VARIABLE), occupation.getProfession().getDisplayComponent()).setStyle(BORDER);
+            message = Component.translatable("[%s] %s", Component.literal("PR").setStyle(VARIABLE), occupation.getProfession().getDisplayComponent()).setStyle(BORDER);
         }
     }
 
     public void addAction(Action action, Component component) {
         if (!actionAdded) {
-            MutableComponent type = new TranslatableComponent(action.getType().getTranslationKey()).setStyle(DESCRIPTOR);
+            MutableComponent type = Component.translatable(action.getType().getTranslationKey()).setStyle(DESCRIPTOR);
             message.append(" ").append(component.copy().withStyle(VARIABLE).withStyle(ChatFormatting.UNDERLINE).withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, type))));
             actionAdded = true;
         }

@@ -1,11 +1,10 @@
 package com.epherical.professions.networking;
 
 import com.epherical.professions.Constants;
+import com.epherical.professions.ForgeRegConstants;
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsForge;
-import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.profession.Profession;
@@ -16,7 +15,6 @@ import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.LevelDisplay;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static com.epherical.professions.Constants.*;
 
@@ -79,11 +76,11 @@ public class NetworkHandler {
             } else if (attempt.subChannel.equals(INFO_BUTTON_REQUEST)) {
                 Profession profession = loader.getProfession(attempt.professionKey);
                 List<ActionDisplay> displays = new ArrayList<>();
-                for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
+                for (ActionType actionType : ForgeRegConstants.ACTION_TYPE) {
                     Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
                     if (actionsFor != null && !actionsFor.isEmpty()) {
-                        ActionDisplay display = new ActionDisplay(new TranslatableComponent("=-=-=| %s |=-=-=",
-                                new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                        ActionDisplay display = new ActionDisplay(Component.translatable("=-=-=| %s |=-=-=",
+                                Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), actionsFor);
                         displays.add(display);
                     }

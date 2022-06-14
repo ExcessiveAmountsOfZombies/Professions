@@ -23,7 +23,9 @@ import java.util.Iterator;
 @Mixin(Explosion.class)
 public abstract class TntExplosionTriggerMixin {
 
-    @Shadow @Nullable public abstract LivingEntity getSourceMob();
+    @Shadow
+    @Nullable
+    public abstract LivingEntity getSourceMob();
 
     @Inject(method = "finalizeExplosion", locals = LocalCapture.CAPTURE_FAILHARD,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"))

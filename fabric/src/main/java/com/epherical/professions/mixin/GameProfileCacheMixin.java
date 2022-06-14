@@ -14,7 +14,9 @@ import java.util.Map;
 @Mixin(GameProfileCache.class)
 public class GameProfileCacheMixin implements GameProfileHelper {
 
-    @Shadow @Final private Map<String, GameProfileCache.GameProfileInfo> profilesByName;
+    @Shadow
+    @Final
+    private Map<String, GameProfileCache.GameProfileInfo> profilesByName;
 
     @Override
     public @Nullable GameProfile professions$getProfileNoLookup(String name) {

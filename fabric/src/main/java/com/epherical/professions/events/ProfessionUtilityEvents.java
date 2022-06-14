@@ -54,6 +54,7 @@ public final class ProfessionUtilityEvents {
          * Only the <B>latest</B> callback will be used as the main storage method, but it will always override the default.
          * <br>
          * Callback method to change the {@link Storage} field. This could allow for different storage methods (MYSQL, H2, SQLITE, etc)
+         *
          * @return the storage to change.
          */
         Storage<ProfessionalPlayer, UUID> setStorage(Storage<ProfessionalPlayer, UUID> storage);

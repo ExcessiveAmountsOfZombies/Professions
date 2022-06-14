@@ -26,7 +26,8 @@ import java.util.UUID;
 @Mixin(AbstractFurnaceBlockEntity.class)
 public abstract class AbstractFurnaceBlockEntityOwnableMixin extends BlockEntity implements PlayerOwnable {
 
-    @Unique UUID professions$placedBy;
+    @Unique
+    UUID professions$placedBy;
 
     public AbstractFurnaceBlockEntityOwnableMixin(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);

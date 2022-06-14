@@ -146,7 +146,8 @@ public class ClientHandler {
     }
 
     public static void sendButtonPacket(CommandButtons buttons) {
-        Runnable runnable = buttonSenders.getOrDefault(buttons, () -> {});
+        Runnable runnable = buttonSenders.getOrDefault(buttons, () -> {
+        });
         runnable.run();
     }
 

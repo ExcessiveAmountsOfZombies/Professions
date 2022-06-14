@@ -20,8 +20,6 @@ import mcp.mobius.waila.api.TooltipPosition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
@@ -50,10 +48,10 @@ public class ProfWailaPlugin implements IWailaPlugin, IBlockComponentProvider, I
             Pair<Unlock.Singular<Block>, Boolean> pair = ProfessionUtil.canUse(pPlayer, Unlocks.BLOCK_UNLOCK, block);
             if (!pair.getSecond()) {
                 Unlock.Singular<Block> singular = pair.getFirst();
-                tooltip.addLine(new TextComponent("❌ ").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors))
-                        .append(new TranslatableComponent("professions.tooltip.drop_req",
-                                singular.getProfessionDisplay(),
-                                new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                tooltip.addLine(Component.literal("❌ ").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors))
+                        .append(Component.translatable("professions.tooltip.drop_req",
+                                        singular.getProfessionDisplay(),
+                                        Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))));
             }
         }

@@ -23,11 +23,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class InventoryBreakSpeedMixin {
 
 
-    @Shadow @Final public Player player;
+    @Shadow
+    @Final
+    public Player player;
 
-    @Shadow @Final public NonNullList<ItemStack> items;
+    @Shadow
+    @Final
+    public NonNullList<ItemStack> items;
 
-    @Shadow public int selected;
+    @Shadow
+    public int selected;
 
     @Inject(method = "getDestroySpeed", at = @At("HEAD"), cancellable = true)
     public void professions$modifyDestroySpeed(BlockState state, CallbackInfoReturnable<Float> cir) {

@@ -18,11 +18,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerPlayerGameMode.class)
 public class ServerPlayerGameModeMixin {
 
-    @Shadow @Final protected ServerPlayer player;
+    @Shadow
+    @Final
+    protected ServerPlayer player;
 
-    @Shadow protected ServerLevel level;
+    @Shadow
+    protected ServerLevel level;
 
-    @Shadow private boolean hasDelayedDestroy;
+    @Shadow
+    private boolean hasDelayedDestroy;
 
     @Inject(method = "handleBlockBreakAction",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V", ordinal = 3))

@@ -10,6 +10,10 @@ allprojects {
     version = mod_version
     group = maven_group
 
+    repositories {
+        mavenCentral()
+    }
+
 }
 
 subprojects {
@@ -17,7 +21,6 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_17
 
     repositories {
-        mavenCentral()
         maven { url "https://repo.spongepowered.org/repository/maven-public/"}
     }
 

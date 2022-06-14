@@ -21,7 +21,8 @@ import java.util.UUID;
 @Mixin(BrewingStandBlockEntity.class)
 public class BrewingStandBlockEntityOwnableMixin implements PlayerOwnable {
 
-    @Unique UUID professions$placedBy;
+    @Unique
+    UUID professions$placedBy;
 
     @Override
     public UUID professions$getPlacedBy() {

@@ -15,10 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractVillager.class)
 public class VillagerTradeMixin {
 
-    @Shadow private @Nullable Player tradingPlayer;
+    @Shadow
+    private @Nullable Player tradingPlayer;
 
     @Inject(method = "notifyTrade", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/TradeTrigger;trigger(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/world/entity/npc/AbstractVillager;Lnet/minecraft/world/item/ItemStack;)V"))
     public void onTrade(MerchantOffer offer, CallbackInfo ci) {
-        TriggerEvents.VILLAGER_TRADE_EVENT.invoker().onTradeWithVillager((ServerPlayer) this.tradingPlayer, (AbstractVillager)(Object) this, offer);
+        TriggerEvents.VILLAGER_TRADE_EVENT.invoker().onTradeWithVillager((ServerPlayer) this.tradingPlayer, (AbstractVillager) (Object) this, offer);
     }
 }

@@ -14,7 +14,9 @@ import java.util.List;
 public class StatePropertiesPredicateMixin implements StatePropertiesPredicateHelper {
 
 
-    @Shadow @Final private List<StatePropertiesPredicate.PropertyMatcher> properties;
+    @Shadow
+    @Final
+    private List<StatePropertiesPredicate.PropertyMatcher> properties;
 
     @Override
     public <S extends StateHolder<?, S>> boolean professions$anyMatches(StateDefinition<?, S> properties, S targetProperty) {

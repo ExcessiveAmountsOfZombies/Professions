@@ -4,7 +4,6 @@ import com.epherical.professions.events.trigger.TriggerEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
@@ -19,7 +18,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ResultSlot.class)
 public class CraftingMixin extends Slot {
 
-    @Shadow @Final private Player player;
+    @Shadow
+    @Final
+    private Player player;
 
     public CraftingMixin(Container container, int i, int j, int k) {
         super(container, i, j, k);

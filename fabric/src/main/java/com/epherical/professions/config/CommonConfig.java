@@ -122,7 +122,7 @@ public class CommonConfig {
                     .comment("CONFIG VERSION, DO NOT EDIT!");
             node.node("maxOccupations").set(maxOccupations)
                     .comment("The max amount of occupations a user can have active at a time.\n" +
-                    "Default is 3, set to 0 to disable and allow any amount of occupations to be joined.");
+                            "Default is 3, set to 0 to disable and allow any amount of occupations to be joined.");
 
             node.node("autoJoinProfessions").set(autoJoinProfessions)
                     .comment("Default false. If set to true, when the player joins the server, they will join *ALL* \n" +
@@ -144,7 +144,7 @@ public class CommonConfig {
 
             node.node("currency").node("overrideCurrencyID").set(overrideCurrencyID)
                     .comment("If you want, you can set this to true and it will override\n" +
-                    "the currency in the datapack to be whatever is set in 'overridenCurrencyID'");
+                            "the currency in the datapack to be whatever is set in 'overridenCurrencyID'");
             node.node("currency").node("overriddenCurrencyID").set(overriddenCurrencyID)
                     .comment("By default this is eights_economy:dollars, the default currency in EightsEconomyP. If you have a different\n" +
                             "currency you want to use, do <namespace>:<path> if you know what it is.");
@@ -191,7 +191,6 @@ public class CommonConfig {
 
             node.node("actions").node("logInChat").set(logInChat)
                     .comment("Will display every valid action in chat. Defaults to false, or rather, defaults to action bar messages instead.");
-
 
 
         } catch (SerializationException e) {

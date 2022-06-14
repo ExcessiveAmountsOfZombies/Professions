@@ -43,7 +43,7 @@ public abstract class AbstractEntryButton extends Button {
             }
             poseStack.scale(divide, divide, divide);
             drawCenteredString(poseStack, font, name, (int) ((this.x + this.width / 2) / divide), (int) ((this.y + (this.height - 8) / 2) / divide), j | Mth.ceil(this.alpha * 255.0F) << 24);
-            poseStack.scale(1/ divide, 1/ divide, 1/ divide);
+            poseStack.scale(1 / divide, 1 / divide, 1 / divide);
         } else {
             drawCenteredString(poseStack, font, name, this.x + this.width / 2, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
         }

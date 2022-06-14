@@ -70,7 +70,7 @@ public class ProfessionsFabric implements ModInitializer {
         this.config.loadConfig();
         if (ProfessionConfig.useBuiltinDatapack) {
             ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation("professions", "normal"),  FabricLoader.getInstance().getModContainer("professions").get(), ResourcePackActivationType.DEFAULT_ENABLED);
-            ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation("professions", "hardcore"),  FabricLoader.getInstance().getModContainer("professions").get(), ResourcePackActivationType.DEFAULT_ENABLED);
+            //ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation("professions", "hardcore"),  FabricLoader.getInstance().getModContainer("professions").get(), ResourcePackActivationType.DEFAULT_ENABLED);
         }
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {

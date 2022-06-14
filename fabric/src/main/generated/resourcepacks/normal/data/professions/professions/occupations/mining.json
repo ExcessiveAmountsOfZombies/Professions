@@ -8,7 +8,7 @@
   ],
   "displayName": "Mining",
   "maxLevel": 100,
-  "experienceSclEquation": "(91+1000)*1.1^(lvl-1)",
+  "experienceSclEquation": "1000*1.064^(lvl-1)",
   "incomeSclEquation": "base",
   "actions": [
     {
@@ -337,6 +337,84 @@
         "minecraft:granite",
         "minecraft:diorite",
         "minecraft:deepslate"
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "blocks": [
+        "#minecraft:terracotta"
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "blocks": [
+        "minecraft:end_stone"
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "blocks": [
+        "minecraft:clay",
+        "minecraft:gravel",
+        "minecraft:sand",
+        "minecraft:red_sand",
+        "minecraft:sandstone",
+        "minecraft:red_sandstone",
+        "minecraft:blackstone"
+      ]
+    },
+    {
+      "action": "professions:break_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 2.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.5,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "blocks": [
+        "minecraft:amethyst_block"
       ]
     },
     {

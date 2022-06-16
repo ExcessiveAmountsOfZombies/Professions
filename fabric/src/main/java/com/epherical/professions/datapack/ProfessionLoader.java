@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ProfessionLoader extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
+public class ProfessionLoader extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener, CommonProfessionLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = createProfessionSerializer()
             .setPrettyPrinting()

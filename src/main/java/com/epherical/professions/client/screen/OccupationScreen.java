@@ -1,9 +1,9 @@
 package com.epherical.professions.client.screen;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.client.widgets.CommandButton;
 import com.epherical.professions.client.widgets.ProfessionsListingWidget;
 import com.epherical.professions.config.ProfessionConfig;
-import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
@@ -69,17 +69,17 @@ public class OccupationScreen<T> extends Screen {
         // row 1
         addRenderableWidget(new CommandButton(new ItemStack(Items.EMERALD), this.width / 2 + 43, this.height / 2 - 80,
                 Component.translatable("professions.gui.join"),
-                button1 -> ClientHandler.sendButtonPacket(CommandButtons.JOIN)));
+                button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.JOIN)));
         addRenderableWidget(new CommandButton(new ItemStack(Items.REDSTONE), this.width / 2 + 43 + 38 + 3, this.height / 2 - 80,
                 Component.translatable("professions.gui.leave"),
-                button1 -> ClientHandler.sendButtonPacket(CommandButtons.LEAVE)));
+                button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.LEAVE)));
         //row 2
         addRenderableWidget(new CommandButton(new ItemStack(Items.BOOK), this.width / 2 + 43, this.height / 2 - 80 + 48 + 3,
                 Component.translatable("professions.gui.info"),
-                button1 -> ClientHandler.sendButtonPacket(CommandButtons.INFO)));
+                button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.INFO)));
         addRenderableWidget(new CommandButton(new ItemStack(Items.AMETHYST_SHARD), this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,
                 Component.translatable("professions.gui.top"),
-                button1 -> ClientHandler.sendButtonPacket(CommandButtons.TOP)));
+                button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.TOP)));
         // row 3
         addRenderableWidget(new CommandButton(new ItemStack(Items.BARRIER), this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,
                 Component.translatable("professions.gui.close"),

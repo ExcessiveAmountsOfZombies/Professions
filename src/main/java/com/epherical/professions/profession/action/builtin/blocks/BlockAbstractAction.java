@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.action.builtin.blocks;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -63,10 +64,8 @@ public abstract class BlockAbstractAction extends AbstractAction {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
         for (Block block : getRealBlocks()) {
-            components.add(block.getName().setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(Component.translatable(" (%s | %s%s)",
-                    map.get(Rewards.PAYMENT_REWARD),
-                    map.get(Rewards.EXPERIENCE_REWARD),
-                    extraRewardInformation(map))));
+            components.add(block.getName().setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))
+                    .append(CommonPlatform.platform.displayInformation(this, map)));
         }
         return components;
     }
@@ -124,7 +123,7 @@ public abstract class BlockAbstractAction extends AbstractAction {
         MutableComponent message = Component.translatable("professions.block.cooldown",
                         Component.literal(String.valueOf(seconds)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
-        player.sendMessage(message, ChatType.GAME_INFO, Util.NIL_UUID);
+        player.sendSystemMessage(message, ChatType.GAME_INFO);
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {

@@ -35,8 +35,11 @@ public class ProfessionsClient implements ClientModInitializer {
     private static KeyMapping occupationMenu;
     private static KeyMapping professionData;
 
+    public static ClientHandler clientHandler;
+
     @Override
     public void onInitializeClient() {
+        clientHandler = new ClientHandler();
         occupationMenu = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.professions.open_occupation_menu",
                 InputConstants.Type.KEYSYM,
@@ -55,7 +58,7 @@ public class ProfessionsClient implements ClientModInitializer {
                     ProfessionalPlayer player = ProfessionsFabric.getInstance().getPlayerManager().getPlayer(client.player.getUUID());
                     client.setScreen(new OccupationScreen<>(player.getActiveOccupations(), client, OccupationScreen::createOccupationEntries, null));
                 } else {
-                    ClientHandler.sendOccupationPacket();
+                    clientHandler.sendOccupationPacket();
                 }
 
             }

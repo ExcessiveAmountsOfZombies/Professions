@@ -40,6 +40,7 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Registry;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -79,7 +80,7 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
         }
 
         @Override
-        public void run(HashCache cache) throws IOException {
+        public void run(CachedOutput cache) throws IOException {
             Path path = this.dataGenerator.getOutputFolder();
             ProfessionBuilder alchemy = ProfessionBuilder.profession(
                             TextColor.parseColor("#a100e0"),
@@ -722,12 +723,12 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
             generate(cache, miningAppender.build(), createHardcoreAppenders(path, Constants.modID("appenders/mining")));
         }
 
-        private static void generate(HashCache cache, Profession profession, Path id) throws IOException {
-            DataProvider.save(GSON, cache, ProfessionLoader.serialize(profession), id);
+        private static void generate(CachedOutput cache, Profession profession, Path id) throws IOException {
+            DataProvider.saveStable(cache, ProfessionLoader.serialize(profession), id);
         }
 
-        private static void generate(HashCache cache, Editor editor, Path id) throws IOException {
-            DataProvider.save(GSON, cache, ProfessionLoader.serialize(editor), id);
+        private static void generate(CachedOutput cache, Editor editor, Path id) throws IOException {
+            DataProvider.saveStable(cache, ProfessionLoader.serialize(editor), id);
         }
 
         private static Path createNormalPath(Path path, ResourceLocation id) {

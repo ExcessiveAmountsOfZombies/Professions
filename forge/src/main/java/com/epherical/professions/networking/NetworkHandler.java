@@ -4,6 +4,7 @@ import com.epherical.professions.Constants;
 import com.epherical.professions.ForgeRegConstants;
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsForge;
+import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.datapack.ProfessionLoader;
@@ -16,8 +17,8 @@ import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.LevelDisplay;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -76,7 +77,7 @@ public class NetworkHandler {
             } else if (attempt.subChannel.equals(INFO_BUTTON_REQUEST)) {
                 Profession profession = loader.getProfession(attempt.professionKey);
                 List<ActionDisplay> displays = new ArrayList<>();
-                for (ActionType actionType : ForgeRegConstants.ACTION_TYPE) {
+                for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
                     Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
                     if (actionsFor != null && !actionsFor.isEmpty()) {
                         ActionDisplay display = new ActionDisplay(Component.translatable("=-=-=| %s |=-=-=",

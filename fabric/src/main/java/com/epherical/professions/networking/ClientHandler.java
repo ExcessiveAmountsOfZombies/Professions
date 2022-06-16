@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
-public class ClientHandler {
+public class ClientHandler implements ClientNetworking {
 
     private static final Map<ResourceLocation, ClientPlayNetworking.PlayChannelHandler> subChannelReceivers = new HashMap<>();
     private static final Map<CommandButtons, CommandButtonHandler> buttonReceivers = new HashMap<>();
@@ -151,27 +151,27 @@ public class ClientHandler {
         runnable.run();
     }
 
-    public static void sendOccupationPacket() {
+    public void sendOccupationPacket() {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeResourceLocation(Constants.OPEN_UI_REQUEST);
         ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
-    public static void attemptJoinPacket(ResourceLocation location) {
+    public void attemptJoinPacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeResourceLocation(Constants.JOIN_BUTTON_REQUEST);
         buf.writeResourceLocation(location);
         ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
-    public static void attemptLeavePacket(ResourceLocation location) {
+    public void attemptLeavePacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeResourceLocation(Constants.LEAVE_BUTTON_REQUEST);
         buf.writeResourceLocation(location);
         ClientPlayNetworking.send(Constants.MOD_CHANNEL, buf);
     }
 
-    public static void attemptInfoPacket(ResourceLocation location) {
+    public void attemptInfoPacket(ResourceLocation location) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeResourceLocation(Constants.INFO_BUTTON_REQUEST);
         buf.writeResourceLocation(location);

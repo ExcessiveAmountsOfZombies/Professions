@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.action;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.conditions.ActionCondition;
@@ -82,7 +83,7 @@ public abstract class AbstractAction implements Action {
         int i = 0;
         MutableComponent hoverComponent = Component.literal("");
         for (Map.Entry<RewardType, Component> entry : base.entrySet()) {
-            if (entry.getKey().equals(Rewards.PAYMENT_REWARD) || entry.getKey().equals(Rewards.EXPERIENCE_REWARD)) {
+            if (CommonPlatform.platform.skipReward(entry.getKey()) || entry.getKey().equals(Rewards.EXPERIENCE_REWARD)) {
                 continue;
             }
             hoverComponent.append(entry.getValue()).append("\n");

@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.action.builtin.items;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -71,10 +72,7 @@ public class EnchantAction extends AbstractItemAction {
         Map<RewardType, Component> map = getRewardInformation();
         for (EnchantmentContainer enchant : enchantments) {
             components.add(((MutableComponent) enchant.enchantment().getFullname(enchant.level())).setStyle(
-                    Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(Component.translatable(" (%s | %s%s)",
-                    map.get(Rewards.PAYMENT_REWARD),
-                    map.get(Rewards.EXPERIENCE_REWARD),
-                    extraRewardInformation(map))));
+                    Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(CommonPlatform.platform.displayInformation(this, map)));
         }
         return components;
     }

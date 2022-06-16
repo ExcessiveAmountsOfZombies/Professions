@@ -1,9 +1,9 @@
 package com.epherical.professions.client.widgets;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.networking.CommandButtons;
-import com.epherical.professions.networking.NetworkHandler;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
 import com.google.common.collect.ImmutableList;
@@ -20,8 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,10 +62,10 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
     public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         double d = this.minecraft.getWindow().getGuiScale();
         RenderSystem.enableScissor(
-                (int)((double)(this.getRowLeft() - 25) * d),
-                (int)((double)(this.height - this.y1) * d + 2),
-                (int)((double)(this.getScrollbarPosition() + 6) * d),
-                (int)((double)(this.height - (this.height - this.y1) - this.y0 - 4) * d));
+                (int) ((double) (this.getRowLeft() - 25) * d),
+                (int) ((double) (this.height - this.y1) * d + 2),
+                (int) ((double) (this.getScrollbarPosition() + 6) * d),
+                (int) ((double) (this.height - (this.height - this.y1) - this.y0 - 4) * d));
         super.render(poseStack, mouseX, mouseY, partialTick);
         RenderSystem.disableScissor();
     }
@@ -80,7 +78,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
         setScrollAmount(0.0D);
     }
 
-    public abstract static class AbstractEntry extends Entry<AbstractEntry> {
+    public abstract static class AbstractEntry extends ContainerObjectSelectionList.Entry<AbstractEntry> {
 
         public abstract Button getButton();
 
@@ -110,7 +108,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             this.button = new OccupationEntryButton(listing, 0, 0, 154, 24, button1 -> {
                 if (parent.getButton() != null) {
                     if (parent.getButton().equals(CommandButtons.LEAVE)) {
-                       // ClientHandler.attemptLeavePacket(button.getOccupation().getProfession().getKey());
+                        CommonPlatform.platform.getClientNetworking().attemptLeavePacket(button.getOccupation().getProfession().getKey());
                     }
                 }
 
@@ -143,15 +141,15 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
                 if (parent.getButton() != null) {
                     switch (parent.getButton()) {
                         case JOIN -> {
-                            NetworkHandler.Client.attemptJoinPacket(profession.getKey());
-                            NetworkHandler.Client.sendOccupationPacket();
+                            CommonPlatform.platform.getClientNetworking().attemptJoinPacket(profession.getKey());
+                            CommonPlatform.platform.getClientNetworking().sendOccupationPacket();
                         }
                         case LEAVE -> {
-                            NetworkHandler.Client.attemptLeavePacket(profession.getKey());
-                            NetworkHandler.Client.sendOccupationPacket();
+                            CommonPlatform.platform.getClientNetworking().attemptLeavePacket(profession.getKey());
+                            CommonPlatform.platform.getClientNetworking().sendOccupationPacket();
                         }
                         case INFO -> {
-                            NetworkHandler.Client.attemptInfoPacket(profession.getKey());
+                            CommonPlatform.platform.getClientNetworking().attemptInfoPacket(profession.getKey());
                         }
                     }
                 }
@@ -208,7 +206,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             PlayerInfo info = client.player.connection.getPlayerInfo(uuid);
             this.info = info;
             this.level = Component.translatable("professions.command.stats.level",
-                    Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                            Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
             button = new LevelEntryButton(Component.literal(info.getProfile().getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), 0, 0, 154, 24, button -> {
             }, (button, poseStack, i, j) -> {
@@ -227,7 +225,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             RenderSystem.disableBlend();
             int color = this.button.active ? 16777215 : 10526880;
             drawCenteredString(poseStack, Minecraft.getInstance().font, level,
-                    (this.button.x + 35 + this.button.getWidth() / 2) , this.button.y + (this.button.getHeight() - 8) / 2, color | Mth.ceil(255.0F) << 24);
+                    (this.button.x + 35 + this.button.getWidth() / 2), this.button.y + (this.button.getHeight() - 8) / 2, color | Mth.ceil(255.0F) << 24);
         }
 
         @Override

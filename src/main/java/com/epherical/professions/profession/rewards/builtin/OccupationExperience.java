@@ -1,7 +1,7 @@
 package com.epherical.professions.profession.rewards.builtin;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.PlayerManager;
-import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
@@ -35,7 +35,7 @@ public record OccupationExperience(double expAmount) implements Reward {
         context.getParameter(ProfessionParameter.ACTION_LOGGER).addExpReward(rewardChatInfo());
         int currentLevel = occupation.getLevel();
         if (occupation.addExp(action.modifyReward(context, this, expAmount), player)) {
-            PlayerManager manager = ProfessionsFabric.getInstance().getPlayerManager();
+            PlayerManager manager = CommonPlatform.platform.getPlayerManager();
             manager.levelUp(player, occupation, currentLevel);
         }
     }

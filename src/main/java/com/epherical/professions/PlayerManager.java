@@ -3,19 +3,12 @@ package com.epherical.professions;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.Storage;
-import com.epherical.professions.events.OccupationEvents;
-import com.epherical.professions.networking.ServerHandler;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.progression.ProfessionalPlayerImpl;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import me.lucko.fabric.api.permissions.v0.Permissions;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -57,7 +50,7 @@ public class PlayerManager {
             }
             players.put(player.getUUID(), pPlayer);
         }
-        ServerHandler.sendSyncRequest(player);
+        CommonPlatform.platform.sendSyncRequest(player);
     }
 
     public void playerQuit(ServerPlayer player) {
@@ -71,12 +64,12 @@ public class PlayerManager {
 
     public void joinOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, OccupationSlot slot, ServerPlayer serverPlayer) {
         if (profession == null) {
-            serverPlayer.sendMessage(Component.translatable("professions.command.join.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return;
         }
 
         if (!hasPermission(serverPlayer, profession)) {
-            serverPlayer.sendMessage(Component.translatable("professions.command.join.error.no_permission").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.error.no_permission").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return;
         }
 
@@ -85,32 +78,32 @@ public class PlayerManager {
         }
 
         if (player.alreadyHasOccupation(profession) && player.isOccupationActive(profession)) {
-            serverPlayer.sendMessage(Component.translatable("professions.command.join.error.already_joined").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.error.already_joined").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return;
         }
 
         if (player.getActiveOccupations().size() >= ProfessionConfig.maxOccupations) {
-            serverPlayer.sendMessage(Component.translatable("professions.command.join.error.max_occupations").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.error.max_occupations").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return;
         }
 
         if (!player.joinOccupation(profession, slot)) {
             return;
         }
-        OccupationEvents.PROFESSION_JOIN_EVENT.invoker().onProfessionJoin(player, profession, slot, player.getPlayer());
-        serverPlayer.sendMessage(Component.translatable("professions.command.join.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
+        CommonPlatform.platform.professionJoinEvent(player, profession, slot, player.getPlayer());
+        serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
 
         storage.saveUser(player);
     }
 
     public boolean leaveOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, ServerPlayer serverPlayer) {
         if (profession == null) {
-            serverPlayer.sendMessage(Component.translatable("professions.command.leave.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendSystemMessage(Component.translatable("professions.command.leave.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return false;
         }
 
-        if (ProfessionConfig.preventLeavingProfession && !Permissions.check(serverPlayer, "professions.bypass.leave_prevention")) {
-            serverPlayer.sendMessage(Component.translatable("professions.command.leave.error.disabled_in_config").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+        if (ProfessionConfig.preventLeavingProfession && !CommonPlatform.platform.checkPermission(serverPlayer, "professions.bypass.leave_prevention")) {
+            serverPlayer.sendSystemMessage(Component.translatable("professions.command.leave.error.disabled_in_config").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return false;
         }
 
@@ -121,20 +114,20 @@ public class PlayerManager {
         if (!player.leaveOccupation(profession)) {
             return false;
         }
-        OccupationEvents.PROFESSION_LEAVE_EVENT.invoker().onProfessionLeave(player, profession, serverPlayer);
+        CommonPlatform.platform.professionLeaveEvent(player, profession, serverPlayer);
         storage.saveUser(player);
-        serverPlayer.sendMessage(Component.translatable("professions.command.leave.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
+        serverPlayer.sendSystemMessage(Component.translatable("professions.command.leave.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
         return true;
     }
 
     public boolean fireFromOccupation(@Nullable ProfessionalPlayer player, @Nullable Profession profession, ServerPlayer serverPlayer) {
         if (profession == null) {
-            serverPlayer.sendMessage(Component.translatable("professions.command.fire.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendSystemMessage(Component.translatable("professions.command.fire.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return false;
         }
 
         if (player == null) {
-            serverPlayer.sendMessage(Component.translatable("professions.command.fire.error.cant_find_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+            serverPlayer.sendSystemMessage(Component.translatable("professions.command.fire.error.cant_find_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return false;
         }
 
@@ -161,13 +154,13 @@ public class PlayerManager {
                             occupation.getProfession().getDisplayComponent(),
                             Component.literal("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
-            server.getPlayerList().broadcastMessage(message, ChatType.SYSTEM, Util.NIL_UUID);
+            server.getPlayerList().broadcastSystemMessage(message, ChatType.SYSTEM);
         } else {
             message = Component.translatable("professions.level_up.local",
                             occupation.getProfession().getDisplayComponent(),
                             Component.literal("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
-            sPlayer.sendMessage(message, Util.NIL_UUID);
+            sPlayer.sendSystemMessage(message);
         }
         List<Component> components = new ArrayList<>();
         // TODO: size limit
@@ -185,7 +178,7 @@ public class PlayerManager {
                             Component.literal(String.valueOf(components.size())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, megaComponent)));
-            sPlayer.sendMessage(unlockMessage, Util.NIL_UUID);
+            sPlayer.sendSystemMessage(unlockMessage);
         }
     }
 
@@ -222,7 +215,8 @@ public class PlayerManager {
 
     private boolean hasPermission(ServerPlayer player, Profession profession) {
         String profKey = profession.getKey().toString().replaceAll(":", ".");
-        return Permissions.check(player, "professions.join", 0) && Permissions.check(player, "professions.start." + profKey.toLowerCase(Locale.ROOT), 0);
+        return CommonPlatform.platform.checkPermission(player, "profesions.join", 0) &&
+                CommonPlatform.platform.checkPermission(player, "professions.start." + profKey.toLowerCase(Locale.ROOT), 0);
     }
 
     public List<Occupation> synchronizePlayer(ServerPlayer player) {
@@ -238,15 +232,21 @@ public class PlayerManager {
     }
 
     public boolean isSynchronized(UUID uuid) {
-        return synchronizedPlayers.contains(uuid) || FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
+        return synchronizedPlayers.contains(uuid) || CommonPlatform.platform.isClientEnvironment();
     }
 
-    @Environment(EnvType.CLIENT)
+
+    /**
+     * Only call on the CLIENT
+     */
     public void addClientPlayer(UUID player, List<Occupation> occupationList) {
         players.put(player, new ProfessionalPlayerImpl(occupationList));
     }
 
-    @Environment(EnvType.CLIENT)
+    /**
+     * Only call on the CLIENT
+     * @param uuid playerUUID
+     */
     public void playerClientQuit(UUID uuid) {
         players.remove(uuid);
     }

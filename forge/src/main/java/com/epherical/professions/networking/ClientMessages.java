@@ -5,7 +5,6 @@ import com.epherical.professions.profession.progression.Occupation;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Collections;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 

@@ -1,7 +1,5 @@
 package com.epherical.professions.datapack;
 
-import com.epherical.professions.ForgeRegConstants;
-import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.profession.Profession;

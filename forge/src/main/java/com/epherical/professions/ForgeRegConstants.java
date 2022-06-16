@@ -1,7 +1,5 @@
 package com.epherical.professions;
 
-import com.epherical.professions.profession.unlock.UnlockType;
-import com.epherical.professions.profession.unlock.Unlocks;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.MappedRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

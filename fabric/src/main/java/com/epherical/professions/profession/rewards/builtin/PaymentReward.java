@@ -3,6 +3,7 @@ package com.epherical.professions.profession.rewards.builtin;
 import com.epherical.octoecon.api.Currency;
 import com.epherical.octoecon.api.Economy;
 import com.epherical.octoecon.api.user.UniqueUser;
+import com.epherical.professions.FabricRegConstants;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
@@ -31,7 +32,7 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
 
     @Override
     public RewardType getType() {
-        return Rewards.PAYMENT_REWARD;
+        return FabricRegConstants.PAYMENT_REWARD;
     }
 
     @Override

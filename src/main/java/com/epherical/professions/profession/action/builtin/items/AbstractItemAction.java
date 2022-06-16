@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.action.builtin.items;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -17,8 +18,8 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -55,10 +56,8 @@ public abstract class AbstractItemAction extends AbstractAction {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
         for (Item item : getRealItems()) {
-            components.add(((TranslatableComponent) item.getDescription()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)).append(Component.translatable(" (%s | %s%s)",
-                    map.get(Rewards.PAYMENT_REWARD),
-                    map.get(Rewards.EXPERIENCE_REWARD),
-                    extraRewardInformation(map))));
+            components.add(((MutableComponent) item.getDescription()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))
+                    .append(CommonPlatform.platform.displayInformation(this, map)));
         }
         return components;
     }
@@ -67,7 +66,7 @@ public abstract class AbstractItemAction extends AbstractAction {
     public List<Component> clientFriendlyInformation() {
         List<Component> components = new ArrayList<>();
         for (Item item : getRealItems()) {
-            components.add(((TranslatableComponent) item.getDescription())
+            components.add(((MutableComponent) item.getDescription())
                     .setStyle(Style.EMPTY
                             .withColor(ProfessionConfig.descriptors)
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, allRewardInformation()))));

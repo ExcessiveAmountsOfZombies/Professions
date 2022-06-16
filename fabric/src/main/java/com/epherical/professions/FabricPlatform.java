@@ -3,9 +3,11 @@ package com.epherical.professions;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClient;
 import com.epherical.professions.datapack.CommonProfessionLoader;
+import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.networking.ClientNetworking;
 import com.epherical.professions.networking.CommandButtons;
+import com.epherical.professions.networking.ServerHandler;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.action.AbstractAction;
@@ -61,27 +63,27 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
 
     @Override
     public PlayerManager getPlayerManager() {
-        return null;
+        return ProfessionsFabric.getInstance().getPlayerManager();
     }
 
     @Override
     public void sendBeforeActionHandledEvent(ProfessionContext context, ProfessionalPlayer player) {
-
+        OccupationEvents.BEFORE_ACTION_HANDLED_EVENT.invoker().onHandleAction(context, player);
     }
 
     @Override
     public void professionJoinEvent(ProfessionalPlayer player, Profession profession, OccupationSlot slot, ServerPlayer serverPlayer) {
-
+        OccupationEvents.PROFESSION_JOIN_EVENT.invoker().onProfessionJoin(player, profession, slot, serverPlayer);
     }
 
     @Override
     public void professionLeaveEvent(ProfessionalPlayer player, Profession profession, ServerPlayer serverPlayer) {
-
+        OccupationEvents.PROFESSION_LEAVE_EVENT.invoker().onProfessionLeave(player, profession, serverPlayer);
     }
 
     @Override
     public void sendSyncRequest(ServerPlayer player) {
-
+        ServerHandler.sendSyncRequest(player);
     }
 
     @Override

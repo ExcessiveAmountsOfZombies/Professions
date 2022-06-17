@@ -5,6 +5,7 @@ import com.epherical.professions.client.ProfessionsClientForge;
 import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.config.Config;
 import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.networking.NetworkHandler;
@@ -71,6 +72,7 @@ public class ProfessionsForge {
     public ProfessionsForge() {
         mod = this;
         config = new Config();
+        CommonPlatform.create(new ForgePlatform());
         handler = new NetworkHandler();
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);

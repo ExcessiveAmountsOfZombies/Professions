@@ -4,14 +4,12 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.progression.Occupation;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ActionLogger {
@@ -58,9 +56,9 @@ public class ActionLogger {
         if (message != null && player != null) {
             message.append(" ").append(money).append(" | ").append(exp);
             if (ProfessionConfig.logInChat) {
-                player.sendMessage(message, Util.NIL_UUID);
+                player.sendSystemMessage(message);
             } else {
-                player.sendMessage(message, ChatType.GAME_INFO, Util.NIL_UUID);
+                player.sendSystemMessage(message, ChatType.GAME_INFO);
             }
         }
     }

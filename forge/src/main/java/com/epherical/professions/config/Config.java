@@ -14,6 +14,9 @@ public class Config {
     private final ForgeConfigSpec.ConfigValue<Boolean> allowCreativeModePayments;
     private final ForgeConfigSpec.ConfigValue<Boolean> displayXpAsPercentage;
 
+    private final ForgeConfigSpec.ConfigValue<Boolean> autoJoinProfessions;
+    private final ForgeConfigSpec.ConfigValue<Boolean> preventLeavingProfession;
+
     private final ForgeConfigSpec.ConfigValue<Boolean> announceLevelUps;
     private final ForgeConfigSpec.ConfigValue<Integer> announceEveryXLevel;
 
@@ -40,6 +43,12 @@ public class Config {
         maxOccupations = builder.comment("The max amount of occupations a user can have active at a time.",
                         "Default is 3, set to 0 to disable and allow any amount of occupations to be joined.")
                 .define("maxOccupations", ProfessionConfig.maxOccupations);
+
+        autoJoinProfessions = builder.comment("Default false. If set to true, when the player joins the server, they will join *ALL* \n" +
+                "possible professions, disregarding 'maxOccupations'.").define("autoJoinProfessions", ProfessionConfig.autoJoinProfessions);
+        preventLeavingProfession = builder.comment("Default false. If set to true, will prevent the player from leaving any profession. \n" +
+                "Good for enforcing a progression system").define("preventLeavingProfession", ProfessionConfig.preventLeavingProfession);
+
         useBuiltinDatapack = builder.comment(
                 "Default true. If you are a regular user you can ignore this. This is to provide an all in one experience",
                 "without having to download additional files. Modpack developers looking to create or rebalance their own professions",
@@ -114,6 +123,8 @@ public class Config {
             ProfessionConfig.clearProgressOnLeave = clearProgressOnLeave.get();
             ProfessionConfig.paymentCoolDown = paymentCoolDown.get();
             ProfessionConfig.logInChat = logInChat.get();
+            ProfessionConfig.preventLeavingProfession = preventLeavingProfession.get();
+            ProfessionConfig.autoJoinProfessions = autoJoinProfessions.get();
         }
     }
 

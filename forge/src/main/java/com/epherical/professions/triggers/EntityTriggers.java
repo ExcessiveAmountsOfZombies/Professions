@@ -44,7 +44,7 @@ public class EntityTriggers {
         LivingEntity killedEntity = event.getEntityLiving();
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
-                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.KILL_ENTITY.get());
+                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.KILL_ENTITY);
         if (source instanceof Player) {
             if (killedEntity instanceof AgeableMob mob) {
                 if (!mob.isBaby()) {
@@ -70,7 +70,7 @@ public class EntityTriggers {
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));
         for (ItemStack drop : event.getDrops()) {
-            builder.addParameter(ProfessionParameter.ACTION_TYPE, Actions.FISH_ACTION.get())
+            builder.addParameter(ProfessionParameter.ACTION_TYPE, Actions.FISH_ACTION)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, drop);
             RewardHandler.handleReward(builder);
         }
@@ -90,7 +90,7 @@ public class EntityTriggers {
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
-                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.CRAFTS_ITEM.get())
+                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.CRAFTS_ITEM)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getCrafting())
                 .addParameter(ProfessionParameter.RECIPE_CRAFTED, recipe);
         RewardHandler.handleReward(builder);
@@ -107,7 +107,7 @@ public class EntityTriggers {
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
-                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAKE_COOKED_ITEM.get())
+                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAKE_COOKED_ITEM)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getSmelting());
         RewardHandler.handleReward(builder);
     }
@@ -122,7 +122,7 @@ public class EntityTriggers {
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
-                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREED_ENTITY.get())
+                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREED_ENTITY)
                 .addParameter(ProfessionParameter.ENTITY, event.getChild());
         RewardHandler.handleReward(builder);
     }
@@ -137,7 +137,7 @@ public class EntityTriggers {
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
-                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAME_ENTITY.get())
+                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TAME_ENTITY)
                 .addParameter(ProfessionParameter.ENTITY, event.getAnimal());
         RewardHandler.handleReward(builder);
     }
@@ -151,7 +151,7 @@ public class EntityTriggers {
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
-                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.VILLAGER_TRADE.get())
+                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.VILLAGER_TRADE)
                 .addParameter(ProfessionParameter.ENTITY, villager)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, offer.getCostA());
         RewardHandler.handleReward(builder);

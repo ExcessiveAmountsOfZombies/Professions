@@ -1,6 +1,6 @@
 package com.epherical.professions.integration.wthit;
 
-import com.epherical.professions.Constants;
+/*import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
@@ -61,4 +61,4 @@ public class ProfWailaPlugin implements IWailaPlugin, IBlockComponentProvider, I
     public void appendServerData(CompoundTag data, IServerAccessor accessor, IPluginConfig config) {
 
     }
-}
+}*/

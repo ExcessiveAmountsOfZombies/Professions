@@ -49,7 +49,9 @@ dependencies {
     include 'me.lucko:fabric-permissions-api:0.1-SNAPSHOT'
 
     // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation ("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}") {
+        exclude group: "net.fabricmc.fabric-api", module: "fabric-gametest-api-v1"
+    }
     modImplementation(include("com.epherical.octo-economy-api:octoeconomyapi:1.0.1"))
     modCompileOnly "curse.maven:ftb-quests-fabric-438496:3725770"
     modCompileOnly "curse.maven:ftb-library-fabric-438495:3725484"

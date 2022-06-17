@@ -1,21 +1,31 @@
 package com.epherical.professions.datapack;
 
+import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionBuilder;
+import com.epherical.professions.profession.ProfessionEditorSerializer;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.conditions.ActionConditions;
+import com.epherical.professions.profession.editor.Append;
+import com.epherical.professions.profession.editor.Editor;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.Rewards;
+import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.Unlocks;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -30,8 +40,9 @@ import org.slf4j.Logger;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class ProfessionLoader extends SimpleJsonResourceReloadListener {
+public class ProfessionLoader extends SimpleJsonResourceReloadListener implements CommonProfessionLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = createProfessionSerializer()
             .setPrettyPrinting()
@@ -47,7 +58,8 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
         professionMap = null;
 
-        ImmutableMap.Builder<ResourceLocation, Profession> builder = ImmutableMap.builder();
+        Map<ResourceLocation, ProfessionBuilder> temp = Maps.newHashMap();
+        Multimap<ResourceLocation, Editor> editsMade = HashMultimap.create();
 
         object.forEach((location, jsonElement) -> {
             JsonObject jsonObject = GsonHelper.convertToJsonObject(jsonElement, "profession");
@@ -55,12 +67,32 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener {
                 ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "type"));
                 ProfessionSerializer<? extends Profession, ? extends ProfessionBuilder> nullable = RegistryConstants.PROFESSION_SERIALIZER.get(type);
                 nullable = nullable != null ? nullable : ProfessionSerializer.DEFAULT_PROFESSION;
-                Profession profession = GSON.fromJson(jsonElement, nullable.getType());
+                ProfessionBuilder profession = GSON.fromJson(jsonElement, nullable.getBuilderType());
                 profession.setKey(location);
-                builder.put(location, profession);
+                temp.put(location, profession);
+            } else if (jsonObject.has("function_type")) {
+                ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "function_type"));
+                Editor editor = RegistryConstants.PROFESSION_EDITOR_SERIALIZER.getOptional(type)
+                        .orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported editor type '" + type + "'"))
+                        .deserialize(jsonObject, GSON);
+                editor.setLocation(location);
+                editsMade.put(editor.getProfessionKey(), editor);
             }
         });
-        this.professionMap = builder.build();
+        // TODO: there should probably be some sort of editing order.
+        for (Map.Entry<ResourceLocation, ProfessionBuilder> entry : temp.entrySet()) {
+            // we will simply ignore any professions that don't exist.
+            ResourceLocation key = entry.getKey();
+            if (key != null) {
+                for (Editor editor : editsMade.get(entry.getKey())) {
+                    editor.applyEdit(entry.getValue());
+                }
+            }
+        }
+        Map<ResourceLocation, Profession> result = temp.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().build()));
+        this.professionMap = ImmutableMap.copyOf(result);
 
         PlayerManager manager = ProfessionsForge.getInstance().getPlayerManager();
         // this will be null when it first loads.
@@ -107,12 +139,19 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener {
                 .registerTypeHierarchyAdapter(Reward.class, Rewards.createGsonAdapter())
                 .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
                 .registerTypeHierarchyAdapter(Action.class, Actions.createGsonAdapter())
-                .registerTypeAdapter(Profession.class, new Profession.Serializer());
+                .registerTypeHierarchyAdapter(Unlock.class, Unlocks.createGsonAdapter())
+                .registerTypeAdapter(Append.class, ProfessionEditorSerializer.APPEND_EDITOR)
+                .registerTypeAdapter(Profession.class, ProfessionSerializer.DEFAULT_PROFESSION)
+                .registerTypeAdapter(ProfessionBuilder.class, ProfessionSerializer.DEFAULT_PROFESSION);
         //ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;
     }
 
     public static JsonElement serialize(Profession profession) {
         return GSON.toJsonTree(profession);
+    }
+
+    public static JsonElement serialize(Editor unlock) {
+        return GSON.toJsonTree(unlock);
     }
 }

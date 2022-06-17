@@ -27,6 +27,7 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import org.antlr.v4.codegen.model.Sync;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +47,10 @@ public class NetworkHandler {
 
 
     public NetworkHandler() {
+        // fabric equivalent is ClientHandler#sendOccupationPacket
+        // then the server handles it as ServerHandler -> OPEN_UI_REQUEST
+        // then the server sends its response,
+        // then the client reads it in ClientHandler -> OPEN_UI_RESPONSE
         INSTANCE.registerMessage(id++, OpenUI.class, (professionMessage, buf) -> {
             buf.writeResourceLocation(professionMessage.location);
         }, Server.openUI(), (professionMessage, contextSupplier) -> {
@@ -144,7 +149,7 @@ public class NetworkHandler {
 
         INSTANCE.registerMessage(id++, RespondUI.class, (respondUI, buf) -> {
             buf.writeResourceLocation(respondUI.location());
-            Occupation.toNetwork(buf, respondUI.occupations());
+            Occupation.toNetwork(buf, respondUI.occupations(), false);
         }, Client.respondUI(), (respondUI, contextSupplier) -> {
             NetworkEvent.Context context = contextSupplier.get();
             context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientMessages.handlePacket(respondUI, contextSupplier)));
@@ -169,7 +174,7 @@ public class NetworkHandler {
         });
 
         INSTANCE.registerMessage(id++, ButtonLeave.class, (buttonLeave, buf) -> {
-            Occupation.toNetwork(buf, buttonLeave.occupations());
+            Occupation.toNetwork(buf, buttonLeave.occupations(), false);
         }, Client.leave(), (buttonLeave, contextSupplier) -> {
             NetworkEvent.Context context = contextSupplier.get();
             context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientMessages.handlePacket(buttonLeave, contextSupplier)));
@@ -195,6 +200,30 @@ public class NetworkHandler {
             context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientMessages.handlePacket(buttonInfo, contextSupplier)));
             context.setPacketHandled(true);
         });
+
+        // why does this make my head spin
+        INSTANCE.registerMessage(id++, SynchronizeRequest.class, (synchronizeRequest, buf) -> {
+        }, Client.empty(), (synchronizeRequest, contextSupplier) -> {
+            NetworkEvent.Context context = contextSupplier.get();
+            context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientMessages.handlePacket(synchronizeRequest, contextSupplier, INSTANCE)));
+            context.setPacketHandled(true);
+        });
+
+        INSTANCE.registerMessage(id++, SynchronizeResponse.class, (synchronizeResponse, buf) -> {
+        }, Client.syncResponse(), (synchronizeResponse, contextSupplier) -> {
+            PlayerManager playerManager = ProfessionsForge.getInstance().getPlayerManager();
+            NetworkEvent.Context context = contextSupplier.get();
+            ServerPlayer player = context.getSender();
+            INSTANCE.send(PacketDistributor.PLAYER.with(context::getSender), new SyncData(playerManager.synchronizePlayer(player)));
+        });
+
+        INSTANCE.registerMessage(id++, SyncData.class, (syncData, buf) -> {
+            Occupation.toNetwork(buf, syncData.occupations(), true);
+        }, Client.syncData(), (syncData, contextSupplier) -> {
+            NetworkEvent.Context context = contextSupplier.get();
+            context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientMessages.handlePacket(syncData, contextSupplier)));
+            context.setPacketHandled(true);
+        });
     }
 
     /**
@@ -203,7 +232,7 @@ public class NetworkHandler {
      * <br>
      * {@link #INSTANCE} then sends a {@link RespondUI} back to the client and the UI should open.
      */
-    public static class Client {
+    public static class Client implements ClientNetworking {
 
         public static Function<FriendlyByteBuf, RespondUI> respondUI() {
             return buf -> new RespondUI(buf.readResourceLocation(), ProfessionSerializer.fromNetwork(buf));
@@ -244,19 +273,31 @@ public class NetworkHandler {
             return buf -> new ButtonInfo(Profession.fromNetwork(buf));
         }
 
-        public static void sendOccupationPacket() {
+        public static Function<FriendlyByteBuf, SynchronizeResponse> syncResponse() {
+            return buf -> new SynchronizeResponse();
+        }
+
+        public static Function<FriendlyByteBuf, SyncData> syncData() {
+            return buf -> new SyncData(ProfessionSerializer.fromNetwork(buf));
+        }
+
+        public static Function<FriendlyByteBuf, SynchronizeRequest> empty() {
+            return buf -> new SynchronizeRequest();
+        }
+
+        public void sendOccupationPacket() {
             INSTANCE.sendToServer(new OpenUI(Constants.OPEN_UI_REQUEST));
         }
 
-        public static void attemptJoinPacket(ResourceLocation location) {
+        public void attemptJoinPacket(ResourceLocation location) {
             INSTANCE.sendToServer(new Attempt(Constants.JOIN_BUTTON_REQUEST, location));
         }
 
-        public static void attemptLeavePacket(ResourceLocation location) {
+        public void attemptLeavePacket(ResourceLocation location) {
             INSTANCE.sendToServer(new Attempt(Constants.LEAVE_BUTTON_REQUEST, location));
         }
 
-        public static void attemptInfoPacket(ResourceLocation location) {
+        public void attemptInfoPacket(ResourceLocation location) {
             INSTANCE.sendToServer(new Attempt(Constants.INFO_BUTTON_REQUEST, location));
         }
 
@@ -282,13 +323,16 @@ public class NetworkHandler {
             };
         }
 
-
+        public static void sendSyncRequest(ServerPlayer player) {
+            INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SynchronizeRequest());
+        }
     }
 
     // Serverbound Packets
     public record OpenUI(ResourceLocation location) {}
     public record Attempt(ResourceLocation subChannel, ResourceLocation professionKey) {}
     public record Button(CommandButtons button) {}
+    public record SynchronizeResponse() {}
 
     // Clientbound Packets
     public record RespondUI(ResourceLocation location, List<Occupation> occupations) {}
@@ -296,6 +340,8 @@ public class NetworkHandler {
     public record ButtonJoin(List<Profession> professions) {}
     public record ButtonLeave(List<Occupation> occupations) {}
     public record ButtonInfo(Collection<Profession> professions) {}
+    public record SynchronizeRequest() {}
+    public record SyncData(List<Occupation> occupations) {}
 
     public static class ButtonTop {
         private Collection<ProfessionalPlayer> players;

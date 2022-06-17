@@ -1,10 +1,15 @@
 package com.epherical.professions.networking;
 
+import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.client.screen.OccupationScreen;
+import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.progression.Occupation;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.simple.SimpleChannel;
 
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -45,5 +50,19 @@ public class ClientMessages {
         minecraft.setScreen(new OccupationScreen<>(msg.professions().stream().toList(), minecraft, (screen, client, display) -> {
             return OccupationScreen.createProfessionEntries(screen, client, display, CommandButtons.INFO);
         }, CommandButtons.INFO));
+    }
+
+    public static void handlePacket(NetworkHandler.SynchronizeRequest msg, Supplier<NetworkEvent.Context> ctx, SimpleChannel channel) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (!minecraft.isLocalServer()) {
+            channel.sendToServer(new NetworkHandler.SynchronizeResponse());
+        }
+    }
+
+    public static void handlePacket(NetworkHandler.SyncData msg, Supplier<NetworkEvent.Context> ctx) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (!minecraft.hasSingleplayerServer()) {
+            ProfessionsForge.getInstance().getPlayerManager().addClientPlayer(UUID.fromString(minecraft.getUser().getUuid()), msg.occupations());
+        }
     }
 }

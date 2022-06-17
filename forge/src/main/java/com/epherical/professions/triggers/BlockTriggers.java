@@ -40,7 +40,7 @@ public class BlockTriggers {
         if (event.getWorld() instanceof ServerLevel level) {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
-                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREAK_BLOCK.get())
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREAK_BLOCK)
                     .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(event.getPlayer().getUUID()))
                     .addParameter(ProfessionParameter.THIS_BLOCKSTATE, event.getState())
@@ -57,7 +57,7 @@ public class BlockTriggers {
         if (event.getWorld() instanceof ServerLevel level && event.getEntity() instanceof ServerPlayer player) {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
-                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.PLACE_BLOCK.get())
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.PLACE_BLOCK)
                     .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
                     .addParameter(ProfessionParameter.THIS_BLOCKSTATE, event.getPlacedBlock())
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));
@@ -72,7 +72,8 @@ public class BlockTriggers {
             for (BlockPos affectedBlock : event.getAffectedBlocks()) {
                 ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                         .addRandom(level.random)
-                        .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TNT_DESTROY.get())
+                        .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TNT_DESTROY)
+                        .addParameter(ProfessionParameter.BLOCKPOS, affectedBlock)
                         .addParameter(ProfessionParameter.THIS_BLOCKSTATE, level.getBlockState(affectedBlock))
                         .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));
                 RewardHandler.handleReward(builder);
@@ -91,7 +92,7 @@ public class BlockTriggers {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(owner))
-                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.ON_ITEM_COOK.get())
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.ON_ITEM_COOK)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, smeltedItem)
                     .addParameter(ProfessionParameter.THIS_BLOCKSTATE, blockEntity.getBlockState())
                     .addParameter(ProfessionParameter.RECIPE_CRAFTED, recipe);
@@ -109,7 +110,7 @@ public class BlockTriggers {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(owner))
-                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREW_ITEM.get())
+                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREW_ITEM)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, brewingIngredient)
                     .addParameter(ProfessionParameter.THIS_BLOCKSTATE, blockEntity.getBlockState());
             RewardHandler.handleReward(builder);
@@ -126,7 +127,7 @@ public class BlockTriggers {
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));
 
         for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(itemEnchanted).entrySet()) {
-            builder.addParameter(ProfessionParameter.ACTION_TYPE, Actions.ENCHANT_ITEM.get())
+            builder.addParameter(ProfessionParameter.ACTION_TYPE, Actions.ENCHANT_ITEM)
                     .addParameter(ProfessionParameter.ENCHANTMENT, new EnchantmentContainer(entry.getKey(), entry.getValue()));
             RewardHandler.handleReward(builder);
         }
@@ -134,7 +135,7 @@ public class BlockTriggers {
         builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
-                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.ENCHANT_ITEM.get())
+                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.ENCHANT_ITEM)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, itemEnchanted);
         RewardHandler.handleReward(builder);
     }

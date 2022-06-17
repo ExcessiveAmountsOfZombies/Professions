@@ -1,7 +1,9 @@
 package com.epherical.professions.commands;
 
 import com.epherical.professions.ForgeRegConstants;
+import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsForge;
+import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
@@ -29,7 +31,6 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -260,7 +261,7 @@ public class ProfessionsCommands {
             }
             List<Component> components = new ArrayList<>();
 
-            for (ActionType actionType : ForgeRegConstants.ACTION_TYPE) {
+            for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
                 Collection<Action> actionsFor = profession.getActions(actionType);
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     components.add(Component.translatable("=-=-=| %s |=-=-=",
@@ -332,7 +333,7 @@ public class ProfessionsCommands {
             components.add(headerFooter);
             if (pPlayer != null) {
                 if (pPlayer.getActiveOccupations().size() == 0 && pPlayer.getUuid().equals(commandPlayer.getUUID())) {
-                    commandPlayer.sendMessage(Component.translatable("professions.command.stats.error.not_in_any_professions").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+                    commandPlayer.sendSystemMessage(Component.translatable("professions.command.stats.error.not_in_any_professions").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                     return 1;
                 }
                 for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
@@ -360,13 +361,13 @@ public class ProfessionsCommands {
 
                 if (components.size() > 1) {
                     for (Component component : components) {
-                        commandPlayer.sendMessage(component, Util.NIL_UUID);
+                        commandPlayer.sendSystemMessage(component);
                     }
                 } else {
-                    commandPlayer.sendMessage(Component.translatable("professions.command.stats.error.other_not_in_any_professions", Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+                    commandPlayer.sendSystemMessage(Component.translatable("professions.command.stats.error.other_not_in_any_professions", Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 }
             } else {
-                commandPlayer.sendMessage(Component.translatable("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+                commandPlayer.sendSystemMessage(Component.translatable("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             }
 
             // -=-=-=| Stats |=-=-=-
@@ -494,9 +495,9 @@ public class ProfessionsCommands {
 
             ProfessionalPlayer player = manager.getPlayer(profile.getId());
             if (manager.fireFromOccupation(player, profession, commandPlayer)) {
-                commandPlayer.sendMessage(Component.translatable("professions.command.fire.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
+                commandPlayer.sendSystemMessage(Component.translatable("professions.command.fire.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
             } else {
-                commandPlayer.sendMessage(Component.translatable("professions.command.fire.fail").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+                commandPlayer.sendSystemMessage(Component.translatable("professions.command.fire.fail").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -518,7 +519,7 @@ public class ProfessionsCommands {
                 manager.fireFromOccupation(player, profession, commandPlayer);
             }
 
-            commandPlayer.sendMessage(Component.translatable("professions.command.fireall.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
+            commandPlayer.sendSystemMessage(Component.translatable("professions.command.fireall.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -564,11 +565,11 @@ public class ProfessionsCommands {
                 Occupation occupation = player.getOccupation(profession);
                 if (occupation != null) {
                     occupation.setLevel(level, player);
-                    commandPlayer.sendMessage(Component.translatable("professions.command.setlevel.success",
+                    commandPlayer.sendSystemMessage(Component.translatable("professions.command.setlevel.success",
                             occupation.getProfession().getDisplayComponent(),
                             Component.literal(String.valueOf(occupation.getLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
                             Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
+                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
                 }
             }
         } catch (Exception e) {

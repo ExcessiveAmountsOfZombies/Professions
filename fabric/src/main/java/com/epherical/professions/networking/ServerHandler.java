@@ -6,7 +6,7 @@ import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
-import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.datapack.FabricProfLoader;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
@@ -108,19 +108,19 @@ public class ServerHandler {
             }
         });
         subChannelReceivers.put(Constants.JOIN_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
-            ProfessionLoader loader = ProfessionsFabric.getInstance().getProfessionLoader();
+            FabricProfLoader loader = ProfessionsFabric.getInstance().getProfessionLoader();
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             Profession profession = loader.getProfession(buf.readResourceLocation());
             playerManager.joinOccupation(pPlayer, profession, OccupationSlot.ACTIVE, player);
         });
         subChannelReceivers.put(Constants.LEAVE_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
-            ProfessionLoader loader = ProfessionsFabric.getInstance().getProfessionLoader();
+            FabricProfLoader loader = ProfessionsFabric.getInstance().getProfessionLoader();
             ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());
             Profession profession = loader.getProfession(buf.readResourceLocation());
             playerManager.leaveOccupation(pPlayer, profession, player);
         });
         subChannelReceivers.put(Constants.INFO_BUTTON_REQUEST, (server, player, listener, buf, responseSender, playerManager) -> {
-            ProfessionLoader loader = ProfessionsFabric.getInstance().getProfessionLoader();
+            FabricProfLoader loader = ProfessionsFabric.getInstance().getProfessionLoader();
             Profession profession = loader.getProfession(buf.readResourceLocation());
             FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
             Collection<ActionDisplay> displays = new ArrayList<>();

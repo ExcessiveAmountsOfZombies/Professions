@@ -7,7 +7,7 @@ import com.epherical.professions.config.Config;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
-import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.datapack.ForgeProfLoader;
 import com.epherical.professions.loot.UnlockCondition;
 import com.epherical.professions.networking.NetworkHandler;
 import com.epherical.professions.triggers.BlockTriggers;
@@ -71,7 +71,7 @@ public class ProfessionsForge {
     private Storage<ProfessionalPlayer, UUID> dataStorage;
     private Set<Class<?>> capHolders = new HashSet<>();
 
-    private ProfessionLoader professionLoader;
+    private ForgeProfLoader professionLoader;
     private NetworkHandler handler;
 
     public static boolean isStopping = false;
@@ -104,7 +104,7 @@ public class ProfessionsForge {
     }
 
     private void commonInit(FMLCommonSetupEvent event) {
-        professionLoader = new ProfessionLoader();
+        professionLoader = new ForgeProfLoader();
         MinecraftForge.EVENT_BUS.register(professionLoader);
     }
 
@@ -181,17 +181,17 @@ public class ProfessionsForge {
             if (ProfessionConfig.useBuiltinDatapack) { // since we are loading a server datapack, I think this is called after the configs have loaded.
                 event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
                     packConsumer.accept(packConstructor.create("default_normal_professions", Component.nullToEmpty("Default Normal Professions"),
-                            true, () -> new PathResourcePack("Default Normal Professions",
-                                    ModList.get().getModFileById(Constants.MOD_ID).getFile().getFilePath().resolve("resourcepacks/forge/normal")),
-                            new PackMetadataSection(Component.nullToEmpty("Default Normal Professions"), 1),
+                            true, () -> new PathResourcePack("Default Normal Professions",                                       /// ????
+                                    ModList.get().getModFileById(Constants.MOD_ID).getFile().findResource("resourcepacks/forge/normal")),
+                            new PackMetadataSection(Component.nullToEmpty("Default Normal Professions"), 10),
                             Pack.Position.BOTTOM,
                             PackSource.WORLD, false));
                 });
                 event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
                     packConsumer.accept(packConstructor.create("default_hardcore_professions", Component.nullToEmpty("Default Hardcore Professions"),
                             true, () -> new PathResourcePack("Default Hardcore Professions",
-                                    ModList.get().getModFileById(Constants.MOD_ID).getFile().getFilePath().resolve("resourcepacks/forge/hardcore")),
-                            new PackMetadataSection(Component.nullToEmpty("Default Hardcore Professions"), 1),
+                                    ModList.get().getModFileById(Constants.MOD_ID).getFile().findResource("resourcepacks/forge/hardcore")),
+                            new PackMetadataSection(Component.nullToEmpty("Default Hardcore Professions"), 10),
                             Pack.Position.BOTTOM,
                             PackSource.WORLD, false));
                 });
@@ -203,7 +203,7 @@ public class ProfessionsForge {
         return mod;
     }
 
-    public ProfessionLoader getProfessionLoader() {
+    public ForgeProfLoader getProfessionLoader() {
         return professionLoader;
     }
 

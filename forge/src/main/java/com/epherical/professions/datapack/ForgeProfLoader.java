@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ProfessionLoader extends SimpleJsonResourceReloadListener implements CommonProfessionLoader {
+public class ForgeProfLoader extends SimpleJsonResourceReloadListener implements CommonProfessionLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = createProfessionSerializer()
             .setPrettyPrinting()
@@ -50,7 +50,7 @@ public class ProfessionLoader extends SimpleJsonResourceReloadListener implement
     private Map<ResourceLocation, Profession> professionMap = ImmutableMap.of();
 
 
-    public ProfessionLoader() {
+    public ForgeProfLoader() {
         super(GSON, "professions/occupations");
     }
 

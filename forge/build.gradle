@@ -24,6 +24,11 @@ configurations {
     compileOnly.extendsFrom shadeSource
 }
 
+mixin {
+    add sourceSets.main, "professions.refmap.json"
+    config "professions.mixins.json"
+}
+
 minecraft {
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     mappings channel: 'official', version: "${minecraft_version}"

@@ -3,7 +3,7 @@ package com.epherical.professions.datagen;
 import com.epherical.octoecon.api.Economy;
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.ProfessionsFabric;
-import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.datapack.FabricProfLoader;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.editor.Editor;
 import com.epherical.professions.profession.rewards.Reward;
@@ -35,11 +35,11 @@ public interface ProviderHelpers {
     }
 
     default void generate(CachedOutput cache, Profession profession, Path id) throws IOException {
-        DataProvider.saveStable(cache, ProfessionLoader.serialize(profession), id);
+        DataProvider.saveStable(cache, FabricProfLoader.serialize(profession), id);
     }
 
     default void generate(CachedOutput cache, Editor editor, Path id) throws IOException {
-        DataProvider.saveStable(cache, ProfessionLoader.serialize(editor), id);
+        DataProvider.saveStable(cache, FabricProfLoader.serialize(editor), id);
     }
 
     default Parser defaultLevelParser() {

@@ -6,7 +6,7 @@ import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
-import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.datapack.ForgeProfLoader;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Action;
@@ -67,7 +67,7 @@ public class NetworkHandler {
         }, Server.attemptAction(), (attempt, contextSupplier) -> {
             NetworkEvent.Context context = contextSupplier.get();
             PlayerManager playerManager = ProfessionsForge.getInstance().getPlayerManager();
-            ProfessionLoader loader = ProfessionsForge.getInstance().getProfessionLoader();
+            ForgeProfLoader loader = ProfessionsForge.getInstance().getProfessionLoader();
             ServerPlayer player = context.getSender();
             if (attempt.subChannel.equals(JOIN_BUTTON_REQUEST)) {
                 ProfessionalPlayer pPlayer = playerManager.getPlayer(player.getUUID());

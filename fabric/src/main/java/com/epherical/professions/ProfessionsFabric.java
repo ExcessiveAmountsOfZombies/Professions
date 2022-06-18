@@ -8,7 +8,7 @@ import com.epherical.professions.config.CommonConfig;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
-import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.datapack.FabricProfLoader;
 import com.epherical.professions.events.ProfessionUtilityEvents;
 import com.epherical.professions.integration.ftb.FTBIntegration;
 import com.epherical.professions.loot.UnlockCondition;
@@ -54,7 +54,7 @@ public class ProfessionsFabric implements ModInitializer {
     private static @Nullable Economy economy;
     private Storage<ProfessionalPlayer, UUID> dataStorage;
 
-    private final ProfessionLoader professionLoader = new ProfessionLoader();
+    private final FabricProfLoader professionLoader = new FabricProfLoader();
 
     private boolean startup;
 
@@ -141,7 +141,7 @@ public class ProfessionsFabric implements ModInitializer {
         return mod;
     }
 
-    public ProfessionLoader getProfessionLoader() {
+    public FabricProfLoader getProfessionLoader() {
         return professionLoader;
     }
 

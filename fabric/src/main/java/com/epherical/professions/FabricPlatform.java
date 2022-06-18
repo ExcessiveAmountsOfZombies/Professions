@@ -47,6 +47,11 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
     }
 
     @Override
+    public boolean checkDynamicPermission(Player player, String basePerm, String dynamic, int defIntPerm) {
+        return Permissions.check(player, basePerm + "." + dynamic, defIntPerm);
+    }
+
+    @Override
     public boolean checkPermission(Player player, String perm) {
         return Permissions.check(player, perm);
     }

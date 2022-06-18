@@ -1,18 +1,11 @@
 {
   "type": "professions:default",
-  "color": "#107D0E",
-  "descriptionColor": "#FFFFFF",
-  "description": [
-    "Earn money and experience",
-    "by farming."
-  ],
-  "displayName": "Farming",
-  "maxLevel": 100,
-  "experienceSclEquation": "(91+1000)*1.1^(lvl-1)",
-  "incomeSclEquation": "base",
   "actions": [
     {
       "action": "professions:break_block",
+      "blocks": [
+        "#minecraft:crops"
+      ],
       "conditions": [
         {
           "condition": "professions:crop_fully_grown"
@@ -20,16 +13,16 @@
       ],
       "rewards": [
         {
-          "reward": "professions:occupation_exp",
-          "amount": 1.0
+          "amount": 1.0,
+          "reward": "professions:occupation_exp"
         }
-      ],
-      "blocks": [
-        "#minecraft:crops"
       ]
     },
     {
       "action": "professions:break_block",
+      "blocks": [
+        "minecraft:cocoa"
+      ],
       "conditions": [
         {
           "condition": "professions:block_state_matches_any",
@@ -40,64 +33,55 @@
       ],
       "rewards": [
         {
-          "reward": "professions:occupation_exp",
-          "amount": 1.0
+          "amount": 1.0,
+          "reward": "professions:occupation_exp"
         }
-      ],
-      "blocks": [
-        "minecraft:cocoa"
       ]
     },
     {
       "action": "professions:break_block",
-      "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 0.75
-        }
-      ],
       "blocks": [
         "minecraft:sugar_cane"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "amount": 0.75,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:break_block",
-      "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 1.3
-        }
-      ],
       "blocks": [
         "minecraft:melon",
         "minecraft:pumpkin"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "amount": 1.3,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:place_block",
-      "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 0.85
-        }
-      ],
       "blocks": [
         "#minecraft:crops",
         "minecraft:cocoa"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "amount": 0.85,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:breed",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 5.0
-        }
-      ],
       "entities": [
         "minecraft:pig",
         "minecraft:cow",
@@ -110,7 +94,24 @@
         "minecraft:wolf",
         "minecraft:chicken",
         "minecraft:horse"
+      ],
+      "rewards": [
+        {
+          "amount": 5.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     }
-  ]
+  ],
+  "color": "#107D0E",
+  "description": [
+    "Earn money and experience",
+    "by farming."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "displayName": "Farming",
+  "experienceSclEquation": "1000*1.064^(lvl-1)",
+  "incomeSclEquation": "base",
+  "maxLevel": 100,
+  "unlocks": []
 }

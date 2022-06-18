@@ -1,0 +1,138 @@
+{
+  "actions": [],
+  "function_type": "professions:append",
+  "to_edit_profession_key": "professions:mining",
+  "unlocks": [
+    {
+      "blocks": [
+        "#minecraft:terracotta"
+      ],
+      "level": 2,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "minecraft:clay",
+        "minecraft:gravel",
+        "minecraft:sand",
+        "minecraft:red_sand",
+        "minecraft:sandstone",
+        "minecraft:red_sandstone"
+      ],
+      "level": 3,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "minecraft:blackstone"
+      ],
+      "level": 10,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "minecraft:amethyst_block"
+      ],
+      "level": 7,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "#minecraft:iron_ores"
+      ],
+      "level": 5,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "#minecraft:redstone_ores"
+      ],
+      "level": 5,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "#minecraft:coal_ores"
+      ],
+      "level": 3,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "#minecraft:copper_ores"
+      ],
+      "level": 3,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "#minecraft:gold_ores"
+      ],
+      "level": 10,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "minecraft:nether_quartz_ore"
+      ],
+      "level": 10,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "#minecraft:lapis_ores"
+      ],
+      "level": 10,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "#minecraft:diamond_ores"
+      ],
+      "level": 20,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "#minecraft:emerald_ores"
+      ],
+      "level": 20,
+      "unlock": "professions:block"
+    },
+    {
+      "blocks": [
+        "minecraft:ancient_debris"
+      ],
+      "level": 30,
+      "unlock": "professions:block"
+    },
+    {
+      "items": [
+        "minecraft:iron_pickaxe"
+      ],
+      "level": 5,
+      "unlock": "professions:tool"
+    },
+    {
+      "items": [
+        "minecraft:golden_pickaxe"
+      ],
+      "level": 12,
+      "unlock": "professions:tool"
+    },
+    {
+      "items": [
+        "minecraft:diamond_pickaxe"
+      ],
+      "level": 22,
+      "unlock": "professions:tool"
+    },
+    {
+      "items": [
+        "minecraft:netherite_pickaxe"
+      ],
+      "level": 34,
+      "unlock": "professions:tool"
+    }
+  ]
+}

@@ -35,6 +35,8 @@ public abstract class CommonPlatform<T> {
 
     public abstract boolean checkPermission(Player player, String perm, int defIntPerm);
 
+    public abstract boolean checkDynamicPermission(Player player, String basePerm, String dynamic, int defIntPerm);
+
     public abstract boolean checkPermission(Player player, String perm);
 
     public abstract void sendButtonPacket(CommandButtons buttons);

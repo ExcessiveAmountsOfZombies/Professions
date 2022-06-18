@@ -180,10 +180,18 @@ public class ProfessionsForge {
         if (event.getPackType() == PackType.SERVER_DATA) {
             if (ProfessionConfig.useBuiltinDatapack) { // since we are loading a server datapack, I think this is called after the configs have loaded.
                 event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
-                    packConsumer.accept(packConstructor.create("default_professions", Component.nullToEmpty("Default Professions"),
-                            true, () -> new PathResourcePack("default_professions",
-                                    ModList.get().getModFileById(Constants.MOD_ID).getFile().getFilePath().resolve("optional")),
-                            new PackMetadataSection(Component.nullToEmpty("Default Professions"), 1),
+                    packConsumer.accept(packConstructor.create("default_normal_professions", Component.nullToEmpty("Default Normal Professions"),
+                            true, () -> new PathResourcePack("Default Normal Professions",
+                                    ModList.get().getModFileById(Constants.MOD_ID).getFile().getFilePath().resolve("resourcepacks/forge/normal")),
+                            new PackMetadataSection(Component.nullToEmpty("Default Normal Professions"), 1),
+                            Pack.Position.BOTTOM,
+                            PackSource.WORLD, false));
+                });
+                event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
+                    packConsumer.accept(packConstructor.create("default_hardcore_professions", Component.nullToEmpty("Default Hardcore Professions"),
+                            true, () -> new PathResourcePack("Default Hardcore Professions",
+                                    ModList.get().getModFileById(Constants.MOD_ID).getFile().getFilePath().resolve("resourcepacks/forge/hardcore")),
+                            new PackMetadataSection(Component.nullToEmpty("Default Hardcore Professions"), 1),
                             Pack.Position.BOTTOM,
                             PackSource.WORLD, false));
                 });

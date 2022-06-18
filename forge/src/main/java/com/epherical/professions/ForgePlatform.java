@@ -18,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.server.permission.PermissionAPI;
+import net.minecraftforge.server.permission.nodes.PermissionNode;
 
 import java.util.Map;
 
@@ -41,13 +42,20 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
 
     @Override
     public boolean checkPermission(Player player, String perm, int defIntPerm) {
-        PermissionAPI.getPermission((ServerPlayer) player, ProfPermissions.CREATIVE_PAYMENT);
-        return false;
+        return PermissionAPI.getPermission((ServerPlayer) player, ProfPermissions.getNode(perm, Boolean.TYPE));
+    }
+
+    @Override
+    public boolean checkDynamicPermission(Player player, String basePerm, String dynamic, int defIntPerm) {
+        PermissionNode<Boolean> perm = ProfPermissions.getNode(basePerm, Boolean.TYPE);
+        // todo: this isn't great, but it's our only dynamic currently so i'm not going to figure out how to abstract it more.
+        // maybe the key becomes a parameter, and a type  so we can keep the type.
+        return PermissionAPI.getPermission((ServerPlayer) player, perm, ProfPermissions.PROFESSION_CONTEXT.createContext(dynamic));
     }
 
     @Override
     public boolean checkPermission(Player player, String perm) {
-        return false;
+        return PermissionAPI.getPermission((ServerPlayer) player, ProfPermissions.getNode(perm, Boolean.TYPE));
     }
 
     @Override
@@ -82,7 +90,7 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
 
     @Override
     public void sendSyncRequest(ServerPlayer player) {
-
+        NetworkHandler.Server.sendSyncRequest(player);
     }
 
     @Override

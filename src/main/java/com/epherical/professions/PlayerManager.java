@@ -102,6 +102,12 @@ public class PlayerManager {
             return false;
         }
 
+        if (CommonPlatform.platform.isClientEnvironment() && ProfessionConfig.preventLeavingProfession && CommonPlatform.platform.checkPermission(serverPlayer, "professions.bypass.leave_prevention")) {
+            serverPlayer.sendSystemMessage(Component.translatable("Allowing you to leave profession, but only because cheats are enabled.").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
+            return false;
+
+        }
+
         if (ProfessionConfig.preventLeavingProfession && !CommonPlatform.platform.checkPermission(serverPlayer, "professions.bypass.leave_prevention")) {
             serverPlayer.sendSystemMessage(Component.translatable("professions.command.leave.error.disabled_in_config").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return false;
@@ -215,8 +221,8 @@ public class PlayerManager {
 
     private boolean hasPermission(ServerPlayer player, Profession profession) {
         String profKey = profession.getKey().toString().replaceAll(":", ".");
-        return CommonPlatform.platform.checkPermission(player, "profesions.join", 0) &&
-                CommonPlatform.platform.checkPermission(player, "professions.start." + profKey.toLowerCase(Locale.ROOT), 0);
+        return CommonPlatform.platform.checkPermission(player, "professions.join", 0) &&
+                CommonPlatform.platform.checkDynamicPermission(player, "professions.start", profKey.toLowerCase(Locale.ROOT), 0);
     }
 
     public List<Occupation> synchronizePlayer(ServerPlayer player) {

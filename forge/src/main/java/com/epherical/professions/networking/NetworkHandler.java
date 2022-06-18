@@ -1,7 +1,6 @@
 package com.epherical.professions.networking;
 
 import com.epherical.professions.Constants;
-import com.epherical.professions.ForgeRegConstants;
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.RegistryConstants;
@@ -27,7 +26,6 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
-import org.antlr.v4.codegen.model.Sync;
 
 import java.util.ArrayList;
 import java.util.Collection;

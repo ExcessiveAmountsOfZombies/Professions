@@ -8,13 +8,16 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ProfessionLoader;
+import com.epherical.professions.loot.UnlockCondition;
 import com.epherical.professions.networking.NetworkHandler;
 import com.epherical.professions.triggers.BlockTriggers;
 import com.epherical.professions.triggers.EntityTriggers;
 import com.epherical.professions.triggers.ProfessionListener;
 import com.epherical.professions.util.PlayerOwnableProvider;
 import com.epherical.professions.capability.PlayerOwnable;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
@@ -26,6 +29,9 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.loot.Serializer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -46,6 +52,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.resource.PathResourcePack;
 
 import java.util.HashSet;
@@ -82,6 +89,7 @@ public class ProfessionsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeRegConstants::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(config::initConfig);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addPacks);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerEvent);
 
         MinecraftForge.EVENT_BUS.register(new ProfPermissions());
         MinecraftForge.EVENT_BUS.register(new ProfessionListener());
@@ -122,6 +130,17 @@ public class ProfessionsForge {
                 capHolders.add(clazz);
             }
         });
+    }
+
+
+    public void registerEvent(RegisterEvent event) {
+        if (event.getRegistryKey().equals(Registry.LOOT_ITEM_REGISTRY)) {
+            Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
+        }
+    }
+
+    public static LootItemConditionType registerLootCondition(String id, Serializer<? extends LootItemCondition> serializer) {
+        return Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation(Constants.MOD_ID, id), new LootItemConditionType(serializer));
     }
 
     @SubscribeEvent

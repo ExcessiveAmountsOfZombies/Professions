@@ -69,6 +69,9 @@ public class ProfessionsClientForge {
 
     @SubscribeEvent
     public void onClientLogin(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+        if (event.getPlayer() == null) {
+            return;
+        }
         Minecraft minecraft = Minecraft.getInstance();
         if (!minecraft.hasSingleplayerServer()) {
             ProfessionsForge.getInstance().getPlayerManager().playerClientQuit(event.getPlayer().getUUID());

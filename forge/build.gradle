@@ -103,6 +103,17 @@ artifacts {
     shadow shadowJar
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    "src/main/generated",
+                    rootProject.sourceSets.main.resources
+            ]
+        }
+    }
+}
+
 jar {
     manifest {
         attributes([

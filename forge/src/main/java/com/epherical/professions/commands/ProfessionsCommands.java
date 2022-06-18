@@ -1,6 +1,5 @@
 package com.epherical.professions.commands;
 
-import com.epherical.professions.ForgeRegConstants;
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.RegistryConstants;
@@ -22,7 +21,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;

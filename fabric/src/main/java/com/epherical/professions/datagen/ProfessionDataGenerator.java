@@ -43,7 +43,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -652,14 +651,14 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .reward(moneyReward(1))
                             .build());
 
-            generate(cache, alchemy.build(), createNormalPath(path, new ResourceLocation("professions:alchemy")));
-            generate(cache, builder.build(), createNormalPath(path, new ResourceLocation("professions:building")));
-            generate(cache, crafting.build(), createNormalPath(path, new ResourceLocation("professions:crafting")));
-            generate(cache, enchanting.build(), createNormalPath(path, new ResourceLocation("professions:enchanting")));
-            generate(cache, farming.build(), createNormalPath(path, new ResourceLocation("professions:farming")));
-            generate(cache, fishing.build(), createNormalPath(path, new ResourceLocation("professions:fishing")));
-            generate(cache, hunting.build(), createNormalPath(path, new ResourceLocation("professions:hunting")));
-            generate(cache, mining.build(), createNormalPath(path, new ResourceLocation("professions:mining")));
+            generate(cache, alchemy.build(), createNormalPath(path, new ResourceLocation("professions:alchemy"), false));
+            generate(cache, builder.build(), createNormalPath(path, new ResourceLocation("professions:building"), false));
+            generate(cache, crafting.build(), createNormalPath(path, new ResourceLocation("professions:crafting"), false));
+            generate(cache, enchanting.build(), createNormalPath(path, new ResourceLocation("professions:enchanting"), false));
+            generate(cache, farming.build(), createNormalPath(path, new ResourceLocation("professions:farming"), false));
+            generate(cache, fishing.build(), createNormalPath(path, new ResourceLocation("professions:fishing"), false));
+            generate(cache, hunting.build(), createNormalPath(path, new ResourceLocation("professions:hunting"), false));
+            generate(cache, mining.build(), createNormalPath(path, new ResourceLocation("professions:mining"), false));
             Append.Builder miningAppender = Append.Builder.appender(Constants.modID("mining"))
                     .addUnlock(BLOCK_UNLOCK, BlockUnlock.builder()
                             .level(2)
@@ -716,11 +715,11 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
                             .level(34)
                             .item(Items.NETHERITE_PICKAXE).build());
 
-            generate(cache, trading.build(), createNormalPath(path, new ResourceLocation("professions:trading")));
-            generate(cache, smithing.build(), createNormalPath(path, new ResourceLocation("professions:smithing")));
-            generate(cache, logging.build(), createNormalPath(path, new ResourceLocation("professions:logging")));
+            generate(cache, trading.build(), createNormalPath(path, new ResourceLocation("professions:trading"), false));
+            generate(cache, smithing.build(), createNormalPath(path, new ResourceLocation("professions:smithing"), false));
+            generate(cache, logging.build(), createNormalPath(path, new ResourceLocation("professions:logging"), false));
 
-            generate(cache, miningAppender.build(), createHardcoreAppenders(path, Constants.modID("appenders/mining")));
+            generate(cache, miningAppender.build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), false));
         }
 
         private static void generate(CachedOutput cache, Profession profession, Path id) throws IOException {
@@ -731,14 +730,20 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
             DataProvider.saveStable(cache, ProfessionLoader.serialize(editor), id);
         }
 
-        private static Path createNormalPath(Path path, ResourceLocation id) {
+        private static Path createNormalPath(Path path, ResourceLocation id, boolean forge) {
             String namespace = id.getNamespace();
-            return path.resolve("resourcepacks/normal/data/" + namespace + "/professions/occupations/" + id.getPath() + ".json");
+            if (forge) {
+                return path.resolve("resourcepacks/forge/normal/data/" + namespace + "/professions/occupations/" + id.getPath() + ".json");
+            }
+            return path.resolve("resourcepacks/fabric/normal/data/" + namespace + "/professions/occupations/" + id.getPath() + ".json");
         }
 
-        private static Path createHardcoreAppenders(Path path, ResourceLocation id) {
+        private static Path createHardcoreAppenders(Path path, ResourceLocation id, boolean forge) {
             String namespace = id.getNamespace();
-            return path.resolve("resourcepacks/hardcore/data/" + namespace + "/professions/occupations/" + id.getPath() + ".json");
+            if (forge) {
+                return path.resolve("resourcepacks/forge/hardcore/data/" + namespace + "/professions/occupations/" + id.getPath() + ".json");
+            }
+            return path.resolve("resourcepacks/fabric/hardcore/data/" + namespace + "/professions/occupations/" + id.getPath() + ".json");
         }
 
         @Override

@@ -19,10 +19,12 @@ public class UnlockableDataImpl implements UnlockableData {
     public UnlockableDataImpl(Occupation occupation) {
         this.occupation = occupation;
         this.unlocks = new HashMap<>();
-        for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
-            for (Unlock<?> unlock : entry.getValue()) {
-                for (Unlock.Singular<?> singular : unlock.convertToSingle(occupation.getProfession())) {
-                    unlocks.put(singular.getObject(), singular);
+        if (occupation.getProfession() != null) {
+            for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
+                for (Unlock<?> unlock : entry.getValue()) {
+                    for (Unlock.Singular<?> singular : unlock.convertToSingle(occupation.getProfession())) {
+                        unlocks.put(singular.getObject(), singular);
+                    }
                 }
             }
         }

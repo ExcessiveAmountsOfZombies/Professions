@@ -10,7 +10,6 @@ import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
-import com.epherical.professions.profession.rewards.Rewards;
 import com.epherical.professions.util.ActionEntry;
 import com.epherical.professions.util.EnchantmentContainer;
 import com.google.gson.JsonArray;

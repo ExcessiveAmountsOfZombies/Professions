@@ -18,7 +18,6 @@ public class ProfessionEntryButton extends Button {
     private final Profession profession;
     private final Component name;
 
-    // todo: this class is very duplicate
     public ProfessionEntryButton(Profession profession, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
         super(i, j, k, l, Component.nullToEmpty(""), onPress, tooltip);
         this.profession = profession;

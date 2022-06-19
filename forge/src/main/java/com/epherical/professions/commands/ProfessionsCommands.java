@@ -189,7 +189,7 @@ public class ProfessionsCommands {
     private int help(CommandContext<CommandSourceStack> stack) {
         var map = CommandUsage.getSmartUsage(stack.getNodes().get(0).getNode(), stack.getSource());
         for (Map.Entry<CommandNode<CommandSourceStack>, MutableComponent> commandNodeStringEntry : map.entrySet()) {
-            stack.getSource().sendSuccess(Component.literal("/professions ").append(commandNodeStringEntry.getValue()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), false);
+            stack.getSource().sendSuccess(new TextComponent("/professions ").append(commandNodeStringEntry.getValue()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), false);
         }
         return 1;
     }
@@ -254,7 +254,7 @@ public class ProfessionsCommands {
         try {
             Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
             if (profession == null) {
-                stack.getSource().sendFailure(Component.translatable("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                stack.getSource().sendFailure(new TranslatableComponent("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return 0;
             }
             List<Component> components = new ArrayList<>();
@@ -262,8 +262,8 @@ public class ProfessionsCommands {
             for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
                 Collection<Action> actionsFor = profession.getActions(actionType);
                 if (actionsFor != null && !actionsFor.isEmpty()) {
-                    components.add(Component.translatable("=-=-=| %s |=-=-=",
-                            Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                    components.add(new TranslatableComponent("=-=-=| %s |=-=-=",
+                            new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
                     for (Action action : actionsFor) {
                         components.addAll(action.displayInformation());
@@ -281,7 +281,7 @@ public class ProfessionsCommands {
             int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
 
             if (page > maxPage) {
-                stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_page").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                stack.getSource().sendFailure(new TranslatableComponent("professions.command.error.missing_page").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return 0;
             }
 
@@ -289,14 +289,14 @@ public class ProfessionsCommands {
                 stack.getSource().sendSuccess(component, false);
             }
 
-            MutableComponent previous = Component.translatable("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
+            MutableComponent previous = new TranslatableComponent("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
                     .withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page - 1))));
-            MutableComponent next = Component.translatable("professions.command.next").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)
+            MutableComponent next = new TranslatableComponent("professions.command.next").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)
                     .withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page + 1))));
 
-            MutableComponent pageComp = Component.translatable("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
+            MutableComponent pageComp = new TranslatableComponent("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
             stack.getSource().sendSuccess(pageComp, false);
 
         } catch (Exception e) {
@@ -325,13 +325,13 @@ public class ProfessionsCommands {
 
             PlayerManager manager = mod.getPlayerManager();
             ProfessionalPlayer pPlayer = manager.getPlayer(profile.getId());
-            MutableComponent stats = Component.translatable("professions.command.stats.header").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
-            MutableComponent headerFooter = Component.translatable("-=-=-=| %s |=-=-=-", stats).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
+            MutableComponent stats = new TranslatableComponent("professions.command.stats.header").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
+            MutableComponent headerFooter = new TranslatableComponent("-=-=-=| %s |=-=-=-", stats).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
             List<Component> components = new ArrayList<>();
             components.add(headerFooter);
             if (pPlayer != null) {
                 if (pPlayer.getActiveOccupations().size() == 0 && pPlayer.getUuid().equals(commandPlayer.getUUID())) {
-                    commandPlayer.sendSystemMessage(Component.translatable("professions.command.stats.error.not_in_any_professions").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.stats.error.not_in_any_professions").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                     return 1;
                 }
                 for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
@@ -339,19 +339,19 @@ public class ProfessionsCommands {
                     double bars = Math.round(percentage * 55); // how many bars should be green.
                     MutableComponent progression;
                     if (ProfessionConfig.displayXpAsPercentage) {
-                        progression = Component.literal((String.format("%.1f", percentage * 100) + "%")).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+                        progression = new TextComponent((String.format("%.1f", percentage * 100) + "%")).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
                     } else {
-                        progression = Component.translatable("%s/%s exp",
-                                Component.literal((String.format("%.1f", activeOccupation.getExp()))).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                                Component.literal(String.valueOf(activeOccupation.getMaxExp())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                        progression = new TranslatableComponent("%s/%s exp",
+                                new TextComponent((String.format("%.1f", activeOccupation.getExp()))).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                                new TextComponent(String.valueOf(activeOccupation.getMaxExp())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
                     }
                     HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_TEXT, progression);
-                    MutableComponent mainComponent = Component.literal("").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
-                            .append(Component.literal("|".repeat((int) bars)).setStyle(Style.EMPTY.withColor(ProfessionConfig.success).withHoverEvent(event)))
-                            .append(Component.literal("|".repeat((int) (55 - bars))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors).withHoverEvent(event)))
-                            .append(Component.literal(" " + activeOccupation.getProfession().getDisplayName()).setStyle(Style.EMPTY.withColor(activeOccupation.getProfession().getColor()))
-                                    .append(Component.translatable("professions.command.stats.level", Component.literal("" + activeOccupation.getLevel())
+                    MutableComponent mainComponent = new TextComponent("").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
+                            .append(new TextComponent("|".repeat((int) bars)).setStyle(Style.EMPTY.withColor(ProfessionConfig.success).withHoverEvent(event)))
+                            .append(new TextComponent("|".repeat((int) (55 - bars))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors).withHoverEvent(event)))
+                            .append(new TextComponent(" " + activeOccupation.getProfession().getDisplayName()).setStyle(Style.EMPTY.withColor(activeOccupation.getProfession().getColor()))
+                                    .append(new TranslatableComponent("professions.command.stats.level", new TextComponent("" + activeOccupation.getLevel())
                                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))));
                     components.add(mainComponent);
@@ -359,13 +359,13 @@ public class ProfessionsCommands {
 
                 if (components.size() > 1) {
                     for (Component component : components) {
-                        commandPlayer.sendSystemMessage(component);
+                        commandPlayer.sendMessage(component);
                     }
                 } else {
-                    commandPlayer.sendSystemMessage(Component.translatable("professions.command.stats.error.other_not_in_any_professions", Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.stats.error.other_not_in_any_professions", new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 }
             } else {
-                commandPlayer.sendSystemMessage(Component.translatable("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                commandPlayer.sendMessage(new TranslatableComponent("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             }
 
             // -=-=-=| Stats |=-=-=-
@@ -386,7 +386,7 @@ public class ProfessionsCommands {
     private int browse(CommandContext<CommandSourceStack> stack) {
         // -=-=-=-=-=| Browse Professions |=-=-=-=-=-
         // Miner Max Level: 100 <-- hover component the description across the entire thing
-        MutableComponent header = Component.translatable("-=-=-=-=-=| %s |=-=-=-=-=-", Component.translatable("professions.command.browse.header")
+        MutableComponent header = new TranslatableComponent("-=-=-=-=-=| %s |=-=-=-=-=-", new TranslatableComponent("professions.command.browse.header")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
         List<Component> components = new ArrayList<>();
         components.add(header);
@@ -406,7 +406,7 @@ public class ProfessionsCommands {
             Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
 
             if (profession == null) {
-                stack.getSource().sendFailure(Component.translatable("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                stack.getSource().sendFailure(new TranslatableComponent("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return 0;
             }
 
@@ -431,31 +431,31 @@ public class ProfessionsCommands {
             int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
 
             if (page > maxPage) {
-                stack.getSource().sendFailure(Component.literal("That page doesn't exist!"));
+                stack.getSource().sendFailure(new TextComponent("That page doesn't exist!"));
                 return 0;
             }*/
 
             if (messages == 0) {
-                stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_players").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                stack.getSource().sendFailure(new TranslatableComponent("professions.command.error.missing_players").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return 0;
             }
 
-            stack.getSource().sendSuccess(Component.translatable("professions.command.top.header",
-                    Component.literal("" + messages).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), profession.getDisplayComponent())
+            stack.getSource().sendSuccess(new TranslatableComponent("professions.command.top.header",
+                    new TextComponent("" + messages).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), false);
             int position = 1;
             for (ProfessionalPlayer player : players) {
                 Component playerName;
                 if (player == null) {
-                    playerName = Component.translatable("professions.command.top.unknown_player");
+                    playerName = new TranslatableComponent("professions.command.top.unknown_player");
                 } else {
                     playerName = player.getPlayer().getDisplayName();
                 }
-                MutableComponent msg = Component.translatable("professions.command.top.position",
-                        Component.literal("" + position).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                MutableComponent msg = new TranslatableComponent("professions.command.top.position",
+                        new TextComponent("" + position).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
                         playerName,
-                        Component.literal("" + player.getOccupation(profession).getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                        Component.literal("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                        new TextComponent("" + player.getOccupation(profession).getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                        new TextComponent("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                         .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
                 stack.getSource().sendSuccess(msg, false);
             }
@@ -472,7 +472,7 @@ public class ProfessionsCommands {
         try {
             ProfessionConfig.reload();
             ActionLogger.reloadStyles();
-            stack.getSource().sendSuccess(Component.translatable("professions.command.reload.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), false);
+            stack.getSource().sendSuccess(new TranslatableComponent("professions.command.reload.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -493,9 +493,9 @@ public class ProfessionsCommands {
 
             ProfessionalPlayer player = manager.getPlayer(profile.getId());
             if (manager.fireFromOccupation(player, profession, commandPlayer)) {
-                commandPlayer.sendSystemMessage(Component.translatable("professions.command.fire.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
+                commandPlayer.sendMessage(new TranslatableComponent("professions.command.fire.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
             } else {
-                commandPlayer.sendSystemMessage(Component.translatable("professions.command.fire.fail").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                commandPlayer.sendMessage(new TranslatableComponent("professions.command.fire.fail").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -517,7 +517,7 @@ public class ProfessionsCommands {
                 manager.fireFromOccupation(player, profession, commandPlayer);
             }
 
-            commandPlayer.sendSystemMessage(Component.translatable("professions.command.fireall.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
+            commandPlayer.sendMessage(new TranslatableComponent("professions.command.fireall.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -563,10 +563,10 @@ public class ProfessionsCommands {
                 Occupation occupation = player.getOccupation(profession);
                 if (occupation != null) {
                     occupation.setLevel(level, player);
-                    commandPlayer.sendSystemMessage(Component.translatable("professions.command.setlevel.success",
+                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.setlevel.success",
                             occupation.getProfession().getDisplayComponent(),
-                            Component.literal(String.valueOf(occupation.getLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                            Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                            new TextComponent(String.valueOf(occupation.getLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                            new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
                 }
             }
@@ -590,7 +590,7 @@ public class ProfessionsCommands {
                 profile = otherPlayer.getGameProfile();
             }
             if (profile == null) {
-                stack.getSource().sendFailure(Component.translatable("professions.command.error.profile_missing").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                stack.getSource().sendFailure(new TranslatableComponent("professions.command.error.profile_missing").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return null;
             }
         } else {

@@ -25,6 +25,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
@@ -120,10 +122,10 @@ public abstract class BlockAbstractAction extends AbstractAction {
             seconds = 0;
         }
         // need bright colors in the action bar for whatever reason, otherwise would use variables/errors
-        MutableComponent message = Component.translatable("professions.block.cooldown",
-                        Component.literal(String.valueOf(seconds)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+        MutableComponent message = new TranslatableComponent("professions.block.cooldown",
+                        new TextComponent(String.valueOf(seconds)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
-        player.sendSystemMessage(message, ChatType.GAME_INFO);
+        player.sendMessage(message, ChatType.GAME_INFO, Util.NIL_UUID);
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {

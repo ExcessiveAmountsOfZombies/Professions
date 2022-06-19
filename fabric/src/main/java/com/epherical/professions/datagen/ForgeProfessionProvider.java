@@ -24,9 +24,9 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Registry;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -52,7 +52,7 @@ public class ForgeProfessionProvider extends CommonProvider implements DataProvi
     }
 
     @Override
-    public void run(CachedOutput cache) throws IOException {
+    public void run(HashCache cache) throws IOException {
         Path path = this.dataGenerator.getOutputFolder();
         ProfessionBuilder alchemy = ProfessionBuilder.profession(
                         TextColor.parseColor("#a100e0"),
@@ -530,19 +530,19 @@ public class ForgeProfessionProvider extends CommonProvider implements DataProvi
                         .reward(expReward(1))
                         .build());
 
-        generate(cache, alchemy.build(), createNormalPath(path, new ResourceLocation("professions:alchemy"), true));
-        generate(cache, builder.build(), createNormalPath(path, new ResourceLocation("professions:building"), true));
-        generate(cache, crafting.build(), createNormalPath(path, new ResourceLocation("professions:crafting"), true));
-        generate(cache, enchanting.build(), createNormalPath(path, new ResourceLocation("professions:enchanting"), true));
-        generate(cache, farming.build(), createNormalPath(path, new ResourceLocation("professions:farming"), true));
-        generate(cache, fishing.build(), createNormalPath(path, new ResourceLocation("professions:fishing"), true));
-        generate(cache, hunting.build(), createNormalPath(path, new ResourceLocation("professions:hunting"), true));
-        generate(cache, mining.build(), createNormalPath(path, new ResourceLocation("professions:mining"), true));
-        generate(cache, createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), true));
+        generate(GSON, cache, alchemy.build(), createNormalPath(path, new ResourceLocation("professions:alchemy"), true));
+        generate(GSON, cache, builder.build(), createNormalPath(path, new ResourceLocation("professions:building"), true));
+        generate(GSON, cache, crafting.build(), createNormalPath(path, new ResourceLocation("professions:crafting"), true));
+        generate(GSON, cache, enchanting.build(), createNormalPath(path, new ResourceLocation("professions:enchanting"), true));
+        generate(GSON, cache, farming.build(), createNormalPath(path, new ResourceLocation("professions:farming"), true));
+        generate(GSON, cache, fishing.build(), createNormalPath(path, new ResourceLocation("professions:fishing"), true));
+        generate(GSON, cache, hunting.build(), createNormalPath(path, new ResourceLocation("professions:hunting"), true));
+        generate(GSON, cache, mining.build(), createNormalPath(path, new ResourceLocation("professions:mining"), true));
+        generate(GSON, cache, createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), true));
 
-        generate(cache, trading.build(), createNormalPath(path, new ResourceLocation("professions:trading"), true));
-        generate(cache, smithing.build(), createNormalPath(path, new ResourceLocation("professions:smithing"), true));
-        generate(cache, logging.build(), createNormalPath(path, new ResourceLocation("professions:logging"), true));
+        generate(GSON, cache, trading.build(), createNormalPath(path, new ResourceLocation("professions:trading"), true));
+        generate(GSON, cache, smithing.build(), createNormalPath(path, new ResourceLocation("professions:smithing"), true));
+        generate(GSON, cache, logging.build(), createNormalPath(path, new ResourceLocation("professions:logging"), true));
 
 
     }

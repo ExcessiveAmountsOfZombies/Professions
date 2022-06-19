@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.Serializer;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +47,7 @@ public record OccupationExperience(double expAmount) implements Reward {
 
     @Override
     public @NotNull Component rewardChatInfo() {
-        return Component.literal(String.format("%.2fxp", expAmount)).setStyle(Style.EMPTY.withColor(ProfessionConfig.experience));
+        return new TextComponent(String.format("%.2fxp", expAmount)).setStyle(Style.EMPTY.withColor(ProfessionConfig.experience));
     }
 
     public static class RewardSerializer implements Serializer<OccupationExperience> {

@@ -19,6 +19,7 @@ import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.Serializer;
@@ -63,7 +64,7 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
 
     @Override
     public Component rewardChatInfo() {
-        return Component.literal(String.format("$%.2f", amount)).setStyle(Style.EMPTY.withColor(ProfessionConfig.money));
+        return new TextComponent(String.format("$%.2f", amount)).setStyle(Style.EMPTY.withColor(ProfessionConfig.money));
     }
 
     public static Builder builder() {

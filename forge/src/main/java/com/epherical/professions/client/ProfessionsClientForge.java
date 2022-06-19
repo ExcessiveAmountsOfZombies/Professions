@@ -97,9 +97,9 @@ public class ProfessionsClientForge {
             List<Unlock.Singular<Block>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.BLOCK_UNLOCK, blockItem.getBlock());
             for (Unlock.Singular<Block> singular : lockedKnowledge) {
                 if (!singular.canUse(pPlayer)) {
-                    comps.add(Component.translatable("professions.tooltip.drop_req",
+                    comps.add(new TranslatableComponent("professions.tooltip.drop_req",
                                     singular.getProfessionDisplay(),
-                                    Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                    new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
                 }
             }
@@ -107,9 +107,9 @@ public class ProfessionsClientForge {
             List<Unlock.Singular<Item>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.TOOL_UNLOCK, item);
             for (Unlock.Singular<Item> singular : lockedKnowledge) {
                 if (!singular.canUse(pPlayer)) {
-                    comps.add(Component.translatable("professions.tooltip.use_req",
+                    comps.add(new TranslatableComponent("professions.tooltip.use_req",
                                     singular.getProfessionDisplay(),
-                                    Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                    new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
                 }
             }
@@ -119,7 +119,7 @@ public class ProfessionsClientForge {
         boolean isKeyDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), professionData.getKey().getValue());
 
         if (!isKeyDown && !comps.isEmpty()) {
-            event.getToolTip().add(Component.translatable("Hold %s to see Professions info", professionData.getKey().getDisplayName()));
+            event.getToolTip().add(new TranslatableComponent("Hold %s to see Professions info", professionData.getKey().getDisplayName()));
         } else if (!comps.isEmpty()) {
             event.getToolTip().addAll(comps);
         }

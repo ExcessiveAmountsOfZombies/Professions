@@ -5,6 +5,8 @@ import com.epherical.professions.profession.editor.Append;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.profession.unlock.builtin.BlockUnlock;
 import com.epherical.professions.profession.unlock.builtin.ToolUnlock;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -13,6 +15,7 @@ import static com.epherical.professions.profession.unlock.Unlocks.BLOCK_UNLOCK;
 
 public abstract class CommonProvider {
 
+    protected static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 
     public Append.Builder createMiningAppender() {
         return Append.Builder.appender(Constants.modID("mining"))

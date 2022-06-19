@@ -17,6 +17,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -95,9 +97,10 @@ public class ToolUnlock implements Unlock<Item> {
 
         @Override
         public Component createUnlockComponent() {
-            return Component.translatable("Unlock use of %s at level %s",
+            // todo: translation
+            return new TranslatableComponent("Unlock use of %s at level %s",
                             ((MutableComponent) getObject().getDescription()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                            Component.literal(String.valueOf(getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                            new TextComponent(String.valueOf(getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
     }

@@ -13,6 +13,7 @@ import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -105,7 +106,7 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
 
     @Override
     public Component displayInformation(AbstractAction action, Map<RewardType, Component> map) {
-        return Component.translatable(" (%s | %s)",
+        return new TranslatableComponent(" (%s | %s)",
                 map.get(Rewards.EXPERIENCE_REWARD),
                 action.extraRewardInformation(map));
     }

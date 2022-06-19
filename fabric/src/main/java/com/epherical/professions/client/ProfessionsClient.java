@@ -24,6 +24,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -87,9 +89,9 @@ public class ProfessionsClient implements ClientModInitializer {
                 List<Unlock.Singular<Block>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.BLOCK_UNLOCK, blockItem.getBlock());
                 for (Unlock.Singular<Block> singular : lockedKnowledge) {
                     if (!singular.canUse(pPlayer)) {
-                        comps.add(Component.translatable("professions.tooltip.drop_req",
+                        comps.add(new TranslatableComponent("professions.tooltip.drop_req",
                                         singular.getProfessionDisplay(),
-                                        Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                        new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
                     }
                 }
@@ -97,9 +99,9 @@ public class ProfessionsClient implements ClientModInitializer {
                 List<Unlock.Singular<Item>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.TOOL_UNLOCK, item);
                 for (Unlock.Singular<Item> singular : lockedKnowledge) {
                     if (!singular.canUse(pPlayer)) {
-                        comps.add(Component.translatable("professions.tooltip.use_req",
+                        comps.add(new TranslatableComponent("professions.tooltip.use_req",
                                         singular.getProfessionDisplay(),
-                                        Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                        new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
                     }
                 }
@@ -108,7 +110,7 @@ public class ProfessionsClient implements ClientModInitializer {
             boolean isKeyDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), KeyBindingHelper.getBoundKeyOf(professionData).getValue());
 
             if (!isKeyDown && !comps.isEmpty()) {
-                lines.add(Component.translatable("Hold %s to see Professions info", KeyBindingHelper.getBoundKeyOf(professionData).getDisplayName()));
+                lines.add(new TranslatableComponent("Hold %s to see Professions info", KeyBindingHelper.getBoundKeyOf(professionData).getDisplayName()));
             } else if (!comps.isEmpty()) {
                 lines.addAll(comps);
             }

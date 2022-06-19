@@ -5,6 +5,8 @@ import com.mojang.brigadier.tree.CommandNode;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -39,7 +41,7 @@ public class CommandUsage<S> {
             return null;
         }
 
-        final MutableComponent self = optional ? Component.literal(USAGE_OPTIONAL_OPEN + node.getUsageText() + USAGE_OPTIONAL_CLOSE) : Component.literal(node.getUsageText());
+        final MutableComponent self = optional ? new TextComponent(USAGE_OPTIONAL_OPEN + node.getUsageText() + USAGE_OPTIONAL_CLOSE) : new TextComponent(node.getUsageText());
         final boolean childOptional = node.getCommand() != null;
         final String open = childOptional ? USAGE_OPTIONAL_OPEN : USAGE_REQUIRED_OPEN;
         final String close = childOptional ? USAGE_OPTIONAL_CLOSE : USAGE_REQUIRED_CLOSE;
@@ -66,7 +68,7 @@ public class CommandUsage<S> {
                     if (childUsage.size() == 1) {
                         final MutableComponent usage = childUsage.iterator().next();
                         return self.append(ARGUMENT_SEPARATOR).append((childOptional
-                                ? Component.translatable(USAGE_OPTIONAL_OPEN + "%s" + USAGE_OPTIONAL_CLOSE, usage.setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))) : usage));
+                                ? new TranslatableComponent(USAGE_OPTIONAL_OPEN + "%s" + USAGE_OPTIONAL_CLOSE, usage.setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))) : usage));
                     } else if (childUsage.size() > 1) {
                         final StringBuilder builder = new StringBuilder(open);
                         int count = 0;

@@ -48,10 +48,10 @@ public class ProfWailaPlugin implements IWailaPlugin, IBlockComponentProvider, I
             Pair<Unlock.Singular<Block>, Boolean> pair = ProfessionUtil.canUse(pPlayer, Unlocks.BLOCK_UNLOCK, block);
             if (!pair.getSecond()) {
                 Unlock.Singular<Block> singular = pair.getFirst();
-                tooltip.addLine(Component.literal("❌ ").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors))
-                        .append(Component.translatable("professions.tooltip.drop_req",
+                tooltip.addLine(new TextComponent("❌ ").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors))
+                        .append(new TranslatableComponent("professions.tooltip.drop_req",
                                         singular.getProfessionDisplay(),
-                                        Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                        new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))));
             }
         }

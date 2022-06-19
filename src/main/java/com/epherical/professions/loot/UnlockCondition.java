@@ -12,17 +12,22 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class UnlockCondition implements LootItemCondition {
@@ -54,19 +59,27 @@ public class UnlockCondition implements LootItemCondition {
             }*/
 
             BlockState blockBroken = context.getParamOrNull(LootContextParams.BLOCK_STATE);
+            // todo: translations
+            MutableComponent error = Component.literal("=-=-=-= Level Requirements =-=-=-=");
             if (blockBroken != null) {
-                Pair<Unlock.Singular<Block>, Boolean> pair = ProfessionUtil.canUse(player, Unlocks.BLOCK_UNLOCK, blockBroken.getBlock());
-                if (pair.getFirst() != null) {
-                    level = pair.getFirst().getUnlockLevel();
+                List<Unlock.Singular<Block>> lockedKnowledge = player.getLockedKnowledge(Unlocks.BLOCK_UNLOCK, blockBroken.getBlock());
+                for (Unlock.Singular<Block> singular : lockedKnowledge) {
+                    if (!singular.canUse(player)) {
+                        canDropBlock = false;
+                        error.append("\n");
+                        error.append(Component.translatable("%s %s",
+                                singular.getProfessionDisplay(),
+                                Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))));
+                    }
                 }
-                canDropBlock = pair.getSecond();
-                msg = blockBroken.getBlock().getName();
             }
             if (!(canUseTool && canDropEntity && canDropBlock)) {
-                serverPlayer.sendSystemMessage(Component.translatable("You must be level %s before you can receive drops from %s.",
-                        Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                        msg.setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))
-                ).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                Component hover = Component.literal("Hover to see which occupations prevented the drop.")
+                                .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)
+                                        .withUnderlined(true)
+                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, error)));
+                serverPlayer.sendSystemMessage(Component.translatable("Drops for this action are not unlocked yet. %s", hover)
+                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return false;
             }
         }

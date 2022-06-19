@@ -62,8 +62,8 @@ public class UtilityListener {
                 return InteractionResult.PASS;
             }
             ItemStack item = player.getItemInHand(hand);
-            Pair<Unlock.Singular<Item>, Boolean> pair = ProfessionUtil.canUse(professionalPlayer, Unlocks.TOOL_UNLOCK, item.getItem());
-            if (!pair.getSecond()) {
+            boolean pair = ProfessionUtil.canUse(professionalPlayer, Unlocks.TOOL_UNLOCK, item.getItem());
+            if (!pair) {
                 addMobEffect(player);
                 playersDestroying.add(player.getUUID());
             }
@@ -137,7 +137,6 @@ public class UtilityListener {
             return true;
         }
         ItemStack item = player.getMainHandItem();
-        Pair<Unlock.Singular<Item>, Boolean> pair = ProfessionUtil.canUse(professionalPlayer, Unlocks.TOOL_UNLOCK, item.getItem());
-        return pair.getSecond();
+        return ProfessionUtil.canUse(professionalPlayer, Unlocks.TOOL_UNLOCK, item.getItem());
     }
 }

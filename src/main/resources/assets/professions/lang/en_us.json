@@ -76,5 +76,9 @@
   "ftbquests.task.professions.profession.action": "Profession Action (Join/Level)",
   "ftbquests.task.professions.profession.level": "Level",
   "ftbquests.task.professions.profession.join_req": "Join the profession \"%s\"",
-  "ftbquests.task.professions.profession.level_req": "Level the profession \"%s\" to %s"
+  "ftbquests.task.professions.profession.level_req": "Level the profession \"%s\" to %s",
+
+  "key.professions.open_occupation_menu": "Open Occupation Menu",
+  "key.professions.show_info": "Show Unlock Information",
+  "category.professions.occupation": "Professions"
 }

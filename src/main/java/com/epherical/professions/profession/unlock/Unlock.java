@@ -1,6 +1,7 @@
 package com.epherical.professions.profession.unlock;
 
 
+import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.util.Tristate;
 import net.minecraft.network.chat.Component;
@@ -45,6 +46,8 @@ public interface Unlock<T> {
         Profession getProfession();
 
         Component createUnlockComponent();
+
+        boolean canUse(ProfessionalPlayer player);
 
     }
 

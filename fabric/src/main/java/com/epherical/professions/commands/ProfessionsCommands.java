@@ -1,5 +1,6 @@
 package com.epherical.professions.commands;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.RegistryConstants;
@@ -72,7 +73,7 @@ public class ProfessionsCommands {
 
     private void registerCommands(CommandDispatcher<CommandSourceStack> stack) {
         SuggestionProvider<CommandSourceStack> occupationProvider = (context, builder) -> {
-            for (ResourceLocation professionKey : mod.getProfessionLoader().getProfessionKeys()) {
+            for (ResourceLocation professionKey : CommonPlatform.platform.getProfessionLoader().getProfessionKeys()) {
                 builder.suggest("\"" + professionKey.toString() + "\"");
             }
             return builder.buildFuture();

@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
+
 @Mixin(Inventory.class)
 public abstract class InventoryBreakSpeedMixin {
 
@@ -41,9 +43,11 @@ public abstract class InventoryBreakSpeedMixin {
             return;
         }
         ItemStack item = this.items.get(this.selected);
-        Pair<Unlock.Singular<Item>, Boolean> pair = ProfessionUtil.canUse(player, Unlocks.TOOL_UNLOCK, item.getItem());
-        if (!pair.getSecond()) {
-            cir.setReturnValue(item.getDestroySpeed(state) * 0.0027F);
+        List<Unlock.Singular<Item>> lockedKnowledge = player.getLockedKnowledge(Unlocks.TOOL_UNLOCK, item.getItem());
+        for (Unlock.Singular<Item> singular : lockedKnowledge) {
+            if (!singular.canUse(player)) {
+                cir.setReturnValue(item.getDestroySpeed(state) * 0.0027F);
+            }
         }
     }
 }

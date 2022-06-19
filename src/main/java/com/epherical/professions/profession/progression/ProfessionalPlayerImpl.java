@@ -9,8 +9,10 @@ import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.util.ActionLogger;
+import com.epherical.professions.util.ProfessionUtil;
 import com.epherical.professions.util.Tristate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -172,6 +174,18 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
             }
         }
         return null;
+    }
+
+    @Override
+    public <T> List<Unlock.Singular<T>> getLockedKnowledge(UnlockType<T> unlockType, T object) {
+        List<Unlock.Singular<T>> unlocks = new ArrayList<>();
+        for (Occupation active : getActiveOccupations()) {
+            Unlock.Singular<T> unlock = active.getData().getUnlock(object);
+            if (unlock != null) {
+                unlocks.add(active.getData().getUnlock(object));
+            }
+        }
+        return unlocks;
     }
 
 

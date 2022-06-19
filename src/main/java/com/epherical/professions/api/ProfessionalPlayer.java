@@ -5,6 +5,7 @@ import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
+import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
@@ -62,4 +63,6 @@ public interface ProfessionalPlayer {
     List<Occupation> getInactiveOccupations();
 
     <T> UnlockableData getUnlockableData(UnlockType<T> unlockType, T object);
+
+    <T> List<Unlock.Singular<T>> getLockedKnowledge(UnlockType<T> unlockType, T object);
 }

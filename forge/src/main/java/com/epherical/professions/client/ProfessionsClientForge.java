@@ -30,6 +30,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jline.keymap.KeyMap;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @OnlyIn(Dist.CLIENT)
 public class ProfessionsClientForge {
 
@@ -89,35 +92,36 @@ public class ProfessionsClientForge {
             return;
         }
         Item item = event.getItemStack().getItem();
-        Component locked = null;
+        List<Component> comps = new ArrayList<>();
         if (item instanceof BlockItem blockItem) {
-            Pair<Unlock.Singular<Block>, Boolean> pair = ProfessionUtil.canUse(pPlayer, Unlocks.BLOCK_UNLOCK, blockItem.getBlock());
-            if (!pair.getSecond()) {
-                Unlock.Singular<Block> singular = pair.getFirst();
-
-                locked = Component.translatable("professions.tooltip.drop_req",
-                                singular.getProfessionDisplay(),
-                                Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
+            List<Unlock.Singular<Block>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.BLOCK_UNLOCK, blockItem.getBlock());
+            for (Unlock.Singular<Block> singular : lockedKnowledge) {
+                if (!singular.canUse(pPlayer)) {
+                    comps.add(Component.translatable("professions.tooltip.drop_req",
+                                    singular.getProfessionDisplay(),
+                                    Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
+                }
             }
         } else {
-            Pair<Unlock.Singular<Item>, Boolean> pair = ProfessionUtil.canUse(pPlayer, Unlocks.TOOL_UNLOCK, item);
-            if (!pair.getSecond()) {
-                Unlock.Singular<Item> singular = pair.getFirst();
-                locked = Component.translatable("professions.tooltip.use_req",
-                                singular.getProfessionDisplay(),
-                                Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
+            List<Unlock.Singular<Item>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.TOOL_UNLOCK, item);
+            for (Unlock.Singular<Item> singular : lockedKnowledge) {
+                if (!singular.canUse(pPlayer)) {
+                    comps.add(Component.translatable("professions.tooltip.use_req",
+                                    singular.getProfessionDisplay(),
+                                    Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
+                }
             }
         }
 
 
         boolean isKeyDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), professionData.getKey().getValue());
 
-        if (!isKeyDown && locked != null) {
+        if (!isKeyDown && !comps.isEmpty()) {
             event.getToolTip().add(Component.translatable("Hold %s to see Professions info", professionData.getKey().getDisplayName()));
-        } else if (locked != null) {
-            event.getToolTip().add(locked);
+        } else if (!comps.isEmpty()) {
+            event.getToolTip().addAll(comps);
         }
     }
 

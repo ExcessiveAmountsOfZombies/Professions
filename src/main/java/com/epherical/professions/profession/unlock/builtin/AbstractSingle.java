@@ -1,6 +1,8 @@
 package com.epherical.professions.profession.unlock.builtin;
 
+import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.Profession;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.util.Tristate;
 import net.minecraft.network.chat.Component;
@@ -19,6 +21,12 @@ public abstract class AbstractSingle<T> implements Unlock.Singular<T> {
     @Override
     public Tristate isLocked(T object, int level) {
         return (level >= this.level && value.equals(object)) ? Tristate.TRUE : Tristate.FALSE;
+    }
+
+    @Override
+    public boolean canUse(ProfessionalPlayer player) {
+        Occupation occupation = player.getOccupation(getProfession());
+        return this.isLocked(getObject(), occupation.getLevel()).valid();
     }
 
     @Override

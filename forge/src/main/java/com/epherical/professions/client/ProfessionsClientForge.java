@@ -7,12 +7,9 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.networking.NetworkHandler;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
-import com.epherical.professions.util.ProfessionUtil;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
@@ -24,10 +21,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.jline.keymap.KeyMap;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -94,7 +89,7 @@ public class ProfessionsClientForge {
         Item item = event.getItemStack().getItem();
         List<Component> comps = new ArrayList<>();
         if (item instanceof BlockItem blockItem) {
-            List<Unlock.Singular<Block>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.BLOCK_UNLOCK, blockItem.getBlock());
+            List<Unlock.Singular<Block>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.BLOCK_DROP_UNLOCK, blockItem.getBlock());
             for (Unlock.Singular<Block> singular : lockedKnowledge) {
                 if (!singular.canUse(pPlayer)) {
                     comps.add(Component.translatable("professions.tooltip.drop_req",

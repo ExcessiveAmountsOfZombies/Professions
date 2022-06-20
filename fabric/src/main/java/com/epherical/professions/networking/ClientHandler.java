@@ -8,6 +8,7 @@ import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.LevelDisplay;
+import com.mojang.util.UUIDTypeAdapter;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -78,7 +79,7 @@ public class ClientHandler implements ClientNetworking {
         subChannelReceivers.put(Constants.SYNCHRONIZE_DATA, (client, handler, buf, responseSender) -> {
             List<Occupation> occupations = ProfessionSerializer.fromNetwork(buf);
             if (!client.hasSingleplayerServer()) {
-                ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(UUID.fromString(client.getUser().getUuid()), occupations);
+                ProfessionsFabric.getInstance().getPlayerManager().addClientPlayer(UUIDTypeAdapter.fromString(client.getUser().getUuid()), occupations);
             }
         });
     }

@@ -1,5 +1,6 @@
 package com.epherical.professions.trigger;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.events.SyncEvents;
@@ -12,6 +13,7 @@ import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -48,6 +50,19 @@ public class UtilityListener {
             if (blockEntity instanceof PlayerOwnable owned) {
                 owned.professions$setPlacedBy(player);
             }
+        });
+
+        PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
+            if (world.isClientSide) {
+                return true;
+            }
+
+            ProfessionalPlayer pPlayer = CommonPlatform.platform.getPlayerManager().getPlayer(player.getUUID());
+            if (pPlayer == null) {
+                return true;
+            }
+
+            return ProfessionUtil.canBreak(pPlayer, player, state.getBlock());
         });
 
         AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {

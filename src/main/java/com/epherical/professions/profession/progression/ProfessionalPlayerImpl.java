@@ -8,6 +8,7 @@ import com.epherical.professions.data.Storage;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
+import com.epherical.professions.profession.UnlockableValues;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
@@ -33,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     private UUID uuid;
@@ -180,14 +182,23 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     public <T> List<Unlock.Singular<T>> getLockedKnowledge(UnlockType<T> unlockType, T object) {
         List<Unlock.Singular<T>> unlocks = new ArrayList<>();
         for (Occupation active : getActiveOccupations()) {
-            Unlock.Singular<T> unlock = active.getData().getUnlock(object);
+            UnlockableValues<Unlock.Singular<T>> unlock = active.getData().getUnlock(object);
             if (unlock != null) {
-                unlocks.add(active.getData().getUnlock(object));
+                unlocks.addAll(unlock.getValues().stream().filter(singular -> {
+                    if (unlockType == null) {
+                        return true;
+                    }
+                    return singular.getType().equals(unlockType);
+                }).toList());
             }
         }
         return unlocks;
     }
 
+    @Override
+    public <T> List<Unlock.Singular<T>> getLockedKnowledge(T object) {
+        return getLockedKnowledge(null, object);
+    }
 
     private List<Occupation> getOccupations(boolean active) {
         ImmutableList.Builder<Occupation> occ = ImmutableList.builder();

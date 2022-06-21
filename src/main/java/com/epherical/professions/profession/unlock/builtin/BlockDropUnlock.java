@@ -29,13 +29,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BlockUnlock implements Unlock<Block> {
+public class BlockDropUnlock implements Unlock<Block> {
     protected final List<ActionEntry<Block>> blocks;
     protected final int level;
     @Nullable
     protected Set<Block> realBlocks;
 
-    public BlockUnlock(List<ActionEntry<Block>> blocks, int level) {
+    public BlockDropUnlock(List<ActionEntry<Block>> blocks, int level) {
         this.blocks = blocks;
         this.level = level;
     }
@@ -52,7 +52,7 @@ public class BlockUnlock implements Unlock<Block> {
 
     @Override
     public UnlockType<Block> getType() {
-        return Unlocks.BLOCK_UNLOCK;
+        return Unlocks.BLOCK_DROP_UNLOCK;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class BlockUnlock implements Unlock<Block> {
 
     @Override
     public UnlockSerializer<?> getSerializer() {
-        return UnlockSerializer.BLOCK_UNLOCK;
+        return UnlockSerializer.BLOCK_DROP_UNLOCK;
     }
 
     public static class Single extends AbstractSingle<Block> {
@@ -77,7 +77,7 @@ public class BlockUnlock implements Unlock<Block> {
 
         @Override
         public UnlockType<Block> getType() {
-            return Unlocks.BLOCK_UNLOCK;
+            return Unlocks.BLOCK_DROP_UNLOCK;
         }
 
         @Override
@@ -125,14 +125,14 @@ public class BlockUnlock implements Unlock<Block> {
 
         @Override
         public Unlock<Block> build() {
-            return new BlockUnlock(blocks, level);
+            return new BlockDropUnlock(blocks, level);
         }
     }
 
-    public static class JsonSerializer implements Serializer<BlockUnlock> {
+    public static class JsonSerializer implements Serializer<BlockDropUnlock> {
 
         @Override
-        public void serialize(JsonObject json, BlockUnlock value, JsonSerializationContext serializationContext) {
+        public void serialize(JsonObject json, BlockDropUnlock value, JsonSerializationContext serializationContext) {
             JsonArray array = new JsonArray();
             for (ActionEntry<Block> block : value.blocks) {
                 array.addAll(block.serialize(Registry.BLOCK));
@@ -142,28 +142,28 @@ public class BlockUnlock implements Unlock<Block> {
         }
 
         @Override
-        public BlockUnlock deserialize(JsonObject json, JsonDeserializationContext serializationContext) {
+        public BlockDropUnlock deserialize(JsonObject json, JsonDeserializationContext serializationContext) {
             List<ActionEntry<Block>> blocks = BlockAbstractAction.Serializer.deserializeBlocks(json);
             int level = GsonHelper.getAsInt(json, "level");
-            return new BlockUnlock(blocks, level);
+            return new BlockDropUnlock(blocks, level);
         }
     }
 
-    public static class NetworkSerializer implements UnlockSerializer<BlockUnlock> {
+    public static class NetworkSerializer implements UnlockSerializer<BlockDropUnlock> {
 
         @Override
-        public BlockUnlock fromNetwork(FriendlyByteBuf buf) {
+        public BlockDropUnlock fromNetwork(FriendlyByteBuf buf) {
             int unlockLevel = buf.readVarInt();
             int arraySize = buf.readVarInt();
             List<ActionEntry<Block>> entries = new ArrayList<>();
             for (int i = 0; i < arraySize; i++) {
                 entries.addAll(ActionEntry.fromNetwork(buf, Registry.BLOCK));
             }
-            return new BlockUnlock(entries, unlockLevel);
+            return new BlockDropUnlock(entries, unlockLevel);
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf buf, BlockUnlock unlock) {
+        public void toNetwork(FriendlyByteBuf buf, BlockDropUnlock unlock) {
             buf.writeVarInt(unlock.level);
             buf.writeVarInt(unlock.blocks.size());
             for (ActionEntry<Block> block : unlock.blocks) {

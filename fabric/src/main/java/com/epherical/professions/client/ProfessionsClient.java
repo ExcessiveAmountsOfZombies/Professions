@@ -2,15 +2,15 @@ package com.epherical.professions.client;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
+import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
-import com.epherical.professions.util.ProfessionUtil;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.datafixers.util.Pair;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -86,15 +86,31 @@ public class ProfessionsClient implements ClientModInitializer {
             Item item = stack.getItem();
             List<Component> comps = new ArrayList<>();
             if (item instanceof BlockItem blockItem) {
-                List<Unlock.Singular<Block>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.BLOCK_UNLOCK, blockItem.getBlock());
-                for (Unlock.Singular<Block> singular : lockedKnowledge) {
+                // TODO: ok this right here will show our code is really screwed up. we can only have one unlock type for one profession for one block/item.
+                //  so we need to rewrite some of the UnlockableDataImpl code to handle MULTIPLE unlocks at once. Maybe you can break a block
+                //  at level 2 but you can only receive the drops at level 3.
+                List<Unlock.Singular<Block>> list = pPlayer.getLockedKnowledge(blockItem.getBlock());
+                for (Unlock.Singular<Block> singular : list) {
                     if (!singular.canUse(pPlayer)) {
-                        comps.add(new TranslatableComponent("professions.tooltip.drop_req",
+                        comps.add(new TranslatableComponent(singular.getType().getTranslationKey(),
                                         singular.getProfessionDisplay(),
                                         new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
                     }
                 }
+                /*for (UnlockType<?> unlock : RegistryConstants.UNLOCKS) {
+                    if (unlock.getType().equals(Block.class)) {
+                        // poorly designed? maybe. I'm not sure of another way to get the locked knowledge of only block unlock types though.
+                        // the reason we do this: block unlock types rely on block tags.
+                        UnlockType<Block> blockUnlockType = (UnlockType<Block>) unlock;
+
+                        pPlayer.getLockedKnowledge(blockItem.getBlock(), unlock)
+                        List<Unlock.Singular<Block>> lockedKnowledge = pPlayer.getLockedKnowledge(blockUnlockType, blockItem.getBlock());
+                        for (Unlock.Singular<Block> singular : lockedKnowledge) {
+
+                        }
+                    }
+                }*/
             } else {
                 List<Unlock.Singular<Item>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.TOOL_UNLOCK, item);
                 for (Unlock.Singular<Item> singular : lockedKnowledge) {

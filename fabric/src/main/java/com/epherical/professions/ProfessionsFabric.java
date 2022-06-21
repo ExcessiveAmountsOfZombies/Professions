@@ -121,7 +121,7 @@ public class ProfessionsFabric implements ModInitializer {
         // dumb way to load classes, it'll change later
         var init = ProfessionSerializer.DEFAULT_PROFESSION;
         var clazz = ProfessionEditorSerializer.APPEND_EDITOR;
-        var bozo = UnlockSerializer.BLOCK_UNLOCK;
+        var bozo = UnlockSerializer.BLOCK_DROP_UNLOCK;
     }
 
     public static LootItemConditionType registerLootCondition(String id, Serializer<? extends LootItemCondition> serializer) {

@@ -65,4 +65,6 @@ public interface ProfessionalPlayer {
     <T> UnlockableData getUnlockableData(UnlockType<T> unlockType, T object);
 
     <T> List<Unlock.Singular<T>> getLockedKnowledge(UnlockType<T> unlockType, T object);
+    <T> List<Unlock.Singular<T>> getLockedKnowledge(T object);
+
 }

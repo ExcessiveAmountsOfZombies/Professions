@@ -2,14 +2,12 @@ package com.epherical.professions.networking;
 
 import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.client.screen.OccupationScreen;
-import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.progression.Occupation;
+import com.mojang.util.UUIDTypeAdapter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-import java.util.List;
-import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -62,7 +60,7 @@ public class ClientMessages {
     public static void handlePacket(NetworkHandler.SyncData msg, Supplier<NetworkEvent.Context> ctx) {
         Minecraft minecraft = Minecraft.getInstance();
         if (!minecraft.hasSingleplayerServer()) {
-            ProfessionsForge.getInstance().getPlayerManager().addClientPlayer(UUID.fromString(minecraft.getUser().getUuid()), msg.occupations());
+            ProfessionsForge.getInstance().getPlayerManager().addClientPlayer(UUIDTypeAdapter.fromString(minecraft.getUser().getUuid()), msg.occupations());
         }
     }
 }

@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 
 public class UnlockableDataImpl implements UnlockableData {
     private final Occupation occupation;
-    private final Map<Object, Unlock.Singular<?>> unlocks;
+    // i really don't like this, but I'm not sure how to handle it better.
+    private final Map<Object, UnlockableValues<Unlock.Singular<?>>> unlocks;
 
     public UnlockableDataImpl(Occupation occupation) {
         this.occupation = occupation;
@@ -23,7 +24,11 @@ public class UnlockableDataImpl implements UnlockableData {
             for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
                 for (Unlock<?> unlock : entry.getValue()) {
                     for (Unlock.Singular<?> singular : unlock.convertToSingle(occupation.getProfession())) {
-                        unlocks.put(singular.getObject(), singular);
+                        if (unlocks.containsKey(singular.getObject())) {
+                            unlocks.get(singular.getObject()).addValue(singular);
+                        } else {
+                            unlocks.put(singular.getObject(), new UnlockableValues<>(singular));
+                        }
                     }
                 }
             }
@@ -31,17 +36,23 @@ public class UnlockableDataImpl implements UnlockableData {
     }
 
     @Override
-    public <T> Unlock.Singular<T> getUnlock(T object) {
-        return (Unlock.Singular<T>) unlocks.get(object);
+    public <T> UnlockableValues<Unlock.Singular<T>> getUnlock(T object) {
+        return (UnlockableValues<Unlock.Singular<T>>)(UnlockableValues<?>) unlocks.get(object);
     }
 
     @Override
     public <T> Tristate canUse(T object) {
-        Unlock.Singular<T> singular = (Unlock.Singular<T>) unlocks.get(object);
-        if (singular == null) {
+        // NO NO NO NO NO
+        UnlockableValues<Unlock.Singular<T>> values = getUnlock(object);
+        if (values == null || values.isEmpty()) {
             return Tristate.UNKNOWN;
         }
-        return singular.isLocked(object, occupation.getLevel());
+        for (Unlock.Singular<T> singular : values.getValues()) {
+            if (!singular.isLocked(object, occupation.getLevel()).valid()) {
+                return Tristate.FALSE;
+            }
+        }
+        return Tristate.TRUE;
     }
 
     @Override
@@ -59,12 +70,17 @@ public class UnlockableDataImpl implements UnlockableData {
 
     @Override
     public Collection<Unlock.Singular<?>> getUnlockables() {
-        return unlocks.values();
+        return unlocks.values()
+                .stream()
+                .map(UnlockableValues::getValues)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Unlock.Singular<?>> getUnlockedKnowledge() {
-        return unlocks.values().stream().filter(singular -> singular.getUnlockLevel() <= occupation.getLevel()).collect(Collectors.toList());
+        return List.of();
+        //return unlocks.values().stream().filter(singular -> singular.getUnlockLevel() <= occupation.getLevel()).collect(Collectors.toList());
     }
 
 }

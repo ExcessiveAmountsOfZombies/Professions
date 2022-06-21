@@ -1,10 +1,10 @@
-// 1.19	2022-06-18T15:10:53.4199098	Professions
+// 1.19	2022-06-20T23:58:01.102306	Professions
 aa3713f069c8bd17c79cf6183447014d65610834 resourcepacks\fabric\normal\data\professions\professions\occupations\alchemy.json
 4248a0c1df1170703764e7627b4f73fc5598ba76 resourcepacks\fabric\normal\data\professions\professions\occupations\crafting.json
 ef8fa66fcc132ca60c652b0e7463a99e7d835657 resourcepacks\fabric\normal\data\professions\professions\occupations\enchanting.json
 8e5125f27f98aafa39c8adfe6938d75052efb773 resourcepacks\fabric\normal\data\professions\professions\occupations\fishing.json
 f4546c9c88acc786d0855c6b3af2d5c3d75924af resourcepacks\fabric\normal\data\professions\professions\occupations\mining.json
-a2dc9ed1b3aa48cd1537b5c37ce7138c44772f07 resourcepacks\fabric\hardcore\data\professions\professions\occupations\appenders\mining.json
+6e2cae541688e4e2217371e1fcb857dc392981d4 resourcepacks\fabric\hardcore\data\professions\professions\occupations\appenders\mining.json
 61034f73e697d24ba2efa8d89530b816af2a4122 resourcepacks\fabric\normal\data\professions\professions\occupations\smithing.json
 4e307bc402e642d4fdfc18cd463c729d03242174 resourcepacks\fabric\normal\data\professions\professions\occupations\farming.json
 95fbbbda3d8db61133ca8302ade2d58bb3187ee7 resourcepacks\fabric\normal\data\professions\professions\occupations\trading.json

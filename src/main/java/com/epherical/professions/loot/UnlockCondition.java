@@ -6,11 +6,9 @@ import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
-import com.epherical.professions.util.ProfessionUtil;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -18,7 +16,6 @@ import net.minecraft.network.chat.Style;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -26,7 +23,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -62,7 +58,7 @@ public class UnlockCondition implements LootItemCondition {
             // todo: translations
             MutableComponent error = Component.literal("=-=-=-= Level Requirements =-=-=-=");
             if (blockBroken != null) {
-                List<Unlock.Singular<Block>> lockedKnowledge = player.getLockedKnowledge(Unlocks.BLOCK_UNLOCK, blockBroken.getBlock());
+                List<Unlock.Singular<Block>> lockedKnowledge = player.getLockedKnowledge(Unlocks.BLOCK_DROP_UNLOCK, blockBroken.getBlock());
                 for (Unlock.Singular<Block> singular : lockedKnowledge) {
                     if (!singular.canUse(player)) {
                         canDropBlock = false;

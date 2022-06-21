@@ -16,6 +16,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
@@ -80,9 +82,9 @@ public class BlockBreakUnlock implements Unlock<Block> {
 
         @Override
         public Component createUnlockComponent() {
-            return Component.translatable("Unlock drops for %s at level %s",
+            return new TranslatableComponent("Unlock drops for %s at level %s",
                             getObject().getName().setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                            Component.literal(String.valueOf(getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                            new TextComponent(String.valueOf(getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
     }

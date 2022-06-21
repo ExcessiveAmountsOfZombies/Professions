@@ -8,9 +8,12 @@ import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 
@@ -38,7 +41,7 @@ public class ProfessionUtil {
      */
     public static boolean canBreak(ProfessionalPlayer player, Player onlinePlayer, Block block) {
         boolean canBreak = true;
-        UnlockErrorHelper helper = new UnlockErrorHelper(Component.literal("=-=-=-= Level Requirements =-=-=-="));
+        UnlockErrorHelper helper = new UnlockErrorHelper(new TextComponent("=-=-=-= Level Requirements =-=-=-="));
         List<Unlock.Singular<Block>> unlocks = player.getLockedKnowledge(Unlocks.BLOCK_BREAK_UNLOCK, block);
         for (Unlock.Singular<Block> singular : unlocks) {
             if (!singular.canUse(player)) {
@@ -49,12 +52,12 @@ public class ProfessionUtil {
         }
 
         if (!canBreak) {
-            Component hover = Component.literal("Hover to see which occupations prevented the block break.")
+            Component hover = new TextComponent("Hover to see which occupations prevented the block break.")
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)
                             .withUnderlined(true)
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, helper.getComponent())));
-            onlinePlayer.sendSystemMessage(Component.translatable("%s", hover)
-                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            onlinePlayer.sendMessage(new TranslatableComponent("%s", hover)
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
         }
         return canBreak;
     }

@@ -12,13 +12,13 @@ import net.minecraft.world.item.ItemStack;
 
 import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
 
-public class CommandButton extends Button {
+public class CommandButton extends Button implements Hidden {
 
-    private final ItemStack stack;
+    private boolean hidden;
 
-    public CommandButton(ItemStack stack, int i, int j, Component component, OnPress onPress) {
-        super(i, j, 38, 48, component, onPress);
-        this.stack = stack;
+    public CommandButton(boolean hiddenByDefault, int i, int j, Component component, OnPress onPress) {
+        super(i, j, 38, 21, component, onPress);
+        this.hidden = hiddenByDefault;
     }
 
     @Override
@@ -37,14 +37,24 @@ public class CommandButton extends Button {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        this.blit(poseStack, this.x, this.y, (166) + i * width, 176, this.width, this.height);
-        this.blit(poseStack, this.x + this.width / 2, this.y, ((204 - this.width / 2)) + i * width, 176, this.width / 2, this.height);
+        this.blit(poseStack, this.x, this.y, (154) + i * width, 172, this.width, this.height);
+        this.blit(poseStack, this.x + this.width / 2, this.y, ((192 - this.width / 2)) + i * width, 172, this.width / 2, this.height);
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
         int j = this.active ? 16777215 : 10526880;
-        drawCenteredString(poseStack, font, getMessage(), this.x + this.width / 2, (this.y + (this.height - 8) / 2) + 12, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        drawCenteredString(poseStack, font, getMessage(), this.x + this.width / 2, (this.y + (this.height - 8) / 2) + 1, j | Mth.ceil(this.alpha * 255.0F) << 24);
         if (this.isHoveredOrFocused()) {
             this.renderToolTip(poseStack, mouseX, mouseY);
         }
-        minecraft.getItemRenderer().renderGuiItem(stack, (this.x + this.width / 2) - 8, (this.y + (this.height - 28) / 2));
+        //minecraft.getItemRenderer().renderGuiItem(stack, (this.x + this.width / 2) - 8, (this.y + (this.height - 28) / 2));
+    }
+
+    @Override
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    @Override
+    public void setHidden(boolean value) {
+        hidden = value;
     }
 }

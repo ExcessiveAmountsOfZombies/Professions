@@ -57,7 +57,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
 
     @Override
     protected int getScrollbarPosition() {
-        return super.getScrollbarPosition() - 90;
+        return super.getScrollbarPosition() - 153;
     }
 
     @Override
@@ -65,9 +65,9 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
         double d = this.minecraft.getWindow().getGuiScale();
         RenderSystem.enableScissor(
                 (int) ((double) (this.getRowLeft() - 25) * d),
-                (int) ((double) (this.height - this.y1) * d + 2),
+                (int) ((double) (this.height - this.y1) * d - 5),
                 (int) ((double) (this.getScrollbarPosition() + 6) * d),
-                (int) ((double) (this.height - (this.height - this.y1) - this.y0 - 4) * d));
+                (int) ((double) (this.height - (this.height - this.y1) - this.y0 - 2) * d));
         super.render(poseStack, mouseX, mouseY, partialTick);
         RenderSystem.disableScissor();
     }
@@ -97,7 +97,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
         }
     }
 
-    public static class OccupationEntry extends AbstractEntry {
+    public static class OccupationEntry extends AbstractEntry implements Selectable, HoldsProfession {
 
         private OccupationEntryButton button;
         private List<Component> toolTip;
@@ -107,7 +107,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             for (String s : listing.getProfession().getDescription()) {
                 toolTip.add(new TextComponent(s).setStyle(Style.EMPTY.withColor(listing.getProfession().getDescriptionColor())));
             }
-            this.button = new OccupationEntryButton(listing, 0, 0, 154, 24, button1 -> {
+            this.button = new OccupationEntryButton(listing, 0, 0, 92, 24, button1 -> {
                 if (parent.getButton() != null) {
                     if (parent.getButton().equals(CommandButtons.LEAVE)) {
                         CommonPlatform.platform.getClientNetworking().attemptLeavePacket(button.getOccupation().getProfession().getKey());
@@ -127,6 +127,26 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
         public List<? extends GuiEventListener> children() {
             return ImmutableList.of(button);
         }
+
+        @Override
+        public int getYFactor() {
+            return 0;
+        }
+
+        @Override
+        public void setSelected(boolean selected) {
+            button.setSelected(selected);
+        }
+
+        @Override
+        public boolean isSelected() {
+            return button.isSelected();
+        }
+
+        @Override
+        public Profession getProfession() {
+            return button.getProfession();
+        }
     }
 
     public static class ProfessionEntry extends AbstractEntry {
@@ -139,7 +159,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             for (String s : profession.getDescription()) {
                 toolTip.add(new TextComponent(s).setStyle(Style.EMPTY.withColor(profession.getDescriptionColor())));
             }
-            this.button = new ProfessionEntryButton(profession, 0, 0, 154, 24, button1 -> {
+            this.button = new ProfessionEntryButton(profession, 0, 0, 92, 24, button1 -> {
                 if (parent.getButton() != null) {
                     switch (parent.getButton()) {
                         case JOIN -> {
@@ -176,7 +196,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
         private final InfoEntryButton button;
 
         public InfoEntry(OccupationScreen<?> parent, ProfessionsListingWidget listingWidget, Minecraft client, Component component) {
-            button = new InfoEntryButton(component, 0, 0, 154, 24, button -> {
+            button = new InfoEntryButton(component, 0, 0, 92, 24, button -> {
 
             }, (button, poseStack, i, j) -> {
                 List<Component> hoverComp = component.getStyle().getHoverEvent() != null
@@ -210,7 +230,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             this.level = new TranslatableComponent("professions.command.stats.level",
                             new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-            button = new LevelEntryButton(new TextComponent(info.getProfile().getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), 0, 0, 154, 24, button -> {
+            button = new LevelEntryButton(Component.literal(info.getProfile().getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), 0, 0, 92, 24, button -> {
             }, (button, poseStack, i, j) -> {
             });
         }

@@ -36,8 +36,8 @@ public class ProfessionEntryButton extends Button {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        this.blit(poseStack, this.x, this.y, 6, 152 + i * 24, this.width, this.height);
-        this.blit(poseStack, this.x + this.width / 2, this.y, 160 - this.width / 2, 152 + i * 24, this.width / 2, this.height);
+        this.blit(poseStack, this.x, this.y, 58, 148 + i * 24, this.width, this.height);
+        this.blit(poseStack, this.x + this.width / 2, this.y, 149 - this.width / 2, 148 + i * 24, this.width / 2, this.height);
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
         int j = this.active ? 16777215 : 10526880;
         drawString(poseStack, font, name, this.x + 5, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
@@ -45,5 +45,4 @@ public class ProfessionEntryButton extends Button {
             this.renderToolTip(poseStack, mouseX, mouseY);
         }
     }
-
 }

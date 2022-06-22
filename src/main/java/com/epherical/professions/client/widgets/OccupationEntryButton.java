@@ -1,5 +1,6 @@
 package com.epherical.professions.client.widgets;
 
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,10 +15,12 @@ import net.minecraft.util.Mth;
 
 import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
 
-public class OccupationEntryButton extends Button {
+public class OccupationEntryButton extends Button implements Selectable, HoldsProfession {
 
     private final Occupation occupation;
     private final Component name;
+
+    private boolean selected = false;
 
     public OccupationEntryButton(Occupation occupation, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
         super(i, j, k, l, Component.nullToEmpty(""), onPress, tooltip);
@@ -32,12 +35,12 @@ public class OccupationEntryButton extends Button {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, WINDOW_LOCATION);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-        int i = this.getYImage(this.isHoveredOrFocused());
+        int i = getYFactor();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        this.blit(poseStack, this.x, this.y, 6, 152 + i * 24, this.width, this.height);
-        this.blit(poseStack, this.x + this.width / 2, this.y, 160 - this.width / 2, 152 + i * 24, this.width / 2, this.height);
+        this.blit(poseStack, this.x, this.y, 58, 148 + i * 24, this.width, this.height);
+        this.blit(poseStack, this.x + this.width / 2, this.y, 149 - this.width / 2, 148 + i * 24, this.width / 2, this.height);
         drawProgression(poseStack);
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
         int j = this.active ? 16777215 : 10526880;
@@ -82,10 +85,39 @@ public class OccupationEntryButton extends Button {
         }
         bufferBuilder.end();
         BufferUploader.end(bufferBuilder);*/
+    }
 
+    @Override
+    public boolean mouseClicked(double $$0, double $$1, int $$2) {
+        return super.mouseClicked($$0, $$1, $$2);
+    }
+
+    @Override
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public int getYFactor() {
+        int value = getYImage(this.isHoveredOrFocused());
+        if (selected) {
+            value += 2;
+            if (this.isHoveredOrFocused()) {
+                value -= 2;
+            }
+        }
+        return value;
     }
 
     public Occupation getOccupation() {
         return occupation;
+    }
+
+    @Override
+    public Profession getProfession() {
+        return occupation.getProfession();
     }
 }

@@ -2,17 +2,23 @@ package com.epherical.professions.client.screen;
 
 import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.client.widgets.CommandButton;
+import com.epherical.professions.client.widgets.Hidden;
+import com.epherical.professions.client.widgets.HoldsProfession;
 import com.epherical.professions.client.widgets.ProfessionsListingWidget;
+import com.epherical.professions.client.widgets.Selectable;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.LevelDisplay;
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -20,8 +26,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +36,7 @@ import java.util.Optional;
 
 public class OccupationScreen<T> extends Screen {
 
-    public static final ResourceLocation WINDOW_LOCATION = new ResourceLocation("professions", "textures/gui/occupation_menu.png");
+    public static final ResourceLocation WINDOW_LOCATION = new ResourceLocation("professions", "textures/gui/new_occupation_menu.png");
     protected int imageWidth = 256;
     protected int imageHeight = 170;
 
@@ -41,6 +45,12 @@ public class OccupationScreen<T> extends Screen {
     private ProfessionsListingWidget list;
     private CommandButtons button;
     private List<ProfessionsListingWidget.AbstractEntry> entries;
+
+    private boolean anyOccupationSelected = false;
+    private HoldsProfession professionHolder;
+
+    private final List<Widget> renderables = Lists.newArrayList();
+    private final List<Hidden> buttonsThatHide = Lists.newArrayList();
 
     private final MutableComponent NO_ENTRIES = new TranslatableComponent("professions.gui.no_entries")
             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
@@ -62,27 +72,38 @@ public class OccupationScreen<T> extends Screen {
     protected void init() {
         super.init();
         this.list = new ProfessionsListingWidget(this, minecraft,
-                this.width,
+                this.width - 4,
                 (this.height), // height
-                (this.height / 2 - 85), // top
+                (this.height / 2 - 81), // top
                 (this.height / 2 + 76), // bottom
                 24);
-        // row 1
-        addRenderableWidget(new CommandButton(new ItemStack(Items.EMERALD), this.width / 2 + 43, this.height / 2 - 80,
+        // column 1
+        initWidget(new CommandButton(false, this.width / 2 - 24, this.height / 2 - 76,
                 new TranslatableComponent("professions.gui.join"),
                 button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.JOIN)));
-        addRenderableWidget(new CommandButton(new ItemStack(Items.REDSTONE), this.width / 2 + 43 + 38 + 3, this.height / 2 - 80,
+        initWidget(new CommandButton(false, this.width / 2 - 24, this.height / 2 - 76 + 20 + 3,
                 new TranslatableComponent("professions.gui.leave"),
                 button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.LEAVE)));
         //row 2
-        addRenderableWidget(new CommandButton(new ItemStack(Items.BOOK), this.width / 2 + 43, this.height / 2 - 80 + 48 + 3,
+        addRenderableWidget(new CommandButton(true, this.width / 2 + 43, this.height / 2 - 80 + 48 + 3,
                 new TranslatableComponent("professions.gui.info"),
                 button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.INFO)));
-        addRenderableWidget(new CommandButton(new ItemStack(Items.AMETHYST_SHARD), this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,
+        addRenderableWidget(new CommandButton(false, this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,
                 new TranslatableComponent("professions.gui.top"),
                 button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.TOP)));
+
+        CommandButton infoButton = new CommandButton(true, this.width / 2 - 24 + 40, this.height / 2 - 76 + 20 + 3,
+                Component.translatable("professions.gui.info"),
+                button1 -> {
+                    CommonPlatform.platform.getClientNetworking().attemptInfoPacket(professionHolder.getProfession().getKey());
+                });
+
+        initWidget(infoButton);
+        buttonsThatHide.add(infoButton);
+
+
         // row 3
-        addRenderableWidget(new CommandButton(new ItemStack(Items.BARRIER), this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,
+        initWidget(new CommandButton(false, this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,
                 new TranslatableComponent("professions.gui.close"),
                 button1 -> this.minecraft.setScreen(prevScreen)));
         this.addWidget(list);
@@ -107,12 +128,45 @@ public class OccupationScreen<T> extends Screen {
         }
 
         list.render(poseStack, mouseX, mouseY, partialTick);
-        super.render(poseStack, mouseX, mouseY, partialTick);
+        //super.render(poseStack, mouseX, mouseY, partialTick);
+        for (Widget renderable : renderables) {
+            if (renderable instanceof Hidden hidden && hidden.isHidden()) {
+                continue;
+            }
+            renderable.render(poseStack, mouseX, mouseY, partialTick);
+        }
 
         if (element.isPresent()) {
             ProfessionsListingWidget.AbstractEntry entry = (ProfessionsListingWidget.AbstractEntry) element.get();
             entry.getButton().renderToolTip(poseStack, mouseX, mouseY);
         }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int $$2) {
+        Optional<GuiEventListener> element = list.getChildAt(mouseX, mouseY);
+        if (element.isPresent()) {
+            GuiEventListener listener = element.get();
+            if (listener instanceof Selectable selectable) {
+                selectable.setSelected(!selectable.isSelected());
+                for (ProfessionsListingWidget.AbstractEntry child : list.children()) {
+                    if (child.equals(selectable)) {
+                        continue;
+                    }
+                    ((ProfessionsListingWidget.OccupationEntry) child).setSelected(false);
+                }
+                anyOccupationSelected = selectable.isSelected();
+                if (selectable instanceof HoldsProfession profession) {
+                    professionHolder = profession;
+                }
+                if (anyOccupationSelected) {
+                    for (Hidden hidden : buttonsThatHide) {
+                        hidden.setHidden(false);
+                    }
+                }
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, $$2);
     }
 
     public void renderOccupationWindow(PoseStack stack, int offsetX, int offsetY) {
@@ -135,6 +189,12 @@ public class OccupationScreen<T> extends Screen {
     private int centeredWidth() {
         return (this.width - 256) / 2;
     }*/
+
+
+    public <T extends GuiEventListener & Widget & NarratableEntry> void initWidget(T widget) {
+        addWidget(widget);
+        this.renderables.add(widget);
+    }
 
     @Override
     public boolean isPauseScreen() {

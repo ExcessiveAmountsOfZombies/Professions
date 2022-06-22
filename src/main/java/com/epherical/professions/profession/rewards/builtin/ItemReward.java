@@ -37,7 +37,7 @@ public record ItemReward(Item item, int count) implements Reward {
         }
         ItemStack toDrop = new ItemStack(this.item);
         toDrop.setCount(this.count);
-        Block.popResource(player.getLevel(), player.getOnPos(), toDrop);
+        Block.popResource(player.getLevel(), player.getOnPos().above(), toDrop);
     }
 
     @Override

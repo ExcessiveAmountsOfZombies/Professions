@@ -4,5 +4,7 @@ public enum CommandButtons {
     JOIN,
     LEAVE,
     INFO,
-    TOP
+    TOP,
+    UNLOCKS,
+    BUFFS
 }

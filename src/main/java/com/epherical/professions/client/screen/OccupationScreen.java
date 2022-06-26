@@ -103,7 +103,7 @@ public class OccupationScreen<T> extends Screen {
 
 
         // row 3
-        initWidget(new CommandButton(false, this.width / 2 + 43 + (38 + 3) / 2, this.height / 2 - 80 + (48 + 3) * 2,
+        initWidget(new CommandButton(false, this.width / 2 + 80 + (38 + 3) / 2, this.height / 2 - 86,
                 new TranslatableComponent("professions.gui.close"),
                 button1 -> this.minecraft.setScreen(prevScreen)));
         this.addWidget(list);

@@ -8,7 +8,7 @@ import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
-import com.epherical.professions.profession.rewards.Rewards;
+import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,7 +17,6 @@ import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -63,13 +62,12 @@ public abstract class AbstractItemAction extends AbstractAction {
     }
 
     @Override
-    public List<Component> clientFriendlyInformation() {
-        List<Component> components = new ArrayList<>();
+    public List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType) {
+        List<ActionDisplay.Icon> components = new ArrayList<>();
         for (Item item : getRealItems()) {
-            components.add(((MutableComponent) item.getDescription())
-                    .setStyle(Style.EMPTY
-                            .withColor(ProfessionConfig.descriptors)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, allRewardInformation()))));
+            ActionDisplay.Icon icon = new ActionDisplay.Icon(item, ((MutableComponent) item.getDescription())
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), allRewardInformation(), actionType);
+            components.add(icon);
         }
         return components;
     }

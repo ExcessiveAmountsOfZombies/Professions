@@ -6,15 +6,19 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
+import com.epherical.professions.util.ActionDisplay;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.controls.ControlsScreen;
+import net.minecraft.client.gui.screens.controls.KeyBindsScreen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -23,6 +27,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -70,9 +75,17 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
                 (int) ((double) (this.height - (this.height - this.y1) - this.y0 - 2) * d));
         super.render(poseStack, mouseX, mouseY, partialTick);
         RenderSystem.disableScissor();
+        AbstractEntry entry = getEntryAtPosition(mouseX, mouseY);
+        if (entry != null) {
+            Optional<GuiEventListener> child = entry.getChildAt(mouseX, mouseY);
+            if (child.isPresent()) {
+                AbstractWidget widget = (AbstractWidget) child.get();
+                widget.renderToolTip(poseStack, mouseX, mouseY);
+            }
+        }
     }
 
-    public void reset(List<AbstractEntry> entries) {
+    public void resetAndAddEntries(List<AbstractEntry> entries) {
         clearEntries();
         for (AbstractEntry entry : entries) {
             addEntry(entry);
@@ -193,28 +206,43 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
 
     public static class InfoEntry extends AbstractEntry {
 
-        private final InfoEntryButton button;
+        OccupationScreen<?> screen;
 
-        public InfoEntry(OccupationScreen<?> parent, ProfessionsListingWidget listingWidget, Minecraft client, Component component) {
-            button = new InfoEntryButton(component, 0, 0, 92, 24, button -> {
+        private final List<InfoEntryButton> buttons = new ArrayList<>();
 
-            }, (button, poseStack, i, j) -> {
-                List<Component> hoverComp = component.getStyle().getHoverEvent() != null
-                        ? component.getStyle().getHoverEvent().getValue(HoverEvent.Action.SHOW_TEXT).getSiblings()
-                        : List.of(component);
+        public InfoEntry(OccupationScreen<?> parent, ProfessionsListingWidget listingWidget, Minecraft client, List<ActionDisplay.Icon> component) {
+            this.screen = parent;
 
-                parent.renderTooltip(poseStack, hoverComp, Optional.empty(), i, j);
-            });
+            for (ActionDisplay.Icon icon : component) {
+                buttons.add(new InfoEntryButton(icon, 0, 0, 16, 16, button -> {
+                }, ( button, poseStack, i, j) -> {
+                    InfoEntryButton infoEntryButton = (InfoEntryButton) button;
+                    List<Component> hoverComp = icon.getName().getStyle().getHoverEvent() != null
+                            ? icon.getName().getStyle().getHoverEvent().getValue(HoverEvent.Action.SHOW_TEXT).getSiblings()
+                            : List.of(icon.getName());
+                    parent.renderTooltip(poseStack, hoverComp, Optional.empty(), i, j);
+                    infoEntryButton.drawText(poseStack, parent.width, parent.height);
+                }));
+            }
+        }
+
+        @Override
+        public void render(PoseStack poseStack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
+            for (int i = 0; i < buttons.size(); i++) {
+                buttons.get(i).x = left - 12 + (i * 18);
+                buttons.get(i).y = top;
+                buttons.get(i).render(poseStack, mouseX, mouseY, partialTick);
+            }
         }
 
         @Override
         public Button getButton() {
-            return button;
+            return null;
         }
 
         @Override
         public List<? extends GuiEventListener> children() {
-            return ImmutableList.of(button);
+            return buttons;
         }
     }
 

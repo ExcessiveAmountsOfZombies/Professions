@@ -5,6 +5,7 @@ import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
+import com.epherical.professions.util.ActionDisplay;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface Action extends Predicate<ProfessionContext> {
 
     List<Component> displayInformation();
 
-    List<Component> clientFriendlyInformation();
+    List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType);
 
     /**
      * Called after it has already been shown the action is successful.

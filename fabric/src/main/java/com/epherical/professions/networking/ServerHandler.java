@@ -128,7 +128,7 @@ public class ServerHandler {
             for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
                 Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
                 if (actionsFor != null && !actionsFor.isEmpty()) {
-                    ActionDisplay display = new ActionDisplay(new TranslatableComponent("=-=-=| %s |=-=-=",
+                    ActionDisplay display = new ActionDisplay(new TranslatableComponent("%s",
                                     new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), actionsFor);
                     displays.add(display);

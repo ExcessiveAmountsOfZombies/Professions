@@ -15,10 +15,20 @@ import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LO
 public class CommandButton extends Button implements Hidden {
 
     private boolean hidden;
+    private boolean small;
+    private SmallIcon icon;
+
+
+
+    public CommandButton(boolean hiddenByDefault, int i, int j, Component component, OnPress onPress, boolean small, int width, int height, SmallIcon icon) {
+        super(i, j, width, height, component, onPress);
+        this.hidden = hiddenByDefault;
+        this.small = small;
+        this.icon = icon;
+    }
 
     public CommandButton(boolean hiddenByDefault, int i, int j, Component component, OnPress onPress) {
-        super(i, j, 38, 21, component, onPress);
-        this.hidden = hiddenByDefault;
+        this(hiddenByDefault, i, j, component, onPress, false, 38, 21, SmallIcon.GOOD);
     }
 
     @Override
@@ -37,11 +47,17 @@ public class CommandButton extends Button implements Hidden {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        this.blit(poseStack, this.x, this.y, (154) + i * width, 172, this.width, this.height);
-        this.blit(poseStack, this.x + this.width / 2, this.y, ((192 - this.width / 2)) + i * width, 172, this.width / 2, this.height);
+
+        if (small) {
+            this.blit(poseStack, this.x, this.y, 154 + i * width, 195, this.width, this.height);
+            this.blit(poseStack, this.x + 3, this.y, icon.ordinal() * 16, 179, this.width, this.height);
+        } else {
+            this.blit(poseStack, this.x, this.y, (154) + i * width, 172, this.width, this.height);
+            this.blit(poseStack, this.x + this.width / 2, this.y, ((192 - this.width / 2)) + i * width, 172, this.width / 2, this.height);
+            int j = this.active ? 16777215 : 10526880;
+            drawCenteredString(poseStack, font, getMessage(), this.x + this.width / 2, (this.y + (this.height - 8) / 2) + 1, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        }
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
-        int j = this.active ? 16777215 : 10526880;
-        drawCenteredString(poseStack, font, getMessage(), this.x + this.width / 2, (this.y + (this.height - 8) / 2) + 1, j | Mth.ceil(this.alpha * 255.0F) << 24);
         if (this.isHoveredOrFocused()) {
             this.renderToolTip(poseStack, mouseX, mouseY);
         }
@@ -56,5 +72,11 @@ public class CommandButton extends Button implements Hidden {
     @Override
     public void setHidden(boolean value) {
         hidden = value;
+    }
+
+    public enum SmallIcon {
+        GOOD,
+        BAD,
+        BACK
     }
 }

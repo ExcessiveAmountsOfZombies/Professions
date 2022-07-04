@@ -8,7 +8,7 @@ import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
-import com.epherical.professions.profession.rewards.Rewards;
+import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -24,6 +24,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -67,13 +68,12 @@ public abstract class AbstractEntityAction extends AbstractAction {
     }
 
     @Override
-    public List<Component> clientFriendlyInformation() {
-        List<Component> components = new ArrayList<>();
+    public List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType) {
+        List<ActionDisplay.Icon> components = new ArrayList<>();
         for (EntityType<?> entity : getRealEntities()) {
-            components.add((entity.getDescription().copy())
-                    .setStyle(Style.EMPTY
-                            .withColor(ProfessionConfig.descriptors)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, allRewardInformation()))));
+            ActionDisplay.Icon icon = new ActionDisplay.Icon(Items.ZOMBIE_HEAD, (entity.getDescription().copy())
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), allRewardInformation(), actionType);
+            components.add(icon);
         }
         return components;
     }

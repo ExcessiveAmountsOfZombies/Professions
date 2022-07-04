@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -29,8 +30,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 
 public class OccupationScreen<T> extends Screen {
@@ -40,7 +44,7 @@ public class OccupationScreen<T> extends Screen {
     protected int imageHeight = 170;
 
     @Nullable
-    private Screen prevScreen;
+    private static Screen prevScreen;
     private ProfessionsListingWidget list;
     private CommandButtons button;
     private List<ProfessionsListingWidget.AbstractEntry> entries;
@@ -75,35 +79,64 @@ public class OccupationScreen<T> extends Screen {
                 (this.height), // height
                 (this.height / 2 - 81), // top
                 (this.height / 2 + 76), // bottom
-                24);
+                button == CommandButtons.INFO ? 16 : 24);
         // column 1
         initWidget(new CommandButton(false, this.width / 2 - 24, this.height / 2 - 76,
                 Component.translatable("professions.gui.join"),
-                button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.JOIN)));
+                button1 -> {
+                    if (button != CommandButtons.JOIN) {
+                        addPrevious(this);
+                    }
+                    CommonPlatform.platform.sendButtonPacket(CommandButtons.JOIN);
+                }));
         initWidget(new CommandButton(false, this.width / 2 - 24, this.height / 2 - 76 + 20 + 3,
                 Component.translatable("professions.gui.leave"),
-                button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.LEAVE)));
+                button1 -> {
+                    if (button != CommandButtons.LEAVE) {
+                        addPrevious(this);
+                    }
+                    CommonPlatform.platform.sendButtonPacket(CommandButtons.LEAVE);
+                }));
         // column 2
         initWidget(new CommandButton(false, this.width / 2 - 24 + 40, this.height / 2 - 76,
                 Component.translatable("professions.gui.top"),
-                button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.TOP)));
-
-        CommandButton infoButton = new CommandButton(true, this.width / 2 - 24 + 40, this.height / 2 - 76 + 20 + 3,
-                Component.translatable("professions.gui.info"),
                 button1 -> {
-                    CommonPlatform.platform.getClientNetworking().attemptInfoPacket(professionHolder.getProfession().getKey());
-                });
+                    if (button != CommandButtons.TOP) {
+                        addPrevious(this);
+                    }
+                    CommonPlatform.platform.sendButtonPacket(CommandButtons.TOP);
+                }));
 
-        initWidget(infoButton);
-        buttonsThatHide.add(infoButton);
+        if (button != CommandButtons.INFO) {
+            CommandButton infoButton = new CommandButton(true, this.width / 2 - 24 + 40, this.height / 2 - 76 + 20 + 3,
+                    Component.translatable("professions.gui.info"),
+                    button1 -> {
+                        addPrevious(this);
+                        CommonPlatform.platform.getClientNetworking().attemptInfoPacket(professionHolder.getProfession().getKey());
+                    });
 
+            initWidget(infoButton);
+            buttonsThatHide.add(infoButton);
+        }
 
         // row 3
-        initWidget(new CommandButton(false, this.width / 2 + 80 + (38 + 3) / 2, this.height / 2 - 86,
+        initWidget(new CommandButton(false, this.width / 2 + 100 + (38 + 3) / 2, this.height / 2 - 86,
                 Component.translatable("professions.gui.close"),
-                button1 -> this.minecraft.setScreen(prevScreen)));
+                button1 -> this.minecraft.setScreen(null), true, 16, 16, CommandButton.SmallIcon.BAD));
+
+
+        if (prevScreen != null) {
+            initWidget(new CommandButton(false, this.width / 2 + 100 - 18 + (38 + 3) / 2, this.height / 2 - 86,
+                    Component.translatable("professions.gui.close"),
+                    button1 -> {
+                        Screen screen = prevScreen;
+                        prevScreen = null;
+                        this.minecraft.setScreen(screen);
+                    }, true, 16, 16, CommandButton.SmallIcon.BACK));
+        }
+
         this.addWidget(list);
-        list.reset(entries);
+        list.resetAndAddEntries(entries);
     }
 
     @Override
@@ -112,9 +145,6 @@ public class OccupationScreen<T> extends Screen {
         int ofx = (this.width - imageWidth) / 2;
         int ofy = (this.height - imageHeight) / 2;
         renderOccupationWindow(poseStack, ofx, ofy);
-
-
-        Optional<GuiEventListener> element = list.getChildAt(mouseX, mouseY);
 
         if (entries.size() == 0) {
             drawCenteredString(poseStack, font, NO_ENTRIES, ((this.width - imageWidth) / 2) + 83, ofy + 50, -1);
@@ -130,11 +160,6 @@ public class OccupationScreen<T> extends Screen {
                 continue;
             }
             renderable.render(poseStack, mouseX, mouseY, partialTick);
-        }
-
-        if (element.isPresent()) {
-            ProfessionsListingWidget.AbstractEntry entry = (ProfessionsListingWidget.AbstractEntry) element.get();
-            entry.getButton().renderToolTip(poseStack, mouseX, mouseY);
         }
     }
 
@@ -193,6 +218,23 @@ public class OccupationScreen<T> extends Screen {
     }
 
     @Override
+    protected void clearWidgets() {
+        super.clearWidgets();
+        this.renderables.clear();
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+        prevScreen = null;
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+    }
+
+    @Override
     public boolean isPauseScreen() {
         return false;
     }
@@ -223,9 +265,9 @@ public class OccupationScreen<T> extends Screen {
     public static <T> List<ProfessionsListingWidget.AbstractEntry> createInfoEntries(OccupationScreen<T> screen, Minecraft minecraft, List<ActionDisplay> displays) {
         List<ProfessionsListingWidget.AbstractEntry> entries = new ArrayList<>();
         for (ActionDisplay display : displays) {
-            entries.add(new ProfessionsListingWidget.InfoEntry(screen, screen.list, minecraft, display.getHeader()));
-            for (Component component : display.getActionInformation()) {
-                entries.add(new ProfessionsListingWidget.InfoEntry(screen, screen.list, minecraft, component));
+            List<ActionDisplay.Icon> acts = new ArrayList<>(display.getActionInformation());
+            for (List<ActionDisplay.Icon> icons : Lists.partition(acts, 5)) {
+                entries.add(new ProfessionsListingWidget.InfoEntry(screen, screen.list, minecraft, icons));
             }
         }
         return entries;

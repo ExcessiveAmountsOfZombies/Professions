@@ -8,7 +8,7 @@ import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
-import com.epherical.professions.profession.rewards.Rewards;
+import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.ActionEntry;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -17,7 +17,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.ChatType;
@@ -29,6 +28,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -71,12 +72,16 @@ public abstract class BlockAbstractAction extends AbstractAction {
     }
 
     @Override
-    public List<Component> clientFriendlyInformation() {
-        List<Component> components = new ArrayList<>();
+    public List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType) {
+        List<ActionDisplay.Icon> components = new ArrayList<>();
         for (Block block : getRealBlocks()) {
-            components.add(block.getName().setStyle(Style.EMPTY
-                    .withColor(ProfessionConfig.descriptors)
-                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, allRewardInformation()))));
+            Item item = block.asItem();
+            if (item.equals(Items.AIR)) {
+                item = Items.BARRIER;
+            }
+            ActionDisplay.Icon icon = new ActionDisplay.Icon(item, block.getName().setStyle(Style.EMPTY
+                    .withColor(ProfessionConfig.descriptors)), allRewardInformation(), actionType);
+            components.add(icon);
         }
         return components;
     }

@@ -10,6 +10,7 @@ import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
+import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.ActionEntry;
 import com.epherical.professions.util.EnchantmentContainer;
 import com.google.gson.JsonArray;
@@ -26,6 +27,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,13 +80,13 @@ public class EnchantAction extends AbstractItemAction {
 
 
     @Override
-    public List<Component> clientFriendlyInformation() {
-        List<Component> components = super.clientFriendlyInformation();
+    public List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType) {
+        List<ActionDisplay.Icon> components = super.clientFriendlyInformation(actionType);
         for (EnchantmentContainer enchantment : enchantments) {
-            components.add(((MutableComponent) enchantment.enchantment().getFullname(enchantment.level()))
+            ActionDisplay.Icon icon = new ActionDisplay.Icon(Items.ENCHANTED_BOOK, ((MutableComponent) enchantment.enchantment().getFullname(enchantment.level()))
                     .setStyle(Style.EMPTY
-                            .withColor(ProfessionConfig.descriptors)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, allRewardInformation()))));
+                            .withColor(ProfessionConfig.descriptors)), allRewardInformation(), actionType);
+            components.add(icon);
         }
 
         return components;

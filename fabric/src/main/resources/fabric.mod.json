@@ -33,12 +33,6 @@
   "depends": {
     "fabricloader": ">=0.13.3",
     "fabric": "*",
-    "minecraft": ">=1.19"
-  },
-  "custom": {
-    "waila:plugins": {
-      "id": "professions:prof_waila",
-      "initializer": "com.epherical.professions.integration.wthit.ProfWailaPlugin"
-    }
+    "minecraft": ">=1.18.2"
   }
 }

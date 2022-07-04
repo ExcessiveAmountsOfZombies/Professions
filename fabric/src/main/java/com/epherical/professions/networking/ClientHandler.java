@@ -3,6 +3,7 @@ package com.epherical.professions.networking;
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.client.screen.OccupationScreen;
+import com.epherical.professions.client.widgets.CommandButton;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.progression.Occupation;
@@ -60,7 +61,7 @@ public class ClientHandler implements ClientNetworking {
             for (int i = 0; i < size; i++) {
                 displays.add(ActionDisplay.fromNetwork(buf));
             }
-            client.execute(() -> client.setScreen(new OccupationScreen<>(displays, client, OccupationScreen::createInfoEntries, null)));
+            client.execute(() -> client.setScreen(new OccupationScreen<>(displays, client, OccupationScreen::createInfoEntries, CommandButtons.INFO)));
         });
         subChannelReceivers.put(Constants.CLICK_PROFESSION_BUTTON_RESPONSE, (client, handler, buf, responseSender) -> {
             CommandButtons button = buf.readEnum(CommandButtons.class);

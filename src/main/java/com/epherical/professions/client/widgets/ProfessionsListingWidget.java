@@ -17,8 +17,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.client.gui.screens.controls.ControlsScreen;
-import net.minecraft.client.gui.screens.controls.KeyBindsScreen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -27,7 +25,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -57,12 +54,17 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
 
     @Override
     public int getRowWidth() {
-        return super.getRowWidth();
+        return super.getRowWidth() + 21;
     }
 
     @Override
     protected int getScrollbarPosition() {
         return super.getScrollbarPosition() - 153;
+    }
+
+    @Override
+    public int getRowLeft() {
+        return super.getRowLeft() + 10;
     }
 
     @Override
@@ -215,7 +217,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
 
             for (ActionDisplay.Icon icon : component) {
                 buttons.add(new InfoEntryButton(icon, 0, 0, 16, 16, button -> {
-                }, ( button, poseStack, i, j) -> {
+                }, (button, poseStack, i, j) -> {
                     InfoEntryButton infoEntryButton = (InfoEntryButton) button;
                     List<Component> hoverComp = icon.getName().getStyle().getHoverEvent() != null
                             ? icon.getName().getStyle().getHoverEvent().getValue(HoverEvent.Action.SHOW_TEXT).getSiblings()

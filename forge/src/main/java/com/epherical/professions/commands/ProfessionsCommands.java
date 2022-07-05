@@ -21,6 +21,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
+import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
@@ -29,6 +30,8 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -331,7 +334,7 @@ public class ProfessionsCommands {
             components.add(headerFooter);
             if (pPlayer != null) {
                 if (pPlayer.getActiveOccupations().size() == 0 && pPlayer.getUuid().equals(commandPlayer.getUUID())) {
-                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.stats.error.not_in_any_professions").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.stats.error.not_in_any_professions").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
                     return 1;
                 }
                 for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
@@ -359,13 +362,13 @@ public class ProfessionsCommands {
 
                 if (components.size() > 1) {
                     for (Component component : components) {
-                        commandPlayer.sendMessage(component);
+                        commandPlayer.sendMessage(component, Util.NIL_UUID);
                     }
                 } else {
-                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.stats.error.other_not_in_any_professions", new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                    commandPlayer.sendMessage(new TranslatableComponent("professions.command.stats.error.other_not_in_any_professions", new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
                 }
             } else {
-                commandPlayer.sendMessage(new TranslatableComponent("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                commandPlayer.sendMessage(new TranslatableComponent("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             }
 
             // -=-=-=| Stats |=-=-=-
@@ -493,9 +496,9 @@ public class ProfessionsCommands {
 
             ProfessionalPlayer player = manager.getPlayer(profile.getId());
             if (manager.fireFromOccupation(player, profession, commandPlayer)) {
-                commandPlayer.sendMessage(new TranslatableComponent("professions.command.fire.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
+                commandPlayer.sendMessage(new TranslatableComponent("professions.command.fire.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
             } else {
-                commandPlayer.sendMessage(new TranslatableComponent("professions.command.fire.fail").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                commandPlayer.sendMessage(new TranslatableComponent("professions.command.fire.fail").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -517,7 +520,7 @@ public class ProfessionsCommands {
                 manager.fireFromOccupation(player, profession, commandPlayer);
             }
 
-            commandPlayer.sendMessage(new TranslatableComponent("professions.command.fireall.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
+            commandPlayer.sendMessage(new TranslatableComponent("professions.command.fireall.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -567,7 +570,7 @@ public class ProfessionsCommands {
                             occupation.getProfession().getDisplayComponent(),
                             new TextComponent(String.valueOf(occupation.getLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
                             new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
+                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
                 }
             }
         } catch (Exception e) {

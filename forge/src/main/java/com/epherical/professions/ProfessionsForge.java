@@ -38,6 +38,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,7 +53,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.resource.PathResourcePack;
 
 import java.util.HashSet;
@@ -89,7 +89,7 @@ public class ProfessionsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeRegConstants::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(config::initConfig);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addPacks);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerEvent);
+        //FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerEvent);
 
         MinecraftForge.EVENT_BUS.register(new ProfPermissions());
         MinecraftForge.EVENT_BUS.register(new ProfessionListener());
@@ -106,6 +106,7 @@ public class ProfessionsForge {
     private void commonInit(FMLCommonSetupEvent event) {
         professionLoader = new ForgeProfLoader();
         MinecraftForge.EVENT_BUS.register(professionLoader);
+        registerEvent();
     }
 
     private void clientInit(FMLClientSetupEvent event) {
@@ -133,10 +134,8 @@ public class ProfessionsForge {
     }
 
 
-    public void registerEvent(RegisterEvent event) {
-        if (event.getRegistryKey().equals(Registry.LOOT_ITEM_REGISTRY)) {
-            Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
-        }
+    public void registerEvent() {
+        Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
     }
 
     public static LootItemConditionType registerLootCondition(String id, Serializer<? extends LootItemCondition> serializer) {

@@ -65,7 +65,7 @@ public abstract class AbstractFurnaceBlockEntityOwnableMixin extends BlockEntity
 
     @Inject(method = "serverTick", locals = LocalCapture.CAPTURE_FAILEXCEPTION,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;setRecipeUsed(Lnet/minecraft/world/item/crafting/Recipe;)V"))
-    private static void onSuccessfulSmelt(Level level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean bl, boolean bl2, ItemStack itemStack, boolean bl3, boolean bl4, Recipe<?> recipe, int i) {
+    private static void onSuccessfulSmelt(Level level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean bl, boolean bl2, ItemStack itemStack, Recipe<?> recipe, int i) {
         if (((PlayerOwnable) blockEntity).professions$hasOwner()) {
             TriggerEvents.SMELT_ITEM_EVENT.invoker().onItemSmelt(((PlayerOwnable) blockEntity).professions$getPlacedBy(), blockEntity.getItem(2), recipe, blockEntity);
         }

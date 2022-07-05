@@ -115,7 +115,7 @@ public class ProfessionsClient implements ClientModInitializer {
                 List<Unlock.Singular<Item>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.TOOL_UNLOCK, item);
                 for (Unlock.Singular<Item> singular : lockedKnowledge) {
                     if (!singular.canUse(pPlayer)) {
-                        comps.add(new TranslatableComponent("professions.tooltip.use_req",
+                        comps.add(new TranslatableComponent("professions.tooltip.unlock.tool_use_req",
                                         singular.getProfessionDisplay(),
                                         new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));

@@ -12,6 +12,8 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -92,7 +94,7 @@ public class ProfessionsClientForge {
             List<Unlock.Singular<Block>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.BLOCK_DROP_UNLOCK, blockItem.getBlock());
             for (Unlock.Singular<Block> singular : lockedKnowledge) {
                 if (!singular.canUse(pPlayer)) {
-                    comps.add(new TranslatableComponent("professions.tooltip.drop_req",
+                    comps.add(new TranslatableComponent("professions.tooltip.unlock.drop_req",
                                     singular.getProfessionDisplay(),
                                     new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
@@ -102,7 +104,7 @@ public class ProfessionsClientForge {
             List<Unlock.Singular<Item>> lockedKnowledge = pPlayer.getLockedKnowledge(Unlocks.TOOL_UNLOCK, item);
             for (Unlock.Singular<Item> singular : lockedKnowledge) {
                 if (!singular.canUse(pPlayer)) {
-                    comps.add(new TranslatableComponent("professions.tooltip.use_req",
+                    comps.add(new TranslatableComponent("professions.tooltip.unlock.tool_use_req",
                                     singular.getProfessionDisplay(),
                                     new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));

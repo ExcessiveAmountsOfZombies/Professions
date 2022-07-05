@@ -28,7 +28,7 @@ public class ProfessionsOwnableAbstractFurnaceMixin implements CapabilityMixinHe
 
     @Inject(method = "serverTick", locals = LocalCapture.CAPTURE_FAILEXCEPTION,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;setRecipeUsed(Lnet/minecraft/world/item/crafting/Recipe;)V"))
-    private static void onSuccessfulSmelt(Level level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean bl, boolean bl2, ItemStack itemStack, boolean bl3, boolean bl4, Recipe<?> recipe, int i) {
+    private static void onSuccessfulSmelt(Level level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity blockEntity, CallbackInfo ci, boolean bl, boolean bl2, ItemStack itemStack, Recipe<?> recipe, int i) {
         CapabilityMixinHelper<PlayerOwnable> entityCast = (CapabilityMixinHelper<PlayerOwnable>) blockEntity;
         if (entityCast.professions$getValue() == null) {
             LazyOptional<PlayerOwnable> capability = blockEntity.getCapability(PlayerOwnableImpl.OWNING_CAPABILITY);

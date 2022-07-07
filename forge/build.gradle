@@ -141,3 +141,12 @@ reobf {
 }
 
 jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            version = version + "-${minecraft_version}"
+            from components.java
+        }
+    }
+}

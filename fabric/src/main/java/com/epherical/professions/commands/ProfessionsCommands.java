@@ -436,7 +436,7 @@ public class ProfessionsCommands {
             int begin = page == 1 ? 0 : Math.min(messages, ((page -1) * messagesPerPage));
             int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
 
-            if (page > maxPage) {
+            if (page > maxPage && !mod.getDataStorage().isDatabase()) {
                 stack.getSource().sendFailure(Component.literal("That page doesn't exist!"));
                 return 0;
             }
@@ -470,14 +470,14 @@ public class ProfessionsCommands {
                 position++;
             }
 
-            MutableComponent previous = new TranslatableComponent("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
+            MutableComponent previous = Component.translatable("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
                     .withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions top \"" + potentialProfession + "\" " + (page - 1))));
-            MutableComponent next = new TranslatableComponent("professions.command.next").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)
+            MutableComponent next = Component.translatable("professions.command.next").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)
                     .withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions top \"" + potentialProfession + "\" " + (page + 1))));
 
-            MutableComponent pageComp = new TranslatableComponent("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
+            MutableComponent pageComp = Component.translatable("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
             stack.getSource().sendSuccess(pageComp, false);
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,11 +12,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
@@ -108,5 +112,27 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
     @Override
     public boolean isDatabase() {
         return false;
+    }
+
+    @Override
+    // debugging only
+    public List<ProfessionalPlayer> getUsers(int from, int to, Profession profession) {
+        List<ProfessionalPlayer> players = new ArrayList<>();
+        try {
+            Files.walk(basePath).forEach(path -> {
+                try {
+                    FileReader reader = new FileReader(path.toFile());
+                    ProfessionalPlayerImpl player = GSON.fromJson(reader, ProfessionalPlayerImpl.class);
+                    String name = path.toFile().getName();
+                    player.setUuid(UUID.fromString(name.substring(0, name.length() - 5)));
+                    players.add(player);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return players;
     }
 }

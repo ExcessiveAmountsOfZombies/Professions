@@ -131,7 +131,9 @@ public class ProfessionsCommands {
                         .requires(Permissions.require("professions.command.top", 0))
                         .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(occupationProvider)
-                                .executes(this::top)))
+                                .executes(this::top)
+                                .then(Commands.argument("page", IntegerArgumentType.integer(1))
+                                        .executes(this::top))))
                 .then(Commands.literal("reload")
                         .requires(Permissions.require("professions.command.reload", 4))
                         .executes(this::reload))
@@ -404,6 +406,10 @@ public class ProfessionsCommands {
     }
 
     private int top(CommandContext<CommandSourceStack> stack) {
+        int page = 1;
+        try {
+            page = IntegerArgumentType.getInteger(stack, "page");
+        } catch (IllegalArgumentException ignored) {}
         try {
             ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
             Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
@@ -416,27 +422,29 @@ public class ProfessionsCommands {
             // if it's not a database, im not going to open all the files to see whose on top, so it will only show
             // the top players who are online.
             int messagesPerPage = 12;
-            Collection<ProfessionalPlayer> players = Collections.emptyList();
+            Collection<ProfessionalPlayer> players;
             if (!mod.getDataStorage().isDatabase()) {
                 players = mod.getPlayerManager().getPlayers();
                 players = players.stream()
                         .filter(player -> player.isOccupationActive(profession))
                         .sorted(Comparator.comparing(player -> player.getOccupation(profession).getLevel()))
-                        .limit(messagesPerPage)
                         .collect(Collectors.toList());
+            } else {
+                int finalTop = page * 12;
+                int from = finalTop - 12;
+                players = mod.getDataStorage().getUsers(from, 12, profession);
             }
             int messages = players.size();
 
             int maxPage = Math.max(messages / messagesPerPage, 1);
-            maxPage = messages % messagesPerPage != 0 ? maxPage + 1 : maxPage;
-            // todo: add multiple pages, but for now just display top 12
-            /*int begin = page == 1 ? 0 : Math.min(messages, ((page -1) * messagesPerPage));
+            maxPage = (messages % messagesPerPage != 0) && messages > messagesPerPage ? maxPage + 1 : maxPage;
+            int begin = page == 1 ? 0 : Math.min(messages, ((page -1) * messagesPerPage));
             int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
 
             if (page > maxPage) {
                 stack.getSource().sendFailure(new TextComponent("That page doesn't exist!"));
                 return 0;
-            }*/
+            }
 
             if (messages == 0) {
                 stack.getSource().sendFailure(new TranslatableComponent("professions.command.error.missing_players").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
@@ -446,11 +454,14 @@ public class ProfessionsCommands {
             stack.getSource().sendSuccess(new TranslatableComponent("professions.command.top.header",
                             new TextComponent("" + messages).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), false);
-            int position = 1;
+            int position = 1 + messagesPerPage * (page - 1);
+
             for (ProfessionalPlayer player : players) {
                 Component playerName;
                 if (player == null) {
                     playerName = new TranslatableComponent("professions.command.top.unknown_player");
+                } else if (player.getPlayer() == null) {
+                    playerName = new TextComponent(player.getUuid().toString().substring(0, 12));
                 } else {
                     playerName = player.getPlayer().getDisplayName();
                 }
@@ -461,8 +472,18 @@ public class ProfessionsCommands {
                                 new TextComponent("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                         .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
                 stack.getSource().sendSuccess(msg, false);
+                position++;
             }
 
+            MutableComponent previous = new TranslatableComponent("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
+                    .withUnderlined(true)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions top \"" + potentialProfession + "\" " + (page - 1))));
+            MutableComponent next = new TranslatableComponent("professions.command.next").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)
+                    .withUnderlined(true)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions top \"" + potentialProfession + "\" " + (page + 1))));
+
+            MutableComponent pageComp = new TranslatableComponent("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
+            stack.getSource().sendSuccess(pageComp, false);
         } catch (Exception e) {
             e.printStackTrace();
         }

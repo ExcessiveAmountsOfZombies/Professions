@@ -1,6 +1,9 @@
 package com.epherical.professions.data;
 
+import com.epherical.professions.profession.Profession;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface Storage<Result, Key> {
 
@@ -14,4 +17,6 @@ public interface Storage<Result, Key> {
     void saveUser(Result result);
 
     boolean isDatabase();
+
+    List<Result> getUsers(int from, int to, Profession profession);
 }

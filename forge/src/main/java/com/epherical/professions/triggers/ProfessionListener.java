@@ -4,23 +4,13 @@ import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.capability.impl.PlayerOwnableImpl;
-import com.epherical.professions.config.ProfessionConfig;
-import com.epherical.professions.profession.unlock.Unlock;
-import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ProfessionUtil;
-import com.epherical.professions.util.UnlockErrorHelper;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import java.util.List;
 
 public class ProfessionListener {
 
@@ -29,7 +19,7 @@ public class ProfessionListener {
         if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayer)) {
             return;
         }
-        BlockEntity entity = event.getWorld().getBlockEntity(event.getPos());
+        BlockEntity entity = event.getLevel().getBlockEntity(event.getPos());
         if (entity != null) {
             entity.getCapability(PlayerOwnableImpl.OWNING_CAPABILITY).ifPresent(ownable -> {
                 ownable.setPlacedBy((ServerPlayer) event.getEntity());
@@ -39,22 +29,22 @@ public class ProfessionListener {
 
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!event.getPlayer().getLevel().isClientSide) {
-            ProfessionsForge.getInstance().getPlayerManager().playerJoined((ServerPlayer) event.getPlayer());
+        if (!event.getEntity().getLevel().isClientSide) {
+            ProfessionsForge.getInstance().getPlayerManager().playerJoined((ServerPlayer) event.getEntity());
         }
 
     }
 
     @SubscribeEvent
     public void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (!event.getPlayer().getLevel().isClientSide) {
-            ProfessionsForge.getInstance().getPlayerManager().playerQuit((ServerPlayer) event.getPlayer());
+        if (!event.getEntity().getLevel().isClientSide) {
+            ProfessionsForge.getInstance().getPlayerManager().playerQuit((ServerPlayer) event.getEntity());
         }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = false)
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (event.isCanceled() || event.getWorld().isClientSide()) {
+        if (event.isCanceled() || event.getLevel().isClientSide()) {
             return;
         }
 

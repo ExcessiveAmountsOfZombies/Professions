@@ -41,7 +41,7 @@ public class EntityTriggers {
         }
         ServerLevel level = (ServerLevel) event.getEntity().getLevel();
         Entity source = event.getSource().getEntity();
-        LivingEntity killedEntity = event.getEntityLiving();
+        LivingEntity killedEntity = event.getEntity();
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.ACTION_TYPE, Actions.KILL_ENTITY);
@@ -61,11 +61,11 @@ public class EntityTriggers {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onCatchFish(ItemFishedEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         if (event.isCanceled() || player.level.isClientSide) {
             return;
         }
-        ServerLevel level = (ServerLevel) event.getPlayer().level;
+        ServerLevel level = (ServerLevel) event.getEntity().level;
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));
@@ -78,7 +78,7 @@ public class EntityTriggers {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onCraftItem(PlayerEvent.ItemCraftedEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         if (event.isCanceled() || player.level.isClientSide) {
             return;
         }
@@ -98,7 +98,7 @@ public class EntityTriggers {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onTakeSmeltedItem(PlayerEvent.ItemSmeltedEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         if (event.isCanceled() || player.level.isClientSide) {
             return;
         }

@@ -1,6 +1,7 @@
 package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.capability.PlayerOwnable;
 import com.epherical.professions.client.ProfessionsClientForge;
 import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.config.Config;
@@ -14,7 +15,6 @@ import com.epherical.professions.triggers.BlockTriggers;
 import com.epherical.professions.triggers.EntityTriggers;
 import com.epherical.professions.triggers.ProfessionListener;
 import com.epherical.professions.util.PlayerOwnableProvider;
-import com.epherical.professions.capability.PlayerOwnable;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -53,7 +53,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.resource.PathResourcePack;
+import net.minecraftforge.resource.PathPackResources;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -100,7 +100,6 @@ public class ProfessionsForge {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getConfigSpec());
 
 
-
     }
 
     private void commonInit(FMLCommonSetupEvent event) {
@@ -110,6 +109,7 @@ public class ProfessionsForge {
 
     private void clientInit(FMLClientSetupEvent event) {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ProfessionsClientForge::initClient);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ProfessionsClientForge::registerKeyBindings);
         MinecraftForge.EVENT_BUS.register(new ProfessionsClientForge());
     }
 
@@ -181,7 +181,7 @@ public class ProfessionsForge {
             if (ProfessionConfig.useBuiltinDatapack) { // since we are loading a server datapack, I think this is called after the configs have loaded.
                 event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
                     packConsumer.accept(packConstructor.create("default_normal_professions", Component.nullToEmpty("Default Normal Professions"),
-                            true, () -> new PathResourcePack("Default Normal Professions",                                       /// ????
+                            true, () -> new PathPackResources("Default Normal Professions",                                       /// ????
                                     ModList.get().getModFileById(Constants.MOD_ID).getFile().findResource("resourcepacks/forge/normal")),
                             new PackMetadataSection(Component.nullToEmpty("Default Normal Professions"), 10),
                             Pack.Position.BOTTOM,
@@ -189,7 +189,7 @@ public class ProfessionsForge {
                 });
                 event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
                     packConsumer.accept(packConstructor.create("default_hardcore_professions", Component.nullToEmpty("Default Hardcore Professions"),
-                            true, () -> new PathResourcePack("Default Hardcore Professions",
+                            true, () -> new PathPackResources("Default Hardcore Professions",
                                     ModList.get().getModFileById(Constants.MOD_ID).getFile().findResource("resourcepacks/forge/hardcore")),
                             new PackMetadataSection(Component.nullToEmpty("Default Hardcore Professions"), 10),
                             Pack.Position.BOTTOM,

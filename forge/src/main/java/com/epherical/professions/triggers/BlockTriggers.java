@@ -16,8 +16,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -37,7 +37,7 @@ public class BlockTriggers {
         if (event.isCanceled()) {
             return;
         }
-        if (event.getWorld() instanceof ServerLevel level) {
+        if (event.getLevel() instanceof ServerLevel level) {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREAK_BLOCK)
@@ -54,7 +54,7 @@ public class BlockTriggers {
         if (event.isCanceled()) {
             return;
         }
-        if (event.getWorld() instanceof ServerLevel level && event.getEntity() instanceof ServerPlayer player) {
+        if (event.getLevel() instanceof ServerLevel level && event.getEntity() instanceof ServerPlayer player) {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.PLACE_BLOCK)
@@ -67,7 +67,7 @@ public class BlockTriggers {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onExplosion(ExplosionEvent.Detonate event) {
-        if (event.getWorld() instanceof ServerLevel level && event.getExplosion().getSourceMob() instanceof ServerPlayer player) {
+        if (event.getLevel() instanceof ServerLevel level && event.getExplosion().getSourceMob() instanceof ServerPlayer player) {
             // This could possibly be slow, in fabric we just use a mixin to directly get the blockstate in the final explosion.
             for (BlockPos affectedBlock : event.getAffectedBlocks()) {
                 ProfessionContext.Builder builder = new ProfessionContext.Builder(level)

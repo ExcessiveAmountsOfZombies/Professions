@@ -258,9 +258,9 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             PlayerInfo info = client.player.connection.getPlayerInfo(uuid);
             this.info = info;
             this.level = new TranslatableComponent("professions.command.stats.level",
-                            new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                    new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-            button = new LevelEntryButton(Component.literal(info.getProfile().getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), 0, 0, 92, 24, button -> {
+            button = new LevelEntryButton(new TextComponent(info.getProfile().getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), 0, 0, 92, 24, button -> {
             }, (button, poseStack, i, j) -> {
             });
         }

@@ -98,11 +98,8 @@ public class OccupationScreen<T> extends Screen {
                     }
                     CommonPlatform.platform.sendButtonPacket(CommandButtons.LEAVE);
                 }));
-        //row 2
-        addRenderableWidget(new CommandButton(true, this.width / 2 + 43, this.height / 2 - 80 + 48 + 3,
-                new TranslatableComponent("professions.gui.info"),
-                button1 -> CommonPlatform.platform.sendButtonPacket(CommandButtons.INFO)));
-        addRenderableWidget(new CommandButton(false, this.width / 2 + 43 + 38 + 3, this.height / 2 - 80 + 48 + 3,
+        // column 2
+        initWidget(new CommandButton(false, this.width / 2 - 24 + 40, this.height / 2 - 76,
                 new TranslatableComponent("professions.gui.top"),
                 button1 -> {
                     if (button != CommandButtons.TOP) {
@@ -113,7 +110,7 @@ public class OccupationScreen<T> extends Screen {
 
         if (button != CommandButtons.INFO) {
             CommandButton infoButton = new CommandButton(true, this.width / 2 - 24 + 40, this.height / 2 - 76 + 20 + 3,
-                    Component.translatable("professions.gui.info"),
+                    new TranslatableComponent("professions.gui.info"),
                     button1 -> {
                         addPrevious(this);
                         CommonPlatform.platform.getClientNetworking().attemptInfoPacket(professionHolder.getProfession().getKey());
@@ -131,13 +128,14 @@ public class OccupationScreen<T> extends Screen {
 
         if (prevScreen != null) {
             initWidget(new CommandButton(false, this.width / 2 + 100 - 18 + (38 + 3) / 2, this.height / 2 - 86,
-                    Component.translatable("professions.gui.close"),
+                    new TranslatableComponent("professions.gui.close"),
                     button1 -> {
                         Screen screen = prevScreen;
                         prevScreen = null;
                         this.minecraft.setScreen(screen);
                     }, true, 16, 16, CommandButton.SmallIcon.BACK));
         }
+
         this.addWidget(list);
         list.resetAndAddEntries(entries);
     }

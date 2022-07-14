@@ -2,8 +2,8 @@ package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.datapack.CommonProfessionLoader;
-import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.networking.ClientNetworking;
+import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.action.AbstractAction;
@@ -62,7 +62,6 @@ public abstract class CommonPlatform<T> {
      * E.G forge does not have a payment reward, only experience.
      */
     public abstract Component displayInformation(AbstractAction action, Map<RewardType, Component> map);
-
 
 
 }

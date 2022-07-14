@@ -42,58 +42,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ForgeProfLoader extends SimpleJsonResourceReloadListener implements CommonProfessionLoader {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Gson GSON = createProfessionSerializer()
-            .setPrettyPrinting()
-            .create();
-    private Map<ResourceLocation, Profession> professionMap = ImmutableMap.of();
-
+public class ForgeProfLoader extends AbstractProfessionLoader implements CommonProfessionLoader {
 
     public ForgeProfLoader() {
-        super(GSON, "professions/occupations");
+        super("professions/occupations");
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
-        professionMap = null;
-
-        Map<ResourceLocation, ProfessionBuilder> temp = Maps.newHashMap();
-        Multimap<ResourceLocation, Editor> editsMade = HashMultimap.create();
-
-        object.forEach((location, jsonElement) -> {
-            JsonObject jsonObject = GsonHelper.convertToJsonObject(jsonElement, "profession");
-            if (jsonObject.has("type")) {
-                ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "type"));
-                ProfessionSerializer<? extends Profession, ? extends ProfessionBuilder> nullable = RegistryConstants.PROFESSION_SERIALIZER.get(type);
-                nullable = nullable != null ? nullable : ProfessionSerializer.DEFAULT_PROFESSION;
-                ProfessionBuilder profession = GSON.fromJson(jsonElement, nullable.getBuilderType());
-                profession.setKey(location);
-                temp.put(location, profession);
-            } else if (jsonObject.has("function_type")) {
-                ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "function_type"));
-                Editor editor = RegistryConstants.PROFESSION_EDITOR_SERIALIZER.getOptional(type)
-                        .orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported editor type '" + type + "'"))
-                        .deserialize(jsonObject, GSON);
-                editor.setLocation(location);
-                editsMade.put(editor.getProfessionKey(), editor);
-            }
-        });
-        // TODO: there should probably be some sort of editing order.
-        for (Map.Entry<ResourceLocation, ProfessionBuilder> entry : temp.entrySet()) {
-            // we will simply ignore any professions that don't exist.
-            ResourceLocation key = entry.getKey();
-            if (key != null) {
-                for (Editor editor : editsMade.get(entry.getKey())) {
-                    editor.applyEdit(entry.getValue());
-                }
-            }
-        }
-        Map<ResourceLocation, Profession> result = temp.entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().build()));
-        this.professionMap = ImmutableMap.copyOf(result);
-
+    public void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
+        super.apply(object, resourceManager, profiler);
         PlayerManager manager = ProfessionsForge.getInstance().getPlayerManager();
         // this will be null when it first loads.
         if (manager != null) {
@@ -132,19 +89,6 @@ public class ForgeProfLoader extends SimpleJsonResourceReloadListener implements
 
     public void clearProfessions() {
         professionMap = ImmutableMap.of();
-    }
-
-    private static GsonBuilder createProfessionSerializer() {
-        GsonBuilder builder = new GsonBuilder()
-                .registerTypeHierarchyAdapter(Reward.class, Rewards.createGsonAdapter())
-                .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
-                .registerTypeHierarchyAdapter(Action.class, Actions.createGsonAdapter())
-                .registerTypeHierarchyAdapter(Unlock.class, Unlocks.createGsonAdapter())
-                .registerTypeAdapter(Append.class, ProfessionEditorSerializer.APPEND_EDITOR)
-                .registerTypeAdapter(Profession.class, ProfessionSerializer.DEFAULT_PROFESSION)
-                .registerTypeAdapter(ProfessionBuilder.class, ProfessionSerializer.DEFAULT_PROFESSION);
-        //ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
-        return builder;
     }
 
     public static JsonElement serialize(Profession profession) {

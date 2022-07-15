@@ -30,9 +30,12 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class AbstractProfessionLoader extends SimpleJsonResourceReloadListener {
@@ -42,8 +45,8 @@ public abstract class AbstractProfessionLoader extends SimpleJsonResourceReloadL
             .create();
     protected Map<ResourceLocation, Profession> professionMap = ImmutableMap.of();
 
-    public AbstractProfessionLoader(String name) {
-        super(GSON, name);
+    public AbstractProfessionLoader() {
+        super(GSON, "professions/occupations");
     }
 
     @Override
@@ -99,4 +102,41 @@ public abstract class AbstractProfessionLoader extends SimpleJsonResourceReloadL
         //ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;
     }
+
+    @Nullable
+    public Profession getProfession(ResourceLocation location) {
+        return professionMap.get(location);
+    }
+
+    public Collection<Profession> getProfessions() {
+        return professionMap.values();
+    }
+
+    public Set<ResourceLocation> getProfessionKeys() {
+        return professionMap.keySet();
+    }
+
+
+    @Nullable
+    public ResourceLocation getIDFromProfession(Profession profession) {
+        for (Map.Entry<ResourceLocation, Profession> entry : professionMap.entrySet()) {
+            if (entry.getValue().getKey().equals(profession.getKey())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public void clearProfessions() {
+        professionMap = ImmutableMap.of();
+    }
+
+    public static JsonElement serialize(Profession profession) {
+        return GSON.toJsonTree(profession);
+    }
+
+    public static JsonElement serialize(Editor unlock) {
+        return GSON.toJsonTree(unlock);
+    }
+
 }

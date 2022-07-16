@@ -3,6 +3,7 @@ package com.epherical.professions;
 import com.epherical.octoecon.api.Economy;
 import com.epherical.octoecon.api.event.EconomyEvents;
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.config.CommonConfig;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.FileStorage;

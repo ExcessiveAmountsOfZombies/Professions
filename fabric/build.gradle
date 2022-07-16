@@ -36,7 +36,10 @@ configurations {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.18.2:2022.07.10")
+    }
     shade(rootProject)
     compileOnly(rootProject)
     implementation(rootProject)

@@ -79,6 +79,7 @@ public class CommandButton extends Button implements Hidden {
         BAD,
         BACK,
         DROP_DOWN_OPEN,
-        DROP_DOWN_CLOSE
+        DROP_DOWN_CLOSE,
+        ADD
     }
 }

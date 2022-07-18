@@ -10,26 +10,23 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 
-public class DropdownButton extends Button {
+public class SmallIconButton extends Button {
 
-    private boolean opened = false;
-    private CommandButton.SmallIcon icon;
+    public boolean opened = false;
+    public CommandButton.SmallIcon icon;
+    protected final ButtonPress<SmallIconButton> onPress;
 
 
-    public DropdownButton(int i, int j, int k, int l, Component component, OnPress onPress) {
-        super(i, j, k, l, component, onPress);
-        icon = CommandButton.SmallIcon.DROP_DOWN_OPEN;
+    public SmallIconButton(int i, int j, int k, int l, Component component, CommandButton.SmallIcon icon, ButtonPress<SmallIconButton> onPress) {
+        super(i, j, k, l, component, button -> {});
+        this.onPress = onPress;
+        this.icon = icon;
     }
 
     @Override
     public void onClick(double mouseX, double mouseY) {
         super.onClick(mouseX, mouseY);
-        opened = !opened;
-        if (opened) {
-            icon = CommandButton.SmallIcon.DROP_DOWN_CLOSE;
-        } else {
-            icon = CommandButton.SmallIcon.DROP_DOWN_OPEN;
-        }
+        onPress.onPress(this);
     }
 
     @Override

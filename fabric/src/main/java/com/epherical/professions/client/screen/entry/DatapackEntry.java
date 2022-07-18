@@ -45,6 +45,10 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
         }
     }
 
+    public void initPosition(int initialX, int initialY) {
+
+    }
+
     public void tick(DatapackScreen screen) {
 
     }

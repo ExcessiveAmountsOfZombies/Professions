@@ -1,11 +1,15 @@
 package com.epherical.professions.client.screen;
 
 import com.epherical.professions.RegistryConstants;
+import com.epherical.professions.client.screen.editors.DataTagEditor;
+import com.epherical.professions.client.screen.entry.ArrayEntry;
+import com.epherical.professions.client.screen.entry.CompoundEntry;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
 import com.epherical.professions.client.screen.entry.NumberEntry;
 import com.epherical.professions.client.screen.entry.RegistryEntry;
 import com.epherical.professions.client.screen.entry.StringEntry;
 import com.epherical.professions.profession.ProfessionSerializer;
+import com.epherical.professions.profession.action.Actions;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -17,6 +21,7 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -48,13 +53,25 @@ public class DatapackScreen extends Screen {
         int width = this.width - 30;
         int height = 23;
         int distance = 23;
-        this.addDatapackWidget(new RegistryEntry<>(ofx, ofy, width, RegistryConstants.PROFESSION_SERIALIZER, ProfessionSerializer.DEFAULT_PROFESSION));
+        DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>();
+        int increment = 0;
+        for (DatapackEntry entry : blockDataTagEditor.entries()) {
+            entry.x = ofx;
+            entry.y = ofy + (entry.getHeight() * increment);
+            entry.setWidth(width);
+            entry.initPosition(ofx, ofy);
+            this.addDatapackWidget(entry);
+            increment++;
+        }
+
+
+        /*this.addDatapackWidget(new RegistryEntry<>(ofx, ofy, width, RegistryConstants.PROFESSION_SERIALIZER, ProfessionSerializer.DEFAULT_PROFESSION));
         this.addDatapackWidget(new StringEntry(ofx, ofy + distance, width, "Color:", "#FFFFFF"));
         this.addDatapackWidget(new StringEntry(ofx, ofy + distance + height, width, "Desc Color:", "#FFFFFF"));
         this.addDatapackWidget(new StringEntry(ofx, ofy + distance + (height * 2), width, "Display Name:", "Occupation"));
         this.addDatapackWidget(new StringEntry(ofx, ofy + distance + (height * 3), width, "Exp Scaling:", "1000*1.064^(lvl-1)"));
         //this.addRenderableWidget(new StringEntry(ofx, ofy + distance + (height * 4), width, "Income Scale", "base"));
-        this.addDatapackWidget(new NumberEntry<>(ofx, ofy + distance + (height * 4), width, "Max Level:", 100));
+        this.addDatapackWidget(new NumberEntry<>(ofx, ofy + distance + (height * 4), width, "Max Level:", 100));*/
     }
 
     private int time = 0;
@@ -67,12 +84,11 @@ public class DatapackScreen extends Screen {
         }
         if (adjustEntries) {
             int yOffset = 11;
-            int distance = 23;
             int increment = 0;
             for (GuiEventListener child : this.children()) {
                 // todo; want to animate the dropdowns instead of it being instant at some point, no idea how.
                 if (child instanceof DatapackEntry widget) {
-                    widget.y = yOffset + (distance * increment);
+                    widget.y = yOffset + ((widget.getHeight()) * increment);
                     increment++;
                 }
             }
@@ -119,6 +135,7 @@ public class DatapackScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_N) {
+            // todo: remove this
             pressedNew = true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);

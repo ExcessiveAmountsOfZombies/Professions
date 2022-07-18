@@ -1,18 +1,17 @@
 package com.epherical.professions.client.screen.entry;
 
 import com.epherical.professions.client.screen.DatapackScreen;
-import com.epherical.professions.client.screen.button.DropdownButton;
+import com.epherical.professions.client.screen.button.SmallIconButton;
+import com.epherical.professions.client.widgets.CommandButton;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public class RegistryEntry<T> extends DatapackEntry {
     private Registry<T> registry;
     private T value;
     private Component tooltip;
-    private final DropdownButton button;
+    private final SmallIconButton button;
 
     private boolean added = false;
     private List<RegistryObjectEntry<T>> registryEntries = new ArrayList<>();
@@ -35,8 +34,13 @@ public class RegistryEntry<T> extends DatapackEntry {
         this.registry = registry;
 
         int start = width - 25;
-        this.button = new DropdownButton(x + start, y + 2, 16, 16, Component.nullToEmpty(""), button1 -> {
-            System.out.println("LUL");
+        this.button = new SmallIconButton(x + start, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.DROP_DOWN_OPEN, smallButton -> {
+            smallButton.opened = !smallButton.opened;
+            if (smallButton.opened) {
+                smallButton.icon = CommandButton.SmallIcon.DROP_DOWN_CLOSE;
+            } else {
+                smallButton.icon = CommandButton.SmallIcon.DROP_DOWN_OPEN;
+            }
         });
         children.add(button);
     }

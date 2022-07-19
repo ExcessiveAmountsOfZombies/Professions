@@ -6,15 +6,16 @@ import com.epherical.professions.client.screen.entry.DatapackEntry;
 import com.epherical.professions.client.screen.entry.TagEntry;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class DataTagEditor<T> extends DatapackEditor {
 
     private final BooleanEntry replace;
     private final ArrayEntry<TagEntry<T>> values;
 
-    public DataTagEditor() {
+    public DataTagEditor(BiFunction<Integer, Integer, TagEntry<T>> addObject) {
         replace = new BooleanEntry(0, 0, 128, "Replace", false);
-        values = new ArrayEntry<>(0, 0, 128, "Values");
+        values = new ArrayEntry<>(0, 0, 128, "Values", addObject);
     }
 
     @Override

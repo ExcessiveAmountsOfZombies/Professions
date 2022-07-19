@@ -1,16 +1,8 @@
 package com.epherical.professions.client.screen;
 
-import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.client.screen.editors.DataTagEditor;
-import com.epherical.professions.client.screen.entry.ArrayEntry;
-import com.epherical.professions.client.screen.entry.CompoundEntry;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
-import com.epherical.professions.client.screen.entry.NumberEntry;
-import com.epherical.professions.client.screen.entry.RegistryEntry;
-import com.epherical.professions.client.screen.entry.StringEntry;
-import com.epherical.professions.profession.ProfessionSerializer;
-import com.epherical.professions.profession.action.Actions;
-import com.google.common.collect.Lists;
+import com.epherical.professions.client.screen.entry.TagEntry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -19,9 +11,11 @@ import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -41,7 +35,7 @@ public class DatapackScreen extends Screen {
     public boolean adjustEntries = false;
 
     public DatapackScreen() {
-        super(Component.nullToEmpty("stop"));
+        super(Component.nullToEmpty(""));
     }
 
 
@@ -53,7 +47,7 @@ public class DatapackScreen extends Screen {
         int width = this.width - 30;
         int height = 23;
         int distance = 23;
-        DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>();
+        DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
         int increment = 0;
         for (DatapackEntry entry : blockDataTagEditor.entries()) {
             entry.x = ofx;
@@ -146,7 +140,7 @@ public class DatapackScreen extends Screen {
         return super.children();
     }
 
-    protected <T extends DatapackEntry> T addDatapackWidget(T widget) {
+    public <T extends DatapackEntry> T addDatapackWidget(T widget) {
         datapackEntries.add(widget);
         for (AbstractWidget child : widget.children()) {
             super.addRenderableWidget(child);
@@ -165,12 +159,17 @@ public class DatapackScreen extends Screen {
     }
 
     @Override
-    public  <T extends Widget> T addRenderableOnly(T widget) {
+    public <T extends Widget> T addRenderableOnly(T widget) {
         return super.addRenderableOnly(widget);
     }
 
     @Override
     public void removeWidget(GuiEventListener listener) {
         super.removeWidget(listener);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        return super.mouseScrolled(mouseX, mouseY, delta);
     }
 }

@@ -5,3 +5,5 @@ accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$P
 accessible field net/minecraft/client/gui/screens/Screen children Ljava/util/List;
 accessible field net/minecraft/client/gui/screens/Screen narratables Ljava/util/List;
 accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
+
+accessible field net/minecraft/client/gui/components/CommandSuggestions pendingSuggestions Ljava/util/concurrent/CompletableFuture;

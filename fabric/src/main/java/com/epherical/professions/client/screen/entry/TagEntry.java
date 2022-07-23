@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 public class TagEntry<T> extends DatapackEntry {
 
 
-    private CommandSuggestions suggestions;
+    //private CommandSuggestions suggestions;
     private EditBox box;
     private final Registry<T> registry;
     private T value;
@@ -46,7 +46,7 @@ public class TagEntry<T> extends DatapackEntry {
         if (isHoveredOrFocused()) {
             renderToolTip(poseStack, mouseX, mouseY, this.box.getMessage());
         }
-        suggestions.render(poseStack, mouseX, mouseY);
+        //suggestions.render(poseStack, mouseX, mouseY);
 
         this.box.y = y + 8;
     }
@@ -54,40 +54,40 @@ public class TagEntry<T> extends DatapackEntry {
     @Override
     public void tick(DatapackScreen screen) {
         super.tick(screen);
-        if (this.suggestions == null) {
+        /*if (this.suggestions == null) {
             Minecraft minecraft = Minecraft.getInstance();
             Font font = minecraft.font;
             this.suggestions = new CommandSuggestions(this.minecraft, screen, box, font, true, false, 1, 10, true, -805306368);
             this.suggestions.updateCommandInfo();
-        }
+        }*/
         box.tick();
         box.setMessage(Component.nullToEmpty(box.getValue()));
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (suggestions.mouseClicked(mouseX, mouseY, button)) {
+        /*if (suggestions.mouseClicked(mouseX, mouseY, button)) {
             return true;
-        }
+        }*/
         return box.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        this.suggestions.pendingSuggestions = getSuggestions();
+        /*this.suggestions.pendingSuggestions = getSuggestions();
         suggestions.showSuggestions(true);
         if (suggestions.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
-        }
+        }*/
             return box.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        double newDelta = Mth.clamp(delta, -1.0, 1.0);
+        /*double newDelta = Mth.clamp(delta, -1.0, 1.0);
         if (suggestions.mouseScrolled(newDelta)) {
             return true;
-        }
+        }*/
         return super.mouseScrolled(mouseX, mouseY, delta);
     }
 
@@ -98,10 +98,10 @@ public class TagEntry<T> extends DatapackEntry {
         return box.charTyped(codePoint, modifiers);
     }
 
-    CompletableFuture<Suggestions> getSuggestions() {
+    /*CompletableFuture<Suggestions> getSuggestions() {
         SuggestionsBuilder builder = new SuggestionsBuilder(box.getValue(), box.getValue().toLowerCase(Locale.ROOT), 0);
         Minecraft.getInstance().player.connection.getSuggestionsProvider()
                 .suggestRegistryElements(registry, SharedSuggestionProvider.ElementSuggestionType.ALL, builder);
         return builder.buildFuture();
-    }
+    }*/
 }

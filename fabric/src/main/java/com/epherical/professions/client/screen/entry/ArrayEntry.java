@@ -51,16 +51,21 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         super.tick(screen);
         if (needsRefresh) {
             for (T object : objects) {
+                for (AbstractWidget child : object.children) {
+                    screen.removeWidget(child);
+                }
                 screen.removeWidget(object);
             }
             int index = screen.children.indexOf(this);
             for (T object : objects) {
-                object.x = x + 7;
-                object.y = y + 23;
+                object.setX(x + 7);
+                object.setY(y + object.getHeight());
                 for (AbstractWidget child : object.children) {
                     // todo; hmm
                     screen.children.add(index + 1, child);
-                    screen.addRenderableWidget(child);
+                    screen.narratables.add(index + 1, child);
+                    screen.renderables.add(index + 1, child);
+                    //screen.addRenderableWidget(child);
                 }
                 screen.children.add(index + 1, object);
                 screen.addRenderableOnly(object);

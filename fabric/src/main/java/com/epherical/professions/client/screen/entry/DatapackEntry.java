@@ -3,6 +3,7 @@ package com.epherical.professions.client.screen.entry;
 import com.epherical.professions.client.screen.DatapackScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -12,11 +13,14 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class DatapackEntry extends AbstractWidget implements Parent {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     protected final Minecraft minecraft = Minecraft.getInstance();
 
@@ -25,16 +29,16 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
     protected final List<AbstractWidget> children = new ArrayList<>();
 
 
-    public DatapackEntry(int i, int j, int k, Type... types) {
-        super(i, j, k, 23, Component.nullToEmpty(""));
+    public DatapackEntry(int x, int y, int width, int height, Type... types) {
+        super(x, y, width, height, Component.nullToEmpty(""));
         this.types = types;
         buttonTypes = new TinyButton[types.length];
-        int start = k - (12 * types.length);
+        int start = width - (12 * types.length);
 
         for (int z = 0; z < this.types.length; z++) {
             int increment = 8 * z;
             int finalZ = z;
-            buttonTypes[z] = new TinyButton(i + start + increment, j + 2, 7, 7, types[z], button -> {
+            buttonTypes[z] = new TinyButton(x + start + increment, y + 2, 7, 7, types[z], button -> {
                 System.out.println("bozo lul ");
                 this.clickTinyButton((TinyButton) button);
             }, (button, poseStack, mouseX, mouseY) -> {
@@ -43,6 +47,10 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
             });
             children.add(buttonTypes[z]);
         }
+    }
+
+    public DatapackEntry(int x, int y, int width, Type... types) {
+        this(x, y, width, 23, types);
     }
 
     public void initPosition(int initialX, int initialY) {
@@ -92,6 +100,16 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
         for (AbstractWidget child : children) {
             child.render(poseStack, mouseX, mouseY, partialTick);
         }
+    }
+
+    public void setX(int x) {
+        LOGGER.info("setting X, old {}, new {}", this.x, x);
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        LOGGER.info("setting Y, old {}, new {}", this.y, y);
+        this.y = y;
     }
 
     @Override

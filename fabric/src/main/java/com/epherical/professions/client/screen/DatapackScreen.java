@@ -1,9 +1,13 @@
 package com.epherical.professions.client.screen;
 
 import com.epherical.professions.client.screen.editors.DataTagEditor;
+import com.epherical.professions.client.screen.entry.BooleanEntry;
+import com.epherical.professions.client.screen.entry.CompoundEntry;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
+import com.epherical.professions.client.screen.entry.MultipleTypeEntry;
 import com.epherical.professions.client.screen.entry.TagEntry;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -17,12 +21,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class DatapackScreen extends Screen {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     protected int imageWidth = 108;
     protected int imageHeight = 180;
@@ -47,11 +54,20 @@ public class DatapackScreen extends Screen {
         int width = this.width - 30;
         int height = 23;
         int distance = 23;
-        DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
+        //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
+         DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> {
+             MultipleTypeEntry required = new MultipleTypeEntry(0, 0, 0,
+                     new TagEntry<>(ofx + 8, y, width - 8, Registry.BLOCK, Blocks.STONE),
+                     new CompoundEntry(ofx, y, width - 8,
+                             List.of(new TagEntry<>(ofx, y, width - 8, Registry.BLOCK, Blocks.STONE),
+                                     new BooleanEntry(ofx, y, width - 8, "Required", false))));
+             return required;
+        });
         int increment = 0;
+        LOGGER.info("Setting x, y position on init entries.");
         for (DatapackEntry entry : blockDataTagEditor.entries()) {
-            entry.x = ofx;
-            entry.y = ofy + (entry.getHeight() * increment);
+            entry.setX(ofx);
+            entry.setY(ofy + (entry.getHeight() * increment));
             entry.setWidth(width);
             entry.initPosition(ofx, ofy);
             this.addDatapackWidget(entry);
@@ -82,7 +98,11 @@ public class DatapackScreen extends Screen {
             for (GuiEventListener child : this.children()) {
                 // todo; want to animate the dropdowns instead of it being instant at some point, no idea how.
                 if (child instanceof DatapackEntry widget) {
+
                     widget.y = yOffset + ((widget.getHeight()) * increment);
+                    if (widget.getHeight() == 0) {
+                        increment--;
+                    }
                     increment++;
                 }
             }

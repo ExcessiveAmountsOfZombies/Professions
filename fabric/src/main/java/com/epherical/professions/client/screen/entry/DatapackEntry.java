@@ -126,6 +126,17 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
         minecraft.screen.renderTooltip(poseStack, component, mouseX, mouseY);
     }
 
+    public List<AbstractWidget> flattenEntries(List<AbstractWidget> total, AbstractWidget current) {
+        System.out.println("Flattening entry for: " + current.getClass().getName());
+        if (current instanceof Parent parent) {
+            for (AbstractWidget child : parent.children()) {
+                total.add(child);
+                flattenEntries(total, child);
+            }
+        }
+        return total;
+    }
+
     public static class TinyButton extends Button {
 
         private final Type type;

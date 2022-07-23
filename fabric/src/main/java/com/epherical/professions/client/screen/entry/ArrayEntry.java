@@ -3,6 +3,7 @@ package com.epherical.professions.client.screen.entry;
 import com.epherical.professions.client.screen.DatapackScreen;
 import com.epherical.professions.client.screen.button.SmallIconButton;
 import com.epherical.professions.client.widgets.CommandButton;
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -13,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
 
@@ -52,7 +54,9 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         if (needsRefresh) {
             for (T object : objects) {
                 for (AbstractWidget child : object.children) {
-                    screen.removeWidget(child);
+                    for (AbstractWidget widget : flattenEntries(Lists.newArrayList(child), child)) {
+                        screen.removeWidget(widget);
+                    }
                 }
                 screen.removeWidget(object);
             }
@@ -61,11 +65,12 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
                 object.setX(x + 7);
                 object.setY(y + object.getHeight());
                 for (AbstractWidget child : object.children) {
-                    // todo; hmm
-                    screen.children.add(index + 1, child);
-                    screen.narratables.add(index + 1, child);
-                    screen.renderables.add(index + 1, child);
-                    //screen.addRenderableWidget(child);
+                    for (AbstractWidget widget : flattenEntries(Lists.newArrayList(child), child)) {
+                        // todo; hmm
+                        screen.children.add(index + 1, widget);
+                        screen.renderables.add(index + 1, widget);
+                        //screen.addRenderableWidget(child);
+                    }
                 }
                 screen.children.add(index + 1, object);
                 screen.addRenderableOnly(object);

@@ -24,6 +24,7 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 
@@ -56,11 +57,11 @@ public class DatapackScreen extends Screen {
         int distance = 23;
         //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
          DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> {
-             MultipleTypeEntry required = new MultipleTypeEntry(0, 0, 0,
-                     new TagEntry<>(ofx + 8, y, width - 8, Registry.BLOCK, Blocks.STONE),
-                     new CompoundEntry(ofx, y, width - 8,
-                             List.of(new TagEntry<>(ofx, y, width - 8, Registry.BLOCK, Blocks.STONE),
-                                     new BooleanEntry(ofx, y, width - 8, "Required", false))));
+             MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 60,
+                     new CompoundEntry(0, 0, 0,
+                             List.of(new TagEntry<>(ofx + 8, y, width - 8, Registry.BLOCK, Blocks.STONE),
+                                     new BooleanEntry(ofx + 8, y, width - 8, "Required", false))),
+                     new TagEntry<>(ofx, y, width - 14, Registry.BLOCK, Blocks.STONE));
              return required;
         });
         int increment = 0;
@@ -92,6 +93,7 @@ public class DatapackScreen extends Screen {
         for (DatapackEntry datapackEntry : datapackEntries) {
             datapackEntry.tick(this);
         }
+
         if (adjustEntries) {
             int yOffset = 11;
             int increment = 0;

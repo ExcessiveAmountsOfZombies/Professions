@@ -131,6 +131,14 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
         }
     }
 
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        return this.active && this.visible && mouseX >= (double)(this.x + getXScroll()) && mouseY >= (double)(this.y + getYScroll()) && mouseX < (double)(this.x + this.width + getXScroll()) && mouseY < (double)(this.y + this.height + getYScroll());
+    }
+
+    protected boolean clicked(double mouseX, double mouseY) {
+        return this.active && this.visible && mouseX >= (double)(this.x + getXScroll()) && mouseY >= (double)(this.y + getYScroll()) && mouseX < (double)(this.x + this.width + getXScroll()) && mouseY < (double)(this.y + this.height + getYScroll());
+    }
+
     public void setX(int x) {
         //LOGGER.info("setting X, old {}, new {}", this.x, x);
         this.x = x;

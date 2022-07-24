@@ -72,7 +72,7 @@ public class DatapackScreen extends Screen {
         //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
          this.blockDataTagEditor = new DataTagEditor<>((x, y) -> {
              MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 90,
-                     new TagEntry<>(ofx + 14, y, width - 14, Registry.BLOCK, Blocks.STONE),
+                     new StringEntry(ofx + 14, y, width - 14, "", "minecraft:stone"),
                      new CompoundEntry(0, 0, 0,
                              List.of(new StringEntry(ofx + 14, y, width - 14, "id", "minecraft:stone", Optional.of("id")),
                                      new BooleanEntry(ofx + 14, y, width - 14, "required", false, Optional.of("required")))));

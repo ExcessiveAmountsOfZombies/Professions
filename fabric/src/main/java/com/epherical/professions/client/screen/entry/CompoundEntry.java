@@ -1,9 +1,17 @@
 package com.epherical.professions.client.screen.entry;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import net.minecraft.client.gui.components.AbstractWidget;
+
 import java.util.List;
 
 public class CompoundEntry extends DatapackEntry {
 
+
+    /**
+     * @param entries a list of entries that will comprise the object. Each entry should use the Optional serialization key.
+     */
     public CompoundEntry(int i, int j, int k, List<DatapackEntry> entries) {
         super(i, j, k, 0);
         children.addAll(entries);
@@ -14,5 +22,17 @@ public class CompoundEntry extends DatapackEntry {
     @Override
     public String getType() {
         return "Compound";
+    }
+
+    @Override
+    public JsonElement getSerializedValue() {
+        JsonObject object = new JsonObject();
+        for (AbstractWidget child : children) {
+            if (child instanceof DatapackEntry entry) {
+                object.add(entry.getSerializationKey().get(), entry.getSerializedValue());
+            }
+        }
+
+        return object;
     }
 }

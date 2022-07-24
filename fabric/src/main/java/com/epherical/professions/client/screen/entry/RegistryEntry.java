@@ -3,6 +3,8 @@ package com.epherical.professions.client.screen.entry;
 import com.epherical.professions.client.screen.DatapackScreen;
 import com.epherical.professions.client.screen.button.SmallIconButton;
 import com.epherical.professions.client.widgets.CommandButton;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -55,6 +57,11 @@ public class RegistryEntry<T> extends DatapackEntry {
         if (isHoveredOrFocused()) {
             renderToolTip(poseStack, mouseX, mouseY, tooltip);
         }
+    }
+
+    @Override
+    public JsonElement getSerializedValue() {
+        return JsonNull.INSTANCE;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.epherical.professions.client.screen.entry;
 
 import com.epherical.professions.client.screen.DatapackScreen;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -49,6 +51,11 @@ public class TagEntry<T> extends DatapackEntry {
         //suggestions.render(poseStack, mouseX, mouseY);
 
         this.box.y = y + 8 + getYScroll();
+    }
+
+    @Override
+    public JsonElement getSerializedValue() {
+        return new JsonPrimitive(registry.getKey(value).toString());
     }
 
     @Override

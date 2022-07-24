@@ -4,22 +4,21 @@ import com.epherical.professions.client.screen.DatapackScreen;
 import com.epherical.professions.client.screen.button.SmallIconButton;
 import com.epherical.professions.client.widgets.CommandButton;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.CommandSuggestions;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Stream;
 
 public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
 
     protected List<T> objects = new ArrayList<>();
-    protected SmallIconButton dropdownButton;
     protected SmallIconButton addButton;
     protected SmallIconButton removeButton;
     private final String usage;
@@ -29,14 +28,6 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
     public ArrayEntry(int x, int y, int width, String usage, BiFunction<Integer, Integer, T> addObject) {
         super(x, y, width);
         this.usage = usage;
-        dropdownButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.DROP_DOWN_OPEN, button -> {
-            button.opened = !button.opened;
-            if (button.opened) {
-                button.icon = CommandButton.SmallIcon.DROP_DOWN_CLOSE;
-            } else {
-                button.icon = CommandButton.SmallIcon.DROP_DOWN_OPEN;
-            }
-        });
         addButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.ADD, button -> {
             addEntry(addObject.apply(x, y + 2));
             needsRefresh = true;
@@ -45,7 +36,7 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
             // todo; dropdown and add little x to all entries. clicking again will remove them
             // todo; needsRefresh = true;
         });
-        children.addAll(List.of(dropdownButton, addButton, removeButton));
+        children.addAll(List.of(addButton, removeButton));
     }
 
     @Override
@@ -103,11 +94,18 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         setButtonPositions(getXScroll(), getYScroll());
     }
 
+    @Override
+    public JsonElement getSerializedValue() {
+        JsonArray array = new JsonArray();
+        for (T object : objects) {
+            array.add(object.getSerializedValue());
+        }
+
+        return array;
+    }
+
     private void setButtonPositions(int xScroll, int yScroll) {
         int start = width - 25;
-        dropdownButton.x = x + start + xScroll;
-        dropdownButton.y = y + 2 + yScroll;
-        start -= 17;
         removeButton.x = x + start + xScroll;
         removeButton.y = y + 2 + yScroll;
         start -= 17;

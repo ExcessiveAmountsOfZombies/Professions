@@ -1,18 +1,26 @@
 package com.epherical.professions.client.screen.entry;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 
+import java.util.Optional;
+
 public class BooleanEntry extends DatapackEntry {
 
     private String usage;
-    private boolean defaultBoolean;
+    private boolean value;
 
-    public BooleanEntry(int i, int j, int k, String usage, boolean defaultValue) {
-        super(i, j, k);
+    public BooleanEntry(int x, int y, int width, String usage, boolean defaultValue) {
+        this(x, y, width, usage, defaultValue, Optional.empty());
+    }
+
+    public BooleanEntry(int x, int y, int width, String usage, boolean defaultValue, Optional<String> serializationKey) {
+        super(x, y, width, serializationKey);
         this.usage = usage;
-        this.defaultBoolean = defaultValue;
+        this.value = defaultValue;
     }
 
     @Override
@@ -21,18 +29,30 @@ public class BooleanEntry extends DatapackEntry {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         font.drawShadow(poseStack, usage, x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
-        drawCenteredString(poseStack, font, String.valueOf(defaultBoolean), (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), 0x0095ba);
+        drawCenteredString(poseStack, font, String.valueOf(value), (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), 0x0095ba);
         //this.box.render(poseStack, mouseX, mouseY, partialTick);
+    }
+
+    public void serialize(JsonElement object) {
+
     }
 
     @Override
     public void onClick(double mouseX, double mouseY) {
         super.onClick(mouseX, mouseY);
-        this.defaultBoolean = !defaultBoolean;
+        this.value = !value;
     }
 
     @Override
     public String getType() {
         return "Boolean";
+    }
+
+    public JsonElement getSerializedValue() {
+        return new JsonPrimitive(value);
+    }
+
+    public boolean getValue() {
+        return value;
     }
 }

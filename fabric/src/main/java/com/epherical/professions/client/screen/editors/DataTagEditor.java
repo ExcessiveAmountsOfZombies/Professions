@@ -4,7 +4,11 @@ import com.epherical.professions.client.screen.entry.ArrayEntry;
 import com.epherical.professions.client.screen.entry.BooleanEntry;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
 import com.epherical.professions.client.screen.entry.MultipleTypeEntry;
-import com.epherical.professions.client.screen.entry.TagEntry;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.data.BuiltinRegistries;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -27,7 +31,17 @@ public class DataTagEditor<T> extends DatapackEditor {
 
 
     @Override
-    public void serialize() {
+    public void serialize(JsonElement object) {
+        JsonObject object1 = new JsonObject();
+        object1.add("replace", replace.getSerializedValue());
+        object1.add("values", values.getSerializedValue());
+
+            // todo: just do getters on everything, starting from the top, working our way down so we can serialize
+            //  in a nicer way. Compound entries will return JsonObjects etc.
+
+        System.out.println(object1);
+        /*replace.serialize(object1);
+        values.serialize(object1);*/
 
     }
 

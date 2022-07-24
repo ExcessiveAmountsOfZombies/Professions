@@ -1,6 +1,7 @@
 package com.epherical.professions.client.screen.entry;
 
 import com.epherical.professions.client.screen.DatapackScreen;
+import com.google.gson.JsonElement;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class DatapackEntry extends AbstractWidget implements Parent, Scrollable, IdentifiableEntry {
 
@@ -29,13 +31,15 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
     private final TinyButton[] buttonTypes;
     protected final List<AbstractWidget> children = new ArrayList<>();
 
+    protected final Optional<String> serializationKey;
+
     protected int xScroll = 0;
     protected int yScroll = 0;
 
-
-    public DatapackEntry(int x, int y, int width, int height, Type... types) {
+    public DatapackEntry(int x, int y, int width, int height, Optional<String> optionalSerializationKey, Type... types) {
         super(x, y, width, height, Component.nullToEmpty(""));
         this.types = types;
+        this.serializationKey = optionalSerializationKey;
         buttonTypes = new TinyButton[types.length];
         int start = width - (12 * types.length);
 
@@ -43,7 +47,6 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
             int increment = 8 * z;
             int finalZ = z;
             buttonTypes[z] = new TinyButton(x + start + increment, y + 2, 7, 7, types[z], button -> {
-                System.out.println("bozo lul ");
                 this.clickTinyButton((TinyButton) button);
             }, (button, poseStack, mouseX, mouseY) -> {
                 Minecraft minecraft = Minecraft.getInstance();
@@ -53,8 +56,16 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
         }
     }
 
+    public DatapackEntry(int x, int y, int width, int height, Type... types) {
+        this(x, y, width, height, Optional.empty(), types);
+    }
+
     public DatapackEntry(int x, int y, int width, Type... types) {
         this(x, y, width, 23, types);
+    }
+
+    public DatapackEntry(int x, int y, int width, Optional<String> serializationKey, Type... types) {
+        this(x, y, width, 23, serializationKey, types);
     }
 
     public void initPosition(int initialX, int initialY) {
@@ -150,6 +161,10 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
         return yScroll;
     }
 
+    public Optional<String> getSerializationKey() {
+        return serializationKey;
+    }
+
     @Override
     public List<? extends AbstractWidget> children() {
         return children;
@@ -174,6 +189,8 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
         }
         return total;
     }
+
+    public abstract JsonElement getSerializedValue();
 
     public static class TinyButton extends Button {
 

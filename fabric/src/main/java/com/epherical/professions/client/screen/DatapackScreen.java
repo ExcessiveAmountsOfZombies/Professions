@@ -5,6 +5,7 @@ import com.epherical.professions.client.screen.entry.BooleanEntry;
 import com.epherical.professions.client.screen.entry.CompoundEntry;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
 import com.epherical.professions.client.screen.entry.MultipleTypeEntry;
+import com.epherical.professions.client.screen.entry.StringEntry;
 import com.epherical.professions.client.screen.entry.TagEntry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 
 
 public class DatapackScreen extends Screen {
@@ -52,6 +54,8 @@ public class DatapackScreen extends Screen {
     public List<DatapackEntry> datapackEntries = new ArrayList<>();
     public boolean adjustEntries = false;
 
+    private DataTagEditor<Block> blockDataTagEditor;
+
     public DatapackScreen() {
         super(Component.nullToEmpty(""));
     }
@@ -66,12 +70,12 @@ public class DatapackScreen extends Screen {
         int height = 23;
         int distance = 23;
         //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
-         DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> {
+         this.blockDataTagEditor = new DataTagEditor<>((x, y) -> {
              MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 90,
                      new TagEntry<>(ofx + 14, y, width - 14, Registry.BLOCK, Blocks.STONE),
                      new CompoundEntry(0, 0, 0,
-                             List.of(new TagEntry<>(ofx + 14, y, width - 14, Registry.BLOCK, Blocks.STONE),
-                                     new BooleanEntry(ofx + 14, y, width - 14, "Required", false))));
+                             List.of(new StringEntry(ofx + 14, y, width - 14, "id", "minecraft:stone", Optional.of("id")),
+                                     new BooleanEntry(ofx + 14, y, width - 14, "required", false, Optional.of("required")))));
              return required;
         });
         int increment = 0;
@@ -84,6 +88,8 @@ public class DatapackScreen extends Screen {
             this.addDatapackWidget(entry);
             increment++;
         }
+
+
 
 
         /*this.addDatapackWidget(new RegistryEntry<>(ofx, ofy, width, RegistryConstants.PROFESSION_SERIALIZER, ProfessionSerializer.DEFAULT_PROFESSION));
@@ -124,6 +130,7 @@ public class DatapackScreen extends Screen {
                 adjustEntries = false;
                 time = 0;
             }
+            blockDataTagEditor.serialize(null);
         }
 
     }

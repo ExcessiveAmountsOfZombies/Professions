@@ -2,6 +2,7 @@ package com.epherical.professions.client.screen.entry;
 
 import com.epherical.professions.client.screen.DatapackScreen;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonElement;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -83,5 +84,9 @@ public class MultipleTypeEntry extends DatapackEntry {
     @Override
     public String getType() {
         return "Multiple Choices";
+    }
+
+    public JsonElement getSerializedValue() {
+        return types[currentSelection].getSerializedValue();
     }
 }

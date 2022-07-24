@@ -1,12 +1,8 @@
 package com.epherical.professions.client.screen;
 
-import com.epherical.professions.client.screen.editors.DataTagEditor;
-import com.epherical.professions.client.screen.entry.BooleanEntry;
-import com.epherical.professions.client.screen.entry.CompoundEntry;
+import com.epherical.professions.client.screen.editors.DatapackEditor;
+import com.epherical.professions.client.screen.editors.ProfessionEditor;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
-import com.epherical.professions.client.screen.entry.MultipleTypeEntry;
-import com.epherical.professions.client.screen.entry.StringEntry;
-import com.epherical.professions.client.screen.entry.TagEntry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -16,26 +12,20 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 
 
 public class DatapackScreen extends Screen {
@@ -54,7 +44,7 @@ public class DatapackScreen extends Screen {
     public List<DatapackEntry> datapackEntries = new ArrayList<>();
     public boolean adjustEntries = false;
 
-    private DataTagEditor<Block> blockDataTagEditor;
+    private DatapackEditor datapackEditor;
 
     public DatapackScreen() {
         super(Component.nullToEmpty(""));
@@ -67,20 +57,19 @@ public class DatapackScreen extends Screen {
         int ofx = 11;
         int ofy = 11;
         int width = this.width - 30;
-        int height = 23;
-        int distance = 23;
         //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
-         this.blockDataTagEditor = new DataTagEditor<>((x, y) -> {
+        /* this.datapackEditor = new DataTagEditor<>((x, y) -> {
              MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 90,
                      new StringEntry(ofx + 14, y, width - 14, "", "minecraft:stone"),
                      new CompoundEntry(0, 0, 0,
                              List.of(new StringEntry(ofx + 14, y, width - 14, "id", "minecraft:stone", Optional.of("id")),
                                      new BooleanEntry(ofx + 14, y, width - 14, "required", false, Optional.of("required")))));
              return required;
-        });
+        });*/
+        this.datapackEditor = new ProfessionEditor(ofx, width);
         int increment = 0;
         //LOGGER.info("Setting x, y position on init entries.");
-        for (DatapackEntry entry : blockDataTagEditor.entries()) {
+        for (DatapackEntry entry : datapackEditor.entries()) {
             entry.setX(ofx);
             entry.setY(ofy + (entry.getHeight() * increment));
             entry.setWidth(width);
@@ -130,7 +119,7 @@ public class DatapackScreen extends Screen {
                 adjustEntries = false;
                 time = 0;
             }
-            blockDataTagEditor.serialize(null);
+            datapackEditor.serialize(null);
         }
 
     }
@@ -145,7 +134,7 @@ public class DatapackScreen extends Screen {
             renderMainWindow(poseStack, ofx, ofy);
             for (GuiEventListener child : this.children) {
                 if (child instanceof DatapackEntry entry) {
-                    entry.setYScroll((int) - scrollAmount);
+                    entry.setYScroll((int) -scrollAmount);
                 }
             }
             double d = this.minecraft.getWindow().getGuiScale();
@@ -202,17 +191,17 @@ public class DatapackScreen extends Screen {
             BufferBuilder bufferBuilder = tesselator.getBuilder();
             RenderSystem.disableTexture();
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            int endOfScrollBar = (int)((float)((top - bottom) * (top - bottom)) / (float)this.getMaxPosition());
+            int endOfScrollBar = (int) ((float) ((top - bottom) * (top - bottom)) / (float) this.getMaxPosition());
             endOfScrollBar = Mth.clamp(endOfScrollBar, 32, (top - bottom - 8));
-            int newBottom = (int)this.getScrollAmount() * (top - bottom - endOfScrollBar) / maxScroll + bottom;
+            int newBottom = (int) this.getScrollAmount() * (top - bottom - endOfScrollBar) / maxScroll + bottom;
             if (newBottom < bottom) {
                 newBottom = bottom;
             }
 
             bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
             bufferBuilder.vertex(i, top - 8, 0.0).color(0, 0, 0, 255).endVertex();
-            bufferBuilder.vertex(j , top - 8, 0.0).color(0, 0, 0, 255).endVertex();
-            bufferBuilder.vertex(j , bottom +8, 0.0).color(0, 0, 0, 255).endVertex();
+            bufferBuilder.vertex(j, top - 8, 0.0).color(0, 0, 0, 255).endVertex();
+            bufferBuilder.vertex(j, bottom + 8, 0.0).color(0, 0, 0, 255).endVertex();
             bufferBuilder.vertex(i, bottom + 8, 0.0).color(0, 0, 0, 255).endVertex();
             bufferBuilder.vertex(i, (newBottom + endOfScrollBar), 0.0).color(128, 128, 128, 255).endVertex();
             bufferBuilder.vertex(j, (newBottom + endOfScrollBar), 0.0).color(128, 128, 128, 255).endVertex();
@@ -274,7 +263,7 @@ public class DatapackScreen extends Screen {
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (!super.mouseScrolled(mouseX, mouseY, delta)) {
             // 23 as most entries will be at least 23.
-            this.setScrollAmount(this.getScrollAmount() - delta * (double)23 / 2.0);
+            this.setScrollAmount(this.getScrollAmount() - delta * (double) 23 / 2.0);
             return true;
         } else {
             return false;

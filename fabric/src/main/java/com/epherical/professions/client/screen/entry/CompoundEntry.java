@@ -1,5 +1,6 @@
 package com.epherical.professions.client.screen.entry;
 
+import com.epherical.professions.client.screen.DatapackScreen;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -34,5 +35,15 @@ public class CompoundEntry extends DatapackEntry {
         }
 
         return object;
+    }
+
+    @Override
+    public void tick(DatapackScreen screen) {
+        super.tick(screen);
+        for (AbstractWidget child : children) {
+            if (child instanceof DatapackEntry entry) {
+                entry.tick(screen);
+            }
+        }
     }
 }

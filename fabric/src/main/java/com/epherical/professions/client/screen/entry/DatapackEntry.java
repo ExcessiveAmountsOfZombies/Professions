@@ -81,15 +81,29 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        this.blit(poseStack, this.x + getXScroll(), this.y + getYScroll(), 0, 0, this.width / 2, this.height);
-        this.blit(poseStack, this.x + getXScroll() + this.width / 2, this.y + getYScroll(), 256 - this.width / 2, 0, this.width / 2, this.height);
-        //this.blit(poseStack, this.x + this.width / 2, this.y, 0, 0, 240, this.height);
-        //this.blit(poseStack, this.x + this.width / 4, this.y, 3, 0, 240, this.height);
+        if (this.width > 256) {
+            // we take 16 from the beginning and 16 from the end, leaving us with 224 in the middle
+            int unusedLengthPixels = 224;
+            int buttonWidth = this.width - 32;
+
+            // how many full iterations of 224 we can go
+            int multiply = buttonWidth / unusedLengthPixels;
+            int pixelsRemaining = buttonWidth % unusedLengthPixels;
+            int startPos = 0;
+            this.blit(poseStack, (this.x + getXScroll()), (this.y + getYScroll()), 0, 0, 16, this.height);
+            for (int i = 0; i < multiply; i++) {
+                startPos = 16 + (i * 224);
+                //                x,                 y,  uOffset, vOffset, uWidth, vHeight
+                this.blit(poseStack, (this.x + getXScroll()) + startPos, (this.y + getYScroll()), 16, 0, 224, this.height);
+            }
+            this.blit(poseStack, (this.x + getXScroll()) + (startPos += 224), (this.y + getYScroll()), 16, 0, pixelsRemaining, this.height);
+            this.blit(poseStack, (this.x + getXScroll()) + (startPos + pixelsRemaining), (this.y + getYScroll()), 240, 0, 16, this.height);
+        } else {
+            this.blit(poseStack, this.x + getXScroll(), this.y + getYScroll(), 0, 0, this.width / 2, this.height);
+            this.blit(poseStack, this.x + getXScroll() + this.width / 2, this.y + getYScroll(), 256 - this.width / 2, 0, this.width / 2, this.height);
+        }
+
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
-
-
-        //int j = this.active ? 16777215 : 10526880;
-        //drawCenteredString(poseStack, font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
     }
 
     @Override

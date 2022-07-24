@@ -33,4 +33,9 @@ public class NumberEntry<T extends Number> extends StringEntry {
             renderToolTip(poseStack, mouseX, mouseY, tooltip);
         }*/
     }
+
+    @Override
+    public String getType() {
+        return "Number";
+    }
 }

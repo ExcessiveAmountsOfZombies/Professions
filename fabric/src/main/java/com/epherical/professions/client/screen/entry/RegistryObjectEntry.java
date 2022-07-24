@@ -28,4 +28,9 @@ public class RegistryObjectEntry<T> extends DatapackEntry implements GuiEventLis
     public T getObject() {
         return object;
     }
+
+    @Override
+    public String getType() {
+        return "String";
+    }
 }

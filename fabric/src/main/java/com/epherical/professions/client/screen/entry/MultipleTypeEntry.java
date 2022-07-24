@@ -3,6 +3,8 @@ package com.epherical.professions.client.screen.entry;
 import com.epherical.professions.client.screen.DatapackScreen;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 
 public class MultipleTypeEntry extends DatapackEntry {
@@ -23,6 +25,9 @@ public class MultipleTypeEntry extends DatapackEntry {
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         super.render(poseStack, mouseX, mouseY, partialTick);
         types[currentSelection].render(poseStack, mouseX, mouseY, partialTick);
+        Minecraft minecraft = Minecraft.getInstance();
+        Font font = minecraft.font;
+        font.drawShadow(poseStack, types[currentSelection].getType(), x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
     }
 
     @Override
@@ -73,5 +78,10 @@ public class MultipleTypeEntry extends DatapackEntry {
             screen.adjustEntries = true;
             needsRefresh = false;
         }
+    }
+
+    @Override
+    public String getType() {
+        return "Multiple Choices";
     }
 }

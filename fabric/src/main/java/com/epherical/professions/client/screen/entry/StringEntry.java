@@ -50,4 +50,9 @@ public class StringEntry extends DatapackEntry {
         box.tick();
         box.setMessage(Component.nullToEmpty(box.getValue()));
     }
+
+    @Override
+    public String getType() {
+        return "String";
+    }
 }

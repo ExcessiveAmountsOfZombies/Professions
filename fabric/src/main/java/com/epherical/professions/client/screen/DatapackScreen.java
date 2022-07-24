@@ -67,11 +67,11 @@ public class DatapackScreen extends Screen {
         int distance = 23;
         //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
          DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> {
-             MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 60,
-                     new TagEntry<>(ofx, y, width - 14, Registry.BLOCK, Blocks.STONE),
+             MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 90,
+                     new TagEntry<>(ofx + 14, y, width - 14, Registry.BLOCK, Blocks.STONE),
                      new CompoundEntry(0, 0, 0,
-                             List.of(new TagEntry<>(ofx + 8, y, width - 8, Registry.BLOCK, Blocks.STONE),
-                                     new BooleanEntry(ofx + 8, y, width - 8, "Required", false))));
+                             List.of(new TagEntry<>(ofx + 14, y, width - 14, Registry.BLOCK, Blocks.STONE),
+                                     new BooleanEntry(ofx + 14, y, width - 14, "Required", false))));
              return required;
         });
         int increment = 0;

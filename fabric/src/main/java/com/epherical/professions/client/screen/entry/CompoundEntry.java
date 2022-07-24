@@ -10,4 +10,9 @@ public class CompoundEntry extends DatapackEntry {
 
         // also need to start working on adding a scroll bar
     }
+
+    @Override
+    public String getType() {
+        return "Compound";
+    }
 }

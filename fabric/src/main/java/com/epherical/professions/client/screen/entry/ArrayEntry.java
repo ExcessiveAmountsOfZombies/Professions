@@ -86,15 +86,7 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
     @Override
     public void initPosition(int initialX, int initialY) {
         super.initPosition(initialX, initialY);
-        int start = width - 25;
-        dropdownButton.x = x + start;
-        dropdownButton.y = y + 2;
-        start -= 17;
-        removeButton.x = x + start;
-        removeButton.y = y + 2;
-        start -= 17;
-        addButton.x = x + start;
-        addButton.y = y + 2;
+        setButtonPositions(0, 0);
     }
 
     public T addEntry(T entry) {
@@ -108,6 +100,23 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         font.drawShadow(poseStack, usage, (x + 3) + getXScroll(), (y + 8) + getYScroll(), 0xFFFFFF);
+        setButtonPositions(getXScroll(), getYScroll());
     }
 
+    private void setButtonPositions(int xScroll, int yScroll) {
+        int start = width - 25;
+        dropdownButton.x = x + start + xScroll;
+        dropdownButton.y = y + 2 + yScroll;
+        start -= 17;
+        removeButton.x = x + start + xScroll;
+        removeButton.y = y + 2 + yScroll;
+        start -= 17;
+        addButton.x = x + start + xScroll;
+        addButton.y = y + 2 + yScroll;
+    }
+
+    @Override
+    public String getType() {
+        return "Array";
+    }
 }

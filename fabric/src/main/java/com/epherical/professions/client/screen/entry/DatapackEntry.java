@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class DatapackEntry extends AbstractWidget implements Parent, Scrollable {
+public abstract class DatapackEntry extends AbstractWidget implements Parent, Scrollable, IdentifiableEntry {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 

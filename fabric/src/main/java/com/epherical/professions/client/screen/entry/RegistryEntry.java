@@ -82,4 +82,9 @@ public class RegistryEntry<T> extends DatapackEntry {
         }
 
     }
+
+    @Override
+    public String getType() {
+        return "String";
+    }
 }

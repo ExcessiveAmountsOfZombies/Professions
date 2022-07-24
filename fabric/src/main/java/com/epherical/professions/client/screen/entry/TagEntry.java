@@ -98,6 +98,11 @@ public class TagEntry<T> extends DatapackEntry {
         return box.charTyped(codePoint, modifiers);
     }
 
+    @Override
+    public String getType() {
+        return "String";
+    }
+
     /*CompletableFuture<Suggestions> getSuggestions() {
         SuggestionsBuilder builder = new SuggestionsBuilder(box.getValue(), box.getValue().toLowerCase(Locale.ROOT), 0);
         Minecraft.getInstance().player.connection.getSuggestionsProvider()

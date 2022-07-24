@@ -30,4 +30,9 @@ public class BooleanEntry extends DatapackEntry {
         super.onClick(mouseX, mouseY);
         this.defaultBoolean = !defaultBoolean;
     }
+
+    @Override
+    public String getType() {
+        return "Boolean";
+    }
 }

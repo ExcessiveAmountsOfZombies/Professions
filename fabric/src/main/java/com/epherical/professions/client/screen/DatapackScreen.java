@@ -141,7 +141,14 @@ public class DatapackScreen extends Screen {
                     entry.setYScroll((int) - scrollAmount);
                 }
             }
+            double d = this.minecraft.getWindow().getGuiScale();
+            RenderSystem.enableScissor(
+                    (int) (10 * d),
+                    (int) ((double) (11) * d),
+                    (int) ((double) (this.getScrollbarPosition() + 6) * d),
+                    (int) ((double) (this.height - 22) * d));
             super.render(poseStack, mouseX, mouseY, partialTick);
+            RenderSystem.disableScissor();
             renderScrollBar();
         } else {
             Minecraft minecraft = Minecraft.getInstance();

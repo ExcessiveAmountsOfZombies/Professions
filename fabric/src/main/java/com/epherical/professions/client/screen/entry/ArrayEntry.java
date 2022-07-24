@@ -107,7 +107,7 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         super.render(poseStack, mouseX, mouseY, partialTick);
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        font.drawShadow(poseStack, usage, x + 3, y + 8, 0xFFFFFF);
+        font.drawShadow(poseStack, usage, (x + 3) + getXScroll(), (y + 8) + getYScroll(), 0xFFFFFF);
     }
 
 }

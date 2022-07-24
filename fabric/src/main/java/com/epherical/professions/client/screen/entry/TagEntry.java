@@ -24,11 +24,11 @@ public class TagEntry<T> extends DatapackEntry {
     private final Registry<T> registry;
     private T value;
 
-    public TagEntry(int i, int j, int k, Registry<T> registry, T defaultValue) {
-        super(i, j, k);
+    public TagEntry(int x, int y, int width, Registry<T> registry, T defaultValue) {
+        super(x, y, width);
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        this.box = new EditBox(font, this.x + width / 2 - 50, j + 8, 250, 22, Component.nullToEmpty(registry.getKey(defaultValue).toString()));
+        this.box = new EditBox(font, this.x + getXScroll() + this.width / 2 - 50, y + 8 + getYScroll(), 250, 22, Component.nullToEmpty(registry.getKey(defaultValue).toString()));
         this.box.setVisible(true);
         this.box.setMaxLength(100);
         this.box.setBordered(false);
@@ -48,7 +48,7 @@ public class TagEntry<T> extends DatapackEntry {
         }
         //suggestions.render(poseStack, mouseX, mouseY);
 
-        this.box.y = y + 8;
+        this.box.y = y + 8 + getYScroll();
     }
 
     @Override

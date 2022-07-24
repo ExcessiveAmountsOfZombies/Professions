@@ -22,7 +22,7 @@ public class RegistryObjectEntry<T> extends DatapackEntry implements GuiEventLis
         super.render(poseStack, mouseX, mouseY, partialTick);
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        drawCenteredString(poseStack, font, key.location().toString(), x + width / 2, y +8, 0xFFFFFF);
+        drawCenteredString(poseStack, font, key.location().toString(), x + getXScroll() + width / 2, y + 8 + getYScroll(), 0xFFFFFF);
     }
 
     public T getObject() {

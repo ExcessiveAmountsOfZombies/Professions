@@ -13,12 +13,13 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class DatapackEntry extends AbstractWidget implements Parent {
+public abstract class DatapackEntry extends AbstractWidget implements Parent, Scrollable {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -27,6 +28,9 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
     private final Type[] types;
     private final TinyButton[] buttonTypes;
     protected final List<AbstractWidget> children = new ArrayList<>();
+
+    protected int xScroll = 0;
+    protected int yScroll = 0;
 
 
     public DatapackEntry(int x, int y, int width, int height, Type... types) {
@@ -44,7 +48,7 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
             }, (button, poseStack, mouseX, mouseY) -> {
                 Minecraft minecraft = Minecraft.getInstance();
                 minecraft.screen.renderTooltip(poseStack, types[finalZ].text, mouseX, mouseY);
-            });
+            }, this);
             children.add(buttonTypes[z]);
         }
     }
@@ -77,8 +81,8 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        this.blit(poseStack, this.x, this.y, 0, 0, this.width / 2, this.height);
-        this.blit(poseStack, this.x + this.width / 2, this.y, 256 - this.width / 2, 0, this.width / 2, this.height);
+        this.blit(poseStack, this.x + getXScroll(), this.y + getYScroll(), 0, 0, this.width / 2, this.height);
+        this.blit(poseStack, this.x + getXScroll() + this.width / 2, this.y + getYScroll(), 256 - this.width / 2, 0, this.width / 2, this.height);
         //this.blit(poseStack, this.x + this.width / 2, this.y, 0, 0, 240, this.height);
         //this.blit(poseStack, this.x + this.width / 4, this.y, 3, 0, 240, this.height);
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
@@ -103,13 +107,33 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
     }
 
     public void setX(int x) {
-        LOGGER.info("setting X, old {}, new {}", this.x, x);
+        //LOGGER.info("setting X, old {}, new {}", this.x, x);
         this.x = x;
     }
 
     public void setY(int y) {
-        LOGGER.info("setting Y, old {}, new {}", this.y, y);
+        //LOGGER.info("setting Y, old {}, new {}", this.y, y);
         this.y = y;
+    }
+
+    @Override
+    public void setXScroll(int x) {
+        this.xScroll = x;
+    }
+
+    @Override
+    public void setYScroll(int y) {
+        this.yScroll = y;
+    }
+
+    @Override
+    public int getXScroll() {
+        return xScroll;
+    }
+
+    @Override
+    public int getYScroll() {
+        return yScroll;
     }
 
     @Override
@@ -127,7 +151,7 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
     }
 
     public List<AbstractWidget> flattenEntries(List<AbstractWidget> total, AbstractWidget current) {
-        System.out.println("Flattening entry for: " + current.getClass().getName());
+        //System.out.println("Flattening entry for: " + current.getClass().getName());
         if (current instanceof Parent parent) {
             for (AbstractWidget child : parent.children()) {
                 total.add(child);
@@ -140,14 +164,17 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
     public static class TinyButton extends Button {
 
         private final Type type;
+        @Nullable
+        private final DatapackEntry entry;
 
         public TinyButton(int i, int j, int k, int l, Type type, OnPress onPress) {
-            this(i, j, k, l, type, onPress, NO_TOOLTIP);
+            this(i, j, k, l, type, onPress, NO_TOOLTIP, null);
         }
 
-        public TinyButton(int i, int j, int k, int l, Type type, Button.OnPress onPress, Button.OnTooltip onTooltip) {
+        public TinyButton(int i, int j, int k, int l, Type type, Button.OnPress onPress, Button.OnTooltip onTooltip, DatapackEntry entry) {
             super(i, j, k, l, Component.nullToEmpty(""), onPress, onTooltip);
             this.type = type;
+            this.entry = entry;
         }
 
 
@@ -173,8 +200,15 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent {
             RenderSystem.defaultBlendFunc();
             RenderSystem.enableDepthTest();
 
-            this.blit(poseStack, this.x, this.y, i * 7, 205, 7, 7);
-            this.blit(poseStack, this.x + 1, this.y + 1, type.ordinal() * 5, 214, 5, 5);
+            int xOffset = 0;
+            int yOffset = 0;
+            if (entry != null) {
+                xOffset = entry.getXScroll();
+                yOffset = entry.getYScroll();
+            }
+
+            this.blit(poseStack, this.x + xOffset, this.y + yOffset, i * 7, 205, 7, 7);
+            this.blit(poseStack, this.x + 1 + xOffset, this.y + 1 + yOffset, type.ordinal() * 5, 214, 5, 5);
             if (this.isHoveredOrFocused()) {
                 this.renderToolTip(poseStack, mouseX, mouseY);
             }

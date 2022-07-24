@@ -6,18 +6,26 @@ import com.epherical.professions.client.screen.entry.CompoundEntry;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
 import com.epherical.professions.client.screen.entry.MultipleTypeEntry;
 import com.epherical.professions.client.screen.entry.TagEntry;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.lwjgl.glfw.GLFW;
@@ -39,6 +47,8 @@ public class DatapackScreen extends Screen {
 
     protected boolean pressedNew = false;
 
+    private double scrollAmount;
+
     public List<DatapackEntry> datapackEntries = new ArrayList<>();
     public boolean adjustEntries = false;
 
@@ -58,14 +68,14 @@ public class DatapackScreen extends Screen {
         //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
          DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> {
              MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 60,
+                     new TagEntry<>(ofx, y, width - 14, Registry.BLOCK, Blocks.STONE),
                      new CompoundEntry(0, 0, 0,
                              List.of(new TagEntry<>(ofx + 8, y, width - 8, Registry.BLOCK, Blocks.STONE),
-                                     new BooleanEntry(ofx + 8, y, width - 8, "Required", false))),
-                     new TagEntry<>(ofx, y, width - 14, Registry.BLOCK, Blocks.STONE));
+                                     new BooleanEntry(ofx + 8, y, width - 8, "Required", false))));
              return required;
         });
         int increment = 0;
-        LOGGER.info("Setting x, y position on init entries.");
+        //LOGGER.info("Setting x, y position on init entries.");
         for (DatapackEntry entry : blockDataTagEditor.entries()) {
             entry.setX(ofx);
             entry.setY(ofy + (entry.getHeight() * increment));
@@ -126,7 +136,13 @@ public class DatapackScreen extends Screen {
         int ofy = (this.height - imageHeight) / 2;
         if (pressedNew) {
             renderMainWindow(poseStack, ofx, ofy);
+            for (GuiEventListener child : this.children) {
+                if (child instanceof DatapackEntry entry) {
+                    entry.setYScroll((int) - scrollAmount);
+                }
+            }
             super.render(poseStack, mouseX, mouseY, partialTick);
+            renderScrollBar();
         } else {
             Minecraft minecraft = Minecraft.getInstance();
             Font font = minecraft.font;
@@ -146,6 +162,56 @@ public class DatapackScreen extends Screen {
         vLine(stack, 10, 10, height - 10, 0xFFFFFFFF);
         vLine(stack, width - 11, 10, height - 10, 0xFFFFFFFF);
         fill(stack, 10, 10, width - 10, height - 10, 0xAA333333);
+    }
+
+    protected int getScrollbarPosition() {
+        return this.width - 11;
+    }
+
+    public double getScrollAmount() {
+        return this.scrollAmount;
+    }
+
+    public void setScrollAmount(double scroll) {
+        this.scrollAmount = Mth.clamp(scroll, 0.0, this.getMaxScroll());
+    }
+
+    private void renderScrollBar() {
+        // just using the code from AbstractSelectionList to create a scrollbar.
+        int i = this.getScrollbarPosition();
+        int j = i - 5;
+        int maxScroll = this.getMaxScroll();
+        if (maxScroll > 0) {
+            int top = 20;
+            int bottom = this.height - 20;
+            Tesselator tesselator = Tesselator.getInstance();
+            BufferBuilder bufferBuilder = tesselator.getBuilder();
+            RenderSystem.disableTexture();
+            RenderSystem.setShader(GameRenderer::getPositionColorShader);
+            int endOfScrollBar = (int)((float)((top - bottom) * (top - bottom)) / (float)this.getMaxPosition());
+            endOfScrollBar = Mth.clamp(endOfScrollBar, 32, (top - bottom - 8));
+            int newBottom = (int)this.getScrollAmount() * (top - bottom - endOfScrollBar) / maxScroll + bottom;
+            if (newBottom < bottom) {
+                newBottom = bottom;
+            }
+
+            bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            bufferBuilder.vertex(i, top - 8, 0.0).color(0, 0, 0, 255).endVertex();
+            bufferBuilder.vertex(j , top - 8, 0.0).color(0, 0, 0, 255).endVertex();
+            bufferBuilder.vertex(j , bottom +8, 0.0).color(0, 0, 0, 255).endVertex();
+            bufferBuilder.vertex(i, bottom + 8, 0.0).color(0, 0, 0, 255).endVertex();
+            bufferBuilder.vertex(i, (newBottom + endOfScrollBar), 0.0).color(128, 128, 128, 255).endVertex();
+            bufferBuilder.vertex(j, (newBottom + endOfScrollBar), 0.0).color(128, 128, 128, 255).endVertex();
+            bufferBuilder.vertex(j, newBottom, 0.0).color(128, 128, 128, 255).endVertex();
+            bufferBuilder.vertex(i, newBottom, 0.0).color(128, 128, 128, 255).endVertex();
+            bufferBuilder.vertex(i, (newBottom + endOfScrollBar - 1), 0.0).color(192, 192, 192, 255).endVertex();
+            bufferBuilder.vertex((j - 1), (newBottom + endOfScrollBar - 1), 0.0).color(192, 192, 192, 255).endVertex();
+            bufferBuilder.vertex((j - 1), newBottom, 0.0).color(192, 192, 192, 255).endVertex();
+            bufferBuilder.vertex(i, newBottom, 0.0).color(192, 192, 192, 255).endVertex();
+            tesselator.end();
+            RenderSystem.enableTexture();
+            RenderSystem.disableBlend();
+        }
     }
 
     @Override
@@ -192,6 +258,26 @@ public class DatapackScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        return super.mouseScrolled(mouseX, mouseY, delta);
+        if (!super.mouseScrolled(mouseX, mouseY, delta)) {
+            // 23 as most entries will be at least 23.
+            this.setScrollAmount(this.getScrollAmount() - delta * (double)23 / 2.0);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected int getMaxPosition() {
+        return this.children.stream().mapToInt(value -> {
+            if (value instanceof DatapackEntry entry) {
+                return entry.getHeight();
+            } else {
+                return 0;
+            }
+        }).sum();
+    }
+
+    public int getMaxScroll() {                                         //0 for top height
+        return Math.max(0, this.getMaxPosition() - ((this.height - 10) - (0 + 10) - 20));
     }
 }

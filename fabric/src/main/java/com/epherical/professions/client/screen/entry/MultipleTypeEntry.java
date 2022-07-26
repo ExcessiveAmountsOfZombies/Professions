@@ -51,35 +51,20 @@ public class MultipleTypeEntry extends DatapackEntry {
         super.tick(screen);
         this.types[currentSelection].tick(screen);
         if (needsRefresh) {
-            AbstractWidget remove = children.remove(0);
-            if (remove instanceof DatapackEntry entry) {
-                for (AbstractWidget child : entry.children) {
-                    for (AbstractWidget widget1 : flattenEntries(Lists.newArrayList(child), child)) {
-                        screen.removeWidget(widget1);
-                    }
-                }
-                screen.removeWidget(entry);
-            }
-            int index = screen.children.indexOf(this);
+            screen.markScreenDirty();
+            children.remove(0);
             DatapackEntry object = types[currentSelection];
-            object.setX(x + 7);
-            object.setY(y + object.getHeight());
-            for (AbstractWidget child : object.children) {
-                for (AbstractWidget widget : flattenEntries(Lists.newArrayList(child), child)) {
-                    // todo; hmm
-                    screen.children.add(index + 1, widget);
-                    screen.renderables.add(index + 1, widget);
-                    //screen.addRenderableWidget(child);
-                }
-                /*screen.children.add(index + 1, child);
-                screen.addRenderableOnly(child);*/
-            }
-            screen.children.add(index + 1, object);
-            screen.renderables.add(index + 1, object);
             children.add(object);
-            screen.adjustEntries = true;
             needsRefresh = false;
         }
+    }
+
+    @Override
+    public void onRebuild(DatapackScreen screen) {
+        // any direct children go before this entry.
+        screen.addChild(this);
+        DatapackEntry object = types[currentSelection];
+        object.onRebuild(screen);
     }
 
     @Override

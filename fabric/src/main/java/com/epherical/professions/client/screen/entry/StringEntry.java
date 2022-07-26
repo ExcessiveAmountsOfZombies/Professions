@@ -64,7 +64,21 @@ public class StringEntry extends DatapackEntry {
     }
 
     @Override
+    public void onRebuild(DatapackScreen screen) {
+        screen.addChild(box);
+        screen.addChild(this);
+    }
+
+    @Override
     public String getType() {
         return "String";
+    }
+
+    @Override
+    public String toString() {
+        return "StringEntry{" +
+                "usage='" + usage + '\'' +
+                ", box=" + box.getValue() +
+                "} " + super.toString();
     }
 }

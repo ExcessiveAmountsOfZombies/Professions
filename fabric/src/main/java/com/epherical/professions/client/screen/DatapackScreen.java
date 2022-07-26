@@ -3,6 +3,7 @@ package com.epherical.professions.client.screen;
 import com.epherical.professions.client.screen.editors.DatapackEditor;
 import com.epherical.professions.client.screen.editors.ProfessionEditor;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
+import com.epherical.professions.client.screen.entry.Parent;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -74,20 +75,10 @@ public class DatapackScreen extends Screen {
             entry.setY(ofy + (entry.getHeight() * increment));
             entry.setWidth(width);
             entry.initPosition(ofx, ofy);
+            System.out.println("going here??");
             this.addDatapackWidget(entry);
             increment++;
         }
-
-
-
-
-        /*this.addDatapackWidget(new RegistryEntry<>(ofx, ofy, width, RegistryConstants.PROFESSION_SERIALIZER, ProfessionSerializer.DEFAULT_PROFESSION));
-        this.addDatapackWidget(new StringEntry(ofx, ofy + distance, width, "Color:", "#FFFFFF"));
-        this.addDatapackWidget(new StringEntry(ofx, ofy + distance + height, width, "Desc Color:", "#FFFFFF"));
-        this.addDatapackWidget(new StringEntry(ofx, ofy + distance + (height * 2), width, "Display Name:", "Occupation"));
-        this.addDatapackWidget(new StringEntry(ofx, ofy + distance + (height * 3), width, "Exp Scaling:", "1000*1.064^(lvl-1)"));
-        //this.addRenderableWidget(new StringEntry(ofx, ofy + distance + (height * 4), width, "Income Scale", "base"));
-        this.addDatapackWidget(new NumberEntry<>(ofx, ofy + distance + (height * 4), width, "Max Level:", 100));*/
     }
 
     private int time = 0;
@@ -100,6 +91,7 @@ public class DatapackScreen extends Screen {
         }
 
         if (adjustEntries) {
+            rebuildScreen();
             int yOffset = 11;
             int increment = 0;
             for (GuiEventListener child : this.children()) {
@@ -116,9 +108,9 @@ public class DatapackScreen extends Screen {
 
             time += 2;
             if (time == 20) {
-                adjustEntries = false;
                 time = 0;
             }
+            adjustEntries = false;
             datapackEditor.serialize(null);
         }
 
@@ -231,12 +223,29 @@ public class DatapackScreen extends Screen {
         return super.children();
     }
 
+    public void markScreenDirty() {
+        adjustEntries = true;
+    }
+
+    private void rebuildScreen() {
+        datapackEntries.clear();
+        children.clear();
+        renderables.clear();
+        narratables.clear();
+        rebuildEntries();
+    }
+
+    private void rebuildEntries() {
+        for (DatapackEntry datapackEntry : this.datapackEditor.entries()) {
+            this.addDatapackWidget(datapackEntry);
+        }
+    }
+
     public <T extends DatapackEntry> T addDatapackWidget(T widget) {
         datapackEntries.add(widget);
-        for (AbstractWidget child : widget.children()) {
-            super.addRenderableWidget(child);
-        }
-        return super.addRenderableWidget(widget);
+        System.out.println("This");
+        widget.onRebuild(this);
+        return widget;
     }
 
     @Override
@@ -283,4 +292,22 @@ public class DatapackScreen extends Screen {
     public int getMaxScroll() {                                         //0 for top height
         return Math.max(0, this.getMaxPosition() - ((this.height - 10) - (0 + 10) - 20));
     }
+
+    public int indexOf(AbstractWidget widget) {
+        return children.indexOf(widget);
+    }
+
+    public void addChild(AbstractWidget widget) {
+        this.children.add(widget);
+        this.renderables.add(widget);
+        this.narratables.add(widget);
+    }
+
+    public void addChild(int index, AbstractWidget widget) {
+        this.children.add(index, widget);
+        this.renderables.add(index, widget);
+        this.narratables.add(index, widget);
+    }
+
+
 }

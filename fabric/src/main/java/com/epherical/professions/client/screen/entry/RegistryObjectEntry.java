@@ -1,5 +1,6 @@
 package com.epherical.professions.client.screen.entry;
 
+import com.epherical.professions.client.screen.DatapackScreen;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,6 +18,11 @@ public class RegistryObjectEntry<T> extends DatapackEntry {
         super(i, j, k);
         this.key = key;
         this.object = object;
+    }
+
+    @Override
+    public void onRebuild(DatapackScreen screen) {
+        screen.addChild(this);
     }
 
     @Override

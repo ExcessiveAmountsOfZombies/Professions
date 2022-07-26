@@ -43,36 +43,21 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
     public void tick(DatapackScreen screen) {
         super.tick(screen);
         if (needsRefresh) {
-            for (T object : objects) {
-                for (AbstractWidget child : object.children) {
-                    for (AbstractWidget widget : flattenEntries(Lists.newArrayList(child), child)) {
-                        screen.removeWidget(widget);
-                    }
-                }
-                screen.removeWidget(object);
-            }
-            int index = screen.children.indexOf(this);
-            for (T object : objects) {
-                object.setX(x + 7);
-                object.setY(y + object.getHeight());
-                for (AbstractWidget child : object.children) {
-                    for (AbstractWidget widget : flattenEntries(Lists.newArrayList(), child)) {
-                        // todo; hmm
-                        screen.children.add(index + 1, widget);
-                        screen.renderables.add(index + 1, widget);
-                        //screen.addRenderableWidget(child);
-                    }
-                    screen.children.add(index + 1, child);
-                    screen.renderables.add(index + 1, child);
-                }
-                screen.children.add(index + 1, object);
-                screen.addRenderableOnly(object);
-            }
-            screen.adjustEntries = true;
+            screen.markScreenDirty();
             needsRefresh = false;
         }
         for (T object : objects) {
             object.tick(screen);
+        }
+    }
+
+    @Override
+    public void onRebuild(DatapackScreen screen) {
+        screen.addChild(addButton);
+        screen.addChild(removeButton);
+        screen.addChild(this);
+        for (T object : objects) {
+            object.onRebuild(screen);
         }
     }
 
@@ -83,7 +68,7 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
     }
 
     public T addEntry(T entry) {
-        objects.add(entry);
+        objects.add(0, entry);
         entry.initPosition(this.x, this.y);
         return entry;
     }
@@ -117,7 +102,21 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
     }
 
     @Override
+    public List<? extends AbstractWidget> children() {
+        List<AbstractWidget> copy = new ArrayList<>(super.children());
+        copy.addAll(objects);
+        return copy;
+    }
+
+    @Override
     public String getType() {
         return "Array";
+    }
+
+    @Override
+    public String toString() {
+        return "ArrayEntry{" +
+                "usage='" + usage + '\'' +
+                "} " + super.toString();
     }
 }

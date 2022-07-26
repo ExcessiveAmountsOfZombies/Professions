@@ -76,6 +76,8 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
 
     }
 
+    public abstract void onRebuild(DatapackScreen screen);
+
     @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {
         this.defaultButtonNarrationText(narrationElementOutput);
@@ -188,7 +190,6 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
     }
 
     public List<AbstractWidget> flattenEntries(List<AbstractWidget> total, AbstractWidget current) {
-        //System.out.println("Flattening entry for: " + current.getClass().getName());
         if (current instanceof Parent parent) {
             for (AbstractWidget child : parent.children()) {
                 total.add(child);

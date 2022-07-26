@@ -72,6 +72,12 @@ public class TagEntry<T> extends DatapackEntry {
     }
 
     @Override
+    public void onRebuild(DatapackScreen screen) {
+        screen.addChild(box);
+        screen.addChild(this);
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         /*if (suggestions.mouseClicked(mouseX, mouseY, button)) {
             return true;

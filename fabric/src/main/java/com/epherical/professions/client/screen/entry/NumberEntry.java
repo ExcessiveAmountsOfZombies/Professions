@@ -34,4 +34,12 @@ public class NumberEntry<T extends Number> extends StringEntry {
     public String getType() {
         return "Number";
     }
+
+    @Override
+    public String toString() {
+        return "NumberEntry{" +
+                "description='" + description + '\'' +
+                ", value=" + value +
+                "} " + super.toString();
+    }
 }

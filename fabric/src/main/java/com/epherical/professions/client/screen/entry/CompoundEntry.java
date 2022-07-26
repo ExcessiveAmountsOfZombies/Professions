@@ -46,4 +46,18 @@ public class CompoundEntry extends DatapackEntry {
             }
         }
     }
+
+    @Override
+    public void onRebuild(DatapackScreen screen) {
+        screen.addChild(this);
+        for (AbstractWidget child : children) {
+            if (child instanceof DatapackEntry entry) {
+                entry.onRebuild(screen);
+            } else {
+                // compound entries shouldn't have anything in them, they're just containers.
+                screen.addChild(child);
+            }
+        }
+
+    }
 }

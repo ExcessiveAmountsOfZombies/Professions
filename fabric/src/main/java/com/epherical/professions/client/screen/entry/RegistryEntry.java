@@ -77,26 +77,29 @@ public class RegistryEntry<T> extends DatapackEntry {
     public void tick(DatapackScreen screen) {
         super.tick(screen);
         if (button.isOpened() && !added) {
+            screen.markScreenDirty();
+        } else if (!button.isOpened() && added) {
+            screen.markScreenDirty();
+        }
+
+    }
+
+    @Override
+    public void onRebuild(DatapackScreen screen) {
+        screen.addChild(button);
+        screen.addChild(this);
+        if (button.isOpened() && !added) {
             List<RegistryObjectEntry<T>> objects = new ArrayList<>();
             for (Map.Entry<ResourceKey<T>, T> entry : registry.entrySet()) {
                 RegistryObjectEntry<T> objectEntry = new RegistryObjectEntry<>(x + 7, y + 23, 160, entry.getKey(), entry.getValue());
                 objects.add(objectEntry);
-                int index = screen.children.indexOf(this);
-                screen.children.add(index + 1, objectEntry);
-                screen.addRenderableOnly(objectEntry);
+                screen.addChild(objectEntry);
             }
             registryEntries.addAll(objects);
             added = true;
-            screen.adjustEntries = true;
         } else if (!button.isOpened() && added) {
-            for (RegistryObjectEntry<T> registryEntry : registryEntries) {
-                screen.removeWidget(registryEntry);
-            }
-            registryEntries.clear();
             added = false;
-            screen.adjustEntries = true;
         }
-
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.epherical.professions.client.screen.entry;
 
+import com.epherical.professions.client.screen.DatapackScreen;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -21,6 +22,11 @@ public class BooleanEntry extends DatapackEntry {
         super(x, y, width, serializationKey);
         this.usage = usage;
         this.value = defaultValue;
+    }
+
+    @Override
+    public void onRebuild(DatapackScreen screen) {
+        screen.addChild(this);
     }
 
     @Override
@@ -54,5 +60,13 @@ public class BooleanEntry extends DatapackEntry {
 
     public boolean getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "BooleanEntry{" +
+                "usage='" + usage + '\'' +
+                ", value=" + value +
+                "} " + super.toString();
     }
 }

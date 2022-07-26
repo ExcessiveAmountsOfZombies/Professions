@@ -4,6 +4,7 @@ import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.client.screen.entry.ArrayEntry;
 import com.epherical.professions.client.screen.entry.CompoundEntry;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
+import com.epherical.professions.client.screen.entry.MultipleTypeEntry;
 import com.epherical.professions.client.screen.entry.NumberEntry;
 import com.epherical.professions.client.screen.entry.RegistryEntry;
 import com.epherical.professions.client.screen.entry.StringEntry;
@@ -24,7 +25,7 @@ public class ProfessionEditor extends DatapackEditor {
     private final StringEntry displayName;
     private final StringEntry expScaling;
     private final NumberEntry<Integer> maxLevel;
-    private final ArrayEntry<CompoundEntry> actions;
+    private final ArrayEntry<MultipleTypeEntry> actions;
     /*private final ArrayEntry<StringEntry> description;
     private final ArrayEntry<CompoundEntry> unlocks;*/
 
@@ -37,20 +38,20 @@ public class ProfessionEditor extends DatapackEditor {
         expScaling = new StringEntry(width / 2, 0, 128, "Exp Scaling:", "1000*1.064^(lvl-1)");
         maxLevel = new NumberEntry<>(width / 2, 0, 128, "Max Level:", 100);
         actions = new ArrayEntry<>(0, 0, 128, "Actions", (x, y) -> {
-           CompoundEntry entry = new CompoundEntry(embed + 8, y, 90,
-                   List.of(new RegistryEntry<>(embed + 14, y, width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK),
-                           new ArrayEntry<>(embed + 14, y, width - 14, "items", (integer, integer2) -> {
-                               return new StringEntry(embed + 18, y, width - 22, "items", "#minecraft:crops", Optional.of("items"));
-                           }),
-                           new ArrayEntry<>(embed + 14, y, width - 14, "rewards", (integer, integer2) -> {
-                               return new CompoundEntry(0, 0, 0,
-                                       List.of(new NumberEntry<>(embed + 18, y, width - 18, "amount", 1.0),
-                                               new RegistryEntry<>(embed + 18, y, width - 18, RegistryConstants.REWARDS, Rewards.EXPERIENCE_REWARD)));
-                           }),
-                           new ArrayEntry<>(embed + 14, y, width - 14, "conditions", (integer, integer2) -> {
-                               return new RegistryEntry<>(embed + 18, y, width - 22, RegistryConstants.ACTION_CONDITION_TYPE, ActionConditions.FULLY_GROWN_CROP_CONDITION);
-                           })));
-           return entry;
+            MultipleTypeEntry entry = new MultipleTypeEntry(embed + 8, y, 90, new CompoundEntry(embed + 8, y, 90, List.of(
+                    new RegistryEntry<>(embed + 14, y, width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK),
+                    new ArrayEntry<>(embed + 14, y, width - 14, "items", (x1, y2) -> {
+                        return new StringEntry(embed + 18, y2, width - 22, "items", "#minecraft:crops", Optional.of("items"));
+                    }),
+                    new ArrayEntry<>(embed + 14, y, width - 14, "rewards", (x1, y2) -> {
+                        return new CompoundEntry(0, 0, 0,
+                                List.of(new NumberEntry<>(embed + 18, y2, width - 18, "amount", 1.0),
+                                        new RegistryEntry<>(embed + 18, y2, width - 18, RegistryConstants.REWARDS, Rewards.EXPERIENCE_REWARD)));
+                    }),
+                    new ArrayEntry<>(embed + 14, y, width - 14, "conditions", (x1, y2) -> {
+                        return new RegistryEntry<>(embed + 18, y2, width - 22, RegistryConstants.ACTION_CONDITION_TYPE, ActionConditions.FULLY_GROWN_CROP_CONDITION);
+                    }))));
+            return entry;
         });
         /*this.addDatapackWidget(new RegistryEntry<>(ofx, ofy, width, RegistryConstants.PROFESSION_SERIALIZER, ProfessionSerializer.DEFAULT_PROFESSION));
         this.addDatapackWidget(new StringEntry(ofx, ofy + distance, width, "Color:", "#FFFFFF"));

@@ -29,7 +29,7 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         super(x, y, width);
         this.usage = usage;
         addButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.ADD, button -> {
-            addEntry(addObject.apply(x, y + 2));
+            addEntry(addObject.apply(x, this.y + 2));
             needsRefresh = true;
         });
         removeButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.BAD, button -> {
@@ -56,12 +56,14 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
                 object.setX(x + 7);
                 object.setY(y + object.getHeight());
                 for (AbstractWidget child : object.children) {
-                    for (AbstractWidget widget : flattenEntries(Lists.newArrayList(child), child)) {
+                    for (AbstractWidget widget : flattenEntries(Lists.newArrayList(), child)) {
                         // todo; hmm
                         screen.children.add(index + 1, widget);
                         screen.renderables.add(index + 1, widget);
                         //screen.addRenderableWidget(child);
                     }
+                    screen.children.add(index + 1, child);
+                    screen.renderables.add(index + 1, child);
                 }
                 screen.children.add(index + 1, object);
                 screen.addRenderableOnly(object);
@@ -82,6 +84,7 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
 
     public T addEntry(T entry) {
         objects.add(entry);
+        entry.initPosition(this.x, this.y);
         return entry;
     }
 

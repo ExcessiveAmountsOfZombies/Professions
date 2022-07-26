@@ -57,6 +57,15 @@ public class RegistryEntry<T> extends DatapackEntry {
         if (isHoveredOrFocused()) {
             renderToolTip(poseStack, mouseX, mouseY, tooltip);
         }
+        int start = width - 25;
+        button.x = x + start + xScroll;
+        button.y = y + 2 + yScroll;
+    }
+
+    @Override
+    public void initPosition(int initialX, int initialY) {
+        super.initPosition(initialX, initialY);
+        setButtonPositions(0, 0);
     }
 
     @Override
@@ -93,5 +102,11 @@ public class RegistryEntry<T> extends DatapackEntry {
     @Override
     public String getType() {
         return "String";
+    }
+
+    private void setButtonPositions(int xScroll, int yScroll) {
+        int start = width - 25;
+        button.x = x + start + xScroll;
+        button.y = y + 2 + yScroll;
     }
 }

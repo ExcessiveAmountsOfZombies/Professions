@@ -49,6 +49,7 @@ public class MultipleTypeEntry extends DatapackEntry {
     @Override
     public void tick(DatapackScreen screen) {
         super.tick(screen);
+        this.types[currentSelection].tick(screen);
         if (needsRefresh) {
             AbstractWidget remove = children.remove(0);
             if (remove instanceof DatapackEntry entry) {

@@ -25,6 +25,8 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    public static final int TEXT_COLOR = 0xebebeb;
+
     protected final Minecraft minecraft = Minecraft.getInstance();
 
     private final Type[] types;
@@ -134,11 +136,11 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return this.active && this.visible && mouseX >= (double)(this.x + getXScroll()) && mouseY >= (double)(this.y + getYScroll()) && mouseX < (double)(this.x + this.width + getXScroll()) && mouseY < (double)(this.y + this.height + getYScroll());
+        return this.active && this.visible && mouseX >= (double) (this.x + getXScroll()) && mouseY >= (double) (this.y + getYScroll()) && mouseX < (double) (this.x + this.width + getXScroll()) && mouseY < (double) (this.y + this.height + getYScroll());
     }
 
     protected boolean clicked(double mouseX, double mouseY) {
-        return this.active && this.visible && mouseX >= (double)(this.x + getXScroll()) && mouseY >= (double)(this.y + getYScroll()) && mouseX < (double)(this.x + this.width + getXScroll()) && mouseY < (double)(this.y + this.height + getYScroll());
+        return this.active && this.visible && mouseX >= (double) (this.x + getXScroll()) && mouseY >= (double) (this.y + getYScroll()) && mouseX < (double) (this.x + this.width + getXScroll()) && mouseY < (double) (this.y + this.height + getYScroll());
     }
 
     public void setX(int x) {

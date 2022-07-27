@@ -6,12 +6,9 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
-import java.util.List;
 import java.util.Optional;
 
 public class StringEntry extends DatapackEntry {
@@ -33,7 +30,7 @@ public class StringEntry extends DatapackEntry {
         this.box.setMaxLength(100);
         this.box.setBordered(false);
         this.box.setValue(defaultValue);
-        this.box.setTextColor(0x0095ba);
+        this.box.setTextColor(TEXT_COLOR);
         children.add(box);
     }
 
@@ -43,7 +40,7 @@ public class StringEntry extends DatapackEntry {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         font.drawShadow(poseStack, usage, x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
-        //drawCenteredString(poseStack, font, this.box.getValue(), this.width / 2, y + 8, 0x0095ba);
+        //drawCenteredString(poseStack, font, this.box.getValue(), this.width / 2, y + 8, TEXT_COLOR);
         if (isHoveredOrFocused()) {
             //renderToolTip(poseStack, mouseX, mouseY, this.box.getValue());
         }

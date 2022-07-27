@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.gui.components.AbstractWidget;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +14,8 @@ public class CompoundEntry extends DatapackEntry {
     /**
      * @param entries a list of entries that will comprise the object. Each entry should use the Optional serialization key.
      */
-    public CompoundEntry(int i, int j, int k, List<DatapackEntry> entries) {
-        super(i, j, k, 0);
+    public CompoundEntry(int x, int y, int width, List<DatapackEntry> entries) {
+        super(x, y, width, 0);
         children.addAll(entries);
     }
 
@@ -59,6 +58,5 @@ public class CompoundEntry extends DatapackEntry {
                 screen.addChild(child);
             }
         }
-
     }
 }

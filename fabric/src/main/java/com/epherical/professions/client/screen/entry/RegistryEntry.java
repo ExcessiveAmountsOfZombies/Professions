@@ -4,11 +4,8 @@ import com.epherical.professions.client.screen.DatapackScreen;
 import com.epherical.professions.client.screen.button.SmallIconButton;
 import com.epherical.professions.client.widgets.CommandButton;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.Registry;
@@ -61,7 +58,7 @@ public class RegistryEntry<T> extends DatapackEntry {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         font.drawShadow(poseStack, "Type:", x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
-        drawCenteredString(poseStack, font, tooltip, (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), 0x0095ba);
+        drawCenteredString(poseStack, font, tooltip, (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), TEXT_COLOR);
         if (isHoveredOrFocused()) {
             renderToolTip(poseStack, mouseX, mouseY, tooltip);
         }
@@ -89,7 +86,6 @@ public class RegistryEntry<T> extends DatapackEntry {
         } else if (!button.isOpened() && added) {
             screen.markScreenDirty();
         }
-
     }
 
     @Override
@@ -118,6 +114,15 @@ public class RegistryEntry<T> extends DatapackEntry {
     @Override
     public String getType() {
         return "String";
+    }
+
+
+    public T getValue() {
+        return value;
+    }
+
+    public Registry<T> getRegistry() {
+        return registry;
     }
 
     private void setButtonPositions(int xScroll, int yScroll) {

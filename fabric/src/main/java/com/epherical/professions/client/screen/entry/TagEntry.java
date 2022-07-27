@@ -35,7 +35,7 @@ public class TagEntry<T> extends DatapackEntry {
         this.box.setMaxLength(100);
         this.box.setBordered(false);
         this.box.setValue(registry.getKey(defaultValue).toString());
-        this.box.setTextColor(0x0095ba);
+        this.box.setTextColor(TEXT_COLOR);
         this.registry = registry;
         this.value = defaultValue;
         children.add(box);

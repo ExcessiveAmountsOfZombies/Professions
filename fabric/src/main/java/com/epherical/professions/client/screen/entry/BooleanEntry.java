@@ -35,12 +35,8 @@ public class BooleanEntry extends DatapackEntry {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         font.drawShadow(poseStack, usage, x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
-        drawCenteredString(poseStack, font, String.valueOf(value), (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), 0x0095ba);
+        drawCenteredString(poseStack, font, String.valueOf(value), (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), TEXT_COLOR);
         //this.box.render(poseStack, mouseX, mouseY, partialTick);
-    }
-
-    public void serialize(JsonElement object) {
-
     }
 
     @Override

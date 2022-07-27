@@ -12,7 +12,9 @@ import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionConditions;
 import com.epherical.professions.profession.rewards.Rewards;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +33,7 @@ public class ProfessionEditor extends DatapackEditor {
 
 
     public ProfessionEditor(int embed, int width) {
-        professionType = new RegistryEntry<>(0, 0, 128, RegistryConstants.PROFESSION_SERIALIZER, ProfessionSerializer.DEFAULT_PROFESSION);
+        professionType = new RegistryEntry<>(0, 0, 128, RegistryConstants.PROFESSION_SERIALIZER, ProfessionSerializer.DEFAULT_PROFESSION, Optional.of("type"));
         professionColor = new StringEntry(width / 2, 0, 128, "Color:", "#FFFFFF");
         descriptionColor = new StringEntry(width / 2, 0, 128, "Description Color:", "#FFFFFF");
         displayName = new StringEntry(width / 2, 0, 128, "Display Name:", "Occupation Name");
@@ -39,7 +41,7 @@ public class ProfessionEditor extends DatapackEditor {
         maxLevel = new NumberEntry<>(width / 2, 0, 128, "Max Level:", 100);
         actions = new ArrayEntry<>(0, 0, 128, "Actions", (x, y) -> {
             MultipleTypeEntry entry = new MultipleTypeEntry(embed + 8, y, 90, new CompoundEntry(embed + 8, y, 90, List.of(
-                    new RegistryEntry<>(embed + 14, y, width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK),
+                    new RegistryEntry<>(embed + 14, y, width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK, Optional.of("action")),
                     new ArrayEntry<>(embed + 14, y, width - 14, "items", (x1, y2) -> {
                         return new StringEntry(embed + 18, y2, width - 22, "items", "#minecraft:crops", Optional.of("items"));
                     }),
@@ -70,6 +72,17 @@ public class ProfessionEditor extends DatapackEditor {
 
     @Override
     public void serialize(JsonElement object) {
-
+        JsonObject object1 = new JsonObject();
+        object1.add("type", professionType.getSerializedValue());
+        object1.add("actions", actions.getSerializedValue());
+        object1.add("color", professionColor.getSerializedValue());
+        object1.add("description", new JsonArray());
+        object1.add("descriptionColor", descriptionColor.getSerializedValue());
+        object1.add("displayName", displayName.getSerializedValue());
+        object1.add("experienceSclEquation", expScaling.getSerializedValue());
+        object1.addProperty("incomeSclEquation", "base");
+        object1.add("maxLevel", maxLevel.getSerializedValue());
+        object1.add("unlocks", new JsonArray());
+        System.out.println(object1);
     }
 }

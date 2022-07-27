@@ -13,11 +13,20 @@ public class RegistryObjectEntry<T> extends DatapackEntry {
 
     private final ResourceKey<T> key;
     private final T object;
+    private final RegistryEntry.ClickRegistryObjectEntry<T> click;
 
-    public RegistryObjectEntry(int i, int j, int k, ResourceKey<T> key, T object) {
+    public RegistryObjectEntry(int i, int j, int k, ResourceKey<T> key, T object, RegistryEntry.ClickRegistryObjectEntry<T> entry) {
         super(i, j, k);
         this.key = key;
         this.object = object;
+        this.click = entry;
+    }
+
+
+    @Override
+    public void onClick(double mouseX, double mouseY) {
+        super.onClick(mouseX, mouseY);
+        click.action(this);
     }
 
     @Override

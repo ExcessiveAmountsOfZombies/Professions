@@ -5,7 +5,10 @@ import com.epherical.professions.client.screen.button.SmallIconButton;
 import com.epherical.professions.client.widgets.CommandButton;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.Registry;
@@ -16,6 +19,7 @@ import net.minecraft.resources.ResourceKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class RegistryEntry<T> extends DatapackEntry {
 
@@ -29,8 +33,8 @@ public class RegistryEntry<T> extends DatapackEntry {
     private boolean added = false;
     private List<RegistryObjectEntry<T>> registryEntries = new ArrayList<>();
 
-    public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue) {
-        super(x, y, width);
+    public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue, Optional<String> serializationKey) {
+        super(x, y, width, serializationKey);
         this.value = defaultValue;
         this.tooltip = new TextComponent(registry.getKey(defaultValue).toString());
         this.registry = registry;
@@ -45,6 +49,10 @@ public class RegistryEntry<T> extends DatapackEntry {
             }
         });
         children.add(button);
+    }
+
+    public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue) {
+        this(x, y, width, registry, defaultValue, Optional.empty());
     }
 
     @Override
@@ -70,7 +78,7 @@ public class RegistryEntry<T> extends DatapackEntry {
 
     @Override
     public JsonElement getSerializedValue() {
-        return JsonNull.INSTANCE;
+        return new JsonPrimitive(registry.getKey(value).toString());
     }
 
     @Override
@@ -88,10 +96,15 @@ public class RegistryEntry<T> extends DatapackEntry {
     public void onRebuild(DatapackScreen screen) {
         screen.addChild(button);
         screen.addChild(this);
+
         if (button.isOpened() && !added) {
             List<RegistryObjectEntry<T>> objects = new ArrayList<>();
             for (Map.Entry<ResourceKey<T>, T> entry : registry.entrySet()) {
-                RegistryObjectEntry<T> objectEntry = new RegistryObjectEntry<>(x + 7, y + 23, 160, entry.getKey(), entry.getValue());
+                RegistryObjectEntry<T> objectEntry = new RegistryObjectEntry<>(x + 7, y + 23, 160, entry.getKey(), entry.getValue(), (object) -> {
+                    this.value = object.getObject();
+                    this.tooltip = new TextComponent(registry.getKey(this.value).toString());
+                    screen.markScreenDirty();
+                });
                 objects.add(objectEntry);
                 screen.addChild(objectEntry);
             }
@@ -111,5 +124,9 @@ public class RegistryEntry<T> extends DatapackEntry {
         int start = width - 25;
         button.x = x + start + xScroll;
         button.y = y + 2 + yScroll;
+    }
+
+    public interface ClickRegistryObjectEntry<T> {
+        void action(RegistryObjectEntry<T> entry);
     }
 }

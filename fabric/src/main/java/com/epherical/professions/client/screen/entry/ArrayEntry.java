@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
@@ -26,7 +27,7 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
     protected boolean needsRefresh;
 
     public ArrayEntry(int x, int y, int width, String usage, BiFunction<Integer, Integer, T> addObject) {
-        super(x, y, width);
+        super(x, y, width, Optional.of(usage));
         this.usage = usage;
         addButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.ADD, button -> {
             addEntry(addObject.apply(x, this.y + 2));

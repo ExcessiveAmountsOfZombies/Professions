@@ -7,6 +7,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class CompoundEntry extends DatapackEntry {
 
@@ -17,7 +18,6 @@ public class CompoundEntry extends DatapackEntry {
     public CompoundEntry(int i, int j, int k, List<DatapackEntry> entries) {
         super(i, j, k, 0);
         children.addAll(entries);
-        Collections.reverse(this.children());
     }
 
     @Override
@@ -30,7 +30,8 @@ public class CompoundEntry extends DatapackEntry {
         JsonObject object = new JsonObject();
         for (AbstractWidget child : children) {
             if (child instanceof DatapackEntry entry) {
-                object.add(entry.getSerializationKey().get(), entry.getSerializedValue());
+                Optional<String> serializationKey = entry.getSerializationKey();
+                serializationKey.ifPresent(s -> object.add(s, entry.getSerializedValue()));
             }
         }
 

@@ -75,7 +75,6 @@ public class DatapackScreen extends Screen {
             entry.setY(ofy + (entry.getHeight() * increment));
             entry.setWidth(width);
             entry.initPosition(ofx, ofy);
-            System.out.println("going here??");
             this.addDatapackWidget(entry);
             increment++;
         }
@@ -243,7 +242,6 @@ public class DatapackScreen extends Screen {
 
     public <T extends DatapackEntry> T addDatapackWidget(T widget) {
         datapackEntries.add(widget);
-        System.out.println("This");
         widget.onRebuild(this);
         return widget;
     }

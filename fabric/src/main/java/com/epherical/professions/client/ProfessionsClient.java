@@ -3,6 +3,7 @@ package com.epherical.professions.client;
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.client.screen.DatapackScreen;
+import com.epherical.professions.client.screen.piece.PieceRegistry;
 import com.epherical.professions.networking.ClientHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -27,6 +28,8 @@ public class ProfessionsClient implements ClientModInitializer {
         commonClient = new CommonClient();
         KeyBindingHelper.registerKeyBinding(commonClient.getOccupationMenu());
         KeyBindingHelper.registerKeyBinding(commonClient.getProfessionData());
+
+        PieceRegistry.init();
 
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

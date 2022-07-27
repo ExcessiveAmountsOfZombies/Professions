@@ -17,7 +17,7 @@ public class StringEntry extends DatapackEntry {
     private EditBox box;
 
     public StringEntry(int x, int y, int width, String usage, String defaultValue) {
-        this(x, y, width, usage, defaultValue, Optional.empty());
+        this(x, y, width, usage, defaultValue, Optional.of(usage));
     }
 
     public StringEntry(int i, int j, int k, String usage, String defaultValue, Optional<String> key) {

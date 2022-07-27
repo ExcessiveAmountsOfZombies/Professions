@@ -8,6 +8,7 @@ import com.epherical.professions.client.screen.entry.DatapackEntry;
 import com.epherical.professions.client.screen.entry.NumberEntry;
 import com.epherical.professions.client.screen.entry.RegistryEntry;
 import com.epherical.professions.client.screen.entry.StringEntry;
+import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.conditions.ActionConditions;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.mojang.serialization.Lifecycle;
@@ -28,8 +29,18 @@ public class PieceRegistry {
     public static final Registry<Format> PIECES = new MappedRegistry<>(PIECES_KEY, Lifecycle.experimental(), null);
 
 
+    public static final Format PAYMENT_REWARD_FORMAT = register(modID("payment"), new RegularFormat((embed, y, width) -> List.of(
+            new NumberEntry<>(embed + 22, y, width - 22, "amount", 1.0),
+            new StringEntry(embed + 22, y, width - 22, "currency", ProfessionConfig.overriddenCurrencyID)
+    )));
+
+    public static final Format ITEM_REWARD_FORMAT = register(modID("item"), new RegularFormat((embed, y, width) -> List.of(
+            new StringEntry(embed + 22, y, width - 22, "item", "minecraft:grass_block"),
+            new NumberEntry<>(embed + 22, y, width - 22, "count", 1)
+    )));
+
     public static final Format EXPERIENCE_REWARD_FORMAT = register(modID("occupation_exp"), new RegularFormat((embed, y, width) -> List.of(
-            new NumberEntry<>(embed + 18, y, width - 18, "amount", 1.0)
+            new NumberEntry<>(embed + 22, y, width - 22, "amount", 1.0)
     )));
 
     public static final Format PLACE_BLOCK_FORMAT = register(modID("place_block"), new RegularFormat((embed, y, width) -> List.of(

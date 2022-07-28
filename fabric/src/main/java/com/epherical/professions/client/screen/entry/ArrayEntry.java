@@ -3,7 +3,6 @@ package com.epherical.professions.client.screen.entry;
 import com.epherical.professions.client.screen.DatapackScreen;
 import com.epherical.professions.client.screen.button.SmallIconButton;
 import com.epherical.professions.client.widgets.CommandButton;
-import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -30,14 +29,30 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         super(x, y, width, Optional.of(usage));
         this.usage = usage;
         addButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.ADD, button -> {
-            addEntry(addObject.apply(x, this.y + 2));
+            T t = addEntry(addObject.apply(x, this.y + 2));
+            t.addListener(button1 -> {
+                if (button1.getType() == Type.REMOVE) {
+                    objects.remove(t);
+                    needsRefresh = true;
+                }
+            });
+            for (AbstractWidget child : t.children) {
+                if (child instanceof DatapackEntry entry) {
+                    entry.addListener(button1 -> {
+                        if (button1.getType() == Type.REMOVE) {
+                            objects.remove(t);
+                            needsRefresh = true;
+                        }
+                    });
+                }
+            }
             needsRefresh = true;
         });
-        removeButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.BAD, button -> {
+       /* removeButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.BAD, button -> {
             // todo; dropdown and add little x to all entries. clicking again will remove them
             // todo; needsRefresh = true;
-        });
-        children.addAll(List.of(addButton, removeButton));
+        });*/
+        children.addAll(List.of(addButton/*, removeButton*/));
     }
 
     @Override
@@ -54,8 +69,9 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
 
     @Override
     public void onRebuild(DatapackScreen screen) {
+        rebuildTinyButtons(screen);
         screen.addChild(addButton);
-        screen.addChild(removeButton);
+        //screen.addChild(removeButton);
         screen.addChild(this);
         for (T object : objects) {
             object.onRebuild(screen);
@@ -95,9 +111,9 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
 
     private void setButtonPositions(int xScroll, int yScroll) {
         int start = width - 25;
-        removeButton.x = x + start + xScroll;
-        removeButton.y = y + 2 + yScroll;
-        start -= 17;
+        /*removeButton.x = x + start + xScroll;
+        removeButton.y = y + 2 + yScroll;*/
+        /*start -= 17;*/
         addButton.x = x + start + xScroll;
         addButton.y = y + 2 + yScroll;
     }

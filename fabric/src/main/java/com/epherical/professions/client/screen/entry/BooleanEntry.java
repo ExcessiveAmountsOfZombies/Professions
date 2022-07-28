@@ -26,6 +26,7 @@ public class BooleanEntry extends DatapackEntry {
 
     @Override
     public void onRebuild(DatapackScreen screen) {
+        rebuildTinyButtons(screen);
         screen.addChild(this);
     }
 
@@ -35,7 +36,8 @@ public class BooleanEntry extends DatapackEntry {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         font.drawShadow(poseStack, usage, x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
-        drawCenteredString(poseStack, font, String.valueOf(value), (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), TEXT_COLOR);
+        font.draw(poseStack, String.valueOf(value), (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), TEXT_COLOR);
+        //drawCenteredString(poseStack, font, String.valueOf(value), (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), TEXT_COLOR);
         //this.box.render(poseStack, mouseX, mouseY, partialTick);
     }
 

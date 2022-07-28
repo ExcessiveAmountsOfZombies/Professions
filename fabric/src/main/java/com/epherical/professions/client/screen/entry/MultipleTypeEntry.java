@@ -1,12 +1,10 @@
 package com.epherical.professions.client.screen.entry;
 
 import com.epherical.professions.client.screen.DatapackScreen;
-import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.AbstractWidget;
 
 public class MultipleTypeEntry extends DatapackEntry {
 
@@ -62,6 +60,7 @@ public class MultipleTypeEntry extends DatapackEntry {
     @Override
     public void onRebuild(DatapackScreen screen) {
         // any direct children go before this entry.
+        rebuildTinyButtons(screen);
         screen.addChild(this);
         DatapackEntry object = types[currentSelection];
         object.onRebuild(screen);

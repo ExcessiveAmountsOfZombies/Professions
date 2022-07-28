@@ -6,7 +6,6 @@ import com.google.gson.JsonNull;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.resources.ResourceKey;
 
 public class RegistryObjectEntry<T> extends DatapackEntry {
@@ -31,6 +30,7 @@ public class RegistryObjectEntry<T> extends DatapackEntry {
 
     @Override
     public void onRebuild(DatapackScreen screen) {
+        rebuildTinyButtons(screen);
         screen.addChild(this);
     }
 

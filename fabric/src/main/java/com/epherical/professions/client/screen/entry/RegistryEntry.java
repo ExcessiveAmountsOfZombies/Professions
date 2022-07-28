@@ -30,8 +30,8 @@ public class RegistryEntry<T> extends DatapackEntry {
     private boolean added = false;
     private List<RegistryObjectEntry<T>> registryEntries = new ArrayList<>();
 
-    public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue, Optional<String> serializationKey) {
-        super(x, y, width, serializationKey);
+    public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue, Optional<String> serializationKey, Type... types) {
+        super(x, y, width, serializationKey, types);
         this.value = defaultValue;
         this.tooltip = new TextComponent(registry.getKey(defaultValue).toString());
         this.registry = registry;
@@ -90,6 +90,7 @@ public class RegistryEntry<T> extends DatapackEntry {
 
     @Override
     public void onRebuild(DatapackScreen screen) {
+        rebuildTinyButtons(screen);
         screen.addChild(button);
         screen.addChild(this);
 
@@ -99,6 +100,8 @@ public class RegistryEntry<T> extends DatapackEntry {
                 RegistryObjectEntry<T> objectEntry = new RegistryObjectEntry<>(x + 7, y + 23, 160, entry.getKey(), entry.getValue(), (object) -> {
                     this.value = object.getObject();
                     this.tooltip = new TextComponent(registry.getKey(this.value).toString());
+                    this.button.icon = CommandButton.SmallIcon.DROP_DOWN_OPEN;
+                    this.button.opened = false;
                     screen.markScreenDirty();
                 });
                 objects.add(objectEntry);

@@ -30,24 +30,24 @@ public class PieceRegistry {
 
 
     public static final Format PAYMENT_REWARD_FORMAT = register(modID("payment"), new RegularFormat((embed, y, width) -> List.of(
-            new NumberEntry<>(embed + 22, y, width - 22, "amount", 1.0),
-            new StringEntry(embed + 22, y, width - 22, "currency", ProfessionConfig.overriddenCurrencyID)
+            new NumberEntry<>(embed + 22, y, width / 2, "amount", 1.0),
+            new StringEntry(embed + 22, y, width / 2, "currency", ProfessionConfig.overriddenCurrencyID)
     )));
 
     public static final Format ITEM_REWARD_FORMAT = register(modID("item"), new RegularFormat((embed, y, width) -> List.of(
-            new StringEntry(embed + 22, y, width - 22, "item", "minecraft:grass_block"),
-            new NumberEntry<>(embed + 22, y, width - 22, "count", 1)
+            new StringEntry(embed + 22, y, width / 2, "item", "minecraft:grass_block"),
+            new NumberEntry<>(embed + 22, y, width / 2, "count", 1)
     )));
 
     public static final Format EXPERIENCE_REWARD_FORMAT = register(modID("occupation_exp"), new RegularFormat((embed, y, width) -> List.of(
-            new NumberEntry<>(embed + 22, y, width - 22, "amount", 1.0)
+            new NumberEntry<>(embed + 22, y, width / 2, "amount", 1.0)
     )));
 
     public static final Format PLACE_BLOCK_FORMAT = register(modID("place_block"), new RegularFormat((embed, y, width) -> List.of(
             createItemArrayEntry(embed, y, width, "items"),
             createRewardArray(embed, y, width, "rewards"),
             new ArrayEntry<>(embed + 14, y, width - 14, "conditions", (x1, y2) -> {
-                return new RegistryEntry<>(embed + 18, y2, width - 18, RegistryConstants.ACTION_CONDITION_TYPE, ActionConditions.FULLY_GROWN_CROP_CONDITION);
+                return new RegistryEntry<>(embed + 18, y2, width / 2, RegistryConstants.ACTION_CONDITION_TYPE, ActionConditions.FULLY_GROWN_CROP_CONDITION);
             })
     )));
 
@@ -70,13 +70,13 @@ public class PieceRegistry {
 
     private static ArrayEntry<DatapackEntry> createItemArrayEntry(int x, int y, int width, String usage) {
         return createArrayEntry(x + 14, y, width - 14, usage, (x1, y2) -> {
-            return new StringEntry(x + 18, y2, width - 18, "items", "#minecraft:crops", Optional.of("items"));
+            return new StringEntry(x + 18, y2, width / 2, "items", "#minecraft:crops", Optional.of("items"), DatapackEntry.Type.REMOVE);
         });
     }
 
     private static ArrayEntry<DatapackEntry> createBlockArrayEntry(int x, int y, int width, String usage) {
         return createArrayEntry(x + 14, y, width - 14, usage, (x1, y2) -> {
-            return new StringEntry(x + 18, y2, width - 18, "blocks", "#minecraft:crops", Optional.of("blocks"));
+            return new StringEntry(x + 18, y2, width / 2, "blocks", "#minecraft:crops", Optional.of("blocks"));
         });
     }
 
@@ -84,8 +84,8 @@ public class PieceRegistry {
         // todo: we should find a way to not have these values be magical,
         //  so they can be used in more contexts. not just for rewards, but for all of them.
         return createArrayEntry(embed + 14, y, width - 14, usage, (x1, y2) -> {
-            return new CompoundAwareEntry<>(0, 0, 0, embed, width, RegistryConstants.REWARD_KEY,
-                    new RegistryEntry<>(embed + 18, y, width - 18, RegistryConstants.REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward")));
+            return new CompoundAwareEntry<>(embed + 18, y, width / 2, embed, width, RegistryConstants.REWARD_KEY,
+                    new RegistryEntry<>(embed + 18, y, width / 2, RegistryConstants.REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"), DatapackEntry.Type.REMOVE));
         });
     }
 

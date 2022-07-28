@@ -20,8 +20,8 @@ public class StringEntry extends DatapackEntry {
         this(x, y, width, usage, defaultValue, Optional.of(usage));
     }
 
-    public StringEntry(int i, int j, int k, String usage, String defaultValue, Optional<String> key) {
-        super(i, j, k, key);
+    public StringEntry(int i, int j, int k, String usage, String defaultValue, Optional<String> key, Type... types) {
+        super(i, j, k, key, types);
         this.usage = usage;
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
@@ -44,6 +44,7 @@ public class StringEntry extends DatapackEntry {
         if (isHoveredOrFocused()) {
             //renderToolTip(poseStack, mouseX, mouseY, this.box.getValue());
         }
+        this.box.x = (this.x + this.width - 9 - (font.width(box.getValue()))) / 2;
         this.box.y = y + 8 + getYScroll();
         //this.box.render(poseStack, mouseX, mouseY, partialTick);
     }
@@ -62,6 +63,7 @@ public class StringEntry extends DatapackEntry {
 
     @Override
     public void onRebuild(DatapackScreen screen) {
+        rebuildTinyButtons(screen);
         screen.addChild(box);
         screen.addChild(this);
     }

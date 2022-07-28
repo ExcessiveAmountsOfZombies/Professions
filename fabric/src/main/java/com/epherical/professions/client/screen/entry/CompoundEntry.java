@@ -14,8 +14,8 @@ public class CompoundEntry extends DatapackEntry {
     /**
      * @param entries a list of entries that will comprise the object. Each entry should use the Optional serialization key.
      */
-    public CompoundEntry(int x, int y, int width, List<DatapackEntry> entries) {
-        super(x, y, width, 0);
+    public CompoundEntry(int x, int y, int width, List<DatapackEntry> entries, Type... types) {
+        super(x, y, width, 0, types);
         children.addAll(entries);
     }
 
@@ -49,6 +49,7 @@ public class CompoundEntry extends DatapackEntry {
 
     @Override
     public void onRebuild(DatapackScreen screen) {
+        rebuildTinyButtons(screen);
         screen.addChild(this);
         for (AbstractWidget child : children) {
             if (child instanceof DatapackEntry entry) {

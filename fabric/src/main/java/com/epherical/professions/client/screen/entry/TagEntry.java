@@ -4,19 +4,11 @@ import com.epherical.professions.client.screen.DatapackScreen;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.CommandSuggestions;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
-
-import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
 
 public class TagEntry<T> extends DatapackEntry {
 
@@ -48,8 +40,10 @@ public class TagEntry<T> extends DatapackEntry {
         if (isHoveredOrFocused()) {
             renderToolTip(poseStack, mouseX, mouseY, this.box.getMessage());
         }
+        Minecraft minecraft = Minecraft.getInstance();
+        Font font = minecraft.font;
         //suggestions.render(poseStack, mouseX, mouseY);
-
+        this.box.x = (this.x + this.width - 9 - (font.width(box.getValue()))) / 2;
         this.box.y = y + 8 + getYScroll();
     }
 
@@ -73,6 +67,7 @@ public class TagEntry<T> extends DatapackEntry {
 
     @Override
     public void onRebuild(DatapackScreen screen) {
+        rebuildTinyButtons(screen);
         screen.addChild(box);
         screen.addChild(this);
     }

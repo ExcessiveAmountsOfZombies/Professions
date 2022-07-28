@@ -3,7 +3,6 @@ package com.epherical.professions.client.screen;
 import com.epherical.professions.client.screen.editors.DatapackEditor;
 import com.epherical.professions.client.screen.editors.ProfessionEditor;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
-import com.epherical.professions.client.screen.entry.Parent;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -55,9 +54,9 @@ public class DatapackScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        int ofx = 11;
+        int ofx = 22;
         int ofy = 11;
-        int width = this.width - 30;
+        int width = this.width - 40;
         //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
         /* this.datapackEditor = new DataTagEditor<>((x, y) -> {
              MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 90,
@@ -151,11 +150,11 @@ public class DatapackScreen extends Screen {
     }
 
     public void renderMainWindow(PoseStack stack, int offsetX, int offsetY) {
-        hLine(stack, 10, width - 11, 10, 0xFFFFFFFF);
-        hLine(stack, 10, width - 11, height - 11, 0xFFFFFFFF);
-        vLine(stack, 10, 10, height - 10, 0xFFFFFFFF);
+        hLine(stack, 20, width - 11, 10, 0xFFFFFFFF);
+        hLine(stack, 20, width - 11, height - 11, 0xFFFFFFFF);
+        vLine(stack, 20, 10, height - 10, 0xFFFFFFFF);
         vLine(stack, width - 11, 10, height - 10, 0xFFFFFFFF);
-        fill(stack, 10, 10, width - 10, height - 10, 0xAA333333);
+        fill(stack, 20, 10, width - 10, height - 10, 0xAA333333);
     }
 
     protected int getScrollbarPosition() {
@@ -183,7 +182,7 @@ public class DatapackScreen extends Screen {
             RenderSystem.disableTexture();
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             int endOfScrollBar = (int) ((float) ((top - bottom) * (top - bottom)) / (float) this.getMaxPosition());
-            endOfScrollBar = Mth.clamp(endOfScrollBar, 32, (top - bottom - 8));
+            endOfScrollBar = Mth.clamp(endOfScrollBar, 50, (top - bottom - 8));
             int newBottom = (int) this.getScrollAmount() * (top - bottom - endOfScrollBar) / maxScroll + bottom;
             if (newBottom < bottom) {
                 newBottom = bottom;

@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -25,13 +24,15 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final int TEXT_COLOR = 0xebebeb;
+    public static final int TEXT_COLOR = 0xFFFFFF;
 
     protected final Minecraft minecraft = Minecraft.getInstance();
 
     private final Type[] types;
-    private final TinyButton[] buttonTypes;
+    protected final TinyButton[] buttonTypes;
     protected final List<AbstractWidget> children = new ArrayList<>();
+
+    protected final List<TinyButtonListener> listeners = new ArrayList<>();
 
     protected final Optional<String> serializationKey;
 
@@ -43,13 +44,15 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
         this.types = types;
         this.serializationKey = optionalSerializationKey;
         buttonTypes = new TinyButton[types.length];
-        int start = width - (12 * types.length);
+        int start = x - 10 + (types.length);
 
         for (int z = 0; z < this.types.length; z++) {
-            int increment = 8 * z;
+            int increment = 6 * z;
             int finalZ = z;
             buttonTypes[z] = new TinyButton(x + start + increment, y + 2, 7, 7, types[z], button -> {
-                this.clickTinyButton((TinyButton) button);
+                for (TinyButtonListener listener : listeners) {
+                    listener.clicked((TinyButton) button);
+                }
             }, (button, poseStack, mouseX, mouseY) -> {
                 Minecraft minecraft = Minecraft.getInstance();
                 minecraft.screen.renderTooltip(poseStack, types[finalZ].text, mouseX, mouseY);
@@ -76,6 +79,12 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
 
     public void tick(DatapackScreen screen) {
 
+    }
+
+    public void rebuildTinyButtons(DatapackScreen screen) {
+        for (TinyButton buttonType : buttonTypes) {
+            screen.addChild(buttonType);
+        }
     }
 
     public abstract void onRebuild(DatapackScreen screen);
@@ -124,13 +133,14 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         super.render(poseStack, mouseX, mouseY, partialTick);
+        this.isHovered = mouseX >= this.x + getXScroll() && mouseY >= this.y + getYScroll() && mouseX < this.x + this.width + getXScroll() && mouseY < this.y + this.height + getYScroll();
         for (TinyButton buttonType : this.buttonTypes) {
-            buttonType.render(poseStack, mouseX, mouseY, partialTick);
-            if (buttonType.isHoveredOrFocused()) {
-                this.isHovered = false;
-            }
+            buttonType.y = y + 2;
         }
         for (AbstractWidget child : children) {
+            if (child.isHoveredOrFocused()) {
+                this.isHovered = false;
+            }
             child.render(poseStack, mouseX, mouseY, partialTick);
         }
     }
@@ -182,8 +192,8 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
         return children;
     }
 
-    public void clickTinyButton(TinyButton button) {
-
+    public void addListener(TinyButtonListener listener) {
+        listeners.add(listener);
     }
 
     public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY, Component component) {
@@ -206,12 +216,10 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
     public static class TinyButton extends Button {
 
         private final Type type;
-        @Nullable
         private final DatapackEntry entry;
 
-        public TinyButton(int i, int j, int k, int l, Type type, OnPress onPress) {
-            this(i, j, k, l, type, onPress, NO_TOOLTIP, null);
-        }
+        protected boolean clicked;
+
 
         public TinyButton(int i, int j, int k, int l, Type type, Button.OnPress onPress, Button.OnTooltip onTooltip, DatapackEntry entry) {
             super(i, j, k, l, Component.nullToEmpty(""), onPress, onTooltip);
@@ -227,6 +235,7 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
 
         @Override
         public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+            this.isHovered = mouseX >= (this.x + entry.getXScroll()) && mouseY >= (this.y + entry.getYScroll()) && mouseX < (this.x + this.width + entry.getXScroll()) && mouseY < (this.y + this.height + entry.getYScroll());
             Minecraft minecraft = Minecraft.getInstance();
             Font font = minecraft.font;
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -254,6 +263,14 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
             if (this.isHoveredOrFocused()) {
                 this.renderToolTip(poseStack, mouseX, mouseY);
             }
+        }
+
+        public boolean isMouseOver(double mouseX, double mouseY) {
+            return this.active && this.visible && mouseX >= (double) (this.x + entry.getXScroll()) && mouseY >= (double) (this.y + entry.getYScroll()) && mouseX < (double) (this.x + this.width + entry.getXScroll()) && mouseY < (double) (this.y + this.height + entry.getYScroll());
+        }
+
+        protected boolean clicked(double mouseX, double mouseY) {
+            return this.active && this.visible && mouseX >= (double) (this.x + entry.getXScroll()) && mouseY >= (double) (this.y + entry.getYScroll()) && mouseX < (double) (this.x + this.width + entry.getXScroll()) && mouseY < (double) (this.y + this.height + entry.getYScroll());
         }
 
         public Type getType() {

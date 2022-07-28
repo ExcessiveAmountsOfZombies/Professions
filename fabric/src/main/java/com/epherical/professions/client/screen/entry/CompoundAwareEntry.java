@@ -17,8 +17,8 @@ public class CompoundAwareEntry<T> extends CompoundEntry {
     private final int embeddedDistance;
     private final int screenWidth;
 
-    public CompoundAwareEntry(int x, int y, int width, int embed, int screenWidth, ResourceKey<Registry<T>> registry, RegistryEntry<T> registryEntry) {
-        super(x, y, width, List.of());
+    public CompoundAwareEntry(int x, int y, int width, int embed, int screenWidth, ResourceKey<Registry<T>> registry, RegistryEntry<T> registryEntry, Type... types) {
+        super(x, y, width, List.of(), types);
         this.registryKey = registry;
         this.entry = registryEntry;
         this.embeddedDistance = embed;

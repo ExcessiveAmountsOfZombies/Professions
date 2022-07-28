@@ -13,8 +13,8 @@ public class MultipleTypeEntry extends DatapackEntry {
 
     protected boolean needsRefresh;
 
-    public MultipleTypeEntry(int i, int j, int k, DatapackEntry... entries) {
-        super(i, j, k, 23);
+    public MultipleTypeEntry(int i, int j, int k, DatapackEntry[] entries, Type... types) {
+        super(i, j, k, 23, types);
         currentSelection = 0;
         this.types = entries;
         children.add(entries[currentSelection]);

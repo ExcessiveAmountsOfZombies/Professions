@@ -1,7 +1,7 @@
 package com.epherical.professions.client.screen.entry;
 
 import com.epherical.professions.client.screen.DatapackScreen;
-import com.epherical.professions.client.screen.piece.PieceRegistry;
+import com.epherical.professions.client.screen.format.PieceRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 

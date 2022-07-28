@@ -3,7 +3,7 @@ package com.epherical.professions.client;
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.client.screen.DatapackScreen;
-import com.epherical.professions.client.screen.piece.PieceRegistry;
+import com.epherical.professions.client.screen.format.PieceRegistry;
 import com.epherical.professions.networking.ClientHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;

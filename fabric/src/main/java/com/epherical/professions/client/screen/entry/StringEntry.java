@@ -20,6 +20,10 @@ public class StringEntry extends DatapackEntry {
         this(x, y, width, usage, defaultValue, Optional.of(usage));
     }
 
+    public StringEntry(int x, int y, int width, String usage, String defaultValue, Type... types) {
+        this(x, y, width, usage, defaultValue, Optional.of(usage), types);
+    }
+
     public StringEntry(int i, int j, int k, String usage, String defaultValue, Optional<String> key, Type... types) {
         super(i, j, k, key, types);
         this.usage = usage;

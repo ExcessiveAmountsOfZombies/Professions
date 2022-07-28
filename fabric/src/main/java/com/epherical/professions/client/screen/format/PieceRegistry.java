@@ -1,4 +1,4 @@
-package com.epherical.professions.client.screen.piece;
+package com.epherical.professions.client.screen.format;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.RegistryConstants;

@@ -3,6 +3,7 @@ package com.epherical.professions.client.screen;
 import com.epherical.professions.client.screen.editors.DatapackEditor;
 import com.epherical.professions.client.screen.editors.ProfessionEditor;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
+import com.google.gson.JsonObject;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -24,6 +25,7 @@ import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,12 @@ public class DatapackScreen extends Screen {
 
     private DatapackEditor datapackEditor;
 
+    private SaveSidebarWidget saveSidebarWidget;
+    private boolean sidebarWidgetOpen = false;
+    private Instant clickedTime;
+    private Box component;
+    private final List<Widget> specialRenders = new ArrayList<>();
+
     public DatapackScreen() {
         super(Component.nullToEmpty(""));
     }
@@ -54,9 +62,46 @@ public class DatapackScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        int ofx = 22;
+
+        saveSidebarWidget = new SaveSidebarWidget(0, 20, 10, 20, button -> {
+            sidebarWidgetOpen = !sidebarWidgetOpen;
+
+            //clickedTime = Instant.now().plus(750, ChronoUnit.MILLIS);
+            children.clear();
+            if (sidebarWidgetOpen) {
+                addChild(saveSidebarWidget);
+                specialRenders.add(component);
+                saveSidebarWidget.x = component.width;
+                component.x = 0;
+                for (Widget child : component.children()) {
+                    if (child instanceof AbstractWidget abstractWidget) {
+                        this.addChild(abstractWidget);
+                    }
+                    this.specialRenders.add(child);
+                }
+            } else {
+                saveSidebarWidget.x = 0;
+                component.x = -(width / 3);
+                rebuildScreen();
+            }
+        });
+        component = new SaveSideBar(-(width / 3), 0, width / 3, height,
+                new FileBox((this.width - 300) / 2, (this.height - 100) / 2, 300, 100,
+                button -> {
+                    JsonObject object = new JsonObject();
+                    datapackEditor.serialize(object);
+                }, button -> {
+                    saveSidebarWidget.x = 0;
+                    component.x = -(width / 3);
+                    rebuildScreen();
+                }));
+
+        this.addChild(saveSidebarWidget);
+
+
+        int ofx = 32;
         int ofy = 11;
-        int width = this.width - 40;
+        int width = this.width - 50;
         //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
         /* this.datapackEditor = new DataTagEditor<>((x, y) -> {
              MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 90,
@@ -84,6 +129,41 @@ public class DatapackScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
+        // todo; would love animation
+        /*if (sidebarWidgetOpen) {
+            Instant now = Instant.now();
+            if (now.isBefore(clickedTime)) {
+                long duration = Duration.between(now, clickedTime).toMillis();
+                double dddd = (double) duration / 750;
+                component.x += Math.sin((dddd * Math.PI) / 2) * 42;
+                saveSidebarWidget.x += Math.sin((dddd * Math.PI) / 2) * 42;
+                if (component.x >= 0) {
+                    component.x = 0;
+                    saveSidebarWidget.x = component.width;
+                }
+                *//*component.x += 5;*//*
+            } else {
+                if (component.x <= 0) {
+                    component.x = 0;
+                    saveSidebarWidget.x = component.width;
+                }
+            }
+        } else {
+            Instant now = Instant.now();
+            if (now.isBefore(clickedTime)) {
+                long duration = Duration.between(now, clickedTime).toMillis();
+                double dddd = (double) duration / 750;
+                component.x -= Math.sin((dddd * Math.PI) / 2) * 36;
+                saveSidebarWidget.x -= Math.sin((dddd * Math.PI) / 2) * 42;
+                *//*component.x += 5;*//*
+            } else {
+                if (component.x <= 0) {
+                    renderables.remove(component);
+                    rebuildScreen();
+                }
+            }
+        }*/
+
         for (DatapackEntry datapackEntry : datapackEntries) {
             datapackEntry.tick(this);
         }
@@ -104,10 +184,10 @@ public class DatapackScreen extends Screen {
                 }
             }
 
-            time += 2;
+            /*time += 2;
             if (time == 20) {
                 time = 0;
-            }
+            }*/
             adjustEntries = false;
             datapackEditor.serialize(null);
         }
@@ -127,14 +207,22 @@ public class DatapackScreen extends Screen {
                     entry.setYScroll((int) -scrollAmount);
                 }
             }
+
             double d = this.minecraft.getWindow().getGuiScale();
             RenderSystem.enableScissor(
-                    (int) (10 * d),
+                    (int) (0 * d),
                     (int) ((double) (11) * d),
                     (int) ((double) (this.getScrollbarPosition() + 6) * d),
                     (int) ((double) (this.height - 22) * d));
             super.render(poseStack, mouseX, mouseY, partialTick);
             RenderSystem.disableScissor();
+
+            for (Widget specialRender : specialRenders) {
+                poseStack.pushPose();
+                specialRender.render(poseStack, mouseX, mouseY, partialTick);
+                poseStack.popPose();
+            }
+
             renderScrollBar();
         } else {
             Minecraft minecraft = Minecraft.getInstance();
@@ -150,11 +238,11 @@ public class DatapackScreen extends Screen {
     }
 
     public void renderMainWindow(PoseStack stack, int offsetX, int offsetY) {
-        hLine(stack, 20, width - 11, 10, 0xFFFFFFFF);
-        hLine(stack, 20, width - 11, height - 11, 0xFFFFFFFF);
-        vLine(stack, 20, 10, height - 10, 0xFFFFFFFF);
+        hLine(stack, 30, width - 11, 10, 0xFFFFFFFF);
+        hLine(stack, 30, width - 11, height - 11, 0xFFFFFFFF);
+        vLine(stack, 30, 10, height - 10, 0xFFFFFFFF);
         vLine(stack, width - 11, 10, height - 10, 0xFFFFFFFF);
-        fill(stack, 20, 10, width - 10, height - 10, 0xAA333333);
+        fill(stack, 30, 10, width - 10, height - 10, 0xAA333333);
     }
 
     protected int getScrollbarPosition() {
@@ -230,10 +318,12 @@ public class DatapackScreen extends Screen {
         children.clear();
         renderables.clear();
         narratables.clear();
+        specialRenders.clear();
         rebuildEntries();
     }
 
     private void rebuildEntries() {
+        addChild(saveSidebarWidget);
         for (DatapackEntry datapackEntry : this.datapackEditor.entries()) {
             this.addDatapackWidget(datapackEntry);
         }

@@ -11,7 +11,6 @@ import com.epherical.professions.client.screen.entry.StringEntry;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Actions;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -26,8 +25,8 @@ public class ProfessionEditor extends DatapackEditor {
     private final StringEntry expScaling;
     private final NumberEntry<Integer> maxLevel;
     private final ArrayEntry<MultipleTypeEntry> actions;
-    /*private final ArrayEntry<StringEntry> description;
-    private final ArrayEntry<CompoundEntry> unlocks;*/
+    private final ArrayEntry<StringEntry> description;
+    /*private final ArrayEntry<CompoundEntry> unlocks;*/
 
 
     public ProfessionEditor(int embed, int width) {
@@ -37,6 +36,9 @@ public class ProfessionEditor extends DatapackEditor {
         displayName = new StringEntry(width / 2, 0, 128, "Display Name:", "Occupation Name");
         expScaling = new StringEntry(width / 2, 0, 128, "Exp Scaling:", "1000*1.064^(lvl-1)");
         maxLevel = new NumberEntry<>(width / 2, 0, 128, "Max Level:", 100);
+        description = new ArrayEntry<>(0, 0, 128, "Description", (x, y) -> {
+            return new StringEntry(embed + 8, y, width - 8, "description", "", DatapackEntry.Type.REMOVE);
+        });
         /*actions = new ArrayEntry<>(0, 0, 128, "Actions", (x, y) -> {
             MultipleTypeEntry entry = new MultipleTypeEntry(embed + 8, y, 90,
                     new CompoundEntry(embed + 8, y, 90, List.of(
@@ -55,9 +57,10 @@ public class ProfessionEditor extends DatapackEditor {
             return entry;
         });*/
         actions = new ArrayEntry<>(0, 0, 128, "Actions", (x, y) -> {
-            MultipleTypeEntry entry = new MultipleTypeEntry(embed + 8, y, 90,
+            MultipleTypeEntry entry = new MultipleTypeEntry(embed + 8, y, 90, new DatapackEntry[]{
                     new CompoundAwareEntry<>(embed + 8, y, 90, embed, width, RegistryConstants.ACTION_TYPE_KEY,
-                            new RegistryEntry<>(embed + 14, y, width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK, Optional.of("action"))));
+                            new RegistryEntry<>(embed + 14, y, width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK, Optional.of("action")))},
+                    DatapackEntry.Type.REMOVE);
             return entry;
         });
 
@@ -73,22 +76,20 @@ public class ProfessionEditor extends DatapackEditor {
 
     @Override
     public List<DatapackEntry> entries() {
-        return List.of(professionType, professionColor, descriptionColor, displayName, expScaling, maxLevel, actions);
+        return List.of(professionType, professionColor, descriptionColor, description, displayName, expScaling, maxLevel, actions);
     }
 
     @Override
-    public void serialize(JsonElement object) {
-        JsonObject object1 = new JsonObject();
-        object1.add("type", professionType.getSerializedValue());
-        object1.add("actions", actions.getSerializedValue());
-        object1.add("color", professionColor.getSerializedValue());
-        object1.add("description", new JsonArray());
-        object1.add("descriptionColor", descriptionColor.getSerializedValue());
-        object1.add("displayName", displayName.getSerializedValue());
-        object1.add("experienceSclEquation", expScaling.getSerializedValue());
-        object1.addProperty("incomeSclEquation", "base");
-        object1.add("maxLevel", maxLevel.getSerializedValue());
-        object1.add("unlocks", new JsonArray());
-        System.out.println(object1);
+    public void serialize(JsonObject object) {
+        object.add("type", professionType.getSerializedValue());
+        object.add("actions", actions.getSerializedValue());
+        object.add("color", professionColor.getSerializedValue());
+        object.add("description", description.getSerializedValue());
+        object.add("descriptionColor", descriptionColor.getSerializedValue());
+        object.add("displayName", displayName.getSerializedValue());
+        object.add("experienceSclEquation", expScaling.getSerializedValue());
+        object.addProperty("incomeSclEquation", "base");
+        object.add("maxLevel", maxLevel.getSerializedValue());
+        object.add("unlocks", new JsonArray());
     }
 }

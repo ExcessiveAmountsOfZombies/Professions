@@ -131,6 +131,10 @@ public abstract class AbstractProfessionLoader extends SimpleJsonResourceReloadL
         professionMap = ImmutableMap.of();
     }
 
+    public static String serialize(JsonObject object) {
+        return GSON.toJson(object);
+    }
+
     public static JsonElement serialize(Profession profession) {
         return GSON.toJsonTree(profession);
     }

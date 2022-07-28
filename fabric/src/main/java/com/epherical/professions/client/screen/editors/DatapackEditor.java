@@ -7,10 +7,17 @@ import java.util.List;
 
 public abstract class DatapackEditor {
 
+
+    protected int width;
+
     public DatapackEditor() {
 
     }
 
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
 
     public abstract List<DatapackEntry> entries();
 

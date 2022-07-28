@@ -29,8 +29,6 @@ public class FileBox extends Box {
 
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTick) {
-        this.namespace.tick();
-        this.occupationName.tick();
         super.render(stack, mouseX, mouseY, partialTick);
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;

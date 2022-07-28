@@ -3,6 +3,7 @@ package com.epherical.professions.client.screen;
 import com.epherical.professions.client.screen.editors.DatapackEditor;
 import com.epherical.professions.client.screen.editors.ProfessionEditor;
 import com.epherical.professions.client.screen.entry.DatapackEntry;
+import com.epherical.professions.datapack.AbstractProfessionLoader;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -11,6 +12,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.logging.LogUtils;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -25,6 +27,8 @@ import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +55,7 @@ public class DatapackScreen extends Screen {
     private SaveSidebarWidget saveSidebarWidget;
     private boolean sidebarWidgetOpen = false;
     private Instant clickedTime;
-    private Box component;
+    private SaveSideBar component;
     private final List<Widget> specialRenders = new ArrayList<>();
 
     public DatapackScreen() {
@@ -89,7 +93,17 @@ public class DatapackScreen extends Screen {
                 new FileBox((this.width - 300) / 2, (this.height - 100) / 2, 300, 100,
                 button -> {
                     JsonObject object = new JsonObject();
+
+                    String data = "data/" + component.getFileBox().getNamespace().getValue()
+                            + "/professions/occupations/";
                     datapackEditor.serialize(object);
+                    try {
+                        Files.createDirectories(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data));
+                        Files.writeString(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data +
+                                "/" + component.getFileBox().getOccupationName().getValue() + ".json"), AbstractProfessionLoader.serialize(object));
+                    } catch (IOException e) {
+                        LOGGER.warn("FILE ALREADY EXISTS", e);
+                    }
                 }, button -> {
                     saveSidebarWidget.x = 0;
                     component.x = -(width / 3);
@@ -111,7 +125,12 @@ public class DatapackScreen extends Screen {
                                      new BooleanEntry(ofx + 14, y, width - 14, "required", false, Optional.of("required")))));
              return required;
         });*/
-        this.datapackEditor = new ProfessionEditor(ofx, width);
+        if (this.datapackEditor == null) {
+            this.datapackEditor = new ProfessionEditor(ofx, width);
+        } else {
+            this.datapackEditor.setWidth(width);
+        }
+
         int increment = 0;
         //LOGGER.info("Setting x, y position on init entries.");
         for (DatapackEntry entry : datapackEditor.entries()) {
@@ -189,7 +208,6 @@ public class DatapackScreen extends Screen {
                 time = 0;
             }*/
             adjustEntries = false;
-            datapackEditor.serialize(null);
         }
 
     }

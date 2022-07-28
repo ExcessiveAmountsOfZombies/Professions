@@ -30,6 +30,7 @@ public class ProfessionEditor extends DatapackEditor {
 
 
     public ProfessionEditor(int embed, int width) {
+        this.width = width;
         professionType = new RegistryEntry<>(0, 0, 128, RegistryConstants.PROFESSION_SERIALIZER, ProfessionSerializer.DEFAULT_PROFESSION, Optional.of("type"));
         professionColor = new StringEntry(width / 2, 0, 128, "Color:", "#FFFFFF");
         descriptionColor = new StringEntry(width / 2, 0, 128, "Description Color:", "#FFFFFF");
@@ -58,11 +59,13 @@ public class ProfessionEditor extends DatapackEditor {
         });*/
         actions = new ArrayEntry<>(0, 0, 128, "Actions", (x, y) -> {
             MultipleTypeEntry entry = new MultipleTypeEntry(embed + 8, y, 90, new DatapackEntry[]{
-                    new CompoundAwareEntry<>(embed + 8, y, 90, embed, width, RegistryConstants.ACTION_TYPE_KEY,
-                            new RegistryEntry<>(embed + 14, y, width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK, Optional.of("action")))},
+                    new CompoundAwareEntry<>(embed + 8, y, 90, embed, this.width, RegistryConstants.ACTION_TYPE_KEY,
+                            new RegistryEntry<>(embed + 14, y, this.width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK, Optional.of("action")))},
                     DatapackEntry.Type.REMOVE);
             return entry;
         });
+
+
 
         /*this.addDatapackWidget(new RegistryEntry<>(ofx, ofy, width, RegistryConstants.PROFESSION_SERIALIZER, ProfessionSerializer.DEFAULT_PROFESSION));
         this.addDatapackWidget(new StringEntry(ofx, ofy + distance, width, "Color:", "#FFFFFF"));

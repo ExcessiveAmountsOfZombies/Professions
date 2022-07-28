@@ -26,4 +26,8 @@ public class SaveSideBar extends Box {
         widgets.addAll(fileBox.children());
         return widgets;
     }
+
+    public FileBox getFileBox() {
+        return fileBox;
+    }
 }

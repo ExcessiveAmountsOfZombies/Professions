@@ -2,6 +2,7 @@ package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClientForge;
+import com.epherical.professions.client.screen.CommonDataScreen;
 import com.epherical.professions.datapack.CommonProfessionLoader;
 import com.epherical.professions.networking.ClientNetworking;
 import com.epherical.professions.networking.CommandButtons;
@@ -12,7 +13,6 @@ import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -110,5 +110,10 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
         return new TranslatableComponent(" (%s | %s)",
                 map.get(Rewards.EXPERIENCE_REWARD),
                 action.extraRewardInformation(map));
+    }
+
+    @Override
+    public CommonDataScreen createScreen() {
+        return ProfessionsClientForge.createScreen();
     }
 }

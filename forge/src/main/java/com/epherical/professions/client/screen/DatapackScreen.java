@@ -15,7 +15,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.logging.LogUtils;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -24,7 +23,9 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
@@ -41,6 +42,8 @@ public class DatapackScreen extends CommonDataScreen {
 
     protected int imageWidth = 108;
     protected int imageHeight = 180;
+
+    public static final ResourceLocation WINDOW_LOCATION = new ResourceLocation("professions", "textures/gui/datapack_screen.png");
 
     protected boolean pressedNew = false;
 
@@ -90,20 +93,21 @@ public class DatapackScreen extends CommonDataScreen {
         });
         component = new SaveSideBar(-(width / 3), 0, width / 3, height,
                 new FileBox((this.width - 300) / 2, (this.height - 100) / 2, 300, 100,
-                button -> {
-                    JsonObject object = new JsonObject();
+                        button -> {
+                            JsonObject object = new JsonObject();
 
-                    String data = "data/" + component.getFileBox().getNamespace().getValue()
-                            + "/professions/occupations/";
-                    datapackEditor.serialize(object);
-                    try {
-                        Files.createDirectories(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data));
-                        Files.writeString(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data +
-                                "/" + component.getFileBox().getOccupationName().getValue() + ".json"), AbstractProfessionLoader.serialize(object));
-                    } catch (IOException e) {
-                        LOGGER.warn("FILE ALREADY EXISTS", e);
-                    }
-                }, button -> {
+                            String data = "data/" + component.getFileBox().getNamespace().getValue()
+                                    + "/professions/occupations/";
+                            datapackEditor.serialize(object);
+                            try {
+
+                                Files.createDirectories(FMLPaths.CONFIGDIR.get().resolve("professions/" + data));
+                                Files.writeString(FMLPaths.CONFIGDIR.get().resolve("professions/" + data +
+                                        "/" + component.getFileBox().getOccupationName().getValue() + ".json"), AbstractProfessionLoader.serialize(object));
+                            } catch (IOException e) {
+                                LOGGER.warn("FILE ALREADY EXISTS", e);
+                            }
+                        }, button -> {
                     saveSidebarWidget.x = 0;
                     component.x = -(width / 3);
                     rebuildScreen();

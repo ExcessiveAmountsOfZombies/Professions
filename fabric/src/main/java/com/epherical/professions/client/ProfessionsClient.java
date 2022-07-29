@@ -2,8 +2,7 @@ package com.epherical.professions.client;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
-import com.epherical.professions.client.screen.DatapackScreen;
-import com.epherical.professions.client.screen.format.PieceRegistry;
+import com.epherical.professions.client.format.PieceRegistry;
 import com.epherical.professions.networking.ClientHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -34,10 +33,7 @@ public class ProfessionsClient implements ClientModInitializer {
 
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (commonClient.getOpenDatapackMenu().isDown()) {
-                client.setScreen(new DatapackScreen());
-            }
-            commonClient.openOccupationMenu(client);
+            commonClient.openMenus(client);
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {

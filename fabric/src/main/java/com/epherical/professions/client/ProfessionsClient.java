@@ -28,12 +28,13 @@ public class ProfessionsClient implements ClientModInitializer {
         commonClient = new CommonClient();
         KeyBindingHelper.registerKeyBinding(commonClient.getOccupationMenu());
         KeyBindingHelper.registerKeyBinding(commonClient.getProfessionData());
+        KeyBindingHelper.registerKeyBinding(commonClient.getOpenDatapackMenu());
 
         PieceRegistry.init();
 
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (commonClient.getProfessionData().isDown()) {
+            if (commonClient.getOpenDatapackMenu().isDown()) {
                 client.setScreen(new DatapackScreen());
             }
             commonClient.openOccupationMenu(client);

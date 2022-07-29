@@ -25,6 +25,7 @@ public class CommonClient {
 
     private KeyMapping occupationMenu;
     private KeyMapping professionData;
+    private KeyMapping openDatapackMenu;
 
 
     public CommonClient() {
@@ -38,6 +39,11 @@ public class CommonClient {
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_LEFT_ALT,
                 "category.professions.occupation");
+        openDatapackMenu = new KeyMapping(
+                "key.professions.datapack_menu",
+                InputConstants.UNKNOWN.getValue(),
+                "category.professions.occupation"
+        );
 
     }
 
@@ -100,5 +106,9 @@ public class CommonClient {
 
     public KeyMapping getProfessionData() {
         return professionData;
+    }
+
+    public KeyMapping getOpenDatapackMenu() {
+        return openDatapackMenu;
     }
 }

@@ -134,13 +134,13 @@ public class PieceRegistry {
 
     private static ArrayEntry<DatapackEntry> createItemArrayEntry(int x, int y, int width, String usage) {
         return createArrayEntry(x + 14, y, width - 14, usage, (x1, y2) -> {
-            return new StringEntry(x + 18, y2, width / 2, "items", "#minecraft:crops", Optional.of("items"), DatapackEntry.Type.REMOVE);
+            return new StringEntry(x + 18, y2, width / 2, "items", "minecraft:stone_sword", Optional.of("items"), DatapackEntry.Type.REMOVE);
         });
     }
 
     private static ArrayEntry<DatapackEntry> createBlockArrayEntry(int x, int y, int width, String usage) {
         return createArrayEntry(x + 14, y, width - 14, usage, (x1, y2) -> {
-            return new StringEntry(x + 18, y2, width / 2, "blocks", "#minecraft:crops", Optional.of("blocks"));
+            return new StringEntry(x + 18, y2, width / 2, "blocks", "minecraft:stone", Optional.of("blocks"));
         });
     }
 

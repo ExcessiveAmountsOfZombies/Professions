@@ -10,7 +10,7 @@ import com.epherical.professions.client.screen.entry.RegistryEntry;
 import com.epherical.professions.client.screen.entry.StringEntry;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Actions;
-import com.google.gson.JsonArray;
+import com.epherical.professions.profession.unlock.Unlocks;
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class ProfessionEditor extends DatapackEditor {
     private final NumberEntry<Integer> maxLevel;
     private final ArrayEntry<MultipleTypeEntry> actions;
     private final ArrayEntry<StringEntry> description;
-    /*private final ArrayEntry<CompoundEntry> unlocks;*/
+    private final ArrayEntry<MultipleTypeEntry> unlocks;
 
 
     public ProfessionEditor(int embed, int width) {
@@ -40,29 +40,17 @@ public class ProfessionEditor extends DatapackEditor {
         description = new ArrayEntry<>(0, 0, 128, "Description", (x, y) -> {
             return new StringEntry(embed + 8, y, width - 8, "description", "", DatapackEntry.Type.REMOVE);
         });
-        /*actions = new ArrayEntry<>(0, 0, 128, "Actions", (x, y) -> {
-            MultipleTypeEntry entry = new MultipleTypeEntry(embed + 8, y, 90,
-                    new CompoundEntry(embed + 8, y, 90, List.of(
-                            new RegistryEntry<>(embed + 14, y, width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK, Optional.of("action")),
-                            new ArrayEntry<>(embed + 14, y, width - 14, "items", (x1, y2) -> {
-                                return new StringEntry(embed + 18, y2, width - 18, "items", "#minecraft:crops", Optional.of("items"));
-                            }),
-                            new ArrayEntry<>(embed + 14, y, width - 14, "rewards", (x1, y2) -> {
-                                return new CompoundEntry(0, 0, 0,
-                                        List.of(new NumberEntry<>(embed + 18, y2, width - 18, "amount", 1.0),
-                                                new RegistryEntry<>(embed + 18, y2, width - 18, RegistryConstants.REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"))));
-                            }),
-                            new ArrayEntry<>(embed + 14, y, width - 14, "conditions", (x1, y2) -> {
-                                return new RegistryEntry<>(embed + 18, y2, width - 18, RegistryConstants.ACTION_CONDITION_TYPE, ActionConditions.FULLY_GROWN_CROP_CONDITION);
-                            }))));
-            return entry;
-        });*/
         actions = new ArrayEntry<>(0, 0, 128, "Actions", (x, y) -> {
-            MultipleTypeEntry entry = new MultipleTypeEntry(embed + 8, y, 90, new DatapackEntry[]{
+            return new MultipleTypeEntry(embed + 8, y, 90, new DatapackEntry[]{
                     new CompoundAwareEntry<>(embed + 8, y, 90, embed, this.width, RegistryConstants.ACTION_TYPE_KEY,
                             new RegistryEntry<>(embed + 14, y, this.width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK, Optional.of("action")))},
                     DatapackEntry.Type.REMOVE);
-            return entry;
+        });
+        unlocks = new ArrayEntry<>(0, 0, 128, "Unlocks", (x, y) -> {
+           return new MultipleTypeEntry(embed + 8, y, 90, new DatapackEntry[]{
+                   new CompoundAwareEntry<>(embed + 8, y, 90, embed, this.width, RegistryConstants.UNLOCK_KEY,
+                           new RegistryEntry<>(embed + 14, y, this.width - 14, RegistryConstants.UNLOCKS, Unlocks.TOOL_UNLOCK, Optional.of("unlock")))},
+                   DatapackEntry.Type.REMOVE);
         });
 
 
@@ -79,7 +67,7 @@ public class ProfessionEditor extends DatapackEditor {
 
     @Override
     public List<DatapackEntry> entries() {
-        return List.of(professionType, professionColor, descriptionColor, description, displayName, expScaling, maxLevel, actions);
+        return List.of(professionType, professionColor, descriptionColor, description, displayName, expScaling, maxLevel, actions, unlocks);
     }
 
     @Override
@@ -93,6 +81,6 @@ public class ProfessionEditor extends DatapackEditor {
         object.add("experienceSclEquation", expScaling.getSerializedValue());
         object.addProperty("incomeSclEquation", "base");
         object.add("maxLevel", maxLevel.getSerializedValue());
-        object.add("unlocks", new JsonArray());
+        object.add("unlocks", unlocks.getSerializedValue());
     }
 }

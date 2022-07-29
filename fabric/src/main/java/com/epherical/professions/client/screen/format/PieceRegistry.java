@@ -32,6 +32,22 @@ public class PieceRegistry {
     public static final ResourceKey<Registry<Format>> PIECES_KEY = ResourceKey.createRegistryKey(Constants.modID("pieces"));
     public static final Registry<Format> PIECES = new MappedRegistry<>(PIECES_KEY, Lifecycle.experimental(), null);
 
+    public static final Format BLOCK_DROP_UNLOCK_FORMAT = register(modID("block_drop"), new RegularFormat((embed, y, width) -> List.of(
+            createBlockArrayEntry(embed + 8, y, width / 2 + 14, "blocks"),
+            new NumberEntry<>(embed + 22, y, width / 2, "level", 1)
+    )));
+
+    public static final Format BLOCK_BREAK_UNLOCK_FORMAT = register(modID("block_break"), new RegularFormat((embed, y, width) -> List.of(
+            createBlockArrayEntry(embed + 8, y, width / 2 + 14, "blocks"),
+            new NumberEntry<>(embed + 22, y, width / 2, "level", 1)
+    )));
+
+    public static final Format TOOL_UNLOCK_FORMAT = register(modID("tool_unlock"), new RegularFormat((embed, y, width) -> List.of(
+            // todo; really demonstrates the need for a systemic way to define how indented the fields should be.
+            createItemArrayEntry(embed + 8, y, width / 2 + 14, "items"),
+            new NumberEntry<>(embed + 22, y, width / 2, "level", 1)
+    )));
+
 
     public static final Format PAYMENT_REWARD_FORMAT = register(modID("payment"), new RegularFormat((embed, y, width) -> List.of(
             new NumberEntry<>(embed + 22, y, width / 2, "amount", 1.0),

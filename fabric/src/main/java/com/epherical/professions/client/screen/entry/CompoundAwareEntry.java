@@ -1,6 +1,7 @@
 package com.epherical.professions.client.screen.entry;
 
 import com.epherical.professions.client.screen.DatapackScreen;
+import com.epherical.professions.client.screen.format.Format;
 import com.epherical.professions.client.screen.format.PieceRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -25,7 +26,10 @@ public class CompoundAwareEntry<T> extends CompoundEntry {
         this.screenWidth = screenWidth;
         this.value = registryEntry.getValue();
         children.add(registryEntry);
-        children.addAll(PieceRegistry.PIECES.get(entry.getRegistry().getKey(value)).entries().apply(embed, y, screenWidth));
+        Format format = PieceRegistry.PIECES.get(entry.getRegistry().getKey(value));
+        if (format != null) {
+            children.addAll(format.entries().apply(embed, y, screenWidth));
+        }
     }
 
 
@@ -35,7 +39,11 @@ public class CompoundAwareEntry<T> extends CompoundEntry {
             this.value = entry.getValue();
             children.clear();
             children.add(entry);
-            children.addAll(PieceRegistry.PIECES.get(entry.getRegistry().getKey(value)).entries().apply(embeddedDistance, y, screenWidth));
+            Format format = PieceRegistry.PIECES.get(entry.getRegistry().getKey(value));
+            if (format != null) {
+                children.addAll(format.entries().apply(embeddedDistance, y, screenWidth));
+            }
+
         }
         super.onRebuild(screen);
     }

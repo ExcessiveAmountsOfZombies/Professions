@@ -23,6 +23,7 @@ public class ProfessionsClientForge {
         commonClient = new CommonClient();
         ClientRegistry.registerKeyBinding(commonClient.getOccupationMenu());
         ClientRegistry.registerKeyBinding(commonClient.getProfessionData());
+        ClientRegistry.registerKeyBinding(commonClient.getOpenDatapackMenu());
     }
 
     public static DatapackScreen createScreen() {

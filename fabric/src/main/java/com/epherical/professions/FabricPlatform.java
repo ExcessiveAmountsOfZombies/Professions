@@ -2,6 +2,8 @@ package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClient;
+import com.epherical.professions.client.screen.CommonDataScreen;
+import com.epherical.professions.client.screen.DatapackScreen;
 import com.epherical.professions.datapack.CommonProfessionLoader;
 import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.networking.ClientHandler;
@@ -108,5 +110,11 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
                 map.get(FabricRegConstants.PAYMENT_REWARD),
                 map.get(Rewards.EXPERIENCE_REWARD),
                 action.extraRewardInformation(map));
+    }
+
+    @Override
+    public CommonDataScreen createScreen() {
+
+        return new DatapackScreen();
     }
 }

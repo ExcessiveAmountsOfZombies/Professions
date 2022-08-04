@@ -37,18 +37,18 @@ public class ProfessionEditor extends DatapackEditor {
         displayName = new StringEntry(width / 2, 0, 128, "Display Name:", "Occupation Name");
         expScaling = new StringEntry(width / 2, 0, 128, "Exp Scaling:", "1000*1.064^(lvl-1)");
         maxLevel = new NumberEntry<>(width / 2, 0, 128, "Max Level:", 100);
-        description = new ArrayEntry<>(0, 0, 128, "Description", (x, y) -> {
+        description = new ArrayEntry<>(0, 0, 128, "Description", (x, y, wid) -> {
             return new StringEntry(embed + 8, y, width - 8, "description", "", DatapackEntry.Type.REMOVE);
         });
-        actions = new ArrayEntry<>(0, 0, 128, "Actions", (x, y) -> {
+        actions = new ArrayEntry<>(0, 0, 128, "Actions", (x, y, wid) -> {
             return new MultipleTypeEntry(embed + 8, y, 90, new DatapackEntry[]{
-                    new CompoundAwareEntry<>(embed + 8, y, 90, embed, this.width, RegistryConstants.ACTION_TYPE_KEY,
+                    new CompoundAwareEntry<>(embed + 8, y, 90, embed + 14, this.width - 14, RegistryConstants.ACTION_TYPE_KEY,
                             new RegistryEntry<>(embed + 14, y, this.width - 14, RegistryConstants.ACTION_TYPE, Actions.PLACE_BLOCK, Optional.of("action")))},
                     DatapackEntry.Type.REMOVE);
         });
-        unlocks = new ArrayEntry<>(0, 0, 128, "Unlocks", (x, y) -> {
+        unlocks = new ArrayEntry<>(0, 0, 128, "Unlocks", (x, y, wid) -> {
            return new MultipleTypeEntry(embed + 8, y, 90, new DatapackEntry[]{
-                   new CompoundAwareEntry<>(embed + 8, y, 90, embed, this.width, RegistryConstants.UNLOCK_KEY,
+                   new CompoundAwareEntry<>(embed + 8, y, 90, embed + 14, this.width - 14, RegistryConstants.UNLOCK_KEY,
                            new RegistryEntry<>(embed + 14, y, this.width - 14, RegistryConstants.UNLOCKS, Unlocks.TOOL_UNLOCK, Optional.of("unlock")))},
                    DatapackEntry.Type.REMOVE);
         });

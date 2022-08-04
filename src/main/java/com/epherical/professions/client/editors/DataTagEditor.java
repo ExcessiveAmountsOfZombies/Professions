@@ -5,16 +5,16 @@ import com.epherical.professions.client.entry.BooleanEntry;
 import com.epherical.professions.client.entry.DatapackEntry;
 import com.epherical.professions.client.entry.MultipleTypeEntry;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.List;
-import java.util.function.BiFunction;
 
 public class DataTagEditor<T> extends DatapackEditor {
 
     private final BooleanEntry replace;
     private final ArrayEntry<MultipleTypeEntry> values;
 
-    public DataTagEditor(BiFunction<Integer, Integer, MultipleTypeEntry> addObject) {
+    public DataTagEditor(TriFunction<Integer, Integer, Integer, MultipleTypeEntry> addObject) {
         replace = new BooleanEntry(0, 0, 128, "Replace", false);
         values = new ArrayEntry<>(0, 0, 128, "Values", addObject);
     }

@@ -1,6 +1,7 @@
 package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.capability.PlayerOwnable;
 import com.epherical.professions.client.ProfessionsClientForge;
 import com.epherical.professions.commands.ProfessionsCommands;
 import com.epherical.professions.config.Config;
@@ -14,7 +15,6 @@ import com.epherical.professions.triggers.BlockTriggers;
 import com.epherical.professions.triggers.EntityTriggers;
 import com.epherical.professions.triggers.ProfessionListener;
 import com.epherical.professions.util.PlayerOwnableProvider;
-import com.epherical.professions.capability.PlayerOwnable;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -97,7 +97,6 @@ public class ProfessionsForge {
         MinecraftForge.EVENT_BUS.register(this);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getConfigSpec());
-
 
 
     }

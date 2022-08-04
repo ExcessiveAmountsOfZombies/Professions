@@ -10,11 +10,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
 
@@ -25,11 +25,12 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
 
     protected boolean needsRefresh;
 
-    public ArrayEntry(int x, int y, int width, String usage, BiFunction<Integer, Integer, T> addObject) {
+    public ArrayEntry(int x, int y, int width, String usage, TriFunction<Integer, Integer, Integer, T> addObject) {
         super(x, y, width, Optional.of(usage));
         this.usage = usage;
         addButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.ADD, button -> {
-            T t = addEntry(addObject.apply(x, this.y + 2));
+            int indent = 4;
+            T t = addEntry(addObject.apply(x + indent, this.y + 2, width - indent));
             t.addListener(button1 -> {
                 if (button1.getType() == Type.REMOVE) {
                     objects.remove(t);

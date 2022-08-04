@@ -11,6 +11,7 @@ allprojects {
     group = maven_group
 
     repositories {
+        mavenLocal()
         mavenCentral()
     }
 

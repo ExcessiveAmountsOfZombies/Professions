@@ -26,7 +26,7 @@ public class CompoundAwareEntry<T> extends CompoundEntry {
         this.screenWidth = screenWidth;
         this.value = registryEntry.getValue();
         children.add(registryEntry);
-        Format format = PieceRegistry.PIECES.get(entry.getRegistry().getKey(value));
+        Format format = PieceRegistry.grabFormat(entry.getRegistry(), value);
         if (format != null) {
             children.addAll(format.entries().apply(embed, y, screenWidth));
         }
@@ -39,7 +39,7 @@ public class CompoundAwareEntry<T> extends CompoundEntry {
             this.value = entry.getValue();
             children.clear();
             children.add(entry);
-            Format format = PieceRegistry.PIECES.get(entry.getRegistry().getKey(value));
+            Format format = PieceRegistry.grabFormat(entry.getRegistry(), value);
             if (format != null) {
                 children.addAll(format.entries().apply(embeddedDistance, y, screenWidth));
             }

@@ -16,8 +16,6 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -25,7 +23,6 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -42,15 +39,13 @@ public class DatapackScreen extends CommonDataScreen {
     protected int imageWidth = 108;
     protected int imageHeight = 180;
 
-    protected boolean pressedNew = false;
-
     private double scrollAmount;
 
-    public List<DatapackEntry> datapackEntries = new ArrayList<>();
+    public List<DatapackEntry<?, ?>> datapackEntries = new ArrayList<>();
     public boolean adjustEntries = false;
 
     private final EditorCreator<?> creator;
-    private DatapackEditor datapackEditor;
+    private DatapackEditor<?> datapackEditor;
 
     private SaveSidebarWidget saveSidebarWidget;
     private boolean sidebarWidgetOpen = false;
@@ -92,20 +87,20 @@ public class DatapackScreen extends CommonDataScreen {
         });
         component = new SaveSideBar(-(width / 3), 0, width / 3, height,
                 new FileBox((this.width - 300) / 2, (this.height - 100) / 2, 300, 100,
-                button -> {
-                    JsonObject object = new JsonObject();
+                        button -> {
+                            JsonObject object = new JsonObject();
 
-                    String data = "data/" + component.getFileBox().getNamespace().getValue()
-                            + "/professions/occupations/";
-                    datapackEditor.serialize(object);
-                    try {
-                        Files.createDirectories(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data));
-                        Files.writeString(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data +
-                                "/" + component.getFileBox().getOccupationName().getValue() + ".json"), AbstractProfessionLoader.serialize(object));
-                    } catch (IOException e) {
-                        LOGGER.warn("FILE ALREADY EXISTS", e);
-                    }
-                }, button -> {
+                            String data = "data/" + component.getFileBox().getNamespace().getValue()
+                                    + "/professions/occupations/";
+                            datapackEditor.serialize(object);
+                            try {
+                                Files.createDirectories(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data));
+                                Files.writeString(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data +
+                                        "/" + component.getFileBox().getOccupationName().getValue() + ".json"), AbstractProfessionLoader.serialize(object));
+                            } catch (IOException e) {
+                                LOGGER.warn("FILE ALREADY EXISTS", e);
+                            }
+                        }, button -> {
                     saveSidebarWidget.x = 0;
                     component.x = -(width / 3);
                     rebuildScreen();
@@ -125,7 +120,7 @@ public class DatapackScreen extends CommonDataScreen {
 
         int increment = 0;
         //LOGGER.info("Setting x, y position on init entries.");
-        for (DatapackEntry entry : datapackEditor.entries()) {
+        for (DatapackEntry<?, ?> entry : datapackEditor.entries()) {
             entry.setX(ofx);
             entry.setY(ofy + (entry.getHeight() * increment));
             entry.setWidth(width);
@@ -210,35 +205,41 @@ public class DatapackScreen extends CommonDataScreen {
 
         int ofx = (this.width - imageWidth) / 2;
         int ofy = (this.height - imageHeight) / 2;
-        if (pressedNew) {
-            renderMainWindow(poseStack, ofx, ofy);
-            for (GuiEventListener child : this.children) {
-                if (child instanceof DatapackEntry entry) {
-                    entry.setYScroll((int) -scrollAmount);
+        renderMainWindow(poseStack, ofx, ofy);
+        for (GuiEventListener child : this.children) {
+            if (child instanceof DatapackEntry entry) {
+                entry.setYScroll((int) -scrollAmount);
+            }
+        }
+
+        double d = this.minecraft.getWindow().getGuiScale();
+        RenderSystem.enableScissor(
+                (int) (0 * d),
+                (int) ((double) (11) * d),
+                (int) ((double) (this.getScrollbarPosition() + 6) * d),
+                (int) ((double) (this.height - 22) * d));
+        for (Widget renderable : this.renderables) {
+            if (renderable instanceof DatapackEntry entry) {
+                if (!(entry.y + entry.getYScroll() <= -10 || entry.y + entry.getYScroll() > this.height)) {
+                    renderable.render(poseStack, mouseX, mouseY, partialTick);
+                }
+            } else if (renderable instanceof AbstractWidget widget) {
+                if (!(widget.y <= 11 || widget.y > this.height - 22)) {
+                    renderable.render(poseStack, mouseX, mouseY, partialTick);
                 }
             }
-
-            double d = this.minecraft.getWindow().getGuiScale();
-            RenderSystem.enableScissor(
-                    (int) (0 * d),
-                    (int) ((double) (11) * d),
-                    (int) ((double) (this.getScrollbarPosition() + 6) * d),
-                    (int) ((double) (this.height - 22) * d));
-            super.render(poseStack, mouseX, mouseY, partialTick);
-            RenderSystem.disableScissor();
-
-            for (Widget specialRender : specialRenders) {
-                poseStack.pushPose();
-                specialRender.render(poseStack, mouseX, mouseY, partialTick);
-                poseStack.popPose();
-            }
-
-            renderScrollBar();
-        } else {
-            Minecraft minecraft = Minecraft.getInstance();
-            Font font = minecraft.font;
-            font.drawShadow(poseStack, "press 'n' to create a new profession", ofx, 32, 0xFFFFFF);
         }
+
+
+        RenderSystem.disableScissor();
+
+        for (Widget specialRender : specialRenders) {
+            poseStack.pushPose();
+            specialRender.render(poseStack, mouseX, mouseY, partialTick);
+            poseStack.popPose();
+        }
+
+        renderScrollBar();
 
     }
 
@@ -307,10 +308,6 @@ public class DatapackScreen extends CommonDataScreen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_N) {
-            // todo: remove this
-            pressedNew = true;
-        }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 

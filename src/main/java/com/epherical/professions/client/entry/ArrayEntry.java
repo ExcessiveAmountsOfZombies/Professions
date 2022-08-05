@@ -16,8 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
+public class ArrayEntry<OBJ, T extends DatapackEntry<?, ?>> extends DatapackEntry<OBJ, ArrayEntry<OBJ, T>> {
 
+    private final TriFunction<Integer, Integer, Integer, T> addObject;
     protected List<T> objects = new ArrayList<>();
     protected SmallIconButton addButton;
     protected SmallIconButton removeButton;
@@ -28,26 +29,9 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
     public ArrayEntry(int x, int y, int width, String usage, TriFunction<Integer, Integer, Integer, T> addObject) {
         super(x, y, width, Optional.of(usage));
         this.usage = usage;
+        this.addObject = addObject;
         addButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.ADD, button -> {
-            int indent = 4;
-            T t = addEntry(addObject.apply(x + indent, this.y + 2, width - indent));
-            t.addListener(button1 -> {
-                if (button1.getType() == Type.REMOVE) {
-                    objects.remove(t);
-                    needsRefresh = true;
-                }
-            });
-            for (AbstractWidget child : t.children) {
-                if (child instanceof DatapackEntry entry) {
-                    entry.addListener(button1 -> {
-                        if (button1.getType() == Type.REMOVE) {
-                            objects.remove(t);
-                            needsRefresh = true;
-                        }
-                    });
-                }
-            }
-            needsRefresh = true;
+            addEntry(createEntry());
         });
        /* removeButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.BAD, button -> {
             // todo; dropdown and add little x to all entries. clicking again will remove them
@@ -68,6 +52,34 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         }
     }
 
+    public T createEntry() {
+        int indent = 4;
+        return addObject.apply(x + indent, this.y + 2, width - indent);
+    }
+
+    public void addEntry(T object) {
+        objects.add(0, object);
+        object.initPosition(this.x, this.y);
+
+        object.addListener(button1 -> {
+            if (button1.getType() == Type.REMOVE) {
+                objects.remove(object);
+                needsRefresh = true;
+            }
+        });
+        for (AbstractWidget child : object.children) {
+            if (child instanceof DatapackEntry entry) {
+                entry.addListener(button1 -> {
+                    if (button1.getType() == Type.REMOVE) {
+                        objects.remove(object);
+                        needsRefresh = true;
+                    }
+                });
+            }
+        }
+        needsRefresh = true;
+    }
+
     @Override
     public void onRebuild(CommonDataScreen screen) {
         rebuildTinyButtons(screen);
@@ -83,12 +95,6 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
     public void initPosition(int initialX, int initialY) {
         super.initPosition(initialX, initialY);
         setButtonPositions(0, 0);
-    }
-
-    public T addEntry(T entry) {
-        objects.add(0, entry);
-        entry.initPosition(this.x, this.y);
-        return entry;
     }
 
     @Override

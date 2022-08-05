@@ -9,21 +9,20 @@ import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.List;
 
-public class DataTagEditor<T> extends DatapackEditor {
+public class DataTagEditor<T> extends DatapackEditor<T> {
 
     private final BooleanEntry replace;
-    private final ArrayEntry<MultipleTypeEntry> values;
+    private final ArrayEntry<T, MultipleTypeEntry<T>> values;
 
-    public DataTagEditor(TriFunction<Integer, Integer, Integer, MultipleTypeEntry> addObject) {
+    public DataTagEditor(TriFunction<Integer, Integer, Integer, MultipleTypeEntry<T>> addObject) {
         replace = new BooleanEntry(0, 0, 128, "Replace", false);
         values = new ArrayEntry<>(0, 0, 128, "Values", addObject);
     }
 
     @Override
-    public List<DatapackEntry> entries() {
-        return List.of(replace, values);
+    public List<DatapackEntry<T, ?>> entries() {
+        return null;
     }
-
 
     @Override
     public void serialize(JsonObject object) {
@@ -34,6 +33,11 @@ public class DataTagEditor<T> extends DatapackEditor {
         System.out.println(object1);
         /*replace.serialize(object1);
         values.serialize(object1);*/
+
+    }
+
+    @Override
+    public void deserialize(Object object) {
 
     }
 

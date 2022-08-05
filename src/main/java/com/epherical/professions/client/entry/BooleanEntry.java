@@ -9,7 +9,7 @@ import net.minecraft.client.gui.Font;
 
 import java.util.Optional;
 
-public class BooleanEntry extends DatapackEntry {
+public class BooleanEntry<T> extends DatapackEntry<T, BooleanEntry<T>> {
 
     private String usage;
     private boolean value;

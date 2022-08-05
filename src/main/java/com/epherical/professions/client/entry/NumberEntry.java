@@ -1,22 +1,13 @@
 package com.epherical.professions.client.entry;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 import java.util.Optional;
 
-public class NumberEntry<T extends Number> extends StringEntry {
-
-    private final String description;
-    private T value;
-    private Component tooltip;
+public class NumberEntry<T extends Number, OBJ> extends EditBoxEntry<OBJ, NumberEntry<T, OBJ>> {
 
     public NumberEntry(int i, int j, int k, String desc, T defaultValue) {
         super(i, j, k, desc, String.valueOf(defaultValue), Optional.of(desc));
-        this.description = desc;
-        this.value = defaultValue;
-        this.tooltip = new TextComponent(value.toString());
     }
 
     @Override
@@ -35,13 +26,5 @@ public class NumberEntry<T extends Number> extends StringEntry {
     @Override
     public String getType() {
         return "Number";
-    }
-
-    @Override
-    public String toString() {
-        return "NumberEntry{" +
-                "description='" + description + '\'' +
-                ", value=" + value +
-                "} " + super.toString();
     }
 }

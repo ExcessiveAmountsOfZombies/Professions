@@ -49,10 +49,10 @@ public class DatapackScreen extends CommonDataScreen {
 
     private double scrollAmount;
 
-    public List<DatapackEntry> datapackEntries = new ArrayList<>();
+    public List<DatapackEntry<?>> datapackEntries = new ArrayList<>();
     public boolean adjustEntries = false;
 
-    private DatapackEditor datapackEditor;
+    private DatapackEditor<?> datapackEditor;
 
     private SaveSidebarWidget saveSidebarWidget;
     private boolean sidebarWidgetOpen = false;
@@ -136,7 +136,7 @@ public class DatapackScreen extends CommonDataScreen {
 
         int increment = 0;
         //LOGGER.info("Setting x, y position on init entries.");
-        for (DatapackEntry entry : datapackEditor.entries()) {
+        for (DatapackEntry<?> entry : datapackEditor.entries()) {
             entry.setX(ofx);
             entry.setY(ofy + (entry.getHeight() * increment));
             entry.setWidth(width);

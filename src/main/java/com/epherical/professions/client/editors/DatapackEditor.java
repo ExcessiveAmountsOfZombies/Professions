@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 
 import java.util.List;
 
-public abstract class DatapackEditor {
+public abstract class DatapackEditor<T> {
 
 
     protected int width;
@@ -19,7 +19,9 @@ public abstract class DatapackEditor {
         this.width = width;
     }
 
-    public abstract List<DatapackEntry> entries();
+    public abstract List<DatapackEntry<T, ?>> entries();
 
     public abstract void serialize(JsonObject object);
+
+    public abstract void deserialize(T object);
 }

@@ -8,14 +8,14 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import java.util.List;
 import java.util.Optional;
 
-public class CompoundEntry<OBJ> extends AbstractCompoundEntry<OBJ, CompoundEntry<OBJ>> {
+public abstract class AbstractCompoundEntry<OBJ, V extends AbstractCompoundEntry<?, ?>> extends DatapackEntry<OBJ, V> {
 
 
     /**
      * @param entries a list of entries that will comprise the object. Each entry should use the Optional serialization key.
      */
-    public CompoundEntry(int x, int y, int width, List<DatapackEntry> entries, Type... types) {
-        super(x, y, width, entries, types);
+    public AbstractCompoundEntry(int x, int y, int width, List<DatapackEntry> entries, Type... types) {
+        super(x, y, width, 0, types);
         children.addAll(entries);
     }
 

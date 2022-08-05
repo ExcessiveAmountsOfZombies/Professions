@@ -6,10 +6,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 
-public class MultipleTypeEntry extends DatapackEntry {
+public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>> {
 
     private int currentSelection;
-    private final DatapackEntry[] types;
+    private final DatapackEntry<?, ?>[] types;
 
     protected boolean needsRefresh;
 

@@ -19,8 +19,9 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
-public abstract class DatapackEntry extends AbstractWidget implements Parent, Scrollable, IdentifiableEntry {
+public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements Parent, Scrollable, IdentifiableEntry {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -35,6 +36,8 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
     protected final List<TinyButtonListener> listeners = new ArrayList<>();
 
     protected final Optional<String> serializationKey;
+
+    protected BiConsumer<T, SELF> deserializer;
 
     protected int xScroll = 0;
     protected int yScroll = 0;
@@ -212,6 +215,24 @@ public abstract class DatapackEntry extends AbstractWidget implements Parent, Sc
     }
 
     public abstract JsonElement getSerializedValue();
+
+    /**
+     * DO NOT CALL {@link #deserialize(Object)} on SELF.
+     * @param consumer
+     * @return itself.
+     */
+    public SELF addDeserializer(BiConsumer<T, SELF> consumer) {
+        deserializer = consumer;
+        return (SELF) this;
+    }
+
+    public void deserialize(T object) {
+        if (deserializer != null) {
+            deserializer.accept(object, (SELF) this);
+        } else {
+            LOGGER.warn("DatapackEntry deserializer was null!!! {}", this);
+        }
+    }
 
     public static class TinyButton extends Button {
 

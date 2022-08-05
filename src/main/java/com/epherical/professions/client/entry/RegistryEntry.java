@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RegistryEntry<T> extends DatapackEntry {
+public class RegistryEntry<DE, T> extends DatapackEntry<DE, RegistryEntry<DE, T>> {
 
     private final Minecraft minecraft = Minecraft.getInstance();
 
@@ -28,7 +28,7 @@ public class RegistryEntry<T> extends DatapackEntry {
     private final SmallIconButton button;
 
     private boolean added = false;
-    private List<RegistryObjectEntry<T>> registryEntries = new ArrayList<>();
+    private List<RegistryObjectEntry<DE, T>> registryEntries = new ArrayList<>();
 
     public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue, Optional<String> serializationKey, Type... types) {
         super(x, y, width, serializationKey, types);
@@ -95,9 +95,9 @@ public class RegistryEntry<T> extends DatapackEntry {
         screen.addChild(this);
 
         if (button.isOpened() && !added) {
-            List<RegistryObjectEntry<T>> objects = new ArrayList<>();
+            List<RegistryObjectEntry<DE, T>> objects = new ArrayList<>();
             for (Map.Entry<ResourceKey<T>, T> entry : registry.entrySet()) {
-                RegistryObjectEntry<T> objectEntry = new RegistryObjectEntry<>(x + 7, y + 23, 160, entry.getKey(), entry.getValue(), (object) -> {
+                RegistryObjectEntry<DE, T> objectEntry = new RegistryObjectEntry<>(x + 7, y + 23, 160, entry.getKey(), entry.getValue(), (object) -> {
                     this.value = object.getObject();
                     this.tooltip = new TextComponent(registry.getKey(this.value).toString());
                     this.button.icon = CommandButton.SmallIcon.DROP_DOWN_OPEN;
@@ -119,6 +119,15 @@ public class RegistryEntry<T> extends DatapackEntry {
         return "String";
     }
 
+    private void update() {
+        this.tooltip = new TextComponent(registry.getKey(this.value).toString());
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+        update();
+    }
+
 
     public T getValue() {
         return value;
@@ -134,7 +143,7 @@ public class RegistryEntry<T> extends DatapackEntry {
         button.y = y + 2 + yScroll;
     }
 
-    public interface ClickRegistryObjectEntry<T> {
-        void action(RegistryObjectEntry<T> entry);
+    public interface ClickRegistryObjectEntry<V,T> {
+        void action(RegistryObjectEntry<V, T> entry);
     }
 }

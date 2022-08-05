@@ -103,6 +103,14 @@ public class Profession {
         return unlocks;
     }
 
+    public Parser getExperienceScalingEquation() {
+        return experienceScalingEquation;
+    }
+
+    public Parser getIncomeScalingEquation() {
+        return incomeScalingEquation;
+    }
+
     @Nullable
     public Collection<Action> getActions(ActionType type) {
         return actions.get(type);

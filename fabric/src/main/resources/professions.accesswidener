@@ -6,4 +6,7 @@ accessible field net/minecraft/client/gui/screens/Screen children Ljava/util/Lis
 accessible field net/minecraft/client/gui/screens/Screen narratables Ljava/util/List;
 accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
 
+extendable method net/minecraft/client/gui/components/AbstractSelectionList getEntryAtPosition (DD)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;
+extendable method net/minecraft/client/gui/components/AbstractSelectionList getRowBottom (I)I
+
 accessible field net/minecraft/client/gui/components/CommandSuggestions pendingSuggestions Ljava/util/concurrent/CompletableFuture;

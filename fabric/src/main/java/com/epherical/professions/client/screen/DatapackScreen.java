@@ -3,8 +3,8 @@ package com.epherical.professions.client.screen;
 import com.epherical.professions.client.FileBox;
 import com.epherical.professions.client.SaveSideBar;
 import com.epherical.professions.client.SaveSidebarWidget;
+import com.epherical.professions.client.editor.EditorCreator;
 import com.epherical.professions.client.editors.DatapackEditor;
-import com.epherical.professions.client.editors.ProfessionEditor;
 import com.epherical.professions.client.entry.DatapackEntry;
 import com.epherical.professions.datapack.AbstractProfessionLoader;
 import com.google.gson.JsonObject;
@@ -49,6 +49,7 @@ public class DatapackScreen extends CommonDataScreen {
     public List<DatapackEntry> datapackEntries = new ArrayList<>();
     public boolean adjustEntries = false;
 
+    private final EditorCreator<?> creator;
     private DatapackEditor datapackEditor;
 
     private SaveSidebarWidget saveSidebarWidget;
@@ -57,8 +58,9 @@ public class DatapackScreen extends CommonDataScreen {
     private SaveSideBar component;
     private final List<Widget> specialRenders = new ArrayList<>();
 
-    public DatapackScreen() {
+    public DatapackScreen(EditorCreator<?> creator) {
         super(Component.nullToEmpty(""));
+        this.creator = creator;
     }
 
 
@@ -115,17 +117,8 @@ public class DatapackScreen extends CommonDataScreen {
         int ofx = 32;
         int ofy = 11;
         int width = this.width - 50;
-        //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
-        /* this.datapackEditor = new DataTagEditor<>((x, y) -> {
-             MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 90,
-                     new StringEntry(ofx + 14, y, width - 14, "", "minecraft:stone"),
-                     new CompoundEntry(0, 0, 0,
-                             List.of(new StringEntry(ofx + 14, y, width - 14, "id", "minecraft:stone", Optional.of("id")),
-                                     new BooleanEntry(ofx + 14, y, width - 14, "required", false, Optional.of("required")))));
-             return required;
-        });*/
         if (this.datapackEditor == null) {
-            this.datapackEditor = new ProfessionEditor(ofx, width);
+            this.datapackEditor = creator.apply(ofx, width);
         } else {
             this.datapackEditor.setWidth(width);
         }

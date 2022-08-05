@@ -1,7 +1,6 @@
 package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.client.screen.CommonDataScreen;
 import com.epherical.professions.datapack.CommonProfessionLoader;
 import com.epherical.professions.networking.ClientNetworking;
 import com.epherical.professions.networking.CommandButtons;
@@ -10,6 +9,7 @@ import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.rewards.RewardType;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -64,7 +64,7 @@ public abstract class CommonPlatform<T> {
      */
     public abstract Component displayInformation(AbstractAction action, Map<RewardType, Component> map);
 
-    public abstract CommonDataScreen createScreen();
+    public abstract Screen createScreen();
 
 
 }

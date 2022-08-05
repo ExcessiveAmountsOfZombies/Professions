@@ -2,8 +2,7 @@ package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClient;
-import com.epherical.professions.client.screen.CommonDataScreen;
-import com.epherical.professions.client.screen.DatapackScreen;
+import com.epherical.professions.client.screen.MenuScreen;
 import com.epherical.professions.datapack.CommonProfessionLoader;
 import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.networking.ClientHandler;
@@ -19,6 +18,7 @@ import com.epherical.professions.profession.rewards.Rewards;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -113,8 +113,8 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
     }
 
     @Override
-    public CommonDataScreen createScreen() {
+    public Screen createScreen() {
 
-        return new DatapackScreen();
+        return new MenuScreen();
     }
 }

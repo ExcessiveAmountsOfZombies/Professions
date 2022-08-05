@@ -48,9 +48,6 @@ public class CommonClient {
     }
 
     public void openMenus(Minecraft client) {
-        if (getOpenDatapackMenu().isDown()) {
-            client.setScreen(CommonPlatform.platform.createScreen());
-        }
 
         if (occupationMenu.isDown()) {
             if (client.isLocalServer()) {

@@ -2,8 +2,10 @@ package com.epherical.professions.client;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
+import com.epherical.professions.client.editor.EditorCreator;
 import com.epherical.professions.client.format.PieceRegistry;
 import com.epherical.professions.client.screen.DatapackScreen;
+import com.epherical.professions.client.screen.MenuScreen;
 import com.epherical.professions.networking.ClientHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -34,6 +36,11 @@ public class ProfessionsClient implements ClientModInitializer {
 
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (commonClient.getOpenDatapackMenu().isDown()) {
+                client.setScreen(new MenuScreen());
+                //client.setScreen(createScreen(ProfessionEditor::new));
+                //client.setScreen(CommonPlatform.platform.createScreen());
+            }
             commonClient.openMenus(client);
         });
 
@@ -55,8 +62,7 @@ public class ProfessionsClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(Constants.MOD_CHANNEL, ClientHandler::receivePacket);
     }
 
-    public static DatapackScreen createScreen() {
-
-        return new DatapackScreen();
+    public static DatapackScreen createScreen(EditorCreator<?> creator) {
+        return new DatapackScreen(creator);
     }
 }

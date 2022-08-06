@@ -42,7 +42,8 @@ public class DatapackScreen extends CommonDataScreen {
     private double scrollAmount;
 
     public List<DatapackEntry<?, ?>> datapackEntries = new ArrayList<>();
-    public boolean adjustEntries = false;
+    protected boolean adjustEntries = false;
+    protected boolean adjustRender = false;
 
     private final EditorCreator<?> creator;
     private DatapackEditor<?> datapackEditor;
@@ -114,6 +115,7 @@ public class DatapackScreen extends CommonDataScreen {
         int width = this.width - 50;
         if (this.datapackEditor == null) {
             this.datapackEditor = creator.apply(ofx, width);
+            adjustEntries = true;
         } else {
             this.datapackEditor.setWidth(width);
         }
@@ -194,6 +196,7 @@ public class DatapackScreen extends CommonDataScreen {
             if (time == 20) {
                 time = 0;
             }*/
+            adjustRender = true;
             adjustEntries = false;
         }
 
@@ -220,13 +223,17 @@ public class DatapackScreen extends CommonDataScreen {
                 (int) ((double) (this.height - 22) * d));
         for (Widget renderable : this.renderables) {
             if (renderable instanceof DatapackEntry entry) {
-                if (!(entry.y + entry.getYScroll() <= -10 || entry.y + entry.getYScroll() > this.height)) {
+                if (!(entry.y + entry.getYScroll() <= -50 || entry.y + entry.getYScroll() > this.height)) {
                     renderable.render(poseStack, mouseX, mouseY, partialTick);
                 }
             } else if (renderable instanceof AbstractWidget widget) {
-                if (!(widget.y <= 11 || widget.y > this.height - 22)) {
+                if (!(widget.y <= 23 || widget.y > this.height - 40)) {
                     renderable.render(poseStack, mouseX, mouseY, partialTick);
                 }
+            }
+            if (adjustRender) {
+                renderable.render(poseStack, mouseX, mouseY, partialTick);
+                adjustRender = false;
             }
         }
 

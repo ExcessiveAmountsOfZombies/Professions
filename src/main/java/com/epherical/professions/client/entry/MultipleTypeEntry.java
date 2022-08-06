@@ -74,4 +74,9 @@ public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>>
     public JsonElement getSerializedValue() {
         return types[currentSelection].getSerializedValue();
     }
+
+    @Override
+    public void deserialize(T object) {
+
+    }
 }

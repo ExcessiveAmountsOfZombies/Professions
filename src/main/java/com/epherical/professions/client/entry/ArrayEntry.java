@@ -18,6 +18,7 @@ import java.util.Optional;
 
 public class ArrayEntry<OBJ, T extends DatapackEntry<?, ?>> extends DatapackEntry<OBJ, ArrayEntry<OBJ, T>> {
 
+    private final Deserializer<OBJ, ArrayEntry<OBJ, T>> deserializer;
     private final TriFunction<Integer, Integer, Integer, T> addObject;
     protected List<T> objects = new ArrayList<>();
     protected SmallIconButton addButton;
@@ -26,12 +27,13 @@ public class ArrayEntry<OBJ, T extends DatapackEntry<?, ?>> extends DatapackEntr
 
     protected boolean needsRefresh;
 
-    public ArrayEntry(int x, int y, int width, String usage, TriFunction<Integer, Integer, Integer, T> addObject) {
+    public ArrayEntry(int x, int y, int width, String usage, TriFunction<Integer, Integer, Integer, T> addObject, Deserializer<OBJ, ArrayEntry<OBJ, T>> deserializer) {
         super(x, y, width, Optional.of(usage));
         this.usage = usage;
         this.addObject = addObject;
+        this.deserializer = deserializer;
         addButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.ADD, button -> {
-            addEntry(createEntry());
+            addEntryToBeginning(createEntry());
         });
        /* removeButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.BAD, button -> {
             // todo; dropdown and add little x to all entries. clicking again will remove them
@@ -57,10 +59,18 @@ public class ArrayEntry<OBJ, T extends DatapackEntry<?, ?>> extends DatapackEntr
         return addObject.apply(x + indent, this.y + 2, width - indent);
     }
 
-    public void addEntry(T object) {
+    public void addEntryToBeginning(T object) {
         objects.add(0, object);
-        object.initPosition(this.x, this.y);
+        initEntry(object);
+    }
 
+    public void addEntry(T object) {
+        objects.add(object);
+        initEntry(object);
+    }
+
+    private void initEntry(T object) {
+        object.initPosition(this.x, this.y);
         object.addListener(button1 -> {
             if (button1.getType() == Type.REMOVE) {
                 objects.remove(object);
@@ -114,6 +124,11 @@ public class ArrayEntry<OBJ, T extends DatapackEntry<?, ?>> extends DatapackEntr
         }
 
         return array;
+    }
+
+    @Override
+    public void deserialize(OBJ object) {
+        deserializer.deserialize(object, this);
     }
 
     private void setButtonPositions(int xScroll, int yScroll) {

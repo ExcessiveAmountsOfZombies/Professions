@@ -221,18 +221,18 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
      * @param consumer
      * @return itself.
      */
-    public SELF addDeserializer(BiConsumer<T, SELF> consumer) {
+    private SELF addDeserializer(BiConsumer<T, SELF> consumer) {
         deserializer = consumer;
         return (SELF) this;
     }
 
-    public void deserialize(T object) {
+    public abstract void deserialize(T object); /*{
         if (deserializer != null) {
             deserializer.accept(object, (SELF) this);
         } else {
             LOGGER.warn("DatapackEntry deserializer was null!!! {}", this);
         }
-    }
+    }*/
 
     public static class TinyButton extends Button {
 
@@ -310,5 +310,9 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
         Type(MutableComponent text) {
             this.text = text;
         }
+    }
+
+    public interface Deserializer<T, SELF> {
+        void deserialize(T t, SELF entry);
     }
 }

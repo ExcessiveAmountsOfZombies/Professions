@@ -48,7 +48,7 @@ public abstract class EditBoxEntry<T, V extends EditBoxEntry<?, ?>> extends Data
         if (isHoveredOrFocused()) {
             //renderToolTip(poseStack, mouseX, mouseY, this.box.getValue());
         }
-        this.box.x = (this.x + this.width - 9 - (font.width(box.getValue()))) / 2;
+        this.box.x = (this.x + this.width - (font.width(box.getValue()) / 2)) / 2;
         this.box.y = y + 8 + getYScroll();
         //this.box.render(poseStack, mouseX, mouseY, partialTick);
     }

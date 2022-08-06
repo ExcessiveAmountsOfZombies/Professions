@@ -7,18 +7,27 @@ import java.util.Optional;
 
 public class StringEntry<OBJ> extends EditBoxEntry<OBJ, StringEntry<OBJ>> {
 
-    public StringEntry(int x, int y, int width, String usage, String defaultValue) {
-        this(x, y, width, usage, defaultValue, Optional.of(usage));
+    private final Deserializer<OBJ, StringEntry<OBJ>> deserializer;
+
+    public StringEntry(int x, int y, int width, String usage, String defaultValue, Deserializer<OBJ, StringEntry<OBJ>> deserializer) {
+        this(x, y, width, usage, defaultValue, Optional.of(usage), deserializer);
     }
 
-    public StringEntry(int x, int y, int width, String usage, String defaultValue, Type... types) {
-        this(x, y, width, usage, defaultValue, Optional.of(usage), types);
+    public StringEntry(int x, int y, int width, String usage, String defaultValue, Deserializer<OBJ, StringEntry<OBJ>> deserializer, Type... types) {
+        this(x, y, width, usage, defaultValue, Optional.of(usage), deserializer, types);
     }
 
-    public StringEntry(int i, int j, int k, String usage, String defaultValue, Optional<String> key, Type... types) {
+    public StringEntry(int i, int j, int k, String usage, String defaultValue, Optional<String> key, Deserializer<OBJ, StringEntry<OBJ>> deserializer, Type... types) {
         super(i, j, k, usage, defaultValue, key, types);
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
+        this.deserializer = deserializer;
+    }
+
+
+    @Override
+    public void deserialize(OBJ object) {
+        deserializer.deserialize(object, this);
     }
 
     @Override

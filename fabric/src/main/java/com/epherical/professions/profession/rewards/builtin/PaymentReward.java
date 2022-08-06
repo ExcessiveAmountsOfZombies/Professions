@@ -5,6 +5,11 @@ import com.epherical.octoecon.api.Economy;
 import com.epherical.octoecon.api.user.UniqueUser;
 import com.epherical.professions.FabricRegConstants;
 import com.epherical.professions.ProfessionsFabric;
+import com.epherical.professions.client.entry.NumberEntry;
+import com.epherical.professions.client.entry.StringEntry;
+import com.epherical.professions.client.format.Format;
+import com.epherical.professions.client.format.FormatBuilder;
+import com.epherical.professions.client.format.RegularFormat;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -12,7 +17,6 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
-import com.epherical.professions.profession.rewards.Rewards;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -26,6 +30,7 @@ import net.minecraft.world.level.storage.loot.Serializer;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.util.List;
 import java.util.UUID;
 
 public record PaymentReward(double amount, @Nullable Currency currency) implements Reward {
@@ -112,6 +117,33 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
         @Override
         public Reward build() {
             return new PaymentReward(amount, currency);
+        }
+    }
+
+    public static class DatapackBuilder implements FormatBuilder<PaymentReward> {
+
+        @Override
+        public Format<PaymentReward> buildDefaultFormat() {
+            return deserializeToFormat(null);
+        }
+
+        @Override
+        public Format<PaymentReward> deserializeToFormat(PaymentReward paymentReward) {
+            RegularFormat<PaymentReward> format = new RegularFormat<>((embed, y, width) -> List.of(
+                    new NumberEntry<Double, PaymentReward>(embed, y, width / 2, "amount", 1.0, (reward, entry) -> {
+                        entry.setValue(String.valueOf(reward.amount));
+                    }),
+                    new StringEntry<PaymentReward>(embed, y, width / 2, "currency", ProfessionConfig.overriddenCurrencyID,
+                            (reward, entry) -> {
+                                if (reward.currency != null) {
+                                    entry.setValue(reward.currency.getIdentity());
+                                } else {
+                                    entry.setValue("eights_economy:dollars");
+                                }
+                            })
+            ));
+
+            return format;
         }
     }
 }

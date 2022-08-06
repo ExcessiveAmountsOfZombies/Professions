@@ -38,6 +38,11 @@ public class CompoundEntry<OBJ> extends AbstractCompoundEntry<OBJ, CompoundEntry
     }
 
     @Override
+    public void deserialize(OBJ object) {
+
+    }
+
+    @Override
     public void tick(CommonDataScreen screen) {
         super.tick(screen);
         for (AbstractWidget child : children) {

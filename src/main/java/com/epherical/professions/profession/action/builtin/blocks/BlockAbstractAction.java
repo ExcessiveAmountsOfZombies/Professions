@@ -22,7 +22,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
@@ -132,6 +131,10 @@ public abstract class BlockAbstractAction extends AbstractAction {
                         new TextComponent(String.valueOf(seconds)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
         player.sendMessage(message, ChatType.GAME_INFO, Util.NIL_UUID);
+    }
+
+    public List<ActionEntry<Block>> getBlocks() {
+        return blocks;
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {

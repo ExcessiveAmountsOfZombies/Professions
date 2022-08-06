@@ -56,6 +56,11 @@ public class BooleanEntry<T> extends DatapackEntry<T, BooleanEntry<T>> {
         return new JsonPrimitive(value);
     }
 
+    @Override
+    public void deserialize(T object) {
+
+    }
+
     public boolean getValue() {
         return value;
     }

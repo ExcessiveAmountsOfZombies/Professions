@@ -47,6 +47,11 @@ public class RegistryObjectEntry<V, T> extends DatapackEntry<V, RegistryObjectEn
         return JsonNull.INSTANCE;
     }
 
+    @Override
+    public void deserialize(V object) {
+        
+    }
+
     public T getObject() {
         return object;
     }

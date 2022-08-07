@@ -114,7 +114,6 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
 
     @Override
     public Screen createScreen() {
-
         return new MenuScreen();
     }
 }

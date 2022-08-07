@@ -130,10 +130,10 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
         @Override
         public Format<PaymentReward> deserializeToFormat(PaymentReward paymentReward) {
             RegularFormat<PaymentReward> format = new RegularFormat<>((embed, y, width) -> List.of(
-                    new NumberEntry<Double, PaymentReward>(embed, y, width / 2, "amount", 1.0, (reward, entry) -> {
+                    new NumberEntry<Double, PaymentReward>(embed, y, width, "amount", 1.0, (reward, entry) -> {
                         entry.setValue(String.valueOf(reward.amount));
                     }),
-                    new StringEntry<PaymentReward>(embed, y, width / 2, "currency", ProfessionConfig.overriddenCurrencyID,
+                    new StringEntry<PaymentReward>(embed, y, width, "currency", ProfessionConfig.overriddenCurrencyID,
                             (reward, entry) -> {
                                 if (reward.currency != null) {
                                     entry.setValue(reward.currency.getIdentity());

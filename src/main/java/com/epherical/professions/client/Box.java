@@ -3,6 +3,9 @@ package com.epherical.professions.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.sounds.SoundEvents;
 
 public abstract class Box extends GuiComponent implements Widget, WidgetParent {
 
@@ -26,6 +29,10 @@ public abstract class Box extends GuiComponent implements Widget, WidgetParent {
         vLine(stack, x + width, y, y + height, 0xFFFFFFFF); // right
         vLine(stack, x, y + height, y, 0xFFFFFFFF); // left
         fill(stack, x, y, x + width + 1, y + height + 1, 0xAA333333);
+    }
+
+    public void playDownSound(SoundManager handler) {
+        handler.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
 

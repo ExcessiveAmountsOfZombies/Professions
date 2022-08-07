@@ -3,7 +3,7 @@ package com.epherical.professions.client.screen;
 import com.epherical.professions.Constants;
 import com.epherical.professions.client.EditorsBox;
 import com.epherical.professions.client.editor.EditorContainer;
-import com.epherical.professions.client.editors.ProfessionEditor;
+import com.epherical.professions.client.editor.ProfessionEditor;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;

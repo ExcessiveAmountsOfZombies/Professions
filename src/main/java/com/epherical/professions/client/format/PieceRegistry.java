@@ -56,16 +56,16 @@ public class PieceRegistry {
 
     public static final FormatBuilder<OccupationExperience> FB_OC_EXP = register(formatID(REWARD_KEY, "occupation_exp"), occupationExperience ->
             new RegularFormat<>((embed, y, width) -> Lists.newArrayList(
-                    new NumberEntry<Double, OccupationExperience>(embed, y, width / 2, "amount", 1.0, (o, entry) -> {
+                    new NumberEntry<Double, OccupationExperience>(embed, y, width, "amount", 1.0, (o, entry) -> {
                         entry.setValue(String.valueOf(o.expAmount()));
                     })
             )));
     public static final FormatBuilder<ItemReward> FB_ITEM_REWARD = register(formatID(REWARD_KEY, "item"), reward ->
             new RegularFormat<>((embed, y, width) -> Lists.newArrayList(
-                    new NumberEntry<Integer, ItemReward>(embed, y, width / 2, "count", 1, (itemReward, entry) -> {
+                    new NumberEntry<Integer, ItemReward>(embed, y, width, "count", 1, (itemReward, entry) -> {
                         entry.setValue(String.valueOf(itemReward.count()));
                     }),
-                    new StringEntry<ItemReward>(embed, y, width / 2, "item", "minecraft:stone_sword", (itemReward, entry) -> {
+                    new StringEntry<ItemReward>(embed, y, width, "item", "minecraft:stone_sword", (itemReward, entry) -> {
                         entry.setValue(Registry.ITEM.getKey(itemReward.item()).toString());
                     })
             )));
@@ -141,8 +141,8 @@ public class PieceRegistry {
                     }
                 }, clazz),
                 new ArrayEntry<T, CompoundAwareEntry<Reward, RewardType>>(embed, y, width, "rewards", (x1, y2, wid) -> {
-                    return new CompoundAwareEntry<>(embed, y, width / 2, x1, wid, REWARD_KEY,
-                            new RegistryEntry<>(x1, y, wid / 2, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
+                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, REWARD_KEY,
+                            new RegistryEntry<>(x1, y, wid, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
                                     (reward, entry) -> entry.setValue(reward.getType()), DatapackEntry.Type.REMOVE),
                             (reward, entry) -> entry.getEntry().deserialize(reward));
                 }, (o, entry) -> {
@@ -166,8 +166,8 @@ public class PieceRegistry {
                     }
                 }, clazz),
                 new ArrayEntry<T, CompoundAwareEntry<Reward, RewardType>>(embed, y, width, "rewards", (x1, y2, wid) -> {
-                    return new CompoundAwareEntry<>(embed, y, width / 2, x1, wid, REWARD_KEY,
-                            new RegistryEntry<>(x1, y, wid / 2, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
+                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, REWARD_KEY,
+                            new RegistryEntry<>(x1, y, wid, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
                                     (reward, entry) -> entry.setValue(reward.getType()), DatapackEntry.Type.REMOVE),
                             (reward, entry) -> entry.getEntry().deserialize(reward));
                 }, (o, entry) -> {
@@ -192,8 +192,8 @@ public class PieceRegistry {
                 }, clazz),
                 // todo; remove duplicated code
                 new ArrayEntry<T, CompoundAwareEntry<Reward, RewardType>>(embed, y, width, "rewards", (x1, y2, wid) -> {
-                    return new CompoundAwareEntry<>(embed, y, width / 2, x1, wid, REWARD_KEY,
-                            new RegistryEntry<>(x1, y, wid / 2, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
+                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, REWARD_KEY,
+                            new RegistryEntry<>(x1, y, wid, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
                                     (reward, entry) -> entry.setValue(reward.getType()), DatapackEntry.Type.REMOVE),
                             (reward, entry) -> entry.getEntry().deserialize(reward));
                 }, (o, entry) -> {

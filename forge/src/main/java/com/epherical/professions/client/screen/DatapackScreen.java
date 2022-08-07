@@ -4,7 +4,6 @@ import com.epherical.professions.client.FileBox;
 import com.epherical.professions.client.SaveSideBar;
 import com.epherical.professions.client.SaveSidebarWidget;
 import com.epherical.professions.client.editors.DatapackEditor;
-import com.epherical.professions.client.editors.ProfessionEditor;
 import com.epherical.professions.client.entry.DatapackEntry;
 import com.epherical.professions.datapack.AbstractProfessionLoader;
 import com.google.gson.JsonObject;
@@ -119,17 +118,9 @@ public class DatapackScreen extends CommonDataScreen {
         int ofx = 32;
         int ofy = 11;
         int width = this.width - 50;
-        //DataTagEditor<Block> blockDataTagEditor = new DataTagEditor<>((x, y) -> new TagEntry<>(x, y, width - 8, Registry.BLOCK, Blocks.STONE));
-        /* this.datapackEditor = new DataTagEditor<>((x, y) -> {
-             MultipleTypeEntry required = new MultipleTypeEntry(ofx + 8, y, 90,
-                     new StringEntry(ofx + 14, y, width - 14, "", "minecraft:stone"),
-                     new CompoundEntry(0, 0, 0,
-                             List.of(new StringEntry(ofx + 14, y, width - 14, "id", "minecraft:stone", Optional.of("id")),
-                                     new BooleanEntry(ofx + 14, y, width - 14, "required", false, Optional.of("required")))));
-             return required;
-        });*/
+
         if (this.datapackEditor == null) {
-            this.datapackEditor = new ProfessionEditor(ofx, width);
+           // TODO: fix this.datapackEditor = new ProfessionEditor(ofx, width);
         } else {
             this.datapackEditor.setWidth(width);
         }

@@ -3,7 +3,6 @@ package com.epherical.professions.client.screen;
 import com.epherical.professions.client.FileBox;
 import com.epherical.professions.client.SaveSideBar;
 import com.epherical.professions.client.SaveSidebarWidget;
-import com.epherical.professions.client.editor.EditorCreator;
 import com.epherical.professions.client.editors.DatapackEditor;
 import com.epherical.professions.client.entry.DatapackEntry;
 import com.epherical.professions.datapack.AbstractProfessionLoader;
@@ -45,8 +44,7 @@ public class DatapackScreen extends CommonDataScreen {
     protected boolean adjustEntries = false;
     protected boolean adjustRender = false;
 
-    private final EditorCreator<?> creator;
-    private DatapackEditor<?> datapackEditor;
+    private final DatapackEditor<?> datapackEditor;
 
     private SaveSidebarWidget saveSidebarWidget;
     private boolean sidebarWidgetOpen = false;
@@ -54,9 +52,9 @@ public class DatapackScreen extends CommonDataScreen {
     private SaveSideBar component;
     private final List<Widget> specialRenders = new ArrayList<>();
 
-    public DatapackScreen(EditorCreator<?> creator) {
+    public DatapackScreen(DatapackEditor<?> editor) {
         super(Component.nullToEmpty(""));
-        this.creator = creator;
+        datapackEditor = editor;
     }
 
 
@@ -113,12 +111,8 @@ public class DatapackScreen extends CommonDataScreen {
         int ofx = 32;
         int ofy = 11;
         int width = this.width - 50;
-        if (this.datapackEditor == null) {
-            this.datapackEditor = creator.apply(ofx, width);
-            adjustEntries = true;
-        } else {
-            this.datapackEditor.setWidth(width);
-        }
+        this.datapackEditor.setWidth(width);
+        adjustEntries = true;
 
         int increment = 0;
         //LOGGER.info("Setting x, y position on init entries.");
@@ -239,6 +233,9 @@ public class DatapackScreen extends CommonDataScreen {
 
 
         RenderSystem.disableScissor();
+
+        saveSidebarWidget.render(poseStack, mouseX, mouseY, partialTick);
+        //component.render(poseStack, mouseX, mouseY, partialTick);
 
         for (Widget specialRender : specialRenders) {
             poseStack.pushPose();

@@ -1,7 +1,8 @@
-package com.epherical.professions.client.editors;
+package com.epherical.professions.client.editor;
 
 import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.RegistryConstants;
+import com.epherical.professions.client.editors.DatapackEditor;
 import com.epherical.professions.client.entry.ArrayEntry;
 import com.epherical.professions.client.entry.CompoundAwareEntry;
 import com.epherical.professions.client.entry.DatapackEntry;
@@ -9,6 +10,7 @@ import com.epherical.professions.client.entry.MultipleTypeEntry;
 import com.epherical.professions.client.entry.NumberEntry;
 import com.epherical.professions.client.entry.RegistryEntry;
 import com.epherical.professions.client.entry.StringEntry;
+import com.epherical.professions.client.screen.DatapackScreen;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Action;
@@ -16,14 +18,16 @@ import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ProfessionEditor<T extends Profession> extends DatapackEditor<T> {
+public class ProfessionEditor extends DatapackEditor<Profession> {
 
     private final RegistryEntry<Profession, ProfessionSerializer<?, ?>> professionType;
     private final StringEntry<Profession> professionColor;
@@ -79,15 +83,28 @@ public class ProfessionEditor<T extends Profession> extends DatapackEditor<T> {
         });
 
         unlocks = null;
-
-        deserialize(CommonPlatform.platform.getProfessionLoader().getProfession(new ResourceLocation("professions:building")));
     }
 
     @Override
-    public List<DatapackEntry<T, ?>> entries() {
-        // silly
-        return (List<DatapackEntry<T, ?>>) (List<?>)
-                List.of(professionType, professionColor, descriptionColor, description, displayName, expScaling, maxLevel, actions/*, unlocks*/);
+    public List<DatapackEntry<Profession, ?>> entries() {
+        return List.of(professionType, professionColor, descriptionColor, description, displayName, expScaling, maxLevel, actions/*, unlocks*/);
+    }
+
+    @Override
+    public Collection<Profession> deserializableObjects() {
+        return CommonPlatform.platform.getProfessionLoader().getProfessions();
+    }
+
+    @Override
+    public Collection<Button> deserializableObjectButtons(DatapackEditor<Profession> editor) {
+        List<Button> buttons = new ArrayList<>();
+        for (Profession profession : CommonPlatform.platform.getProfessionLoader().getProfessions()) {
+            buttons.add(new Button(0, 0, 0, 20, profession.getDisplayComponent(), button -> {
+                editor.deserialize(profession);
+                Minecraft.getInstance().setScreen(new DatapackScreen(editor));
+            }));
+        }
+        return buttons;
     }
 
     @Override

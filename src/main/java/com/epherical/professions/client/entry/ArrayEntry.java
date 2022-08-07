@@ -55,8 +55,8 @@ public class ArrayEntry<OBJ, T extends DatapackEntry<?, ?>> extends DatapackEntr
     }
 
     public T createEntry() {
-        int indent = 4;
-        return addObject.apply(x + indent, this.y + 2, width - indent);
+        int indent = 20;
+        return addObject.apply(x + indent, this.y + 2, width - (indent * 2));
     }
 
     public void addEntryToBeginning(T object) {

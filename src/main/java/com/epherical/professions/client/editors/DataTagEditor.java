@@ -3,8 +3,10 @@ package com.epherical.professions.client.editors;
 import com.epherical.professions.client.entry.DatapackEntry;
 import com.epherical.professions.client.entry.MultipleTypeEntry;
 import com.google.gson.JsonObject;
+import net.minecraft.client.gui.components.Button;
 import org.apache.commons.lang3.function.TriFunction;
 
+import java.util.Collection;
 import java.util.List;
 
 public class DataTagEditor<T> extends DatapackEditor<T> {
@@ -19,6 +21,16 @@ public class DataTagEditor<T> extends DatapackEditor<T> {
 
     @Override
     public List<DatapackEntry<T, ?>> entries() {
+        return null;
+    }
+
+    @Override
+    public List<T> deserializableObjects() {
+        return null;
+    }
+
+    @Override
+    public Collection<Button> deserializableObjectButtons(DatapackEditor<T> editor) {
         return null;
     }
 

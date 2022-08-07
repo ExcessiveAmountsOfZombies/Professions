@@ -2,9 +2,7 @@ package com.epherical.professions.client;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
-import com.epherical.professions.client.editor.EditorCreator;
 import com.epherical.professions.client.format.PieceRegistry;
-import com.epherical.professions.client.screen.DatapackScreen;
 import com.epherical.professions.client.screen.MenuScreen;
 import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.profession.rewards.builtin.PaymentReward;
@@ -68,9 +66,5 @@ public class ProfessionsClient implements ClientModInitializer {
                     KeyBindingHelper.getBoundKeyOf(commonClient.getProfessionData()).getDisplayName(), lines);
         });
         ClientPlayNetworking.registerGlobalReceiver(Constants.MOD_CHANNEL, ClientHandler::receivePacket);
-    }
-
-    public static DatapackScreen createScreen(EditorCreator<?> creator) {
-        return new DatapackScreen(creator);
     }
 }

@@ -2,7 +2,7 @@ package com.epherical.professions.client;
 
 import com.epherical.professions.client.editor.BoxSelectionWidget;
 import com.epherical.professions.client.editor.EditorContainer;
-import com.epherical.professions.client.screen.DatapackScreen;
+import com.epherical.professions.client.screen.EditOrCreateScreen;
 import com.epherical.professions.client.screen.MenuScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -31,10 +31,19 @@ public class EditorsBox extends Box {
         int yOffset = 46;
         for (EditorContainer<?> o : containerStream.toList()) {
             entries.add(new BoxSelectionWidget.Entry(new Button(x + 40, yOffset, width - 1, 20, Component.nullToEmpty(o.getDisplayName()), button -> {
-                Minecraft.getInstance().setScreen(new DatapackScreen(o.getCreator()));
+                Minecraft.getInstance().setScreen(new EditOrCreateScreen(o));
             })));
             yOffset += 20;
         }
+        widget.addEntries(entries);
+    }
+
+    public EditorsBox(int x, int y, int width, int height, String header, List<BoxSelectionWidget.Entry> entries) {
+        super(x,y, width, height);
+        this.header = header;
+        widget = new BoxSelectionWidget(Minecraft.getInstance(), width, height - 20, 42, height + 4, 20);
+        widget.setLeftPos(x);
+
         widget.addEntries(entries);
     }
 
@@ -51,8 +60,6 @@ public class EditorsBox extends Box {
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTick) {
         hLine(stack, x, x + width, 45, 0xFFFFFFFF);
         super.render(stack, mouseX, mouseY, partialTick);
-
-
         Minecraft minecraft = Minecraft.getInstance();
 
         Font font = minecraft.font;

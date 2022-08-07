@@ -5,7 +5,7 @@ import com.epherical.professions.client.editors.DatapackEditor;
 /**
  * A class to store extra data about an {@link DatapackEditor editor} so we can display extra information to the user.
  */
-public class EditorContainer<T extends DatapackEditor> {
+public class EditorContainer<T> {
 
     private final boolean modded;
     private final String displayName;

@@ -49,7 +49,7 @@ public class RegistryObjectEntry<V, T> extends DatapackEntry<V, RegistryObjectEn
 
     @Override
     public void deserialize(V object) {
-        
+
     }
 
     public T getObject() {

@@ -7,6 +7,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, CompoundAwareEntry<OBJ, T>> {
 
@@ -16,12 +17,19 @@ public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, Compo
 
     private T value;
 
+    private OBJ objValue;
+
     private final int embeddedDistance;
     private final int screenWidth;
 
     public CompoundAwareEntry(int x, int y, int width, int embed, int screenWidth, ResourceKey<Registry<T>> registry, RegistryEntry<OBJ, T> registryEntry,
                               Deserializer<OBJ, CompoundAwareEntry<OBJ, T>> deserializer, Type... types) {
-        super(x, y, width, List.of(), types);
+        this(x, y, width, embed, screenWidth, registry, registryEntry, deserializer, Optional.empty(), types);
+    }
+
+    public CompoundAwareEntry(int x, int y, int width, int embed, int screenWidth, ResourceKey<Registry<T>> registry, RegistryEntry<OBJ, T> registryEntry,
+                              Deserializer<OBJ, CompoundAwareEntry<OBJ, T>> deserializer, Optional<String> key, Type... types) {
+        super(x, y, width, key, List.of(), types);
         this.deserializer = deserializer;
         this.registryKey = registry;
         this.entry = registryEntry;
@@ -52,7 +60,10 @@ public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, Compo
 
     @Override
     public void deserialize(OBJ object) {
+        this.objValue = object;
         deserializer.deserialize(object, this);
+        object = this.objValue;
+
         this.value = entry.getValue();
         children.clear();
         children.add(entry);
@@ -71,5 +82,15 @@ public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, Compo
 
     public void setValue(T value) {
         this.value = value;
+    }
+
+    /**
+     * Mutate a value that needs to be changed after deserializing
+     */
+    public void setNewObj(OBJ obj) {
+        // this method is really stupid, but I don't want to refactor all the deserialization code to include some
+        // sort of Mutator Class that just holds the object. The only thing that currently uses this is the
+        // InvertedCondition code for action conditions.
+        this.objValue = obj;
     }
 }

@@ -396,6 +396,9 @@ public class DatapackScreen extends CommonDataScreen {
     }
 
     public void addChild(AbstractWidget widget) {
+        /*if (this.children.contains(widget)) {
+            LOGGER.warn("DUPLICATE DETECTED");
+        }*/
         this.children.add(widget);
         this.renderables.add(widget);
         this.narratables.add(widget);

@@ -226,13 +226,13 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
         return (SELF) this;
     }
 
-    public abstract void deserialize(T object); /*{
-        if (deserializer != null) {
-            deserializer.accept(object, (SELF) this);
-        } else {
-            LOGGER.warn("DatapackEntry deserializer was null!!! {}", this);
-        }
-    }*/
+    /**
+     * A way to convert an object to its DatapackEntry equivalent. Each subclass should
+     * provide their own {@link Deserializer}. That deserializer should not call this method.
+     * @param object The object you want to deserialize into its DatapackEntry components.
+     * @throws StackOverflowError a StackOverflowError can occur if you call deserialize on the object from the {@link Deserializer}
+     */
+    public abstract void deserialize(T object);
 
     public static class TinyButton extends Button {
 

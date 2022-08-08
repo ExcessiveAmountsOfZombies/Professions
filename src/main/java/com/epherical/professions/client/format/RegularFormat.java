@@ -7,14 +7,14 @@ import java.util.List;
 
 public class RegularFormat<T> implements Format<T> {
 
-    private final TriFunction<Integer, Integer, Integer, List<DatapackEntry>> entries;
+    private final TriFunction<Integer, Integer, Integer, List<DatapackEntry<T, ?>>> entries;
 
-    public RegularFormat(TriFunction<Integer, Integer, Integer, List<DatapackEntry>> entries) {
+    public RegularFormat(TriFunction<Integer, Integer, Integer, List<DatapackEntry<T, ?>>> entries) {
         this.entries = entries;
     }
 
     @Override
-    public TriFunction<Integer, Integer, Integer, List<DatapackEntry>> entries() {
+    public TriFunction<Integer, Integer, Integer, List<DatapackEntry<T, ?>>> entries() {
         return entries;
     }
 }

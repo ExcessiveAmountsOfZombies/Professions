@@ -3,10 +3,12 @@ package com.epherical.professions.client.format;
 import com.epherical.professions.Constants;
 import com.epherical.professions.client.entry.ArrayEntry;
 import com.epherical.professions.client.entry.CompoundAwareEntry;
+import com.epherical.professions.client.entry.CompoundEntry;
 import com.epherical.professions.client.entry.DatapackEntry;
 import com.epherical.professions.client.entry.NumberEntry;
 import com.epherical.professions.client.entry.RegistryEntry;
 import com.epherical.professions.client.entry.StringEntry;
+import com.epherical.professions.mixin.accessor.EnchantmentPredicateAccess;
 import com.epherical.professions.profession.action.builtin.blocks.BlockAbstractAction;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
@@ -38,6 +40,7 @@ import com.epherical.professions.util.ActionEntry;
 import com.epherical.professions.util.EnchantmentContainer;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Lifecycle;
+import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -264,7 +267,7 @@ public class FormatRegistry {
 
     public static final FormatBuilder<EnchantAction> ENCHANT_ITEM_FORMAT = register(formatID(ACTION_TYPE_KEY, "enchant"), action ->
             new RegularFormat<>(((embed, y, width) -> {
-                List<DatapackEntry> copy = createItemAction(EnchantAction.class).entries().apply(embed, y, width);
+                List<DatapackEntry<EnchantAction, ?>> copy = createItemAction(EnchantAction.class).entries().apply(embed, y, width);
                 copy.addAll(List.of(
                         createEnchantArrayEntry(embed, y, width, "enchants", (o1, entry) -> {
                             for (EnchantmentContainer enchantment : o1.getEnchantments()) {
@@ -306,6 +309,7 @@ public class FormatRegistry {
     }
 
     public static void init() {
+        ActionConditionFormats.init();
     }
 
     private static <T> ArrayEntry<T, StringEntry<String>> arrayBlockString(int x, int y, int width, String usage,
@@ -317,8 +321,8 @@ public class FormatRegistry {
         }, deserializer);
     }
 
-    private static <T> ArrayEntry<T, StringEntry<String>> arrayItemString(int x, int y, int width, String usage,
-                                                                          DatapackEntry.Deserializer<T, ArrayEntry<T, StringEntry<String>>> deserializer, Class<T> genericHelp) {
+    public static <T> ArrayEntry<T, StringEntry<String>> arrayItemString(int x, int y, int width, String usage,
+                                                                         DatapackEntry.Deserializer<T, ArrayEntry<T, StringEntry<String>>> deserializer, Class<T> genericHelp) {
         return new ArrayEntry<>(x, y, width, usage, (x1, y2, wid) -> {
             return new StringEntry<>(x1, y2, wid, "items", "minecraft:stone_sword", Optional.of("items"), (s, entry) -> {
                 entry.setValue(s);
@@ -331,6 +335,50 @@ public class FormatRegistry {
         return new ArrayEntry<>(x, y, width, usage, (x1, y2, wid) -> {
             return new StringEntry<>(x1, y2, wid, "enchants", "minecraft:sharpness#2", Optional.of("enchants"), (s, entry) -> {
                 entry.setValue(s);
+            }, DatapackEntry.Type.REMOVE);
+        }, deserializer);
+    }
+
+    public static <T> ArrayEntry<T, CompoundEntry<EnchantmentPredicate>> createEnchantmentPredicateArray(int x, int y, int width, String usage,
+                                                                                                         DatapackEntry.Deserializer<T, ArrayEntry<T, CompoundEntry<EnchantmentPredicate>>> deserializer) {
+        return new ArrayEntry<>(x, y, width, usage, (x1, y2, wid) -> {
+            return new CompoundEntry<>(x1, y2, wid, Optional.of(usage), Lists.newArrayList(
+                    new StringEntry<>(x1 + 8, y2, wid - 8, "enchantment", "minecraft:sharpness", (o, entry) -> {
+                        EnchantmentPredicateAccess access = (EnchantmentPredicateAccess) o;
+                        if (access.getEnchantment() != null) {
+                            entry.setValue(Registry.ENCHANTMENT.getKey(access.getEnchantment()).toString());
+                        }
+                    }),
+                    new CompoundEntry<>(x1 + 8, y, width - 8, Optional.of("levels"),
+                            Lists.newArrayList(
+                                    new NumberEntry<>(x1 + 8, y, width - 8, "min", 0, (o, entry) -> {
+                                        EnchantmentPredicateAccess predicate = (EnchantmentPredicateAccess) o;
+                                        Integer min = predicate.getLevel().getMin();
+                                        if (min != null) {
+                                            entry.setValue(String.valueOf(min));
+                                        } else {
+                                            entry.setValue("");
+                                        }
+                                    }),
+                                    new NumberEntry<>(x1 + 8, y, width - 8, "max", 0, (o, entry) -> {
+                                        EnchantmentPredicateAccess predicate = (EnchantmentPredicateAccess) o;
+                                        Integer max = predicate.getLevel().getMax();
+                                        if (max != null) {
+                                            entry.setValue(String.valueOf(max));
+                                        } else {
+                                            entry.setValue("");
+                                        }
+                                    })
+                            ),
+                            (o, entry) -> {
+                                for (DatapackEntry<EnchantmentPredicate, ?> entryEntry : entry.getEntries()) {
+                                    entryEntry.deserialize(o);
+                                }
+                            })
+            ), (t, entry) -> {
+                for (DatapackEntry<EnchantmentPredicate, ?> entryEntry : entry.getEntries()) {
+                    entryEntry.deserialize(t);
+                }
             }, DatapackEntry.Type.REMOVE);
         }, deserializer);
     }

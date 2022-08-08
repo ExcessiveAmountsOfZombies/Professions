@@ -2,6 +2,7 @@ package com.epherical.professions.client.entry;
 
 import com.epherical.professions.client.screen.CommonDataScreen;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -13,8 +14,8 @@ import java.util.Optional;
 
 public abstract class EditBoxEntry<T, V extends EditBoxEntry<?, ?>> extends DatapackEntry<T, V> {
 
-    private final String usage;
-    private EditBox box;
+    protected final String usage;
+    protected EditBox box;
 
     public EditBoxEntry(int x, int y, int width, String usage, String defaultValue) {
         this(x, y, width, usage, defaultValue, Optional.of(usage));
@@ -31,7 +32,7 @@ public abstract class EditBoxEntry<T, V extends EditBoxEntry<?, ?>> extends Data
         Font font = minecraft.font;
         this.box = new EditBox(font, this.x + width / 2 - 50, j + 8, 250, 22, Component.nullToEmpty(""));
         this.box.setVisible(true);
-        this.box.setMaxLength(100);
+        this.box.setMaxLength(256);
         this.box.setBordered(false);
         this.box.setValue(defaultValue);
         this.box.setTextColor(TEXT_COLOR);
@@ -55,7 +56,11 @@ public abstract class EditBoxEntry<T, V extends EditBoxEntry<?, ?>> extends Data
 
     @Override
     public JsonElement getSerializedValue() {
-        return new JsonPrimitive(box.getValue());
+        if (box.getValue().length() > 0) {
+            return new JsonPrimitive(box.getValue());
+        } else {
+            return JsonNull.INSTANCE;
+        }
     }
 
     @Override

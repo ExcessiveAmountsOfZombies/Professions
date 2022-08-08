@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface Format<T> {
 
-    TriFunction<Integer, Integer, Integer, List<DatapackEntry>> entries();
+    TriFunction<Integer, Integer, Integer, List<DatapackEntry<T, ?>>> entries();
 }

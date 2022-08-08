@@ -29,7 +29,8 @@
     ]
   },
   "mixins": [
-    "Professions.mixins.json"
+    "Professions.mixins.json",
+    "professions-root.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.13.3",

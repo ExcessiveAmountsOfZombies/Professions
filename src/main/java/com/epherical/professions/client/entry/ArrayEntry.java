@@ -5,6 +5,7 @@ import com.epherical.professions.client.screen.CommonDataScreen;
 import com.epherical.professions.client.widgets.CommandButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -119,8 +120,12 @@ public class ArrayEntry<OBJ, T extends DatapackEntry<?, ?>> extends DatapackEntr
     @Override
     public JsonElement getSerializedValue() {
         JsonArray array = new JsonArray();
-        for (T object : objects) {
-            array.add(object.getSerializedValue());
+        if (objects.size() > 0) {
+            for (T object : objects) {
+                array.add(object.getSerializedValue());
+            }
+        } else {
+            return JsonNull.INSTANCE;
         }
 
         return array;

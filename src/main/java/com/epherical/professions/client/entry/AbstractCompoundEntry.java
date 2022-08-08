@@ -11,12 +11,19 @@ import java.util.Optional;
 public abstract class AbstractCompoundEntry<OBJ, V extends AbstractCompoundEntry<?, ?>> extends DatapackEntry<OBJ, V> {
 
 
+    private final List<DatapackEntry<OBJ, ?>> entries;
+
+    public AbstractCompoundEntry(int x, int y, int width, Optional<String> serializationKey, List<DatapackEntry<OBJ, ?>> entries, Type... types) {
+        super(x, y, width, 0, serializationKey, types);
+        children.addAll(entries);
+        this.entries = entries;
+    }
+
     /**
      * @param entries a list of entries that will comprise the object. Each entry should use the Optional serialization key.
      */
-    public AbstractCompoundEntry(int x, int y, int width, List<DatapackEntry> entries, Type... types) {
-        super(x, y, width, 0, types);
-        children.addAll(entries);
+    public AbstractCompoundEntry(int x, int y, int width, List<DatapackEntry<OBJ, ?>> entries, Type... types) {
+        this(x, y, width, Optional.empty(), entries, types);
     }
 
     @Override
@@ -30,10 +37,13 @@ public abstract class AbstractCompoundEntry<OBJ, V extends AbstractCompoundEntry
         for (AbstractWidget child : children) {
             if (child instanceof DatapackEntry entry) {
                 Optional<String> serializationKey = entry.getSerializationKey();
-                serializationKey.ifPresent(s -> object.add(s, entry.getSerializedValue()));
+                serializationKey.ifPresent(s -> {
+                    if (!entry.getSerializedValue().isJsonNull()) {
+                        object.add(s, entry.getSerializedValue());
+                    }
+                });
             }
         }
-
         return object;
     }
 
@@ -59,5 +69,9 @@ public abstract class AbstractCompoundEntry<OBJ, V extends AbstractCompoundEntry
                 screen.addChild(child);
             }
         }
+    }
+
+    public List<DatapackEntry<OBJ, ?>> getEntries() {
+        return entries;
     }
 }

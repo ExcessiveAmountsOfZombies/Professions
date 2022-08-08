@@ -9,11 +9,11 @@ import net.minecraft.client.gui.Font;
 public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>> {
 
     private int currentSelection;
-    private final DatapackEntry<?, ?>[] types;
+    private final DatapackEntry<T, ?>[] types;
 
     protected boolean needsRefresh;
 
-    public MultipleTypeEntry(int i, int j, int k, DatapackEntry[] entries, Type... types) {
+    public MultipleTypeEntry(int i, int j, int k, DatapackEntry<T, ?>[] entries, Type... types) {
         super(i, j, k, 23, types);
         currentSelection = 0;
         this.types = entries;
@@ -26,7 +26,7 @@ public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>>
         types[currentSelection].render(poseStack, mouseX, mouseY, partialTick);
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        font.drawShadow(poseStack, types[currentSelection].getType(), x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
+        font.drawShadow(poseStack, types[currentSelection].getType() + " (Click to change)", x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
     }
 
     @Override
@@ -77,6 +77,6 @@ public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>>
 
     @Override
     public void deserialize(T object) {
-
+        types[currentSelection].deserialize(object);
     }
 }

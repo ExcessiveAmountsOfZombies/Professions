@@ -24,6 +24,11 @@ public class StringEntry<OBJ> extends EditBoxEntry<OBJ, StringEntry<OBJ>> {
         this.deserializer = deserializer;
     }
 
+    public StringEntry<OBJ> setEditMaxLength(int maxLength) {
+        box.setMaxLength(maxLength);
+        return this;
+    }
+
 
     @Override
     public void deserialize(OBJ object) {

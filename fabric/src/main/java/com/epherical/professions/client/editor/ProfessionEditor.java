@@ -6,7 +6,6 @@ import com.epherical.professions.client.editors.DatapackEditor;
 import com.epherical.professions.client.entry.ArrayEntry;
 import com.epherical.professions.client.entry.CompoundAwareEntry;
 import com.epherical.professions.client.entry.DatapackEntry;
-import com.epherical.professions.client.entry.MultipleTypeEntry;
 import com.epherical.professions.client.entry.NumberEntry;
 import com.epherical.professions.client.entry.RegistryEntry;
 import com.epherical.professions.client.entry.StringEntry;
@@ -17,6 +16,8 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockType;
+import com.epherical.professions.profession.unlock.Unlocks;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -37,7 +38,7 @@ public class ProfessionEditor extends DatapackEditor<Profession> {
     private final NumberEntry<Integer, Profession> maxLevel;
     private final ArrayEntry<Profession, CompoundAwareEntry<Action, ActionType>> actions;
     private final ArrayEntry<Profession, StringEntry<String>> description;
-    private final ArrayEntry<Unlock<?>, MultipleTypeEntry<Unlock<?>>> unlocks;
+    private final ArrayEntry<Profession, CompoundAwareEntry<Unlock<?>, UnlockType<?>>> unlocks;
 
 
     public ProfessionEditor(int embed, int width) {
@@ -82,12 +83,25 @@ public class ProfessionEditor extends DatapackEditor<Profession> {
             }
         });
 
-        unlocks = null;
+        unlocks = new ArrayEntry<>(0, 0, 128, "Unlocks", (x, y, wid) -> {
+            return new CompoundAwareEntry<>(embed + 8, y, 90, embed + 14, this.width - 14, RegistryConstants.UNLOCK_KEY,
+                    new RegistryEntry<>(embed + 14, y, this.width - 14, RegistryConstants.UNLOCKS, Unlocks.BLOCK_DROP_UNLOCK, Optional.of("unlock"),
+                            (unlock, entry) -> entry.setValue(unlock.getType()), DatapackEntry.Type.REMOVE),
+            (unlock, entry) -> entry.getEntry().deserialize(unlock));
+        }, (profession, entry) -> {
+            for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entrySet : profession.getUnlocks().entrySet()) {
+                for (Unlock<?> unlock : entrySet.getValue()) {
+                    CompoundAwareEntry<Unlock<?>, UnlockType<?>> entry1 = entry.createEntry();
+                    entry1.deserialize(unlock);
+                    entry.addEntry(entry1);
+                }
+            }
+        });
     }
 
     @Override
     public List<DatapackEntry<Profession, ?>> entries() {
-        return List.of(professionType, professionColor, descriptionColor, description, displayName, expScaling, maxLevel, actions/*, unlocks*/);
+        return List.of(professionType, professionColor, descriptionColor, description, displayName, expScaling, maxLevel, actions, unlocks);
     }
 
     @Override
@@ -118,7 +132,7 @@ public class ProfessionEditor extends DatapackEditor<Profession> {
         object.add("experienceSclEquation", expScaling.getSerializedValue());
         object.addProperty("incomeSclEquation", "base");
         object.add("maxLevel", maxLevel.getSerializedValue());
-        //object.add("unlocks", unlocks.getSerializedValue());
+        object.add("unlocks", unlocks.getSerializedValue());
     }
 
     @Override
@@ -131,13 +145,7 @@ public class ProfessionEditor extends DatapackEditor<Profession> {
         expScaling.deserialize(object);
         maxLevel.deserialize(object);
         actions.deserialize(object);
-
-
-        /*for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : object.getUnlocks().entrySet()) {
-            for (Unlock<?> unlock : entry.getValue()) {
-                unlocks.deserialize(unlock);
-            }
-        }*/
+        unlocks.deserialize(object);
     }
 
 }

@@ -23,6 +23,9 @@ import com.epherical.professions.profession.action.builtin.items.FishingAction;
 import com.epherical.professions.profession.action.builtin.items.SmeltItemAction;
 import com.epherical.professions.profession.action.builtin.items.TakeSmeltAction;
 import com.epherical.professions.profession.action.builtin.items.TradeAction;
+import com.epherical.professions.profession.conditions.ActionCondition;
+import com.epherical.professions.profession.conditions.ActionConditionType;
+import com.epherical.professions.profession.conditions.ActionConditions;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
@@ -49,7 +52,7 @@ import java.util.Optional;
 
 import static com.epherical.professions.RegistryConstants.*;
 
-public class PieceRegistry {
+public class FormatRegistry {
 
     public static final ResourceKey<Registry<FormatBuilder<?>>> BUILDER_KEY = ResourceKey.createRegistryKey(Constants.modID("builder"));
     public static final Registry<FormatBuilder<?>> BUILDERS = new MappedRegistry<>(BUILDER_KEY, Lifecycle.experimental(), null);
@@ -71,35 +74,50 @@ public class PieceRegistry {
             )));
     public static final FormatBuilder<BlockDropUnlock> FB_BLOCK_DROP_UNLOCK = register(formatID(UNLOCK_KEY, "block_drop"), blockDropUnlock ->
             new RegularFormat<>((embed, y, width) -> Lists.newArrayList(arrayBlockString(embed, y, width, "blocks",
-                    (o, entry) -> {
-                        for (ActionEntry<Block> block : o.getBlocks()) {
-                            for (String s : block.serializeString(Registry.BLOCK)) {
-                                StringEntry<String> entry1 = entry.createEntry();
-                                entry1.deserialize(s);
-                            }
-                        }
-                    }, BlockDropUnlock.class))));
+                            (o, entry) -> {
+                                for (ActionEntry<Block> block : o.getBlocks()) {
+                                    for (String s : block.serializeString(Registry.BLOCK)) {
+                                        StringEntry<String> entry1 = entry.createEntry();
+                                        entry1.deserialize(s);
+                                        entry.addEntry(entry1);
+                                    }
+                                }
+                            }, BlockDropUnlock.class),
+                    new NumberEntry<Integer, BlockDropUnlock>(embed, y, width, "level", 1, (o, entry) -> {
+                        entry.setValue(String.valueOf(o.getUnlockLevel()));
+                    })
+            )));
     public static final FormatBuilder<BlockBreakUnlock> FB_BLOCK_BREAK_UNLOCK = register(formatID(UNLOCK_KEY, "block_break"), blockBreakUnlock ->
             new RegularFormat<>((embed, y, width) -> Lists.newArrayList(arrayBlockString(embed, y, width, "blocks",
-                    (o, entry) -> {
-                        for (ActionEntry<Block> block : o.getBlocks()) {
-                            for (String s : block.serializeString(Registry.BLOCK)) {
-                                StringEntry<String> entry1 = entry.createEntry();
-                                entry1.deserialize(s);
-                            }
-                        }
-                    }, BlockBreakUnlock.class))));
+                            (o, entry) -> {
+                                for (ActionEntry<Block> block : o.getBlocks()) {
+                                    for (String s : block.serializeString(Registry.BLOCK)) {
+                                        StringEntry<String> entry1 = entry.createEntry();
+                                        entry1.deserialize(s);
+                                        entry.addEntry(entry1);
+                                    }
+                                }
+                            }, BlockBreakUnlock.class),
+                    new NumberEntry<Integer, BlockBreakUnlock>(embed, y, width, "level", 1, (o, entry) -> {
+                        entry.setValue(String.valueOf(o.getUnlockLevel()));
+                    })
+            )));
 
     public static final FormatBuilder<ToolUnlock> FB_TOOL_UNLOCK = register(formatID(UNLOCK_KEY, "tool_unlock"), toolUnlock ->
             new RegularFormat<>((embed, y, width) -> Lists.newArrayList(arrayItemString(embed, y, width, "items",
-                    (o, entry) -> {
-                        for (ActionEntry<Item> block : o.getItems()) {
-                            for (String s : block.serializeString(Registry.ITEM)) {
-                                StringEntry<String> entry1 = entry.createEntry();
-                                entry1.deserialize(s);
-                            }
-                        }
-                    }, ToolUnlock.class))));
+                            (o, entry) -> {
+                                for (ActionEntry<Item> block : o.getItems()) {
+                                    for (String s : block.serializeString(Registry.ITEM)) {
+                                        StringEntry<String> entry1 = entry.createEntry();
+                                        entry1.deserialize(s);
+                                        entry.addEntry(entry1);
+                                    }
+                                }
+                            }, ToolUnlock.class),
+                    new NumberEntry<Integer, ToolUnlock>(embed, y, width, "level", 1, (o, entry) -> {
+                        entry.setValue(String.valueOf(o.getUnlockLevel()));
+                    })
+            )));
 
     public static final FormatBuilder<BreakBlockAction> FB_BREAK_BLOCK = register(formatID(ACTION_TYPE_KEY, "break_block"), breakBlockAction ->
             createBlockFormat(BreakBlockAction.class));
@@ -151,7 +169,20 @@ public class PieceRegistry {
                         entry1.deserialize(reward);
                         entry.addEntry(entry1);
                     }
-                })));
+                }),
+                new ArrayEntry<T, CompoundAwareEntry<ActionCondition, ActionConditionType>>(embed, y, width, "conditions", (x1, y2, wid) -> {
+                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, ACTION_CONDITION_KEY,
+                            new RegistryEntry<>(x1, y, wid, ACTION_CONDITION_TYPE, ActionConditions.TOOL_MATCHES, Optional.of("condition"),
+                                    (con, entry) -> entry.setValue(con.getType()), DatapackEntry.Type.REMOVE),
+                            (con, entry) -> entry.getEntry().deserialize(con));
+                }, (o, entry) -> {
+                    for (ActionCondition condition : o.getConditions()) {
+                        CompoundAwareEntry<ActionCondition, ActionConditionType> entry1 = entry.createEntry();
+                        entry1.deserialize(condition);
+                        entry.addEntry(entry1);
+                    }
+                })
+        ));
     }
 
     public static <T extends AbstractEntityAction> Format<T> createEntityAction(Class<T> clazz) {
@@ -176,7 +207,20 @@ public class PieceRegistry {
                         entry1.deserialize(reward);
                         entry.addEntry(entry1);
                     }
-                })));
+                }),
+                new ArrayEntry<T, CompoundAwareEntry<ActionCondition, ActionConditionType>>(embed, y, width, "conditions", (x1, y2, wid) -> {
+                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, ACTION_CONDITION_KEY,
+                            new RegistryEntry<>(x1, y, wid, ACTION_CONDITION_TYPE, ActionConditions.TOOL_MATCHES, Optional.of("condition"),
+                                    (con, entry) -> entry.setValue(con.getType()), DatapackEntry.Type.REMOVE),
+                            (con, entry) -> entry.getEntry().deserialize(con));
+                }, (o, entry) -> {
+                    for (ActionCondition condition : o.getConditions()) {
+                        CompoundAwareEntry<ActionCondition, ActionConditionType> entry1 = entry.createEntry();
+                        entry1.deserialize(condition);
+                        entry.addEntry(entry1);
+                    }
+                })
+        ));
     }
 
     public static <T extends AbstractItemAction> Format<T> createItemAction(Class<T> clazz) {
@@ -202,7 +246,20 @@ public class PieceRegistry {
                         entry1.deserialize(reward);
                         entry.addEntry(entry1);
                     }
-                })));
+                }),
+                new ArrayEntry<T, CompoundAwareEntry<ActionCondition, ActionConditionType>>(embed, y, width, "conditions", (x1, y2, wid) -> {
+                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, ACTION_CONDITION_KEY,
+                            new RegistryEntry<>(x1, y, wid, ACTION_CONDITION_TYPE, ActionConditions.TOOL_MATCHES, Optional.of("condition"),
+                                    (con, entry) -> entry.setValue(con.getType()), DatapackEntry.Type.REMOVE),
+                            (con, entry) -> entry.getEntry().deserialize(con));
+                }, (o, entry) -> {
+                    for (ActionCondition condition : o.getConditions()) {
+                        CompoundAwareEntry<ActionCondition, ActionConditionType> entry1 = entry.createEntry();
+                        entry1.deserialize(condition);
+                        entry.addEntry(entry1);
+                    }
+                })
+        ));
     }
 
     public static final FormatBuilder<EnchantAction> ENCHANT_ITEM_FORMAT = register(formatID(ACTION_TYPE_KEY, "enchant"), action ->

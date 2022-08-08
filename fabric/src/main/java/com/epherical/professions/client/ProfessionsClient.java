@@ -2,7 +2,7 @@ package com.epherical.professions.client;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
-import com.epherical.professions.client.format.PieceRegistry;
+import com.epherical.professions.client.format.FormatRegistry;
 import com.epherical.professions.client.screen.MenuScreen;
 import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.profession.rewards.builtin.PaymentReward;
@@ -19,8 +19,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Registry;
 
 import static com.epherical.professions.RegistryConstants.REWARD_KEY;
-import static com.epherical.professions.client.format.PieceRegistry.BUILDERS;
-import static com.epherical.professions.client.format.PieceRegistry.formatID;
+import static com.epherical.professions.client.format.FormatRegistry.BUILDERS;
+import static com.epherical.professions.client.format.FormatRegistry.formatID;
 
 @Environment(EnvType.CLIENT)
 public class ProfessionsClient implements ClientModInitializer {
@@ -36,7 +36,7 @@ public class ProfessionsClient implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(commonClient.getProfessionData());
         KeyBindingHelper.registerKeyBinding(commonClient.getOpenDatapackMenu());
 
-        PieceRegistry.init();
+        FormatRegistry.init();
 
         Registry.register(BUILDERS, formatID(REWARD_KEY, "payment"), new PaymentReward.DatapackBuilder());
 

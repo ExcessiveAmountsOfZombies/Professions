@@ -1,7 +1,7 @@
 package com.epherical.professions.client.entry;
 
 import com.epherical.professions.client.format.FormatBuilder;
-import com.epherical.professions.client.format.PieceRegistry;
+import com.epherical.professions.client.format.FormatRegistry;
 import com.epherical.professions.client.screen.CommonDataScreen;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -29,7 +29,7 @@ public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, Compo
         this.screenWidth = screenWidth;
         this.value = registryEntry.getValue();
         children.add(registryEntry);
-        FormatBuilder<OBJ> format = PieceRegistry.grabBuilder(entry.getRegistry(), value);
+        FormatBuilder<OBJ> format = FormatRegistry.grabBuilder(entry.getRegistry(), value);
         if (format != null) {
             children.addAll(format.buildDefaultFormat().entries().apply(embed, y, screenWidth));
         }
@@ -41,7 +41,7 @@ public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, Compo
             this.value = entry.getValue();
             children.clear();
             children.add(entry);
-            FormatBuilder<OBJ> format = PieceRegistry.grabBuilder(entry.getRegistry(), value);
+            FormatBuilder<OBJ> format = FormatRegistry.grabBuilder(entry.getRegistry(), value);
             if (format != null) {
                 children.addAll(format.buildDefaultFormat().entries().apply(embeddedDistance, y, screenWidth));
             }
@@ -56,7 +56,7 @@ public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, Compo
         this.value = entry.getValue();
         children.clear();
         children.add(entry);
-        FormatBuilder<OBJ> format = PieceRegistry.grabBuilder(entry.getRegistry(), value);
+        FormatBuilder<OBJ> format = FormatRegistry.grabBuilder(entry.getRegistry(), value);
         if (format != null) {
             for (DatapackEntry<OBJ, ?> entry : format.deserializeToFormat(object).entries().apply(embeddedDistance, y, screenWidth)) {
                 entry.deserialize(object);

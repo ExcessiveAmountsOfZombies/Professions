@@ -1,5 +1,6 @@
 package com.epherical.professions.client.screen;
 
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.client.FileBox;
 import com.epherical.professions.client.SaveSideBar;
 import com.epherical.professions.client.SaveSidebarWidget;
@@ -14,7 +15,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.logging.LogUtils;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -93,8 +93,9 @@ public class DatapackScreen extends CommonDataScreen {
                                     + "/professions/occupations/";
                             datapackEditor.serialize(object);
                             try {
-                                Files.createDirectories(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data));
-                                Files.writeString(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data +
+                                // todo; we'll clean ths up
+                                Files.createDirectories(CommonPlatform.platform.getRootConfigPath().resolve("professions/" + data));
+                                Files.writeString(CommonPlatform.platform.getRootConfigPath().resolve("professions/" + data +
                                         "/" + component.getFileBox().getOccupationName().getValue() + ".json"), AbstractProfessionLoader.serialize(object));
                             } catch (IOException e) {
                                 LOGGER.warn("FILE ALREADY EXISTS", e);

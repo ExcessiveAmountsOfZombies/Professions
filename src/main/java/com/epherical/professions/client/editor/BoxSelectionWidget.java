@@ -51,13 +51,13 @@ public class BoxSelectionWidget extends ContainerObjectSelectionList<BoxSelectio
     }
 
     @Override
-    protected int getRowBottom(int index) {
+    public int getRowBottom(int index) {
         return getRowTop(index);
     }
 
     @Nullable
     @Override
-    protected Entry getEntryAtPosition(double mouseX, double mouseY) {
+    public Entry getEntryAtPosition(double mouseX, double mouseY) {
         int i = this.getRowWidth() / 2;
         int j = this.x0 + this.width / 2;
         int k = j - i;

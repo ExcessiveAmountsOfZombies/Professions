@@ -1,7 +1,6 @@
 package com.epherical.professions.client;
 
 import com.epherical.professions.ProfessionsForge;
-import com.epherical.professions.client.screen.DatapackScreen;
 import com.epherical.professions.networking.NetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,10 +23,6 @@ public class ProfessionsClientForge {
         ClientRegistry.registerKeyBinding(commonClient.getOccupationMenu());
         ClientRegistry.registerKeyBinding(commonClient.getProfessionData());
         ClientRegistry.registerKeyBinding(commonClient.getOpenDatapackMenu());
-    }
-
-    public static DatapackScreen createScreen() {
-        return new DatapackScreen();
     }
 
     @SubscribeEvent

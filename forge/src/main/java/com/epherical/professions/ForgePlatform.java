@@ -18,9 +18,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 public class ForgePlatform extends CommonPlatform<ForgePlatform> {
@@ -102,6 +104,11 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
     @Override
     public boolean skipReward(RewardType type) {
         return false;
+    }
+
+    @Override
+    public Path getRootConfigPath() {
+        return FMLPaths.CONFIGDIR.get();
     }
 
     @Override

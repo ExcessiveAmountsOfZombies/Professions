@@ -22,6 +22,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 public class FabricPlatform extends CommonPlatform<FabricPlatform> {
@@ -100,6 +101,11 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
     @Override
     public boolean skipReward(RewardType type) {
         return type.equals(FabricRegConstants.PAYMENT_REWARD);
+    }
+
+    @Override
+    public Path getRootConfigPath() {
+        return FabricLoader.getInstance().getConfigDir();
     }
 
     @Override

@@ -3,3 +3,10 @@ accessWidener	v1	named
 accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactPropertyMatcher
 accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher
 accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedPropertyMatcher
+
+extendable method net/minecraft/client/gui/components/AbstractSelectionList getEntryAtPosition (DD)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;
+extendable method net/minecraft/client/gui/components/AbstractSelectionList getRowBottom (I)I
+
+accessible field net/minecraft/client/gui/screens/Screen children Ljava/util/List;
+accessible field net/minecraft/client/gui/screens/Screen narratables Ljava/util/List;
+accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;

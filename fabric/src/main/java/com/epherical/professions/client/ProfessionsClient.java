@@ -3,7 +3,6 @@ package com.epherical.professions.client;
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.client.format.FormatRegistry;
-import com.epherical.professions.client.screen.MenuScreen;
 import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.profession.rewards.builtin.PaymentReward;
 import net.fabricmc.api.ClientModInitializer;
@@ -42,11 +41,6 @@ public class ProfessionsClient implements ClientModInitializer {
 
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (commonClient.getOpenDatapackMenu().isDown()) {
-                client.setScreen(new MenuScreen());
-                //client.setScreen(createScreen(ProfessionEditor::new));
-                //client.setScreen(CommonPlatform.platform.createScreen());
-            }
             commonClient.openMenus(client);
         });
 

@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 public abstract class CommonPlatform<T> {
@@ -56,6 +57,8 @@ public abstract class CommonPlatform<T> {
     public abstract ClientNetworking getClientNetworking();
 
     public abstract boolean skipReward(RewardType type);
+
+    public abstract Path getRootConfigPath();
 
     /**
      * Some platforms may not have the same key rewards that should be displayed in /professions info.

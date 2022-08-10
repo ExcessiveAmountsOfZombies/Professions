@@ -2,7 +2,6 @@ package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClientForge;
-import com.epherical.professions.client.screen.CommonDataScreen;
 import com.epherical.professions.datapack.CommonProfessionLoader;
 import com.epherical.professions.networking.ClientNetworking;
 import com.epherical.professions.networking.CommandButtons;
@@ -110,10 +109,5 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
         return new TranslatableComponent(" (%s | %s)",
                 map.get(Rewards.EXPERIENCE_REWARD),
                 action.extraRewardInformation(map));
-    }
-
-    @Override
-    public CommonDataScreen createScreen() {
-        return ProfessionsClientForge.createScreen();
     }
 }

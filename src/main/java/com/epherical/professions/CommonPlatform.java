@@ -9,7 +9,6 @@ import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.rewards.RewardType;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -63,8 +62,6 @@ public abstract class CommonPlatform<T> {
      * E.G forge does not have a payment reward, only experience.
      */
     public abstract Component displayInformation(AbstractAction action, Map<RewardType, Component> map);
-
-    public abstract Screen createScreen();
 
 
 }

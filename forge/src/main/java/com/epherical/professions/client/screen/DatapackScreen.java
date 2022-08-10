@@ -14,18 +14,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.fml.loading.FMLPaths;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -42,16 +37,13 @@ public class DatapackScreen extends CommonDataScreen {
     protected int imageWidth = 108;
     protected int imageHeight = 180;
 
-    public static final ResourceLocation WINDOW_LOCATION = new ResourceLocation("professions", "textures/gui/datapack_screen.png");
-
-    protected boolean pressedNew = false;
-
     private double scrollAmount;
 
     public List<DatapackEntry<?, ?>> datapackEntries = new ArrayList<>();
-    public boolean adjustEntries = false;
+    protected boolean adjustEntries = false;
+    protected boolean adjustRender = false;
 
-    private DatapackEditor<?> datapackEditor;
+    private final DatapackEditor<?> datapackEditor;
 
     private SaveSidebarWidget saveSidebarWidget;
     private boolean sidebarWidgetOpen = false;
@@ -59,8 +51,9 @@ public class DatapackScreen extends CommonDataScreen {
     private SaveSideBar component;
     private final List<Widget> specialRenders = new ArrayList<>();
 
-    public DatapackScreen() {
+    public DatapackScreen(DatapackEditor<?> editor) {
         super(Component.nullToEmpty(""));
+        datapackEditor = editor;
     }
 
 
@@ -99,9 +92,9 @@ public class DatapackScreen extends CommonDataScreen {
                                     + "/professions/occupations/";
                             datapackEditor.serialize(object);
                             try {
-
-                                Files.createDirectories(FMLPaths.CONFIGDIR.get().resolve("professions/" + data));
-                                Files.writeString(FMLPaths.CONFIGDIR.get().resolve("professions/" + data +
+                                // todo; fix
+                                Files.createDirectories(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data));
+                                Files.writeString(FabricLoader.getInstance().getConfigDir().resolve("professions/" + data +
                                         "/" + component.getFileBox().getOccupationName().getValue() + ".json"), AbstractProfessionLoader.serialize(object));
                             } catch (IOException e) {
                                 LOGGER.warn("FILE ALREADY EXISTS", e);
@@ -118,12 +111,8 @@ public class DatapackScreen extends CommonDataScreen {
         int ofx = 32;
         int ofy = 11;
         int width = this.width - 50;
-
-        if (this.datapackEditor == null) {
-           // TODO: fix this.datapackEditor = new ProfessionEditor(ofx, width);
-        } else {
-            this.datapackEditor.setWidth(width);
-        }
+        this.datapackEditor.setWidth(width);
+        adjustEntries = true;
 
         int increment = 0;
         //LOGGER.info("Setting x, y position on init entries.");
@@ -201,6 +190,7 @@ public class DatapackScreen extends CommonDataScreen {
             if (time == 20) {
                 time = 0;
             }*/
+            adjustRender = true;
             adjustEntries = false;
         }
 
@@ -212,35 +202,48 @@ public class DatapackScreen extends CommonDataScreen {
 
         int ofx = (this.width - imageWidth) / 2;
         int ofy = (this.height - imageHeight) / 2;
-        if (pressedNew) {
-            renderMainWindow(poseStack, ofx, ofy);
-            for (GuiEventListener child : this.children) {
-                if (child instanceof DatapackEntry entry) {
-                    entry.setYScroll((int) -scrollAmount);
+        renderMainWindow(poseStack, ofx, ofy);
+        for (GuiEventListener child : this.children) {
+            if (child instanceof DatapackEntry entry) {
+                entry.setYScroll((int) -scrollAmount);
+            }
+        }
+
+        double d = this.minecraft.getWindow().getGuiScale();
+        RenderSystem.enableScissor(
+                (int) (0 * d),
+                (int) ((double) (11) * d),
+                (int) ((double) (this.getScrollbarPosition() + 6) * d),
+                (int) ((double) (this.height - 22) * d));
+        for (Widget renderable : this.renderables) {
+            if (renderable instanceof DatapackEntry entry) {
+                if (!(entry.y + entry.getYScroll() <= -50 || entry.y + entry.getYScroll() > this.height)) {
+                    renderable.render(poseStack, mouseX, mouseY, partialTick);
+                }
+            } else if (renderable instanceof AbstractWidget widget) {
+                if (!(widget.y <= 23 || widget.y > this.height - 40)) {
+                    renderable.render(poseStack, mouseX, mouseY, partialTick);
                 }
             }
-
-            double d = this.minecraft.getWindow().getGuiScale();
-            RenderSystem.enableScissor(
-                    (int) (0 * d),
-                    (int) ((double) (11) * d),
-                    (int) ((double) (this.getScrollbarPosition() + 6) * d),
-                    (int) ((double) (this.height - 22) * d));
-            super.render(poseStack, mouseX, mouseY, partialTick);
-            RenderSystem.disableScissor();
-
-            for (Widget specialRender : specialRenders) {
-                poseStack.pushPose();
-                specialRender.render(poseStack, mouseX, mouseY, partialTick);
-                poseStack.popPose();
+            if (adjustRender) {
+                renderable.render(poseStack, mouseX, mouseY, partialTick);
+                adjustRender = false;
             }
-
-            renderScrollBar();
-        } else {
-            Minecraft minecraft = Minecraft.getInstance();
-            Font font = minecraft.font;
-            font.drawShadow(poseStack, "press 'n' to create a new profession", ofx, 32, 0xFFFFFF);
         }
+
+
+        RenderSystem.disableScissor();
+
+        saveSidebarWidget.render(poseStack, mouseX, mouseY, partialTick);
+        //component.render(poseStack, mouseX, mouseY, partialTick);
+
+        for (Widget specialRender : specialRenders) {
+            poseStack.pushPose();
+            specialRender.render(poseStack, mouseX, mouseY, partialTick);
+            poseStack.popPose();
+        }
+
+        renderScrollBar();
 
     }
 
@@ -309,10 +312,6 @@ public class DatapackScreen extends CommonDataScreen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_N) {
-            // todo: remove this
-            pressedNew = true;
-        }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
@@ -397,6 +396,9 @@ public class DatapackScreen extends CommonDataScreen {
     }
 
     public void addChild(AbstractWidget widget) {
+        /*if (this.children.contains(widget)) {
+            LOGGER.warn("DUPLICATE DETECTED");
+        }*/
         this.children.add(widget);
         this.renderables.add(widget);
         this.narratables.add(widget);

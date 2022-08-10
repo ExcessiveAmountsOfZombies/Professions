@@ -26,14 +26,6 @@ public class NumberEntry<T extends Number, OBJ> extends EditBoxEntry<OBJ, Number
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         super.render(poseStack, mouseX, mouseY, partialTick);
-        /*Minecraft minecraft = Minecraft.getInstance();
-        Font font = minecraft.font;
-        font.drawShadow(poseStack, description, x + 3, y + 8, 0xFFFFFF);
-        drawCenteredString(poseStack, font, value.toString(), this.width / 2, y + 8, TEXT_COLOR);
-        //font.drawShadow(poseStack, value.toString(), this.width, y + 16, TEXT_COLOR);
-        if (isHoveredOrFocused()) {
-            renderToolTip(poseStack, mouseX, mouseY, tooltip);
-        }*/
     }
 
     @Override

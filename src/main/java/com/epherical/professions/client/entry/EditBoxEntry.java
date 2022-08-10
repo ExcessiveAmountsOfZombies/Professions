@@ -45,13 +45,8 @@ public abstract class EditBoxEntry<T, V extends EditBoxEntry<?, ?>> extends Data
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         font.drawShadow(poseStack, usage, x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
-        //drawCenteredString(poseStack, font, this.box.getValue(), this.width / 2, y + 8, TEXT_COLOR);
-        if (isHoveredOrFocused()) {
-            //renderToolTip(poseStack, mouseX, mouseY, this.box.getValue());
-        }
         this.box.x = (this.x + this.width - (font.width(box.getValue()) / 2)) / 2;
         this.box.y = y + 8 + getYScroll();
-        //this.box.render(poseStack, mouseX, mouseY, partialTick);
     }
 
     @Override

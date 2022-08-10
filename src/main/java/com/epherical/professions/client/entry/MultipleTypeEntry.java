@@ -52,7 +52,6 @@ public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>>
 
     /**
      * 0 to arraySize - 1 are the valid values.
-     * @param value
      */
     public void setValue(int value) {
         if (value >= types.length) {

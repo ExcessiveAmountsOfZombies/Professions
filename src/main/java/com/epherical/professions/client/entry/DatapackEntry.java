@@ -28,6 +28,7 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
     public static final int TEXT_COLOR = 0xFFFFFF;
 
     protected final Minecraft minecraft = Minecraft.getInstance();
+    protected final Font font = minecraft.font;
 
     private final Type[] types;
     protected final TinyButton[] buttonTypes;
@@ -76,10 +77,22 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
         this(x, y, width, 23, serializationKey, types);
     }
 
+    /**
+     * use this to tie additional children of a {@link DatapackEntry} to the position of the entry see an example in
+     * {@link ArrayEntry#initPosition(int, int)} where it is used to keep the position of the addButton at the end of the entry
+     *
+     * @param initialX The leftmost position of the screen.
+     * @param initialY The top of the screen.
+     */
     public void initPosition(int initialX, int initialY) {
 
     }
 
+    /**
+     * Some entries require ticking as they contain {@link net.minecraft.client.gui.components.EditBox} but it can also
+     * be used for checking if the screen needs to be rebuilt. Any DatapackEntry that modifies elements of the screen should
+     * mark that the screen needs to be rebuilt using {@link CommonDataScreen#markScreenDirty()}
+     */
     public void tick(CommonDataScreen screen) {
 
     }
@@ -90,6 +103,18 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
         }
     }
 
+    /**
+     * A method of re-adding children to the {@link CommonDataScreen}. Any children directly tied to the parent should go before the parent
+     * i.e
+     * <br>
+     * <code>
+     * screen.addChild(child1);<br>
+     * screen.addChild(child2);<br>
+     * screen.addChild(this);<br>
+     * </code>
+     * It has to do with how children are handled in the screen, if you add "this" before the children, you won't be able to interact with
+     * the children.
+     */
     public abstract void onRebuild(CommonDataScreen screen);
 
     @Override
@@ -100,8 +125,6 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
 
     @Override
     public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-        Minecraft minecraft = Minecraft.getInstance();
-        Font font = minecraft.font;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, CommonDataScreen.WINDOW_LOCATION);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
@@ -208,7 +231,7 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
         minecraft.screen.renderTooltip(poseStack, component, mouseX, mouseY);
     }
 
-    public List<AbstractWidget> flattenEntries(List<AbstractWidget> total, AbstractWidget current) {
+    /*public List<AbstractWidget> flattenEntries(List<AbstractWidget> total, AbstractWidget current) {
         if (current instanceof Parent parent) {
             for (AbstractWidget child : parent.children()) {
                 total.add(child);
@@ -216,12 +239,16 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
             }
         }
         return total;
-    }
+    }*/
 
+    /**
+     * @return a {@link JsonElement}. Some will return {@link com.google.gson.JsonNull} if no value is present
+     */
     public abstract JsonElement getSerializedValue();
 
     /**
      * DO NOT CALL {@link #deserialize(Object)} on SELF.
+     *
      * @param consumer
      * @return itself.
      */
@@ -233,6 +260,7 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
     /**
      * A way to convert an object to its DatapackEntry equivalent. Each subclass should
      * provide their own {@link Deserializer}. That deserializer should not call this method.
+     *
      * @param object The object you want to deserialize into its DatapackEntry components.
      * @throws StackOverflowError a StackOverflowError can occur if you call deserialize on the object from the {@link Deserializer}
      */
@@ -241,12 +269,11 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
     public static class TinyButton extends Button {
 
         private final Type type;
-        private final DatapackEntry entry;
+        private final DatapackEntry<?, ?> entry;
 
         protected boolean clicked;
 
-
-        public TinyButton(int i, int j, int k, int l, Type type, Button.OnPress onPress, Button.OnTooltip onTooltip, DatapackEntry entry) {
+        public TinyButton(int i, int j, int k, int l, Type type, Button.OnPress onPress, Button.OnTooltip onTooltip, DatapackEntry<?, ?> entry) {
             super(i, j, k, l, Component.nullToEmpty(""), onPress, onTooltip);
             this.type = type;
             this.entry = entry;
@@ -261,8 +288,6 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
         @Override
         public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
             this.isHovered = mouseX >= (this.x + entry.getXScroll()) && mouseY >= (this.y + entry.getYScroll()) && mouseX < (this.x + this.width + entry.getXScroll()) && mouseY < (this.y + this.height + entry.getYScroll());
-            Minecraft minecraft = Minecraft.getInstance();
-            Font font = minecraft.font;
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderTexture(0, CommonDataScreen.WINDOW_LOCATION);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
@@ -276,12 +301,8 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
             RenderSystem.defaultBlendFunc();
             RenderSystem.enableDepthTest();
 
-            int xOffset = 0;
-            int yOffset = 0;
-            if (entry != null) {
-                xOffset = entry.getXScroll();
-                yOffset = entry.getYScroll();
-            }
+            int xOffset = entry.getXScroll();
+            int yOffset = entry.getYScroll();
 
             this.blit(poseStack, this.x + xOffset, this.y + yOffset, i * 7, 205, 7, 7);
             this.blit(poseStack, this.x + 1 + xOffset, this.y + 1 + yOffset, type.ordinal() * 5, 214, 5, 5);
@@ -291,10 +312,14 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
         }
 
         public boolean isMouseOver(double mouseX, double mouseY) {
-            return this.active && this.visible && mouseX >= (double) (this.x + entry.getXScroll()) && mouseY >= (double) (this.y + entry.getYScroll()) && mouseX < (double) (this.x + this.width + entry.getXScroll()) && mouseY < (double) (this.y + this.height + entry.getYScroll());
+            return checkMousePosition(mouseX, mouseY);
         }
 
         protected boolean clicked(double mouseX, double mouseY) {
+            return checkMousePosition(mouseX, mouseY);
+        }
+
+        private boolean checkMousePosition(double mouseX, double mouseY) {
             return this.active && this.visible && mouseX >= (double) (this.x + entry.getXScroll()) && mouseY >= (double) (this.y + entry.getYScroll()) && mouseX < (double) (this.x + this.width + entry.getXScroll()) && mouseY < (double) (this.y + this.height + entry.getYScroll());
         }
 

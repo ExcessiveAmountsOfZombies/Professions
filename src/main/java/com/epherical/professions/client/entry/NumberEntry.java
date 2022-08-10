@@ -9,7 +9,17 @@ public class NumberEntry<T extends Number, OBJ> extends EditBoxEntry<OBJ, Number
     private final Deserializer<OBJ, NumberEntry<T, OBJ>> deserializer;
 
     public NumberEntry(int i, int j, int k, String desc, T defaultValue, Deserializer<OBJ, NumberEntry<T, OBJ>> deserializer) {
-        super(i, j, k, desc, String.valueOf(defaultValue), Optional.of(desc));
+        this(i, j, k, desc, Optional.of(desc), defaultValue, deserializer);
+
+    }
+
+    public NumberEntry(int x, int y, int width, String description, Optional<String> deserializationKey, T defaultValue, Deserializer<OBJ, NumberEntry<T, OBJ>> deserializer) {
+        super(x, y, width, description, String.valueOf(defaultValue), deserializationKey);
+        this.deserializer = deserializer;
+    }
+
+    public NumberEntry(int x, int y, int width, String description, Optional<String> deserializationKey, Deserializer<OBJ, NumberEntry<T, OBJ>> deserializer) {
+        super(x, y, width, description, "", deserializationKey);
         this.deserializer = deserializer;
     }
 

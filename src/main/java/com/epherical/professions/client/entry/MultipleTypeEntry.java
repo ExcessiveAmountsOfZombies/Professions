@@ -6,6 +6,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 
+import java.util.Optional;
+
 public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>> {
 
     private int currentSelection;
@@ -17,7 +19,7 @@ public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>>
         super(i, j, k, 23, types);
         currentSelection = 0;
         this.types = entries;
-        children.add(entries[currentSelection]);
+        setValue(0);
     }
 
     @Override
@@ -37,11 +39,33 @@ public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>>
     @Override
     public void onClick(double mouseX, double mouseY) {
         super.onClick(mouseX, mouseY);
+        increment();
+    }
+
+    public void increment() {
         currentSelection++;
         if (currentSelection >= types.length) {
             currentSelection = 0;
         }
         needsRefresh = true;
+    }
+
+    /**
+     * 0 to arraySize - 1 are the valid values.
+     * @param value
+     */
+    public void setValue(int value) {
+        if (value >= types.length) {
+            currentSelection = types.length - 1;
+        } else {
+            currentSelection = value;
+        }
+        children.add(types[currentSelection]);
+        //needsRefresh = true;
+    }
+
+    public DatapackEntry<T, ?> currentSelection() {
+        return types[currentSelection];
     }
 
     @Override
@@ -50,7 +74,9 @@ public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>>
         this.types[currentSelection].tick(screen);
         if (needsRefresh) {
             screen.markScreenDirty();
-            children.remove(0);
+            for (DatapackEntry<T, ?> type : this.types) {
+                children.remove(type);
+            }
             DatapackEntry object = types[currentSelection];
             children.add(object);
             needsRefresh = false;
@@ -73,6 +99,11 @@ public class MultipleTypeEntry<T> extends DatapackEntry<T, MultipleTypeEntry<T>>
 
     public JsonElement getSerializedValue() {
         return types[currentSelection].getSerializedValue();
+    }
+
+    @Override
+    public Optional<String> getSerializationKey() {
+        return types[currentSelection].getSerializationKey();
     }
 
     @Override

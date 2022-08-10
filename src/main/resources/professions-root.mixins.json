@@ -5,7 +5,9 @@
   "refmap": "",
   "mixins": [
     "accessor.EnchantmentPredicateAccess",
-    "accessor.ItemPredicateAccess"
+    "accessor.ItemPredicateAccess",
+    "accessor.RangedPropertyMatcherAccess",
+    "accessor.StatePropertiesPredicateAccess"
   ],
   "injectors": {
     "defaultRequire": 1

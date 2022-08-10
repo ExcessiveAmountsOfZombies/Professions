@@ -23,7 +23,7 @@ import java.util.function.BiConsumer;
 
 public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements Parent, Scrollable, IdentifiableEntry {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
+    protected static final Logger LOGGER = LogUtils.getLogger();
 
     public static final int TEXT_COLOR = 0xFFFFFF;
 
@@ -35,7 +35,7 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
 
     protected final List<TinyButtonListener> listeners = new ArrayList<>();
 
-    protected final Optional<String> serializationKey;
+    protected Optional<String> serializationKey;
 
     protected BiConsumer<T, SELF> deserializer;
 
@@ -184,6 +184,10 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
     @Override
     public int getYScroll() {
         return yScroll;
+    }
+
+    public void setSerializationKey(Optional<String> serializationKey) {
+        this.serializationKey = serializationKey;
     }
 
     public Optional<String> getSerializationKey() {

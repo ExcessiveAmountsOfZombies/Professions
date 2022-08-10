@@ -32,7 +32,7 @@ subprojects {
 
 minecraft {
     version(minecraft_version)
-    //accessWideners("src/main/resources/professions-root.accesswidener")
+    accessWideners(project.file("src/main/resources/professions-root.accesswidener"))
 }
 
 dependencies {

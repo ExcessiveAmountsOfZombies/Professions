@@ -32,7 +32,13 @@
         {
           "condition": "professions:block_state_matches_any",
           "properties": {
-            "age": "2"
+            "age": "2",
+            "bozo": "5",
+            "facing": "NORTH",
+            "ranged": {
+              "min": 2,
+              "max": 5
+            }
           }
         }
       ],

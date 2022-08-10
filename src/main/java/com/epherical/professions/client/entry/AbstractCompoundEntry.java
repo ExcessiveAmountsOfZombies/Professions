@@ -13,10 +13,14 @@ public abstract class AbstractCompoundEntry<OBJ, V extends AbstractCompoundEntry
 
     private final List<DatapackEntry<OBJ, ?>> entries;
 
-    public AbstractCompoundEntry(int x, int y, int width, Optional<String> serializationKey, List<DatapackEntry<OBJ, ?>> entries, Type... types) {
-        super(x, y, width, 0, serializationKey, types);
+    public AbstractCompoundEntry(int x, int y, int width, int height, Optional<String> serializationKey, List<DatapackEntry<OBJ, ?>> entries, Type... types) {
+        super(x, y, width, height, serializationKey, types);
         children.addAll(entries);
         this.entries = entries;
+    }
+
+    public AbstractCompoundEntry(int x, int y, int width, Optional<String> serializationKey, List<DatapackEntry<OBJ, ?>> entries, Type... types) {
+        this(x, y, width, 0, serializationKey, entries, types);
     }
 
     /**
@@ -37,10 +41,12 @@ public abstract class AbstractCompoundEntry<OBJ, V extends AbstractCompoundEntry
         for (AbstractWidget child : children) {
             if (child instanceof DatapackEntry entry) {
                 Optional<String> serializationKey = entry.getSerializationKey();
-                serializationKey.ifPresent(s -> {
+                serializationKey.ifPresentOrElse(s -> {
                     if (!entry.getSerializedValue().isJsonNull()) {
                         object.add(s, entry.getSerializedValue());
                     }
+                }, () -> {
+                    LOGGER.warn("unable to serialize value for: {} in AbstractCompoundEntry", entry);
                 });
             }
         }

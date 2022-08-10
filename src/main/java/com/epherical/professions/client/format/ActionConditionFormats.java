@@ -3,19 +3,26 @@ package com.epherical.professions.client.format;
 import com.epherical.professions.client.entry.CompoundAwareEntry;
 import com.epherical.professions.client.entry.CompoundEntry;
 import com.epherical.professions.client.entry.DatapackEntry;
+import com.epherical.professions.client.entry.DoubleEditBoxEntry;
+import com.epherical.professions.client.entry.DynamicCompoundEntry;
 import com.epherical.professions.client.entry.MultipleTypeEntry;
 import com.epherical.professions.client.entry.NumberEntry;
 import com.epherical.professions.client.entry.RegistryEntry;
 import com.epherical.professions.client.entry.StringEntry;
 import com.epherical.professions.mixin.accessor.ItemPredicateAccess;
+import com.epherical.professions.mixin.accessor.RangedPropertyMatcherAccess;
+import com.epherical.professions.mixin.accessor.StatePropertiesPredicateAccess;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.conditions.ActionConditionType;
 import com.epherical.professions.profession.conditions.ActionConditions;
+import com.epherical.professions.profession.conditions.builtin.BlockStateIntegerRangeCondition;
+import com.epherical.professions.profession.conditions.builtin.BlockStatePropertyAnyCondition;
 import com.epherical.professions.profession.conditions.builtin.InvertedCondition;
 import com.epherical.professions.profession.conditions.builtin.ToolMatcher;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -49,6 +56,75 @@ public class ActionConditionFormats {
                                 }, Optional.of("term")));
             })
     );
+
+    public static final FormatBuilder<BlockStateIntegerRangeCondition> BS_INTEGER_RANGE_CONDITION = register(formatID(ACTION_CONDITION_KEY, "blockstate_int_range"), condition -> {
+        return new RegularFormat<>((embed, y, width) -> {
+            int indent = 8;
+            return Lists.newArrayList(
+                    new NumberEntry<Integer, BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Min Range", Optional.of("min"), (o, entry) -> {
+                        entry.setValue(String.valueOf(o.min()));
+                    }),
+                    new NumberEntry<Integer, BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Max Range", Optional.of("max"), (o, entry) -> {
+                        entry.setValue(String.valueOf(o.max()));
+                    }),
+                    new StringEntry<BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Property", "", Optional.of("property"), (o, entry) -> {
+                        entry.setValue(o.property());
+                    })
+            );
+        });
+    });
+
+    public static final FormatBuilder<BlockStatePropertyAnyCondition> BS_ANY_PROPERTY_CONDITION = register(formatID(ACTION_CONDITION_KEY, "block_state_matches_any"), condition -> {
+        return new RegularFormat<>((embed, y, width) -> {
+            int indent = 8;
+            return Lists.newArrayList(
+                    new DynamicCompoundEntry<BlockStatePropertyAnyCondition, MultipleTypeEntry<StatePropertiesPredicate.PropertyMatcher>>(embed, y, width, Optional.of("properties"), Lists.newArrayList(
+
+                    ), (o, entry) -> {
+                        StatePropertiesPredicateAccess access = (StatePropertiesPredicateAccess) o.getPredicate();
+                        for (StatePropertiesPredicate.PropertyMatcher property : access.getProperties()) {
+                            MultipleTypeEntry<StatePropertiesPredicate.PropertyMatcher> entry1 = entry.createEntry();
+                            if (property instanceof StatePropertiesPredicate.RangedPropertyMatcher) {
+                                entry1.setValue(1); // change to the MultipleTypeEntry that handles objects, as defined below
+                                entry1.currentSelection().setSerializationKey(Optional.of(property.getName()));
+                            } else if (property instanceof StatePropertiesPredicate.ExactPropertyMatcher) {
+                                entry1.setValue(0);
+                            }
+                            entry1.deserialize(property);
+                            entry.addEntry(entry1);
+                        }
+                    }, (x1, y1, wid) -> {
+                        return new MultipleTypeEntry<>(x1, y1, wid, new DatapackEntry[]{
+                                new DoubleEditBoxEntry<StatePropertiesPredicate.PropertyMatcher>(x1, y1, wid, "prop", "", Optional.empty(), (propertyMatcher, entry) -> {
+                                    JsonElement element = propertyMatcher.toJson();
+                                    if (element.isJsonPrimitive()) { // it should always be a primitive, only ExactPropertyMatchers should go here
+                                        entry.setValue(element.getAsString());
+                                    }
+                                    entry.setKeyValue(propertyMatcher.getName());
+                                }),
+                                new CompoundEntry<StatePropertiesPredicate.PropertyMatcher>(x1, y1, wid, 23, Optional.empty(), Lists.newArrayList(
+                                        new StringEntry<>(x1 + indent, y, wid - indent, "min", "", (o, entry) -> {
+                                            RangedPropertyMatcherAccess access = (RangedPropertyMatcherAccess) o;
+                                            if (access.getMinValue() != null) {
+                                                entry.setValue(access.getMinValue());
+                                            }
+                                        }),
+                                        new StringEntry<>(x1 + indent, y, wid - indent, "max", "", (o, entry) -> {
+                                            RangedPropertyMatcherAccess access = (RangedPropertyMatcherAccess) o;
+                                            if (access.getMaxValue() != null) {
+                                                entry.setValue(access.getMaxValue());
+                                            }
+                                        })
+                                ), (o, entry) -> {
+                                    for (DatapackEntry<StatePropertiesPredicate.PropertyMatcher, ?> entryEntry : entry.getEntries()) {
+                                        entryEntry.deserialize(o);
+                                    }
+                                })
+                        }, DatapackEntry.Type.REMOVE);
+                    })
+            );
+        });
+    });
 
     public static final FormatBuilder<ToolMatcher> TOOL_MATCHER_FORMAT = register(formatID(ACTION_CONDITION_KEY, "tool_matches"), toolMatcher ->
             new RegularFormat<>((embed, y, width) -> {

@@ -41,6 +41,8 @@ public class DoubleEditBoxEntry<OBJ> extends EditBoxEntry<OBJ, DoubleEditBoxEntr
         super.render(poseStack, mouseX, mouseY, partialTick);
         this.keyBox.x = (this.x + 30);
         this.keyBox.y = y + 8 + getYScroll();
+        drawString(poseStack, minecraft.font, "_____", x + 28 + xScroll, y + 12 + yScroll, 0xFFFFFF);
+        drawString(poseStack, minecraft.font, "_____", this.x + width / 2 - 50 + xScroll, y + 12 + yScroll, 0xFFFFFF);
     }
 
     public void setKeyValue(String key) {
@@ -53,6 +55,12 @@ public class DoubleEditBoxEntry<OBJ> extends EditBoxEntry<OBJ, DoubleEditBoxEntr
         screen.addChild(box);
         screen.addChild(keyBox);
         screen.addChild(this);
+    }
+
+    @Override
+    public void tick(CommonDataScreen screen) {
+        super.tick(screen);
+        this.keyBox.tick();
     }
 
     @Override

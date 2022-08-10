@@ -91,6 +91,7 @@ public class CompoundEntry<OBJ> extends AbstractCompoundEntry<OBJ, CompoundEntry
         if (box != null) {
             this.box.x = (this.x + 30);
             this.box.y = y + 8 + getYScroll();
+            drawString(poseStack, minecraft.font, ">>>", x + 13 + xScroll, y + 8 + yScroll, 0xFFFFFF);
         }
     }
 

@@ -26,8 +26,8 @@ public class DynamicCompoundEntry<OBJ, T extends DatapackEntry<?, ?>> extends Ab
     protected boolean needsRefresh;
 
     public DynamicCompoundEntry(int x, int y, int width, Optional<String> key, List<DatapackEntry<OBJ, ?>> entries, Deserializer<OBJ, DynamicCompoundEntry<OBJ, T>> deserializer,
-                         TriFunction<Integer, Integer, Integer, T> addObject, Type... types) {
-        super(x, y, width, key, entries, types);
+                                TriFunction<Integer, Integer, Integer, T> addObject, Type... types) {
+        super(x, y, width, 23, key, entries, types);
         this.deserializer = deserializer;
         this.addObject = addObject;
         this.addButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.ADD, button -> {

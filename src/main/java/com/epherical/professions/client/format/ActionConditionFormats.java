@@ -17,6 +17,7 @@ import com.epherical.professions.profession.conditions.ActionConditionType;
 import com.epherical.professions.profession.conditions.ActionConditions;
 import com.epherical.professions.profession.conditions.builtin.BlockStateIntegerRangeCondition;
 import com.epherical.professions.profession.conditions.builtin.BlockStatePropertyAnyCondition;
+import com.epherical.professions.profession.conditions.builtin.BlockStatePropertyCondition;
 import com.epherical.professions.profession.conditions.builtin.InvertedCondition;
 import com.epherical.professions.profession.conditions.builtin.ToolMatcher;
 import com.google.common.collect.Lists;
@@ -69,6 +70,59 @@ public class ActionConditionFormats {
                     }),
                     new StringEntry<BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Property", "", Optional.of("property"), (o, entry) -> {
                         entry.setValue(o.property());
+                    })
+            );
+        });
+    });
+
+    public static final FormatBuilder<BlockStatePropertyCondition> BS_PROPERTY_CONDITION = register(formatID(ACTION_CONDITION_KEY, "block_state_matches"), condition -> {
+        return new RegularFormat<>((embed, y, width) -> {
+            int indent = 8;
+            return Lists.newArrayList(
+                    new StringEntry<BlockStatePropertyCondition>(embed, y, width, "block", "", (o, entry) -> entry.setValue(Registry.BLOCK.getKey(o.getBlock()).toString())),
+                    new DynamicCompoundEntry<BlockStatePropertyCondition, MultipleTypeEntry<StatePropertiesPredicate.PropertyMatcher>>(embed, y, width, Optional.of("properties"), Lists.newArrayList(
+
+                    ), (o, entry) -> {
+                        StatePropertiesPredicateAccess access = (StatePropertiesPredicateAccess) o.getPredicate();
+                        for (StatePropertiesPredicate.PropertyMatcher property : access.getProperties()) {
+                            MultipleTypeEntry<StatePropertiesPredicate.PropertyMatcher> entry1 = entry.createEntry();
+                            if (property instanceof StatePropertiesPredicate.RangedPropertyMatcher) {
+                                entry1.setValue(1); // change to the MultipleTypeEntry that handles objects, as defined below
+                                entry1.currentSelection().setSerializationKey(Optional.of(property.getName()));
+                            } else if (property instanceof StatePropertiesPredicate.ExactPropertyMatcher) {
+                                entry1.setValue(0);
+                            }
+                            entry1.deserialize(property);
+                            entry.addEntry(entry1);
+                        }
+                    }, (x1, y1, wid) -> {
+                        return new MultipleTypeEntry<>(x1, y1, wid, new DatapackEntry[]{
+                                new DoubleEditBoxEntry<StatePropertiesPredicate.PropertyMatcher>(x1, y1, wid, "prop", "", Optional.empty(), (propertyMatcher, entry) -> {
+                                    JsonElement element = propertyMatcher.toJson();
+                                    if (element.isJsonPrimitive()) { // it should always be a primitive, only ExactPropertyMatchers should go here
+                                        entry.setValue(element.getAsString());
+                                    }
+                                    entry.setKeyValue(propertyMatcher.getName());
+                                }),
+                                new CompoundEntry<StatePropertiesPredicate.PropertyMatcher>(x1, y1, wid, 23, Optional.empty(), Lists.newArrayList(
+                                        new StringEntry<>(x1 + indent, y, wid - indent, "min", "", (o, entry) -> {
+                                            RangedPropertyMatcherAccess access = (RangedPropertyMatcherAccess) o;
+                                            if (access.getMinValue() != null) {
+                                                entry.setValue(access.getMinValue());
+                                            }
+                                        }),
+                                        new StringEntry<>(x1 + indent, y, wid - indent, "max", "", (o, entry) -> {
+                                            RangedPropertyMatcherAccess access = (RangedPropertyMatcherAccess) o;
+                                            if (access.getMaxValue() != null) {
+                                                entry.setValue(access.getMaxValue());
+                                            }
+                                        })
+                                ), (o, entry) -> {
+                                    for (DatapackEntry<StatePropertiesPredicate.PropertyMatcher, ?> entryEntry : entry.getEntries()) {
+                                        entryEntry.deserialize(o);
+                                    }
+                                })
+                        }, DatapackEntry.Type.REMOVE);
                     })
             );
         });

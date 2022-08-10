@@ -9,6 +9,7 @@ import com.epherical.professions.client.entry.NumberEntry;
 import com.epherical.professions.client.entry.StringEntry;
 import com.epherical.professions.client.format.Format;
 import com.epherical.professions.client.format.FormatBuilder;
+import com.epherical.professions.client.format.FormatEntryBuilder;
 import com.epherical.professions.client.format.RegularFormat;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
@@ -30,7 +31,6 @@ import net.minecraft.world.level.storage.loot.Serializer;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.util.List;
 import java.util.UUID;
 
 public record PaymentReward(double amount, @Nullable Currency currency) implements Reward {
@@ -129,21 +129,18 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
 
         @Override
         public Format<PaymentReward> deserializeToFormat(PaymentReward paymentReward) {
-            RegularFormat<PaymentReward> format = new RegularFormat<>((embed, y, width) -> List.of(
-                    new NumberEntry<Double, PaymentReward>(embed, y, width, "amount", 1.0, (reward, entry) -> {
+            return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<PaymentReward>()
+                    .addEntry(new NumberEntry<>(embed, y, width, "amount", 1.0, (reward, entry) -> {
                         entry.setValue(String.valueOf(reward.amount));
-                    }),
-                    new StringEntry<PaymentReward>(embed, y, width, "currency", ProfessionConfig.overriddenCurrencyID,
+                    }))
+                    .addEntry(new StringEntry<>(embed, y, width, "currency", ProfessionConfig.overriddenCurrencyID,
                             (reward, entry) -> {
                                 if (reward.currency != null) {
                                     entry.setValue(reward.currency.getIdentity());
                                 } else {
                                     entry.setValue("eights_economy:dollars");
                                 }
-                            })
-            ));
-
-            return format;
+                            })));
         }
     }
 }

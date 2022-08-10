@@ -39,7 +39,7 @@ public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, Compo
         children.add(registryEntry);
         FormatBuilder<OBJ> format = FormatRegistry.grabBuilder(entry.getRegistry(), value);
         if (format != null) {
-            children.addAll(format.buildDefaultFormat().entries().apply(embed, y, screenWidth));
+            children.addAll(format.buildDefaultFormat().entries().apply(embed, y, screenWidth).build());
         }
     }
 
@@ -51,7 +51,7 @@ public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, Compo
             children.add(entry);
             FormatBuilder<OBJ> format = FormatRegistry.grabBuilder(entry.getRegistry(), value);
             if (format != null) {
-                children.addAll(format.buildDefaultFormat().entries().apply(embeddedDistance, y, screenWidth));
+                children.addAll(format.buildDefaultFormat().entries().apply(embeddedDistance, y, screenWidth).build());
             }
 
         }
@@ -69,7 +69,7 @@ public class CompoundAwareEntry<OBJ, T> extends AbstractCompoundEntry<OBJ, Compo
         children.add(entry);
         FormatBuilder<OBJ> format = FormatRegistry.grabBuilder(entry.getRegistry(), value);
         if (format != null) {
-            for (DatapackEntry<OBJ, ?> entry : format.deserializeToFormat(object).entries().apply(embeddedDistance, y, screenWidth)) {
+            for (DatapackEntry<OBJ, ?> entry : format.deserializeToFormat(object).entries().apply(embeddedDistance, y, screenWidth).build()) {
                 entry.deserialize(object);
                 children.add(entry);
             }

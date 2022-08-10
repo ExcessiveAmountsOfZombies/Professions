@@ -13,7 +13,6 @@ import com.epherical.professions.mixin.accessor.ItemPredicateAccess;
 import com.epherical.professions.mixin.accessor.RangedPropertyMatcherAccess;
 import com.epherical.professions.mixin.accessor.StatePropertiesPredicateAccess;
 import com.epherical.professions.profession.conditions.ActionCondition;
-import com.epherical.professions.profession.conditions.ActionConditionType;
 import com.epherical.professions.profession.conditions.ActionConditions;
 import com.epherical.professions.profession.conditions.builtin.BlockStateIntegerRangeCondition;
 import com.epherical.professions.profession.conditions.builtin.BlockStatePropertyAnyCondition;
@@ -40,8 +39,8 @@ public class ActionConditionFormats {
 
     public static final FormatBuilder<ActionCondition> INVERTED_CONDITION = register(formatID(ACTION_CONDITION_KEY, "inverted"), condition ->
             new RegularFormat<>((embed, y, width) -> {
-                return Lists.newArrayList(
-                        new CompoundAwareEntry<ActionCondition, ActionConditionType>(embed, y, width, embed + 8, width - 8, ACTION_CONDITION_KEY,
+                return new FormatEntryBuilder<ActionCondition>()
+                        .addEntry(new CompoundAwareEntry<>(embed, y, width, embed + 8, width - 8, ACTION_CONDITION_KEY,
                                 new RegistryEntry<>(embed + 8, y, width - 8, ACTION_CONDITION_TYPE, ActionConditions.TOOL_MATCHES, Optional.of("condition"),
                                         (con, entry) -> {
                                             entry.setValue(con.getType());
@@ -61,26 +60,25 @@ public class ActionConditionFormats {
     public static final FormatBuilder<BlockStateIntegerRangeCondition> BS_INTEGER_RANGE_CONDITION = register(formatID(ACTION_CONDITION_KEY, "blockstate_int_range"), condition -> {
         return new RegularFormat<>((embed, y, width) -> {
             int indent = 8;
-            return Lists.newArrayList(
-                    new NumberEntry<Integer, BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Min Range", Optional.of("min"), (o, entry) -> {
+            return new FormatEntryBuilder<BlockStateIntegerRangeCondition>()
+                    .addEntry(new NumberEntry<Integer, BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Min Range", Optional.of("min"), (o, entry) -> {
                         entry.setValue(String.valueOf(o.min()));
-                    }),
-                    new NumberEntry<Integer, BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Max Range", Optional.of("max"), (o, entry) -> {
+                    }))
+                    .addEntry(new NumberEntry<Integer, BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Max Range", Optional.of("max"), (o, entry) -> {
                         entry.setValue(String.valueOf(o.max()));
-                    }),
-                    new StringEntry<BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Property", "", Optional.of("property"), (o, entry) -> {
+                    }))
+                    .addEntry(new StringEntry<BlockStateIntegerRangeCondition>(embed + indent, y, width - indent, "Property", "", Optional.of("property"), (o, entry) -> {
                         entry.setValue(o.property());
-                    })
-            );
+                    }));
         });
     });
 
     public static final FormatBuilder<BlockStatePropertyCondition> BS_PROPERTY_CONDITION = register(formatID(ACTION_CONDITION_KEY, "block_state_matches"), condition -> {
         return new RegularFormat<>((embed, y, width) -> {
             int indent = 8;
-            return Lists.newArrayList(
-                    new StringEntry<BlockStatePropertyCondition>(embed, y, width, "block", "", (o, entry) -> entry.setValue(Registry.BLOCK.getKey(o.getBlock()).toString())),
-                    new DynamicCompoundEntry<BlockStatePropertyCondition, MultipleTypeEntry<StatePropertiesPredicate.PropertyMatcher>>(embed, y, width, Optional.of("properties"), Lists.newArrayList(
+            return new FormatEntryBuilder<BlockStatePropertyCondition>()
+                    .addEntry(new StringEntry<>(embed, y, width, "block", "", (o, entry) -> entry.setValue(Registry.BLOCK.getKey(o.getBlock()).toString())))
+                    .addEntry(new DynamicCompoundEntry<BlockStatePropertyCondition, MultipleTypeEntry<StatePropertiesPredicate.PropertyMatcher>>(embed, y, width, Optional.of("properties"), Lists.newArrayList(
 
                     ), (o, entry) -> {
                         StatePropertiesPredicateAccess access = (StatePropertiesPredicateAccess) o.getPredicate();
@@ -123,16 +121,15 @@ public class ActionConditionFormats {
                                     }
                                 })
                         }, DatapackEntry.Type.REMOVE);
-                    })
-            );
+                    }));
         });
     });
 
     public static final FormatBuilder<BlockStatePropertyAnyCondition> BS_ANY_PROPERTY_CONDITION = register(formatID(ACTION_CONDITION_KEY, "block_state_matches_any"), condition -> {
         return new RegularFormat<>((embed, y, width) -> {
             int indent = 8;
-            return Lists.newArrayList(
-                    new DynamicCompoundEntry<BlockStatePropertyAnyCondition, MultipleTypeEntry<StatePropertiesPredicate.PropertyMatcher>>(embed, y, width, Optional.of("properties"), Lists.newArrayList(
+            return new FormatEntryBuilder<BlockStatePropertyAnyCondition>()
+                    .addEntry(new DynamicCompoundEntry<BlockStatePropertyAnyCondition, MultipleTypeEntry<StatePropertiesPredicate.PropertyMatcher>>(embed, y, width, Optional.of("properties"), Lists.newArrayList(
 
                     ), (o, entry) -> {
                         StatePropertiesPredicateAccess access = (StatePropertiesPredicateAccess) o.getPredicate();
@@ -175,8 +172,7 @@ public class ActionConditionFormats {
                                     }
                                 })
                         }, DatapackEntry.Type.REMOVE);
-                    })
-            );
+                    }));
         });
     });
 
@@ -184,8 +180,8 @@ public class ActionConditionFormats {
             new RegularFormat<>((embed, y, width) -> {
                 int indent = 8;
                 int countIndent = 16;
-                return Lists.newArrayList(
-                        new CompoundEntry<ToolMatcher>(embed, y, width, Optional.of("predicate"), Lists.newArrayList(
+                return new FormatEntryBuilder<ToolMatcher>()
+                        .addEntry(new CompoundEntry<ToolMatcher>(embed, y, width, Optional.of("predicate"), Lists.newArrayList(
                                 FormatRegistry.arrayItemString(embed + indent, y, width - indent, "items", (o, entry) -> {
                                     ItemPredicateAccess access = (ItemPredicateAccess) o.predicate();
                                     Set<Item> items = access.getItems();
@@ -306,19 +302,10 @@ public class ActionConditionFormats {
                             for (DatapackEntry<ToolMatcher, ?> entryEntry : entry.getEntries()) {
                                 entryEntry.deserialize(o);
                             }
-                        })
-                );
+                        }));
             })
     );
 
     static void init() {
-    }
-
-    private static void deserialize(ActionCondition con, CompoundAwareEntry<ActionCondition, ActionConditionType> entry) {
-        System.out.println("whats heppening");
-        for (DatapackEntry<ActionCondition, ?> entryEntry : entry.getEntries()) {
-            System.out.println("we're dying");
-            entryEntry.deserialize(con);
-        }
     }
 }

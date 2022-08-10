@@ -9,6 +9,7 @@ import com.epherical.professions.client.entry.NumberEntry;
 import com.epherical.professions.client.entry.RegistryEntry;
 import com.epherical.professions.client.entry.StringEntry;
 import com.epherical.professions.mixin.accessor.EnchantmentPredicateAccess;
+import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.action.builtin.blocks.BlockAbstractAction;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
@@ -60,67 +61,13 @@ public class FormatRegistry {
     public static final ResourceKey<Registry<FormatBuilder<?>>> BUILDER_KEY = ResourceKey.createRegistryKey(Constants.modID("builder"));
     public static final Registry<FormatBuilder<?>> BUILDERS = new MappedRegistry<>(BUILDER_KEY, Lifecycle.experimental(), null);
 
-    public static final FormatBuilder<OccupationExperience> FB_OC_EXP = register(formatID(REWARD_KEY, "occupation_exp"), occupationExperience ->
-            new RegularFormat<>((embed, y, width) -> Lists.newArrayList(
-                    new NumberEntry<Double, OccupationExperience>(embed, y, width, "amount", 1.0, (o, entry) -> {
-                        entry.setValue(String.valueOf(o.expAmount()));
-                    })
-            )));
-    public static final FormatBuilder<ItemReward> FB_ITEM_REWARD = register(formatID(REWARD_KEY, "item"), reward ->
-            new RegularFormat<>((embed, y, width) -> Lists.newArrayList(
-                    new NumberEntry<Integer, ItemReward>(embed, y, width, "count", 1, (itemReward, entry) -> {
-                        entry.setValue(String.valueOf(itemReward.count()));
-                    }),
-                    new StringEntry<ItemReward>(embed, y, width, "item", "minecraft:stone_sword", (itemReward, entry) -> {
-                        entry.setValue(Registry.ITEM.getKey(itemReward.item()).toString());
-                    })
-            )));
-    public static final FormatBuilder<BlockDropUnlock> FB_BLOCK_DROP_UNLOCK = register(formatID(UNLOCK_KEY, "block_drop"), blockDropUnlock ->
-            new RegularFormat<>((embed, y, width) -> Lists.newArrayList(arrayBlockString(embed, y, width, "blocks",
-                            (o, entry) -> {
-                                for (ActionEntry<Block> block : o.getBlocks()) {
-                                    for (String s : block.serializeString(Registry.BLOCK)) {
-                                        StringEntry<String> entry1 = entry.createEntry();
-                                        entry1.deserialize(s);
-                                        entry.addEntry(entry1);
-                                    }
-                                }
-                            }, BlockDropUnlock.class),
-                    new NumberEntry<Integer, BlockDropUnlock>(embed, y, width, "level", 1, (o, entry) -> {
-                        entry.setValue(String.valueOf(o.getUnlockLevel()));
-                    })
-            )));
-    public static final FormatBuilder<BlockBreakUnlock> FB_BLOCK_BREAK_UNLOCK = register(formatID(UNLOCK_KEY, "block_break"), blockBreakUnlock ->
-            new RegularFormat<>((embed, y, width) -> Lists.newArrayList(arrayBlockString(embed, y, width, "blocks",
-                            (o, entry) -> {
-                                for (ActionEntry<Block> block : o.getBlocks()) {
-                                    for (String s : block.serializeString(Registry.BLOCK)) {
-                                        StringEntry<String> entry1 = entry.createEntry();
-                                        entry1.deserialize(s);
-                                        entry.addEntry(entry1);
-                                    }
-                                }
-                            }, BlockBreakUnlock.class),
-                    new NumberEntry<Integer, BlockBreakUnlock>(embed, y, width, "level", 1, (o, entry) -> {
-                        entry.setValue(String.valueOf(o.getUnlockLevel()));
-                    })
-            )));
+    public static final FormatBuilder<OccupationExperience> FB_OC_EXP = register(formatID(REWARD_KEY, "occupation_exp"), new RewardFormats.OccupationExp());
+    public static final FormatBuilder<ItemReward> FB_ITEM_REWARD = register(formatID(REWARD_KEY, "item"), new RewardFormats.Item());
 
-    public static final FormatBuilder<ToolUnlock> FB_TOOL_UNLOCK = register(formatID(UNLOCK_KEY, "tool_unlock"), toolUnlock ->
-            new RegularFormat<>((embed, y, width) -> Lists.newArrayList(arrayItemString(embed, y, width, "items",
-                            (o, entry) -> {
-                                for (ActionEntry<Item> block : o.getItems()) {
-                                    for (String s : block.serializeString(Registry.ITEM)) {
-                                        StringEntry<String> entry1 = entry.createEntry();
-                                        entry1.deserialize(s);
-                                        entry.addEntry(entry1);
-                                    }
-                                }
-                            }, ToolUnlock.class),
-                    new NumberEntry<Integer, ToolUnlock>(embed, y, width, "level", 1, (o, entry) -> {
-                        entry.setValue(String.valueOf(o.getUnlockLevel()));
-                    })
-            )));
+    public static final FormatBuilder<BlockDropUnlock> FB_BLOCK_DROP_UNLOCK = register(formatID(UNLOCK_KEY, "block_drop"), new UnlockFormats.BlockDrop());
+    public static final FormatBuilder<BlockBreakUnlock> FB_BLOCK_BREAK_UNLOCK = register(formatID(UNLOCK_KEY, "block_break"), new UnlockFormats.BlockBreak());
+    public static final FormatBuilder<ToolUnlock> FB_TOOL_UNLOCK = register(formatID(UNLOCK_KEY, "tool_unlock"), new UnlockFormats.Tool());
+
 
     public static final FormatBuilder<BreakBlockAction> FB_BREAK_BLOCK = register(formatID(ACTION_TYPE_KEY, "break_block"), breakBlockAction ->
             createBlockFormat(BreakBlockAction.class));
@@ -151,8 +98,8 @@ public class FormatRegistry {
 
 
     public static <T extends BlockAbstractAction> Format<T> createBlockFormat(Class<T> clazz) {
-        return new RegularFormat<>((embed, y, width) -> Lists.newArrayList(
-                arrayBlockString(embed, y, width, "blocks", (o, entry) -> {
+        return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<T>()
+                .addEntry(arrayBlockString(embed, y, width, "blocks", (o, entry) -> {
                     for (ActionEntry<Block> block : o.getBlocks()) {
                         for (String s : block.serializeString(Registry.BLOCK)) {
                             StringEntry<String> entry1 = entry.createEntry();
@@ -160,37 +107,13 @@ public class FormatRegistry {
                             entry.addEntry(entry1);
                         }
                     }
-                }, clazz),
-                new ArrayEntry<T, CompoundAwareEntry<Reward, RewardType>>(embed, y, width, "rewards", (x1, y2, wid) -> {
-                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, REWARD_KEY,
-                            new RegistryEntry<>(x1, y, wid, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
-                                    (reward, entry) -> entry.setValue(reward.getType()), DatapackEntry.Type.REMOVE),
-                            (reward, entry) -> entry.getEntry().deserialize(reward));
-                }, (o, entry) -> {
-                    for (Reward reward : o.getRewards()) {
-                        CompoundAwareEntry<Reward, RewardType> entry1 = entry.createEntry();
-                        entry1.deserialize(reward);
-                        entry.addEntry(entry1);
-                    }
-                }),
-                new ArrayEntry<T, CompoundAwareEntry<ActionCondition, ActionConditionType>>(embed, y, width, "conditions", (x1, y2, wid) -> {
-                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, ACTION_CONDITION_KEY,
-                            new RegistryEntry<>(x1, y, wid, ACTION_CONDITION_TYPE, ActionConditions.TOOL_MATCHES, Optional.of("condition"),
-                                    (con, entry) -> entry.setValue(con.getType()), DatapackEntry.Type.REMOVE),
-                            (con, entry) -> entry.getEntry().deserialize(con));
-                }, (o, entry) -> {
-                    for (ActionCondition condition : o.getConditions()) {
-                        CompoundAwareEntry<ActionCondition, ActionConditionType> entry1 = entry.createEntry();
-                        entry1.deserialize(condition);
-                        entry.addEntry(entry1);
-                    }
-                })
-        ));
+                }, clazz))
+                .addEntry(commonActionEntries(embed, y, width)));
     }
 
     public static <T extends AbstractEntityAction> Format<T> createEntityAction(Class<T> clazz) {
-        return new RegularFormat<>((embed, y, width) -> Lists.newArrayList(
-                arrayBlockString(embed, y, width, "entities", (o, entry) -> {
+        return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<T>()
+                .addEntry(arrayBlockString(embed, y, width, "entities", (o, entry) -> {
                     for (ActionEntry<EntityType<?>> block : o.getEntities()) {
                         for (String s : block.serializeString(Registry.ENTITY_TYPE)) {
                             StringEntry<String> entry1 = entry.createEntry();
@@ -198,37 +121,13 @@ public class FormatRegistry {
                             entry.addEntry(entry1);
                         }
                     }
-                }, clazz),
-                new ArrayEntry<T, CompoundAwareEntry<Reward, RewardType>>(embed, y, width, "rewards", (x1, y2, wid) -> {
-                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, REWARD_KEY,
-                            new RegistryEntry<>(x1, y, wid, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
-                                    (reward, entry) -> entry.setValue(reward.getType()), DatapackEntry.Type.REMOVE),
-                            (reward, entry) -> entry.getEntry().deserialize(reward));
-                }, (o, entry) -> {
-                    for (Reward reward : o.getRewards()) {
-                        CompoundAwareEntry<Reward, RewardType> entry1 = entry.createEntry();
-                        entry1.deserialize(reward);
-                        entry.addEntry(entry1);
-                    }
-                }),
-                new ArrayEntry<T, CompoundAwareEntry<ActionCondition, ActionConditionType>>(embed, y, width, "conditions", (x1, y2, wid) -> {
-                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, ACTION_CONDITION_KEY,
-                            new RegistryEntry<>(x1, y, wid, ACTION_CONDITION_TYPE, ActionConditions.TOOL_MATCHES, Optional.of("condition"),
-                                    (con, entry) -> entry.setValue(con.getType()), DatapackEntry.Type.REMOVE),
-                            (con, entry) -> entry.getEntry().deserialize(con));
-                }, (o, entry) -> {
-                    for (ActionCondition condition : o.getConditions()) {
-                        CompoundAwareEntry<ActionCondition, ActionConditionType> entry1 = entry.createEntry();
-                        entry1.deserialize(condition);
-                        entry.addEntry(entry1);
-                    }
-                })
-        ));
+                }, clazz))
+                .addEntry(commonActionEntries(embed, y, width)));
     }
 
     public static <T extends AbstractItemAction> Format<T> createItemAction(Class<T> clazz) {
-        return new RegularFormat<>((embed, y, width) -> Lists.newArrayList(
-                arrayBlockString(embed, y, width, "items", (o, entry) -> {
+        return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<T>()
+                .addEntry(arrayBlockString(embed, y, width, "items", (o, entry) -> {
                     for (ActionEntry<Item> item : o.getItems()) {
                         for (String s : item.serializeString(Registry.ITEM)) {
                             StringEntry<String> entry1 = entry.createEntry();
@@ -236,49 +135,23 @@ public class FormatRegistry {
                             entry.addEntry(entry1);
                         }
                     }
-                }, clazz),
-                // todo; remove duplicated code
-                new ArrayEntry<T, CompoundAwareEntry<Reward, RewardType>>(embed, y, width, "rewards", (x1, y2, wid) -> {
-                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, REWARD_KEY,
-                            new RegistryEntry<>(x1, y, wid, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
-                                    (reward, entry) -> entry.setValue(reward.getType()), DatapackEntry.Type.REMOVE),
-                            (reward, entry) -> entry.getEntry().deserialize(reward));
-                }, (o, entry) -> {
-                    for (Reward reward : o.getRewards()) {
-                        CompoundAwareEntry<Reward, RewardType> entry1 = entry.createEntry();
-                        entry1.deserialize(reward);
-                        entry.addEntry(entry1);
-                    }
-                }),
-                new ArrayEntry<T, CompoundAwareEntry<ActionCondition, ActionConditionType>>(embed, y, width, "conditions", (x1, y2, wid) -> {
-                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, ACTION_CONDITION_KEY,
-                            new RegistryEntry<>(x1, y, wid, ACTION_CONDITION_TYPE, ActionConditions.TOOL_MATCHES, Optional.of("condition"),
-                                    (con, entry) -> entry.setValue(con.getType()), DatapackEntry.Type.REMOVE),
-                            (con, entry) -> entry.getEntry().deserialize(con));
-                }, (o, entry) -> {
-                    for (ActionCondition condition : o.getConditions()) {
-                        CompoundAwareEntry<ActionCondition, ActionConditionType> entry1 = entry.createEntry();
-                        entry1.deserialize(condition);
-                        entry.addEntry(entry1);
-                    }
-                })
-        ));
+                }, clazz))
+                .addEntry(commonActionEntries(embed, y, width)));
     }
 
     public static final FormatBuilder<EnchantAction> ENCHANT_ITEM_FORMAT = register(formatID(ACTION_TYPE_KEY, "enchant"), action ->
             new RegularFormat<>(((embed, y, width) -> {
-                List<DatapackEntry<EnchantAction, ?>> copy = createItemAction(EnchantAction.class).entries().apply(embed, y, width);
-                copy.addAll(List.of(
-                        createEnchantArrayEntry(embed, y, width, "enchants", (o1, entry) -> {
-                            for (EnchantmentContainer enchantment : o1.getEnchantments()) {
-                                StringEntry<String> entry1 = entry.createEntry();
-                                String key = Registry.ENCHANTMENT.getKey(enchantment.enchantment()).toString() + "#" + enchantment.level();
-                                entry1.setValue(key);
-                                entry.addEntry(entry1);
-                            }
-                        }, EnchantAction.class)
-                ));
-                return copy;
+                FormatEntryBuilder<EnchantAction> builder = new FormatEntryBuilder<>();
+                builder.addEntry(createItemAction(EnchantAction.class).entries().apply(embed, y, width).build());
+                builder.addEntry(createEnchantArrayEntry(embed, y, width, "enchants", (o1, entry) -> {
+                    for (EnchantmentContainer enchantment : o1.getEnchantments()) {
+                        StringEntry<String> entry1 = entry.createEntry();
+                        String key = Registry.ENCHANTMENT.getKey(enchantment.enchantment()).toString() + "#" + enchantment.level();
+                        entry1.setValue(key);
+                        entry.addEntry(entry1);
+                    }
+                }, EnchantAction.class));
+                return builder;
             })));
 
 
@@ -312,8 +185,8 @@ public class FormatRegistry {
         ActionConditionFormats.init();
     }
 
-    private static <T> ArrayEntry<T, StringEntry<String>> arrayBlockString(int x, int y, int width, String usage,
-                                                                           DatapackEntry.Deserializer<T, ArrayEntry<T, StringEntry<String>>> deserializer, Class<T> genericHelp) {
+    public static <T> ArrayEntry<T, StringEntry<String>> arrayBlockString(int x, int y, int width, String usage,
+                                                                          DatapackEntry.Deserializer<T, ArrayEntry<T, StringEntry<String>>> deserializer, Class<T> genericHelp) {
         return new ArrayEntry<>(x, y, width, usage, (x1, y2, wid) -> {
             return new StringEntry<>(x1, y2, wid, "blocks", "minecraft:stone", Optional.of("blocks"), (s, entry) -> {
                 entry.setValue(s);
@@ -383,26 +256,32 @@ public class FormatRegistry {
         }, deserializer);
     }
 
-    /*private static Format<Action> createItemFormat(ResourceLocation modID, List<TriFunction<Integer, Integer, Integer, DatapackEntry>> entries) {
-        return register(modID, new RegularFormat<>((embed, y, width) -> {
-            List<DatapackEntry> copy = entries.stream().map(function -> function.apply(embed, y, width)).collect(Collectors.toList());
-            copy.addAll(List.of(
-                    createItemArrayEntry(embed, y, width, "items").addDeserializer((itemActionEntry, entry) -> {
-                        for (JsonElement element : itemActionEntry.serialize(Registry.ITEM)) {
-                            if (element instanceof JsonPrimitive primitive) {
-                                StringEntry<ActionEntry<Item>> entry1 = entry.createEntry();
-                                entry1.setValue(primitive.getAsString());
-                                entry.addEntry(entry1);
-                            }
-                        }
-                    }),
-                    createRewardArray(embed, y, width, "rewards"),
-                    createConditionArray(embed, y, width, "conditions")
-            ));
-            return copy;
-        }, action -> {
-            AbstractAction abstractAction = (AbstractAction) action;
-        }));
-    }*/
+    public static <T extends AbstractAction> List<DatapackEntry<T, ?>> commonActionEntries(int embed, int y, int width) {
+        return Lists.newArrayList(
+                new ArrayEntry<T, CompoundAwareEntry<Reward, RewardType>>(embed, y, width, "rewards", (x1, y2, wid) -> {
+                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, REWARD_KEY,
+                            new RegistryEntry<>(x1, y, wid, REWARDS, Rewards.EXPERIENCE_REWARD, Optional.of("reward"),
+                                    (reward, entry) -> entry.setValue(reward.getType()), DatapackEntry.Type.REMOVE),
+                            (reward, entry) -> entry.getEntry().deserialize(reward));
+                }, (o, entry) -> {
+                    for (Reward reward : o.getRewards()) {
+                        CompoundAwareEntry<Reward, RewardType> entry1 = entry.createEntry();
+                        entry1.deserialize(reward);
+                        entry.addEntry(entry1);
+                    }
+                }),
+                new ArrayEntry<T, CompoundAwareEntry<ActionCondition, ActionConditionType>>(embed, y, width, "conditions", (x1, y2, wid) -> {
+                    return new CompoundAwareEntry<>(embed, y, width, x1, wid, ACTION_CONDITION_KEY,
+                            new RegistryEntry<>(x1, y, wid, ACTION_CONDITION_TYPE, ActionConditions.TOOL_MATCHES, Optional.of("condition"),
+                                    (con, entry) -> entry.setValue(con.getType()), DatapackEntry.Type.REMOVE),
+                            (con, entry) -> entry.getEntry().deserialize(con));
+                }, (o, entry) -> {
+                    for (ActionCondition condition : o.getConditions()) {
+                        CompoundAwareEntry<ActionCondition, ActionConditionType> entry1 = entry.createEntry();
+                        entry1.deserialize(condition);
+                        entry.addEntry(entry1);
+                    }
+                }));
+    }
 
 }

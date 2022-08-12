@@ -66,13 +66,13 @@ public class MenuScreen extends Screen {
 
     static {
         DATAPACK_EDITORS.put(Constants.modID("profession_editor"), new EditorContainer<>("Professions", true, ProfessionEditor::new));
-        DATAPACK_EDITORS.put(new ResourceLocation("minecraft", "loot_table"), new EditorContainer<>("Loot Tables", false, ProfessionEditor::new));
+       /* DATAPACK_EDITORS.put(new ResourceLocation("minecraft", "loot_table"), new EditorContainer<>("Loot Tables", false, ProfessionEditor::new));
         DATAPACK_EDITORS.put(new ResourceLocation("minecraft", "advancement"), new EditorContainer<>("Advancements", false, ProfessionEditor::new));
         DATAPACK_EDITORS.put(new ResourceLocation("minecraft", "block_tag"), new EditorContainer<>("Block Tags", false, ProfessionEditor::new));
         DATAPACK_EDITORS.put(new ResourceLocation("minecraft", "item_tag"), new EditorContainer<>("Item Tags", false, ProfessionEditor::new));
         DATAPACK_EDITORS.put(new ResourceLocation("minecraft", "entity_tags"), new EditorContainer<>("Entity Tags", false, ProfessionEditor::new));
         DATAPACK_EDITORS.put(new ResourceLocation("minecraft", "recipe"), new EditorContainer<>("Recipes", false, ProfessionEditor::new));
-        DATAPACK_EDITORS.put(new ResourceLocation("minecraft", "biome"), new EditorContainer<>("Biomes", false, ProfessionEditor::new));
+        DATAPACK_EDITORS.put(new ResourceLocation("minecraft", "biome"), new EditorContainer<>("Biomes", false, ProfessionEditor::new));*/
     }
 
 

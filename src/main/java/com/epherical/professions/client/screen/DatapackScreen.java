@@ -1,13 +1,10 @@
 package com.epherical.professions.client.screen;
 
-import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.client.FileBox;
 import com.epherical.professions.client.SaveSideBar;
 import com.epherical.professions.client.SaveSidebarWidget;
 import com.epherical.professions.client.editors.DatapackEditor;
 import com.epherical.professions.client.entry.DatapackEntry;
-import com.epherical.professions.datapack.AbstractProfessionLoader;
-import com.google.gson.JsonObject;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -21,17 +18,17 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.slf4j.Logger;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
-public class DatapackScreen extends CommonDataScreen {
+public class DatapackScreen extends CommonDataScreen implements Cloneable {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -52,15 +49,23 @@ public class DatapackScreen extends CommonDataScreen {
     private SaveSideBar component;
     private final List<Widget> specialRenders = new ArrayList<>();
 
+    private String fileName = "Untitled";
+
     public DatapackScreen(DatapackEditor<?> editor) {
         super(Component.nullToEmpty(""));
         datapackEditor = editor;
+    }
+
+    private DatapackScreen(DatapackEditor<?> editor, String fileName) {
+        this(editor);
+        this.fileName = fileName;
     }
 
 
     @Override
     protected void init() {
         super.init();
+        sidebarWidgetOpen = false;
 
         saveSidebarWidget = new SaveSidebarWidget(0, 20, 10, 20, button -> {
             sidebarWidgetOpen = !sidebarWidgetOpen;
@@ -78,6 +83,7 @@ public class DatapackScreen extends CommonDataScreen {
                     }
                     this.specialRenders.add(child);
                 }
+                addWidget(component.getWidget());
             } else {
                 saveSidebarWidget.x = 0;
                 component.x = -(width / 3);
@@ -87,24 +93,44 @@ public class DatapackScreen extends CommonDataScreen {
         component = new SaveSideBar(-(width / 3), 0, width / 3, height,
                 new FileBox((this.width - 300) / 2, (this.height - 100) / 2, 300, 100,
                         button -> {
-                            JsonObject object = new JsonObject();
-
-                            String data = "data/" + component.getFileBox().getNamespace().getValue()
-                                    + "/professions/occupations/";
-                            datapackEditor.serialize(object);
-                            try {
-                                // todo; we'll clean ths up
-                                Files.createDirectories(CommonPlatform.platform.getRootConfigPath().resolve("professions/" + data));
-                                Files.writeString(CommonPlatform.platform.getRootConfigPath().resolve("professions/" + data +
-                                        "/" + component.getFileBox().getOccupationName().getValue() + ".json"), AbstractProfessionLoader.serialize(object));
-                            } catch (IOException e) {
-                                LOGGER.warn("FILE ALREADY EXISTS", e);
+                            if (fileName.equalsIgnoreCase("Untitled")) {
+                                ResourceLocation location = new ResourceLocation(component.getFileBox().getNamespace().getValue()
+                                        .toLowerCase(Locale.ROOT)
+                                        .trim()
+                                        .replaceAll(" ", ""), component.getFileBox().getPath().getValue()
+                                        .toLowerCase(Locale.ROOT)
+                                        .trim()
+                                        .replaceAll(" ", ""));
+                                fileName = location.toString();
+                                try {
+                                    component.addEntry(location, this.clone(), datapackEditor);
+                                } catch (CloneNotSupportedException e) {
+                                    e.printStackTrace();
+                                }
+                                saveSidebarWidget.x = 0;
+                                component.x = -(width / 3);
+                                rebuildScreen();
+                                sidebarWidgetOpen = false;
+                            } else {
+                                ResourceLocation newName = new ResourceLocation(component.getFileBox().getNamespace().getValue()
+                                        .toLowerCase(Locale.ROOT)
+                                        .trim()
+                                        .replaceAll(" ", ""), component.getFileBox().getPath().getValue()
+                                        .toLowerCase(Locale.ROOT)
+                                        .trim()
+                                        .replaceAll(" ", ""));
+                                component.rename(fileName, datapackEditor, newName);
+                                fileName = newName.toString();
                             }
-                        }, button -> {
-                    saveSidebarWidget.x = 0;
-                    component.x = -(width / 3);
-                    rebuildScreen();
-                }));
+                        },
+                        button -> {
+                            saveSidebarWidget.x = 0;
+                            component.x = -(width / 3);
+                            rebuildScreen();
+                            sidebarWidgetOpen = false;
+                        }
+                )
+        );
 
         this.addChild(saveSidebarWidget);
 
@@ -234,6 +260,9 @@ public class DatapackScreen extends CommonDataScreen {
 
 
         RenderSystem.disableScissor();
+        String editing = "Currently Editing: " + fileName;
+        int txtWidth = font.width(editing);
+        drawString(poseStack, font, editing, this.width - txtWidth - 10, height - 10, 0xFFFFFF);
 
         saveSidebarWidget.render(poseStack, mouseX, mouseY, partialTick);
         //component.render(poseStack, mouseX, mouseY, partialTick);
@@ -243,9 +272,15 @@ public class DatapackScreen extends CommonDataScreen {
             specialRender.render(poseStack, mouseX, mouseY, partialTick);
             poseStack.popPose();
         }
+        if (sidebarWidgetOpen) {
+            component.getWidget().render(poseStack, mouseX, mouseY, partialTick);
+        }
 
         renderScrollBar();
+    }
 
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     @Override
@@ -411,5 +446,8 @@ public class DatapackScreen extends CommonDataScreen {
         this.narratables.add(index, widget);
     }
 
-
+    @Override
+    protected DatapackScreen clone() throws CloneNotSupportedException {
+        return new DatapackScreen(datapackEditor, fileName);
+    }
 }

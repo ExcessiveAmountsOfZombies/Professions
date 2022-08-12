@@ -32,7 +32,7 @@ public class EditChoiceScreen<T> extends Screen {
         int boxWidth = this.width / 3;
 
         DatapackEditor<T> apply = (DatapackEditor<T>) container.getCreator().apply(ofx, width);
-        List<BoxSelectionWidget.Entry> boxEntries = new ArrayList<>();
+        List<BoxSelectionWidget.AbstractEntry> boxEntries = new ArrayList<>();
         for (Button deserializableObjectButton : apply.deserializableObjectButtons(apply)) {
             deserializableObjectButton.setWidth(boxWidth - 2);
             boxEntries.add(new BoxSelectionWidget.Entry(deserializableObjectButton));

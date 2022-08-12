@@ -32,7 +32,8 @@ public class FileBox extends Box {
         super.render(stack, mouseX, mouseY, partialTick);
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        font.drawShadow(stack, "data/<namespace>/professions/occupations/<name>.json", x + 5, y + 20, 0xFFFFFF);
+        font.drawShadow(stack, "Namespace", x + 5, y + 20, 0xFFFFFF);
+        font.drawShadow(stack, "Name", x + 120, y + 20, 0xFFFFFF);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class FileBox extends Box {
         return namespace;
     }
 
-    public EditBox getOccupationName() {
+    public EditBox getPath() {
         return occupationName;
     }
 }

@@ -148,4 +148,14 @@ public class ProfessionEditor extends DatapackEditor<Profession> {
         unlocks.deserialize(object);
     }
 
+    @Override
+    public String datapackType() {
+        return "Occupation";
+    }
+
+    @Override
+    public String savePath() {
+        return "data/%s/professions/occupations/%s";
+    }
+
 }

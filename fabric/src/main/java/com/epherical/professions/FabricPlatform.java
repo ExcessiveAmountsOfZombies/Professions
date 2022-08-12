@@ -105,7 +105,7 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
 
     @Override
     public Path getRootConfigPath() {
-        return FabricLoader.getInstance().getConfigDir();
+        return FabricLoader.getInstance().getConfigDir().resolve("professions");
     }
 
     @Override

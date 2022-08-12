@@ -31,6 +31,14 @@ public abstract class DatapackEditor<T> {
 
     public abstract void deserialize(T object);
 
+    public abstract String datapackType();
+
+    /**
+     * @return a {@link String#format(String, Object...) formattable} string that accepts two parameters, a namespace, and a path
+     * from {@link net.minecraft.resources.ResourceLocation}
+     */
+    public abstract String savePath();
+
     public void deserialize() {
         if (objectToBeDeserialized != null) {
             deserialize(objectToBeDeserialized);

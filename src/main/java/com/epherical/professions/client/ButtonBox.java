@@ -13,15 +13,24 @@ import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 
-public class ButtonBox extends Box implements GuiEventListener, NarratableEntry {
+public class ButtonBox<T extends ButtonBox<T>> extends Box implements GuiEventListener, NarratableEntry {
 
     private final String message;
-    private final ButtonPress<ButtonBox> box;
+    private final ButtonPress<T> box;
 
-    public ButtonBox(int x, int y, int width, int height, String message, ButtonPress<ButtonBox> box) {
+    private final float msgScale;
+    private int yOffset;
+
+    public ButtonBox(int x, int y, int width, int height, String message, ButtonPress<T> box) {
+        this(x, y, width, height, 3f, 0, message, box);
+    }
+
+    public ButtonBox(int x, int y, int width, int height, float msgScale, int yOffset, String message, ButtonPress<T> box) {
         super(x, y, width, height);
         this.message = message;
         this.box = box;
+        this.yOffset = yOffset;
+        this.msgScale = msgScale;
     }
 
     @Override
@@ -37,7 +46,7 @@ public class ButtonBox extends Box implements GuiEventListener, NarratableEntry 
         super.render(stack, mouseX, mouseY, partialTick);
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        MenuScreen.drawScaledTextCentered(stack, font, message, ((x + width) - width / 2), (y + height / 2 - 12), 0xFFFFFF, 3f);
+        MenuScreen.drawScaledTextCentered(stack, font, getMessage(), ((x + width) - width / 2), (y + height / 2 - 12) + yOffset, 0xFFFFFF, msgScale);
     }
 
     @Override
@@ -50,12 +59,16 @@ public class ButtonBox extends Box implements GuiEventListener, NarratableEntry 
         if (button == 0) {
             boolean mouseOver = isMouseOver(mouseX, mouseY);
             if (mouseOver) {
-                this.box.onPress(this);
+                this.box.onPress((T) this);
                 this.playDownSound(Minecraft.getInstance().getSoundManager());
                 return true;
             }
         }
         return false;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     @Override

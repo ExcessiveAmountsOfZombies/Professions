@@ -26,7 +26,7 @@ public class EditorsBox extends Box {
         widget = new BoxSelectionWidget(Minecraft.getInstance(), width, height - 20, 42, height + 4, 20);
         widget.setLeftPos(x);
 
-        List<BoxSelectionWidget.Entry> entries = new ArrayList<>();
+        List<BoxSelectionWidget.AbstractEntry> entries = new ArrayList<>();
 
         int yOffset = 46;
         for (EditorContainer<?> o : containerStream.toList()) {
@@ -38,7 +38,7 @@ public class EditorsBox extends Box {
         widget.addEntries(entries);
     }
 
-    public EditorsBox(int x, int y, int width, int height, String header, List<BoxSelectionWidget.Entry> entries) {
+    public EditorsBox(int x, int y, int width, int height, String header, List<BoxSelectionWidget.AbstractEntry> entries) {
         super(x,y, width, height);
         this.header = header;
         widget = new BoxSelectionWidget(Minecraft.getInstance(), width, height - 20, 42, height + 4, 20);

@@ -100,6 +100,10 @@ public class BlockDropUnlock implements Unlock<Block> {
         return realBlocks;
     }
 
+    public List<ActionEntry<Block>> getBlocks() {
+        return blocks;
+    }
+
     public static Builder builder() {
         return new Builder();
     }

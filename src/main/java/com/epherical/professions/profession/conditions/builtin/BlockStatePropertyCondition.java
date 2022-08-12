@@ -45,6 +45,14 @@ public class BlockStatePropertyCondition implements ActionCondition {
         return state != null && state.is(this.block) && this.predicate.matches(state);
     }
 
+    public Block getBlock() {
+        return block;
+    }
+
+    public StatePropertiesPredicate getPredicate() {
+        return predicate;
+    }
+
     public static Builder checkProperties(Block block) {
         return new Builder(block);
     }

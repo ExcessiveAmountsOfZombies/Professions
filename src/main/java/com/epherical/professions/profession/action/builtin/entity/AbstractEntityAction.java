@@ -17,7 +17,6 @@ import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -86,6 +85,10 @@ public abstract class AbstractEntityAction extends AbstractAction {
             }
         }
         return realEntities;
+    }
+
+    public List<ActionEntry<EntityType<?>>> getEntities() {
+        return entities;
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {

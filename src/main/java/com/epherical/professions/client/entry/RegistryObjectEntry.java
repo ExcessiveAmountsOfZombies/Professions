@@ -8,13 +8,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.resources.ResourceKey;
 
-public class RegistryObjectEntry<T> extends DatapackEntry {
+public class RegistryObjectEntry<V, T> extends DatapackEntry<V, RegistryObjectEntry<V, T>> {
 
     private final ResourceKey<T> key;
     private final T object;
-    private final RegistryEntry.ClickRegistryObjectEntry<T> click;
+    private final RegistryEntry.ClickRegistryObjectEntry<V, T> click;
 
-    public RegistryObjectEntry(int i, int j, int k, ResourceKey<T> key, T object, RegistryEntry.ClickRegistryObjectEntry<T> entry) {
+    public RegistryObjectEntry(int i, int j, int k, ResourceKey<T> key, T object, RegistryEntry.ClickRegistryObjectEntry<V, T> entry) {
         super(i, j, k);
         this.key = key;
         this.object = object;
@@ -45,6 +45,11 @@ public class RegistryObjectEntry<T> extends DatapackEntry {
     @Override
     public JsonElement getSerializedValue() {
         return JsonNull.INSTANCE;
+    }
+
+    @Override
+    public void deserialize(V object) {
+
     }
 
     public T getObject() {

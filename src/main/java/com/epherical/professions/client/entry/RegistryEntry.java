@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RegistryEntry<T> extends DatapackEntry {
+public class RegistryEntry<DE, T> extends DatapackEntry<DE, RegistryEntry<DE, T>> {
 
     private final Minecraft minecraft = Minecraft.getInstance();
 
@@ -27,14 +27,18 @@ public class RegistryEntry<T> extends DatapackEntry {
     private Component tooltip;
     private final SmallIconButton button;
 
-    private boolean added = false;
-    private List<RegistryObjectEntry<T>> registryEntries = new ArrayList<>();
+    private final Deserializer<DE, RegistryEntry<DE, T>> deserializer;
 
-    public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue, Optional<String> serializationKey, Type... types) {
+    private boolean added = false;
+    private List<RegistryObjectEntry<DE, T>> registryEntries = new ArrayList<>();
+
+    public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue, Optional<String> serializationKey,
+                         Deserializer<DE, RegistryEntry<DE, T>> deserializer, Type... types) {
         super(x, y, width, serializationKey, types);
         this.value = defaultValue;
         this.tooltip = new TextComponent(registry.getKey(defaultValue).toString());
         this.registry = registry;
+        this.deserializer = deserializer;
 
         int start = width - 25;
         this.button = new SmallIconButton(x + start, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.DROP_DOWN_OPEN, smallButton -> {
@@ -48,8 +52,8 @@ public class RegistryEntry<T> extends DatapackEntry {
         children.add(button);
     }
 
-    public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue) {
-        this(x, y, width, registry, defaultValue, Optional.empty());
+    public RegistryEntry(int x, int y, int width, Registry<T> registry, T defaultValue, Deserializer<DE, RegistryEntry<DE, T>> deserializer) {
+        this(x, y, width, registry, defaultValue, Optional.empty(), deserializer);
     }
 
     @Override
@@ -58,7 +62,7 @@ public class RegistryEntry<T> extends DatapackEntry {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         font.drawShadow(poseStack, "Type:", x + 3 + getXScroll(), y + 8 + getYScroll(), 0xFFFFFF);
-        drawCenteredString(poseStack, font, tooltip, (this.width / 2) + getXScroll(), (y + 8) + getYScroll(), TEXT_COLOR);
+        drawCenteredString(poseStack, font, tooltip, (x + this.width / 2) + getXScroll(), (y + 8) + getYScroll(), TEXT_COLOR);
         if (isHoveredOrFocused()) {
             renderToolTip(poseStack, mouseX, mouseY, tooltip);
         }
@@ -79,6 +83,11 @@ public class RegistryEntry<T> extends DatapackEntry {
     }
 
     @Override
+    public void deserialize(DE object) {
+        deserializer.deserialize(object, this);
+    }
+
+    @Override
     public void tick(CommonDataScreen screen) {
         super.tick(screen);
         if (button.isOpened() && !added) {
@@ -95,9 +104,9 @@ public class RegistryEntry<T> extends DatapackEntry {
         screen.addChild(this);
 
         if (button.isOpened() && !added) {
-            List<RegistryObjectEntry<T>> objects = new ArrayList<>();
+            List<RegistryObjectEntry<DE, T>> objects = new ArrayList<>();
             for (Map.Entry<ResourceKey<T>, T> entry : registry.entrySet()) {
-                RegistryObjectEntry<T> objectEntry = new RegistryObjectEntry<>(x + 7, y + 23, 160, entry.getKey(), entry.getValue(), (object) -> {
+                RegistryObjectEntry<DE, T> objectEntry = new RegistryObjectEntry<>(x + 7, y + 23, 160, entry.getKey(), entry.getValue(), (object) -> {
                     this.value = object.getObject();
                     this.tooltip = new TextComponent(registry.getKey(this.value).toString());
                     this.button.icon = CommandButton.SmallIcon.DROP_DOWN_OPEN;
@@ -119,6 +128,15 @@ public class RegistryEntry<T> extends DatapackEntry {
         return "String";
     }
 
+    private void update() {
+        this.tooltip = new TextComponent(registry.getKey(this.value).toString());
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+        update();
+    }
+
 
     public T getValue() {
         return value;
@@ -134,7 +152,7 @@ public class RegistryEntry<T> extends DatapackEntry {
         button.y = y + 2 + yScroll;
     }
 
-    public interface ClickRegistryObjectEntry<T> {
-        void action(RegistryObjectEntry<T> entry);
+    public interface ClickRegistryObjectEntry<V,T> {
+        void action(RegistryObjectEntry<V, T> entry);
     }
 }

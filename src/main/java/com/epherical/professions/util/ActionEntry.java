@@ -42,6 +42,14 @@ public class ActionEntry<T> {
         return array;
     }
 
+    public List<String> serializeString(Registry<T> registry) {
+        List<String> array = new ArrayList<>();
+        for (Value<T> actionValue : actionValues) {
+            array.add(actionValue.serializable(registry));
+        }
+        return array;
+    }
+
     private void pullValues(Registry<T> registry) {
         if (this.values == null) {
             this.values = Arrays.stream(actionValues)

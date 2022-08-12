@@ -103,6 +103,14 @@ public abstract class AbstractAction implements Action {
         return mainComponent;
     }
 
+    public ActionCondition[] getConditions() {
+        return conditions;
+    }
+
+    public Reward[] getRewards() {
+        return rewards;
+    }
+
     public abstract static class ActionSerializer<T extends AbstractAction> implements Serializer<T> {
 
         @Override

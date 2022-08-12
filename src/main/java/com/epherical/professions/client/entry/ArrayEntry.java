@@ -5,19 +5,22 @@ import com.epherical.professions.client.screen.CommonDataScreen;
 import com.epherical.professions.client.widgets.CommandButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
+import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
-public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
+public class ArrayEntry<OBJ, T extends DatapackEntry<?, ?>> extends DatapackEntry<OBJ, ArrayEntry<OBJ, T>> {
 
+    private final Deserializer<OBJ, ArrayEntry<OBJ, T>> deserializer;
+    private final TriFunction<Integer, Integer, Integer, T> addObject;
     protected List<T> objects = new ArrayList<>();
     protected SmallIconButton addButton;
     protected SmallIconButton removeButton;
@@ -25,28 +28,13 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
 
     protected boolean needsRefresh;
 
-    public ArrayEntry(int x, int y, int width, String usage, BiFunction<Integer, Integer, T> addObject) {
+    public ArrayEntry(int x, int y, int width, String usage, TriFunction<Integer, Integer, Integer, T> addObject, Deserializer<OBJ, ArrayEntry<OBJ, T>> deserializer) {
         super(x, y, width, Optional.of(usage));
         this.usage = usage;
+        this.addObject = addObject;
+        this.deserializer = deserializer;
         addButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.ADD, button -> {
-            T t = addEntry(addObject.apply(x, this.y + 2));
-            t.addListener(button1 -> {
-                if (button1.getType() == Type.REMOVE) {
-                    objects.remove(t);
-                    needsRefresh = true;
-                }
-            });
-            for (AbstractWidget child : t.children) {
-                if (child instanceof DatapackEntry entry) {
-                    entry.addListener(button1 -> {
-                        if (button1.getType() == Type.REMOVE) {
-                            objects.remove(t);
-                            needsRefresh = true;
-                        }
-                    });
-                }
-            }
-            needsRefresh = true;
+            addEntryToBeginning(createEntry());
         });
        /* removeButton = new SmallIconButton(x, y + 2, 16, 16, Component.nullToEmpty(""), CommandButton.SmallIcon.BAD, button -> {
             // todo; dropdown and add little x to all entries. clicking again will remove them
@@ -67,6 +55,42 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         }
     }
 
+    public T createEntry() {
+        int indent = 20;
+        return addObject.apply(x + indent, this.y + 2, width - (indent * 2));
+    }
+
+    public void addEntryToBeginning(T object) {
+        objects.add(0, object);
+        initEntry(object);
+    }
+
+    public void addEntry(T object) {
+        objects.add(object);
+        initEntry(object);
+    }
+
+    private void initEntry(T object) {
+        object.initPosition(this.x, this.y);
+        object.addListener(button1 -> {
+            if (button1.getType() == Type.REMOVE) {
+                objects.remove(object);
+                needsRefresh = true;
+            }
+        });
+        for (AbstractWidget child : object.children) {
+            if (child instanceof DatapackEntry entry) {
+                entry.addListener(button1 -> {
+                    if (button1.getType() == Type.REMOVE) {
+                        objects.remove(object);
+                        needsRefresh = true;
+                    }
+                });
+            }
+        }
+        needsRefresh = true;
+    }
+
     @Override
     public void onRebuild(CommonDataScreen screen) {
         rebuildTinyButtons(screen);
@@ -84,12 +108,6 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
         setButtonPositions(0, 0);
     }
 
-    public T addEntry(T entry) {
-        objects.add(0, entry);
-        entry.initPosition(this.x, this.y);
-        return entry;
-    }
-
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         super.render(poseStack, mouseX, mouseY, partialTick);
@@ -102,11 +120,20 @@ public class ArrayEntry<T extends DatapackEntry> extends DatapackEntry {
     @Override
     public JsonElement getSerializedValue() {
         JsonArray array = new JsonArray();
-        for (T object : objects) {
-            array.add(object.getSerializedValue());
+        if (objects.size() > 0) {
+            for (T object : objects) {
+                array.add(object.getSerializedValue());
+            }
+        } else {
+            return JsonNull.INSTANCE;
         }
 
         return array;
+    }
+
+    @Override
+    public void deserialize(OBJ object) {
+        deserializer.deserialize(object, this);
     }
 
     private void setButtonPositions(int xScroll, int yScroll) {

@@ -2,7 +2,6 @@ package com.epherical.professions;
 
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClientForge;
-import com.epherical.professions.client.screen.CommonDataScreen;
 import com.epherical.professions.datapack.CommonProfessionLoader;
 import com.epherical.professions.networking.ClientNetworking;
 import com.epherical.professions.networking.CommandButtons;
@@ -19,9 +18,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 public class ForgePlatform extends CommonPlatform<ForgePlatform> {
@@ -106,14 +107,14 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
     }
 
     @Override
+    public Path getRootConfigPath() {
+        return FMLPaths.CONFIGDIR.get();
+    }
+
+    @Override
     public Component displayInformation(AbstractAction action, Map<RewardType, Component> map) {
         return new TranslatableComponent(" (%s | %s)",
                 map.get(Rewards.EXPERIENCE_REWARD),
                 action.extraRewardInformation(map));
-    }
-
-    @Override
-    public CommonDataScreen createScreen() {
-        return ProfessionsClientForge.createScreen();
     }
 }

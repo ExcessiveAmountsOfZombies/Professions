@@ -103,6 +103,14 @@ public class Profession {
         return unlocks;
     }
 
+    public Parser getExperienceScalingEquation() {
+        return experienceScalingEquation;
+    }
+
+    public Parser getIncomeScalingEquation() {
+        return incomeScalingEquation;
+    }
+
     @Nullable
     public Collection<Action> getActions(ActionType type) {
         return actions.get(type);
@@ -177,8 +185,7 @@ public class Profession {
 
     /**
      * Only call on the CLIENT
-     *
-     * @return
+     * @return a List of professions from the network
      */
     public static List<Profession> fromNetwork(FriendlyByteBuf buf) {
         int size = buf.readVarInt();
@@ -264,9 +271,8 @@ public class Profession {
             }
             Map<UnlockType<?>, Collection<Unlock<?>>> map = new HashMap<>();
             if (buffer.readBoolean()) {
-                map = buffer.readMap(buf -> {
-                    return RegistryConstants.UNLOCKS.get(buf.readResourceLocation());
-                }, buf -> {
+                map = buffer.readMap(buf ->
+                        RegistryConstants.UNLOCKS.get(buf.readResourceLocation()), buf -> {
                     int size = buf.readVarInt();
                     Collection<Unlock<?>> unlocks = new ArrayList<>();
                     for (int i = 0; i < size; i++) {

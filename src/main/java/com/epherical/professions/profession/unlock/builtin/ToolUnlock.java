@@ -80,6 +80,10 @@ public class ToolUnlock implements Unlock<Item> {
         return real;
     }
 
+    public List<ActionEntry<Item>> getItems() {
+        return items;
+    }
+
     public static Builder builder() {
         return new Builder();
     }

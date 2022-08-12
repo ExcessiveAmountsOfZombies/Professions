@@ -10,7 +10,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 
-public class TagEntry<T> extends DatapackEntry {
+public class TagEntry<V, T> extends DatapackEntry<V, TagEntry<V, T>> {
 
 
     //private CommandSuggestions suggestions;
@@ -50,6 +50,11 @@ public class TagEntry<T> extends DatapackEntry {
     @Override
     public JsonElement getSerializedValue() {
         return new JsonPrimitive(registry.getKey(value).toString());
+    }
+
+    @Override
+    public void deserialize(V object) {
+
     }
 
     @Override

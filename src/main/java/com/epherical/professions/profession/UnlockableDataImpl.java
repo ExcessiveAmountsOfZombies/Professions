@@ -4,7 +4,6 @@ import com.epherical.professions.api.UnlockableData;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
-import com.epherical.professions.util.Tristate;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,29 +37,6 @@ public class UnlockableDataImpl implements UnlockableData {
     @Override
     public <T> UnlockableValues<Unlock.Singular<T>> getUnlock(T object) {
         return (UnlockableValues<Unlock.Singular<T>>)(UnlockableValues<?>) unlocks.get(object);
-    }
-
-    @Override
-    public <T> Tristate canUse(T object) {
-        // NO NO NO NO NO
-        UnlockableValues<Unlock.Singular<T>> values = getUnlock(object);
-        if (values == null || values.isEmpty()) {
-            return Tristate.UNKNOWN;
-        }
-        for (Unlock.Singular<T> singular : values.getValues()) {
-            if (!singular.isLocked(object, occupation.getLevel()).valid()) {
-                return Tristate.FALSE;
-            }
-        }
-        return Tristate.TRUE;
-    }
-
-    @Override
-    public <T> Tristate canUse(Unlock.Singular<T> unlock, T object) {
-        if (unlock == null) {
-            return Tristate.UNKNOWN;
-        }
-        return unlock.isLocked(object, occupation.getLevel());
     }
 
     @Override

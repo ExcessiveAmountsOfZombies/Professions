@@ -1,6 +1,7 @@
 package com.epherical.professions.profession.unlock;
 
 import com.epherical.professions.RegistryConstants;
+import com.epherical.professions.profession.unlock.builtin.AdvancementUnlock;
 import com.epherical.professions.profession.unlock.builtin.BlockBreakUnlock;
 import com.epherical.professions.profession.unlock.builtin.BlockDropUnlock;
 import com.epherical.professions.profession.unlock.builtin.ToolUnlock;
@@ -17,6 +18,7 @@ public class Unlocks {
     public static final UnlockType<Block> BLOCK_DROP_UNLOCK = register(modID("block_drop"), new BlockDropUnlock.JsonSerializer(), Block.class, "professions.tooltip.unlock.drop_req");
     public static final UnlockType<Block> BLOCK_BREAK_UNLOCK = register(modID("block_break"), new BlockBreakUnlock.JsonSerializer(), Block.class, "professions.tooltip.unlock.break_req");
     public static final UnlockType<Item> TOOL_UNLOCK = register(modID("tool_unlock"), new ToolUnlock.JsonSerializer(), Item.class, "professions.tooltip.unlock.tool_use_req");
+    public static final UnlockType<Item> ADVANCEMENT_UNLOCK = register(modID("need_advancement"), new AdvancementUnlock.JsonSerializer(), Item.class, "professions.tooltip.unlock.advancement_req");
 
 
     public static Object createGsonAdapter() {

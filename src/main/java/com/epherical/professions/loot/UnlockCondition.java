@@ -9,13 +9,11 @@ import com.epherical.professions.profession.unlock.Unlocks;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -67,9 +65,7 @@ public class UnlockCondition implements LootItemCondition {
                     if (!singular.canUse(player)) {
                         canDropBlock = false;
                         error.append("\n");
-                        error.append(new TranslatableComponent("%s %s",
-                                singular.getProfessionDisplay(),
-                                new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))));
+                        error.append(singular.createUnlockComponent());
                     }
                 }
             }

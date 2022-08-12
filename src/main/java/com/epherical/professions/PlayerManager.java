@@ -176,7 +176,7 @@ public class PlayerManager {
         // TODO: size limit
         occupation.getData().getUnlockables()
                 .stream()
-                .filter(singular -> singular.getUnlockLevel() > oldLevel && singular.getUnlockLevel() <= occupation.getLevel())
+                .filter(singular -> singular.canUse(player))
                 .forEach(singular -> components.add(singular.createUnlockComponent()));
         if (components.size() > 0) {
             MutableComponent megaComponent = new TranslatableComponent("professions.level_up.rewards").append("\n").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));

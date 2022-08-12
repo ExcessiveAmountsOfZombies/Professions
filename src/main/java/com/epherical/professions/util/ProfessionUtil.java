@@ -1,13 +1,10 @@
 package com.epherical.professions.util;
 
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.api.UnlockableData;
 import com.epherical.professions.config.ProfessionConfig;
-import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -15,9 +12,11 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
+import java.util.Set;
 
 public class ProfessionUtil {
 
@@ -44,6 +43,14 @@ public class ProfessionUtil {
         UnlockErrorHelper helper = new UnlockErrorHelper(new TextComponent("=-=-=-= Level Requirements =-=-=-="));
         List<Unlock.Singular<Block>> unlocks = player.getLockedKnowledge(Unlocks.BLOCK_BREAK_UNLOCK, block);
         for (Unlock.Singular<Block> singular : unlocks) {
+            if (!singular.canUse(player)) {
+                helper.newLine();
+                helper.levelRequirementNotMet(singular);
+                canBreak = false;
+            }
+        }
+        List<Unlock.Singular<Item>> itemUnlocks = player.getLockedKnowledge(block.asItem(), Set.of(Unlocks.ADVANCEMENT_UNLOCK));
+        for (Unlock.Singular<Item> singular : itemUnlocks) {
             if (!singular.canUse(player)) {
                 helper.newLine();
                 helper.levelRequirementNotMet(singular);

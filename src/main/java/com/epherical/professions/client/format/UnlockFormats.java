@@ -32,7 +32,7 @@ public class UnlockFormats {
                                 }
                             }, BlockDropUnlock.class))
                     .addEntry(new NumberEntry<>(embed, y, width, "level", 1, (o, entry) -> {
-                        entry.setValue(String.valueOf(o.getUnlockLevel()));
+                        entry.setValue(String.valueOf(o.getLevel()));
                     })));
         }
     }
@@ -53,7 +53,7 @@ public class UnlockFormats {
                                 }
                             }, BlockBreakUnlock.class))
                     .addEntry(new NumberEntry<>(embed, y, width, "level", 1, (o, entry) -> {
-                        entry.setValue(String.valueOf(o.getUnlockLevel()));
+                        entry.setValue(String.valueOf(o.getLevel()));
                     })));
         }
     }
@@ -74,7 +74,7 @@ public class UnlockFormats {
                                 }
                             }, ToolUnlock.class))
                     .addEntry(new NumberEntry<>(embed, y, width, "level", 1, (o, entry) -> {
-                        entry.setValue(String.valueOf(o.getUnlockLevel()));
+                        entry.setValue(String.valueOf(o.getLevel()));
                     })));
         }
     }

@@ -4,14 +4,11 @@ import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.MenuScreen;
 import com.epherical.professions.client.screen.OccupationScreen;
-import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -77,20 +74,20 @@ public class CommonClient {
             List<Unlock.Singular<Block>> list = pPlayer.getLockedKnowledge(blockItem.getBlock());
             for (Unlock.Singular<Block> singular : list) {
                 if (!singular.canUse(pPlayer)) {
-                    comps.add(new TranslatableComponent(singular.getType().getTranslationKey(),
-                                    singular.getProfessionDisplay(),
-                                    new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
+                    comps.add(singular.createUnlockComponent());
+                }
+            }
+            List<Unlock.Singular<Item>> itemList = pPlayer.getLockedKnowledge(blockItem);
+            for (Unlock.Singular<Item> singular : itemList) {
+                if (!singular.canUse(pPlayer)) {
+                    comps.add(singular.createUnlockComponent());
                 }
             }
         } else {
             List<Unlock.Singular<Item>> list = pPlayer.getLockedKnowledge(item);
             for (Unlock.Singular<Item> singular : list) {
                 if (!singular.canUse(pPlayer)) {
-                    comps.add(new TranslatableComponent(singular.getType().getTranslationKey(),
-                                    singular.getProfessionDisplay(),
-                                    new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
+                    comps.add(singular.createUnlockComponent());
                 }
             }
         }

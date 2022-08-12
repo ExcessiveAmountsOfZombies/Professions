@@ -2,7 +2,6 @@ package com.epherical.professions.profession.progression;
 
 import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.api.UnlockableData;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.profession.Profession;
@@ -13,8 +12,6 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.util.ActionLogger;
-import com.epherical.professions.util.ProfessionUtil;
-import com.epherical.professions.util.Tristate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonDeserializationContext;
@@ -33,8 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     private UUID uuid;
@@ -167,28 +164,16 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     }
 
     @Override
-    // passing the unlockType but not doing anything with it might be silly, but it lets us enforce typed data.
-    // so other people coding know what they're sending/need to send
-    public <T> UnlockableData getUnlockableData(UnlockType<T> unlockType, T object) {
-        for (Occupation activeOccupation : getActiveOccupations()) {
-            if (activeOccupation.getData().canUse(object) != Tristate.UNKNOWN) {
-                return activeOccupation.getData();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public <T> List<Unlock.Singular<T>> getLockedKnowledge(UnlockType<T> unlockType, T object) {
+    public <T> List<Unlock.Singular<T>> getLockedKnowledge(T object, Set<UnlockType<T>> unlockTypes) {
         List<Unlock.Singular<T>> unlocks = new ArrayList<>();
         for (Occupation active : getActiveOccupations()) {
             UnlockableValues<Unlock.Singular<T>> unlock = active.getData().getUnlock(object);
             if (unlock != null) {
                 unlocks.addAll(unlock.getValues().stream().filter(singular -> {
-                    if (unlockType == null) {
+                    if (unlockTypes == null) {
                         return true;
                     }
-                    return singular.getType().equals(unlockType);
+                    return unlockTypes.contains(singular.getType());
                 }).toList());
             }
         }
@@ -196,8 +181,13 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     }
 
     @Override
+    public <T> List<Unlock.Singular<T>> getLockedKnowledge(UnlockType<T> unlockType, T object) {
+        return getLockedKnowledge(object, Set.of(unlockType));
+    }
+
+    @Override
     public <T> List<Unlock.Singular<T>> getLockedKnowledge(T object) {
-        return getLockedKnowledge(null, object);
+        return getLockedKnowledge(object, null);
     }
 
     private List<Occupation> getOccupations(boolean active) {

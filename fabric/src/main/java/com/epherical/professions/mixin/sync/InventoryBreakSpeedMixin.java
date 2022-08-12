@@ -4,8 +4,6 @@ import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
-import com.epherical.professions.util.ProfessionUtil;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Set;
 
 @Mixin(Inventory.class)
 public abstract class InventoryBreakSpeedMixin {
@@ -43,7 +42,7 @@ public abstract class InventoryBreakSpeedMixin {
             return;
         }
         ItemStack item = this.items.get(this.selected);
-        List<Unlock.Singular<Item>> lockedKnowledge = player.getLockedKnowledge(Unlocks.TOOL_UNLOCK, item.getItem());
+        List<Unlock.Singular<Item>> lockedKnowledge = player.getLockedKnowledge(item.getItem(), Set.of(Unlocks.TOOL_UNLOCK, Unlocks.ADVANCEMENT_UNLOCK));
         for (Unlock.Singular<Item> singular : lockedKnowledge) {
             if (!singular.canUse(player)) {
                 cir.setReturnValue(item.getDestroySpeed(state) * 0.0027F);

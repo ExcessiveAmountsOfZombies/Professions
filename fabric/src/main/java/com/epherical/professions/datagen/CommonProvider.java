@@ -3,17 +3,19 @@ package com.epherical.professions.datagen;
 import com.epherical.professions.Constants;
 import com.epherical.professions.profession.editor.Append;
 import com.epherical.professions.profession.unlock.Unlocks;
+import com.epherical.professions.profession.unlock.builtin.AdvancementUnlock;
 import com.epherical.professions.profession.unlock.builtin.BlockBreakUnlock;
 import com.epherical.professions.profession.unlock.builtin.BlockDropUnlock;
 import com.epherical.professions.profession.unlock.builtin.ToolUnlock;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
-import static com.epherical.professions.profession.unlock.Unlocks.BLOCK_BREAK_UNLOCK;
-import static com.epherical.professions.profession.unlock.Unlocks.BLOCK_DROP_UNLOCK;
+import static com.epherical.professions.profession.unlock.Unlocks.*;
 
 public abstract class CommonProvider {
 
@@ -21,6 +23,9 @@ public abstract class CommonProvider {
 
     public Append.Builder createMiningAppender() {
         return Append.Builder.appender(Constants.modID("mining"))
+                .addUnlock(ADVANCEMENT_UNLOCK, AdvancementUnlock.builder()
+                        .id(new ResourceLocation("minecraft:adventure/adventuring_time"))
+                        .tag(ItemTags.EMERALD_ORES))
                 .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
                         .level(2)
                         .tag(BlockTags.TERRACOTTA))

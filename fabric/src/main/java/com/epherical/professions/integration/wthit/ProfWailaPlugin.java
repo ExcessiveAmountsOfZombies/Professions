@@ -48,7 +48,7 @@ public class ProfWailaPlugin implements IWailaPlugin, IBlockComponentProvider, I
                 tooltip.addLine(new TextComponent("❌ ").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors))
                         .append(new TranslatableComponent(blockSingular.getType().getTranslationKey(),
                                 blockSingular.getProfessionDisplay(),
-                                new TextComponent(String.valueOf(blockSingular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                blockSingular.createUnlockComponent())
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))));
             }
         }

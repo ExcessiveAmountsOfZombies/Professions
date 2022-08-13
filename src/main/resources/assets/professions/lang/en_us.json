@@ -71,6 +71,7 @@
   "professions.tooltip.unlock.drop_req": "%s drops at lvl %s.",
   "professions.tooltip.unlock.break_req": "%s can be broken at lvl %s.",
   "professions.tooltip.unlock.tool_use_req": "%s unlocks at lvl %s.",
+  "professions.tooltip.unlock.advancement_req": "Requires achieving %s",
 
   "ftbquests.task.professions.profession": "Profession",
   "ftbquests.task.professions.profession.profession": "Profession Key",

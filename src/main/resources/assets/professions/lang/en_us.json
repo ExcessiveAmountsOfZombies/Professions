@@ -12,6 +12,7 @@
   "professions.action.type.breed": "Breed",
   "professions.action.type.tame": "Tame",
   "professions.action.type.villager_trade": "Villager Trade",
+  "professions.action.type.explore_biome": "Explore",
 
   "professions.command.join.error.does_not_exist": "Profession does not exist.",
   "professions.command.join.error.no_permission": "You do not have permission to join this profession.",

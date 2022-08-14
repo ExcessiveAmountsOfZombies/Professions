@@ -4,13 +4,67 @@
   "descriptionColor": "#FFFFFF",
   "description": [
     "Earn money and experience",
-    "by hunting animals and killing monsters."
+    "by hunting animals, killing monsters, and exploring"
   ],
   "displayName": "Hunting",
   "maxLevel": 100,
   "experienceSclEquation": "1000*1.064^(lvl-1)",
   "incomeSclEquation": "base",
   "actions": [
+    {
+      "action": "professions:explore_biome",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 3.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 6.0
+        }
+      ],
+      "biomes": [
+        "#c:in_overworld"
+      ]
+    },
+    {
+      "action": "professions:explore_biome",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 8.0
+        }
+      ],
+      "biomes": [
+        "#c:in_nether"
+      ]
+    },
+    {
+      "action": "professions:explore_biome",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 9.2
+        }
+      ],
+      "biomes": [
+        "#c:in_the_end"
+      ]
+    },
     {
       "action": "professions:kill_entity",
       "conditions": [],

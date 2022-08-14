@@ -10,6 +10,7 @@ import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.rewards.RewardType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
@@ -33,6 +34,8 @@ public abstract class CommonPlatform<T> {
     public abstract boolean isClientEnvironment();
 
     public abstract boolean isServerEnvironment();
+
+    public abstract MinecraftServer server();
 
     public abstract boolean checkPermission(Player player, String perm, int defIntPerm);
 

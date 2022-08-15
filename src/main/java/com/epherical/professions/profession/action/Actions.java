@@ -2,6 +2,7 @@ package com.epherical.professions.profession.action;
 
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.profession.action.builtin.ExploreBiomeAction;
+import com.epherical.professions.profession.action.builtin.ExploreStructureAction;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
@@ -40,6 +41,7 @@ public class Actions {
     public static final ActionType TAME_ENTITY = register(modID("tame"), new TameAction.Serializer(), "professions.action.type.tame");
     public static final ActionType VILLAGER_TRADE = register(modID("villager_trade"), new TradeAction.Serializer(), "professions.action.type.villager_trade");
     public static final ActionType EXPLORE_BIOME = register(modID("explore_biome"), new ExploreBiomeAction.Serializer(), "professions.action.type.explore_biome");
+    public static final ActionType EXPLORE_STRUCT = register(modID("explore_struct"), new ExploreStructureAction.Serializer(), "professions.action.type.explore_structure");
 
 
     public static Object createGsonAdapter() {

@@ -53,7 +53,7 @@
       "rewards": [
         {
           "reward": "professions:payment",
-          "amount": 4.0,
+          "amount": 5.0,
           "currency": "eights_economy:dollars"
         },
         {

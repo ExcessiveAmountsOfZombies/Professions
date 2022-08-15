@@ -26,7 +26,7 @@
         }
       ],
       "biomes": [
-        "#c:in_overworld"
+        "#forge:is_overworld"
       ]
     },
     {
@@ -44,7 +44,10 @@
         }
       ],
       "biomes": [
-        "#c:in_nether"
+        "#forge:is_hot/nether",
+        "#forge:is_cold/nether",
+        "#forge:is_dense/nether",
+        "#forge:is_nether"
       ]
     },
     {
@@ -53,7 +56,7 @@
       "rewards": [
         {
           "reward": "professions:payment",
-          "amount": 4.0,
+          "amount": 5.0,
           "currency": "eights_economy:dollars"
         },
         {
@@ -62,7 +65,7 @@
         }
       ],
       "biomes": [
-        "#c:in_the_end"
+        "#forge:is_end"
       ]
     },
     {

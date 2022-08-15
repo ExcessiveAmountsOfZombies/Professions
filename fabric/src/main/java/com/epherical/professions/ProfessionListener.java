@@ -14,9 +14,11 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class ProfessionListener {
@@ -64,6 +66,17 @@ public class ProfessionListener {
                     if (RewardHandler.handleReward(builder)) {
                         component.addPlayerToChunk(uuid);
                         access.setUnsaved(true);
+                    }
+                    Set<ConfiguredStructureFeature<?, ?>> configuredStructureFeatures = player.getLevel().structureFeatureManager().getAllStructuresAt(player.getOnPos()).keySet();
+                    for (ConfiguredStructureFeature<?, ?> configuredStructureFeature : configuredStructureFeatures) {
+                        if (player.getLevel().structureFeatureManager().getStructureAt(player.getOnPos(), configuredStructureFeature).isValid()) {
+                            builder = new ProfessionContext.Builder(player.getLevel())
+                                    .addRandom(player.getLevel().random)
+                                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.EXPLORE_STRUCT)
+                                    .addParameter(ProfessionParameter.THIS_PLAYER, fabric.getPlayerManager().getPlayer(player.getUUID()))
+                                    .addParameter(ProfessionParameter.CONFIGURED_STRUCTURE, configuredStructureFeature);
+                            RewardHandler.handleReward(builder);
+                        }
                     }
                 } else {
                     playerPositions.put(uuid, player.chunkPosition());

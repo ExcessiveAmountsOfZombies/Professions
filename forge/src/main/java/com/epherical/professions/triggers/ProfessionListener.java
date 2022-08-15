@@ -16,6 +16,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -24,6 +25,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class ProfessionListener {
@@ -103,6 +105,15 @@ public class ProfessionListener {
                         if (RewardHandler.handleReward(builder)) {
                             chunkVisited.addPlayerToChunk(uuid);
                             access.setUnsaved(true);
+                        }
+                        Set<ConfiguredStructureFeature<?, ?>> configuredStructureFeatures = player.getLevel().structureFeatureManager().getAllStructuresAt(player.getOnPos()).keySet();
+                        for (ConfiguredStructureFeature<?, ?> configuredStructureFeature : configuredStructureFeatures) {
+                            builder = new ProfessionContext.Builder(player.getLevel())
+                                    .addRandom(player.getLevel().random)
+                                    .addParameter(ProfessionParameter.ACTION_TYPE, Actions.EXPLORE_STRUCT)
+                                    .addParameter(ProfessionParameter.THIS_PLAYER, ProfessionsForge.getInstance().getPlayerManager().getPlayer(player.getUUID()))
+                                    .addParameter(ProfessionParameter.CONFIGURED_STRUCTURE, configuredStructureFeature);
+                            RewardHandler.handleReward(builder);
                         }
                     } else {
                         playerPositions.put(uuid, player.chunkPosition());

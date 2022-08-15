@@ -69,8 +69,9 @@ public class ExploreBiomeAction extends AbstractAction {
     public List<Component> displayInformation() {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
-        for (Biome realBiome : getRealBiomes(CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY))) {
-            ResourceLocation key = BuiltinRegistries.BIOME.getKey(realBiome);
+        Registry<Biome> registry = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
+        for (Biome realBiome : getRealBiomes(registry)) {
+            ResourceLocation key = registry.getKey(realBiome);
             if (key != null) {
                 components.add(new TextComponent(key.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))
                         .append(CommonPlatform.platform.displayInformation(this, map)));

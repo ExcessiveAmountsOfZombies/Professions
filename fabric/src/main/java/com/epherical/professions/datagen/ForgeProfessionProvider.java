@@ -3,6 +3,7 @@ package com.epherical.professions.datagen;
 import com.epherical.professions.Constants;
 import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.builtin.ExploreBiomeAction;
+import com.epherical.professions.profession.action.builtin.ExploreStructureAction;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
@@ -39,6 +40,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -527,7 +529,15 @@ public class ForgeProfessionProvider extends CommonProvider implements DataProvi
                         .block(Blocks.STONE, Blocks.ANDESITE, Blocks.GRANITE, Blocks.DIORITE, Blocks.DEEPSLATE, Blocks.TUFF, Blocks.CALCITE, Blocks.DRIPSTONE_BLOCK)
                         .reward(expReward(0.5))
                         .reward(moneyReward(0.5))
-                        .build());
+                        .build())
+                .addAction(EXPLORE_STRUCT, ExploreStructureAction.explore()
+                        .feature(BuiltinStructures.MINESHAFT)
+                        .reward(expReward(20))
+                        .reward(moneyReward(8)))
+                .addAction(EXPLORE_STRUCT, ExploreStructureAction.explore()
+                        .feature(BuiltinStructures.MINESHAFT_MESA)
+                        .reward(expReward(30))
+                        .reward(moneyReward(10)));
         ProfessionBuilder trading = ProfessionBuilder.profession(
                         TextColor.parseColor("#2dcf08"),
                         TextColor.parseColor("#FFFFFF"),

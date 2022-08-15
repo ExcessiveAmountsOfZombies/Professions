@@ -52,7 +52,7 @@ public class RewardFormats {
                     .addEntry(new StringEntry<>(embed, y, width, "currency", ProfessionConfig.overriddenCurrencyID,
                             (reward, entry) -> {
                                 if (reward.currency() != null) {
-                                    entry.setValue(reward.currency().getIdentity());
+                                    entry.setValue(reward.currency().toString());
                                 } else {
                                     entry.setValue("eights_economy:dollars");
                                 }

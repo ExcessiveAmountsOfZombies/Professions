@@ -3,26 +3,32 @@ package com.epherical.professions.triggers;
 import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.capability.impl.ChunkVisitedImpl;
 import com.epherical.professions.capability.impl.PlayerOwnableImpl;
-import com.epherical.professions.config.ProfessionConfig;
-import com.epherical.professions.profession.unlock.Unlock;
-import com.epherical.professions.profession.unlock.Unlocks;
+import com.epherical.professions.profession.ProfessionContext;
+import com.epherical.professions.profession.ProfessionParameter;
+import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.util.ProfessionUtil;
-import com.epherical.professions.util.UnlockErrorHelper;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ProfessionListener {
+
+    private Map<UUID, ChunkPos> playerPositions = new HashMap<>();
 
     @SubscribeEvent()
     public void onBlockEntity(BlockEvent.EntityPlaceEvent event) {
@@ -49,6 +55,7 @@ public class ProfessionListener {
     public void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         if (!event.getPlayer().getLevel().isClientSide) {
             ProfessionsForge.getInstance().getPlayerManager().playerQuit((ServerPlayer) event.getPlayer());
+            playerPositions.remove(event.getPlayer().getUUID());
         }
     }
 
@@ -65,5 +72,43 @@ public class ProfessionListener {
 
         // want the opposite, if it returns true, we want to set it to false, so it doesn't actually cancel the event.
         event.setCanceled(!ProfessionUtil.canBreak(player, event.getPlayer(), event.getState().getBlock()));
+    }
+
+    @SubscribeEvent()
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent event) {
+        LivingEntity entity = event.getEntityLiving();
+        if (event.isCanceled() || entity.level.isClientSide || !(entity instanceof ServerPlayer)) {
+            return;
+        }
+        ServerPlayer player = (ServerPlayer) event.getEntityLiving();
+        UUID uuid = player.getUUID();
+        if (!playerPositions.containsKey(uuid)) {
+            playerPositions.put(uuid, player.chunkPosition());
+        } else {
+            ChunkPos pos = playerPositions.get(uuid);
+            // shifted chunks
+            if (!pos.equals(player.chunkPosition())) {
+                ChunkPos newPos = player.chunkPosition();
+                LevelChunk access = player.getLevel().getChunk(newPos.x, newPos.z);
+                access.getCapability(ChunkVisitedImpl.CHUNK_VISITED_CAPABILITY).ifPresent(chunkVisited -> {
+                    if (!chunkVisited.hasPlayerExploredChunk(uuid)) {
+                        Holder<Biome> biomeHolder = player.getLevel().getBiome(player.getOnPos());
+                        ProfessionContext.Builder builder = new ProfessionContext.Builder(player.getLevel())
+                                .addRandom(player.getLevel().random)
+                                .addParameter(ProfessionParameter.ACTION_TYPE, Actions.EXPLORE_BIOME)
+                                .addParameter(ProfessionParameter.THIS_PLAYER, ProfessionsForge.getInstance().getPlayerManager().getPlayer(player.getUUID()))
+                                .addParameter(ProfessionParameter.BIOME, biomeHolder);
+
+                        playerPositions.put(uuid, player.chunkPosition());
+                        if (RewardHandler.handleReward(builder)) {
+                            chunkVisited.addPlayerToChunk(uuid);
+                            access.setUnsaved(true);
+                        }
+                    } else {
+                        playerPositions.put(uuid, player.chunkPosition());
+                    }
+                });
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@
     "PlaceBlockTriggerMixin",
     "StatePropertiesPredicateMixin",
     "TamingMixin",
+    "TickTriggerMixin",
     "TntExplosionTriggerMixin",
     "VillagerTradeMixin",
     "ownables.AbstractFurnaceBlockEntityOwnableMixin",

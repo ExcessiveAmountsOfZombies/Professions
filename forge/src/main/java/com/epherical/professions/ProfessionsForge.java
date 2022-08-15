@@ -1,6 +1,9 @@
 package com.epherical.professions;
 
+import com.epherical.octoecon.api.Economy;
+import com.epherical.octoecon.api.event.EconomyChangeEvent;
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.capability.ChunkVisited;
 import com.epherical.professions.capability.PlayerOwnable;
 import com.epherical.professions.client.ProfessionsClientForge;
 import com.epherical.professions.commands.ProfessionsCommands;
@@ -14,6 +17,7 @@ import com.epherical.professions.networking.NetworkHandler;
 import com.epherical.professions.triggers.BlockTriggers;
 import com.epherical.professions.triggers.EntityTriggers;
 import com.epherical.professions.triggers.ProfessionListener;
+import com.epherical.professions.util.ChunkVisitedProvider;
 import com.epherical.professions.util.PlayerOwnableProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
@@ -28,6 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.loot.Serializer;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -74,6 +79,9 @@ public class ProfessionsForge {
     private NetworkHandler handler;
 
     public static boolean isStopping = false;
+
+    private MinecraftServer minecraftServer;
+    private Economy economy;
 
     public ProfessionsForge() {
         mod = this;
@@ -141,6 +149,11 @@ public class ProfessionsForge {
     }
 
     @SubscribeEvent
+    public void onEconomyChange(EconomyChangeEvent event) {
+        this.economy = event.getEconomy();
+    }
+
+    @SubscribeEvent
     public void serverStarting(ServerStartingEvent event) {
         MinecraftServer server = event.getServer();
         isStopping = false;
@@ -148,6 +161,7 @@ public class ProfessionsForge {
         //this.dataStorage = ProfessionUtilityEvents.STORAGE_CALLBACK.invoker().setStorage(dataStorage);
         //ProfessionUtilityEvents.STORAGE_FINALIZATION_EVENT.invoker().onFinalization(dataStorage);
         this.playerManager = new PlayerManager(this.dataStorage, server);
+        this.minecraftServer = server;
     }
 
     @SubscribeEvent
@@ -163,6 +177,13 @@ public class ProfessionsForge {
     @SubscribeEvent
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.register(PlayerOwnable.class);
+        event.register(ChunkVisited.class);
+    }
+
+    @SubscribeEvent
+    public void attachChunkCapability(AttachCapabilitiesEvent<LevelChunk> event) {
+        ChunkVisitedProvider provider = new ChunkVisitedProvider();
+        event.addCapability(ChunkVisitedProvider.ID, provider);
     }
 
     @SubscribeEvent
@@ -198,6 +219,14 @@ public class ProfessionsForge {
 
     public static ProfessionsForge getInstance() {
         return mod;
+    }
+
+    public Economy getEconomy() {
+        return economy;
+    }
+
+    public MinecraftServer getMinecraftServer() {
+        return minecraftServer;
     }
 
     public ForgeProfLoader getProfessionLoader() {

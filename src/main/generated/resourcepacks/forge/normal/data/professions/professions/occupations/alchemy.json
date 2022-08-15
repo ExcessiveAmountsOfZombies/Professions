@@ -18,6 +18,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.5,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -31,6 +36,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.65,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -45,6 +55,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -58,6 +73,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.85,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -71,6 +91,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -84,6 +109,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 0.5
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.25,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -97,6 +127,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 10.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 5.0,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -112,6 +147,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 3.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -125,6 +165,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.5,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [
@@ -140,6 +185,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 5.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
         }
       ],
       "items": [

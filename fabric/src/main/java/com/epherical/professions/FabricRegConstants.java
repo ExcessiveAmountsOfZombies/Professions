@@ -1,20 +1,14 @@
 package com.epherical.professions;
 
 import com.epherical.professions.loot.UnlockCondition;
-import com.epherical.professions.profession.rewards.RewardType;
-import com.epherical.professions.profession.rewards.Rewards;
-import com.epherical.professions.profession.rewards.builtin.PaymentReward;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.MappedRegistry;
 
-import static com.epherical.professions.Constants.modID;
 import static com.epherical.professions.ProfessionsFabric.registerLootCondition;
 import static com.epherical.professions.RegistryConstants.*;
 
 public class FabricRegConstants {
-
-    public static final RewardType PAYMENT_REWARD;
 
     public static void init() {}
 
@@ -28,7 +22,6 @@ public class FabricRegConstants {
         UNLOCK_TYPE = FabricRegistryBuilder.from(new MappedRegistry<>(UNLOCK_TYPE_KEY, Lifecycle.experimental(), null)).buildAndRegister();
 
         Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
-        PAYMENT_REWARD = Rewards.register(modID("payment"), new PaymentReward.RewardSerializer());
     }
 
 }

@@ -4,7 +4,6 @@ import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.client.format.FormatRegistry;
 import com.epherical.professions.networking.ClientHandler;
-import com.epherical.professions.profession.rewards.builtin.PaymentReward;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -15,11 +14,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Registry;
-
-import static com.epherical.professions.RegistryConstants.REWARD_KEY;
-import static com.epherical.professions.client.format.FormatRegistry.BUILDERS;
-import static com.epherical.professions.client.format.FormatRegistry.formatID;
 
 @Environment(EnvType.CLIENT)
 public class ProfessionsClient implements ClientModInitializer {
@@ -36,8 +30,6 @@ public class ProfessionsClient implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(commonClient.getOpenDatapackMenu());
 
         FormatRegistry.init();
-
-        Registry.register(BUILDERS, formatID(REWARD_KEY, "payment"), new PaymentReward.DatapackBuilder());
 
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

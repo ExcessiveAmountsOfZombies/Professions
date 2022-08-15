@@ -2,6 +2,7 @@ package com.epherical.professions.datagen;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.profession.ProfessionBuilder;
+import com.epherical.professions.profession.action.builtin.ExploreBiomeAction;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
@@ -19,6 +20,7 @@ import com.epherical.professions.profession.conditions.builtin.BlockStatePropert
 import com.epherical.professions.profession.conditions.builtin.FullyGrownCropCondition;
 import com.epherical.professions.profession.conditions.builtin.ToolMatcher;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -372,10 +374,22 @@ public class FabricProfessionProvider extends CommonProvider implements DataProv
                         TextColor.parseColor("#FFFFFF"),
                         new String[]{
                                 "Earn money and experience",
-                                "by hunting animals and killing monsters."},
+                                "by hunting animals, killing monsters, and exploring"},
                         "Hunting", 100)
                 .addExperienceScaling(defaultLevelParser())
                 .incomeScaling(defaultIncomeParser())
+                .addAction(EXPLORE_BIOME, ExploreBiomeAction.explore()
+                        .biome(ConventionalBiomeTags.IN_OVERWORLD)
+                        .reward(moneyReward(3))
+                        .reward(expReward(6)))
+                .addAction(EXPLORE_BIOME, ExploreBiomeAction.explore()
+                        .biome(ConventionalBiomeTags.IN_NETHER)
+                        .reward(moneyReward(4))
+                        .reward(expReward(8)))
+                .addAction(EXPLORE_BIOME, ExploreBiomeAction.explore()
+                        .biome(ConventionalBiomeTags.IN_THE_END)
+                        .reward(moneyReward(5))
+                        .reward(expReward(9.2)))
                 .addAction(KILL_ENTITY, KillAction.kill()
                         .entity(EntityType.PIG, EntityType.CHICKEN, EntityType.SHEEP, EntityType.COW, EntityType.MOOSHROOM, EntityType.RABBIT)
                         .reward(moneyReward(8))

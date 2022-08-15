@@ -34,6 +34,7 @@ import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.epherical.professions.profession.rewards.builtin.ItemReward;
 import com.epherical.professions.profession.rewards.builtin.OccupationExperience;
+import com.epherical.professions.profession.rewards.builtin.PaymentReward;
 import com.epherical.professions.profession.unlock.builtin.BlockBreakUnlock;
 import com.epherical.professions.profession.unlock.builtin.BlockDropUnlock;
 import com.epherical.professions.profession.unlock.builtin.ToolUnlock;
@@ -63,6 +64,7 @@ public class FormatRegistry {
 
     public static final FormatBuilder<OccupationExperience> FB_OC_EXP = register(formatID(REWARD_KEY, "occupation_exp"), new RewardFormats.OccupationExp());
     public static final FormatBuilder<ItemReward> FB_ITEM_REWARD = register(formatID(REWARD_KEY, "item"), new RewardFormats.Item());
+    public static final FormatBuilder<PaymentReward> FB_PAYMENT_REWARD = Registry.register(BUILDERS, formatID(REWARD_KEY, "payment"), new RewardFormats.Payment());
 
     public static final FormatBuilder<BlockDropUnlock> FB_BLOCK_DROP_UNLOCK = register(formatID(UNLOCK_KEY, "block_drop"), new UnlockFormats.BlockDrop());
     public static final FormatBuilder<BlockBreakUnlock> FB_BLOCK_BREAK_UNLOCK = register(formatID(UNLOCK_KEY, "block_break"), new UnlockFormats.BlockBreak());

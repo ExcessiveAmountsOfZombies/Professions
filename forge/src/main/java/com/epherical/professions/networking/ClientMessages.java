@@ -20,7 +20,7 @@ public class ClientMessages {
 
     public static void handlePacket(NetworkHandler.RespondInfo msg, Supplier<NetworkEvent.Context> ctx) {
         Minecraft client = Minecraft.getInstance();
-        client.execute(() -> client.setScreen(new OccupationScreen<>(msg.displays(), client, OccupationScreen::createInfoEntries, null)));
+        client.execute(() -> client.setScreen(new OccupationScreen<>(msg.displays(), client, OccupationScreen::createInfoEntries, CommandButtons.INFO)));
     }
 
     public static void handlePacket(NetworkHandler.ButtonJoin msg, Supplier<NetworkEvent.Context> ctx) {

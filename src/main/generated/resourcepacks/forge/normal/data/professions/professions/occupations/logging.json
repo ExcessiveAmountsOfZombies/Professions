@@ -18,6 +18,11 @@
         {
           "reward": "professions:occupation_exp",
           "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
         }
       ],
       "blocks": [

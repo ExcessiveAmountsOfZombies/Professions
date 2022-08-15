@@ -84,6 +84,12 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<PlayerLocation> PLAYER_LOCATION_EVENT = EventFactory.createArrayBacked(PlayerLocation.class, calls -> player -> {
+        for (PlayerLocation call : calls) {
+            call.onPlayerTick(player);
+        }
+    });
+
 
     public interface PlaceBlock {
         /**
@@ -145,6 +151,10 @@ public final class TriggerEvents {
 
     public interface VillagerTrade {
         void onTradeWithVillager(ServerPlayer player, AbstractVillager villager, MerchantOffer offer);
+    }
+
+    public interface PlayerLocation {
+        void onPlayerTick(ServerPlayer player);
     }
 
 }

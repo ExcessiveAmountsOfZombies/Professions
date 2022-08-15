@@ -16,6 +16,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 10.0
         }
@@ -30,6 +35,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 16.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 16.0
         }
@@ -43,6 +53,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 14.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 14.0
@@ -58,6 +73,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 8.0
         }
@@ -71,6 +91,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -86,6 +111,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -99,6 +129,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -114,6 +149,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -127,6 +167,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 16.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 16.0
@@ -142,6 +187,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -155,6 +205,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -170,6 +225,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -183,6 +243,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 8.0
@@ -198,6 +263,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -211,6 +281,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -226,6 +301,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -239,6 +319,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 8.0
@@ -254,6 +339,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -267,6 +357,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -282,6 +377,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -295,6 +395,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 8.0
@@ -310,6 +415,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -323,6 +433,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -338,6 +453,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -351,6 +471,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 8.0
@@ -366,6 +491,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -379,6 +509,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -394,6 +529,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -407,6 +547,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 8.0
@@ -422,6 +567,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -435,6 +585,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -450,6 +605,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -463,6 +623,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -478,6 +643,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -491,6 +661,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -506,6 +681,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -519,6 +699,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -534,6 +719,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -547,6 +737,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -562,6 +757,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -575,6 +775,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -590,6 +795,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -603,6 +813,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 8.0
@@ -618,6 +833,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 10.0
         }
@@ -631,6 +851,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -646,6 +871,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -659,6 +889,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -674,6 +909,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 8.0
         }
@@ -687,6 +927,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 10.0
@@ -702,6 +947,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -715,6 +965,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -730,6 +985,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -743,6 +1003,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 8.0
@@ -758,6 +1023,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 10.0
         }
@@ -771,6 +1041,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -786,6 +1061,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -799,6 +1079,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -814,6 +1099,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -827,6 +1117,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -842,6 +1137,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -855,6 +1155,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -870,6 +1175,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -883,6 +1193,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -898,6 +1213,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -911,6 +1231,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -926,6 +1251,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -939,6 +1269,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -954,6 +1289,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 8.0
         }
@@ -967,6 +1307,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 10.0
@@ -982,6 +1327,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -995,6 +1345,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -1010,6 +1365,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -1023,6 +1383,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -1038,6 +1403,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -1051,6 +1421,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -1066,6 +1441,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -1079,6 +1459,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -1094,6 +1479,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -1107,6 +1497,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -1122,6 +1517,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 8.0
         }
@@ -1135,6 +1535,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 10.0
@@ -1150,6 +1555,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -1163,6 +1573,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -1178,6 +1593,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -1191,6 +1611,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -1206,6 +1631,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -1219,6 +1649,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -1234,6 +1669,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -1247,6 +1687,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -1262,6 +1707,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -1275,6 +1725,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -1290,6 +1745,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -1303,6 +1763,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -1318,6 +1783,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -1331,6 +1801,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -1346,6 +1821,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -1359,6 +1839,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -1374,6 +1859,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 8.0
         }
@@ -1387,6 +1877,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 10.0
@@ -1402,6 +1897,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -1415,6 +1915,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -1430,6 +1935,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -1443,6 +1953,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -1458,6 +1973,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -1471,6 +1991,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -1486,6 +2011,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 4.0
         }
@@ -1499,6 +2029,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 6.0
@@ -1514,6 +2049,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 2.0
         }
@@ -1527,6 +2067,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 4.0
@@ -1542,6 +2087,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 6.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 6.0
         }
@@ -1555,6 +2105,11 @@
       "action": "professions:enchant",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 8.0

@@ -3,14 +3,7 @@ package com.epherical.professions.profession.rewards.builtin;
 import com.epherical.octoecon.api.Currency;
 import com.epherical.octoecon.api.Economy;
 import com.epherical.octoecon.api.user.UniqueUser;
-import com.epherical.professions.FabricRegConstants;
-import com.epherical.professions.ProfessionsFabric;
-import com.epherical.professions.client.entry.NumberEntry;
-import com.epherical.professions.client.entry.StringEntry;
-import com.epherical.professions.client.format.Format;
-import com.epherical.professions.client.format.FormatBuilder;
-import com.epherical.professions.client.format.FormatEntryBuilder;
-import com.epherical.professions.client.format.RegularFormat;
+import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -18,6 +11,7 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
+import com.epherical.professions.profession.rewards.Rewards;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -38,12 +32,12 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
 
     @Override
     public RewardType getType() {
-        return FabricRegConstants.PAYMENT_REWARD;
+        return Rewards.PAYMENT_REWARD;
     }
 
     @Override
     public void giveReward(ProfessionContext context, Action action, Occupation occupation) {
-        Economy economy = ProfessionsFabric.getEconomy();
+        Economy economy = CommonPlatform.platform.economy();
         if (economy != null) {
             UUID playerID = context.getParameter(ProfessionParameter.THIS_PLAYER).getUuid();
             UniqueUser user = economy.getOrCreatePlayerAccount(playerID);
@@ -92,12 +86,12 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
         public PaymentReward deserialize(JsonObject json, JsonDeserializationContext serializationContext) {
             double amount = GsonHelper.getAsDouble(json, "amount");
             Currency currency = null;
-            if (ProfessionsFabric.getEconomy() != null) {
+            if (CommonPlatform.platform.economy() != null) {
                 String currencyString = GsonHelper.getAsString(json, "currency");
-                currency = ProfessionsFabric.getEconomy().getCurrency(new ResourceLocation(currencyString));
+                currency = CommonPlatform.platform.economy().getCurrency(new ResourceLocation(currencyString));
                 if (currency == null) {
-                    LOGGER.warn("PaymentReward used was a null currency {}. Using default currency of {}", currencyString, ProfessionsFabric.getEconomy().getDefaultCurrency().getIdentity());
-                    currency = ProfessionsFabric.getEconomy().getDefaultCurrency();
+                    LOGGER.warn("PaymentReward used was a null currency {}. Using default currency of {}", currencyString, CommonPlatform.platform.economy().getDefaultCurrency().getIdentity());
+                    currency = CommonPlatform.platform.economy().getDefaultCurrency();
                 }
             }
             return new PaymentReward(amount, currency);
@@ -117,30 +111,6 @@ public record PaymentReward(double amount, @Nullable Currency currency) implemen
         @Override
         public Reward build() {
             return new PaymentReward(amount, currency);
-        }
-    }
-
-    public static class DatapackBuilder implements FormatBuilder<PaymentReward> {
-
-        @Override
-        public Format<PaymentReward> buildDefaultFormat() {
-            return deserializeToFormat(null);
-        }
-
-        @Override
-        public Format<PaymentReward> deserializeToFormat(PaymentReward paymentReward) {
-            return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<PaymentReward>()
-                    .addEntry(new NumberEntry<>(embed, y, width, "amount", 1.0, (reward, entry) -> {
-                        entry.setValue(String.valueOf(reward.amount));
-                    }))
-                    .addEntry(new StringEntry<>(embed, y, width, "currency", ProfessionConfig.overriddenCurrencyID,
-                            (reward, entry) -> {
-                                if (reward.currency != null) {
-                                    entry.setValue(reward.currency.getIdentity());
-                                } else {
-                                    entry.setValue("eights_economy:dollars");
-                                }
-                            })));
         }
     }
 }

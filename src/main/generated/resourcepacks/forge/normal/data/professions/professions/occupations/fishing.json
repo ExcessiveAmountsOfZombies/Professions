@@ -16,6 +16,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 25.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 25.0
         }

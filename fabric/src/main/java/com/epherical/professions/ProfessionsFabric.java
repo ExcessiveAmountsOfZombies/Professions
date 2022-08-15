@@ -10,6 +10,7 @@ import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.FabricProfLoader;
 import com.epherical.professions.events.ProfessionUtilityEvents;
+import com.epherical.professions.events.trigger.TriggerEvents;
 import com.epherical.professions.integration.ftb.FTBIntegration;
 import com.epherical.professions.loot.UnlockCondition;
 import com.epherical.professions.mixin.LootTableBuilderAccessor;
@@ -32,6 +33,7 @@ import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -60,6 +62,8 @@ public class ProfessionsFabric implements ModInitializer {
 
     public static boolean isStopping = false;
 
+    private MinecraftServer minecraftServer;
+
     @Override
     public void onInitialize() {
         CommonPlatform.create(new FabricPlatform());
@@ -86,6 +90,7 @@ public class ProfessionsFabric implements ModInitializer {
             this.dataStorage = ProfessionUtilityEvents.STORAGE_CALLBACK.invoker().setStorage(dataStorage);
             ProfessionUtilityEvents.STORAGE_FINALIZATION_EVENT.invoker().onFinalization(dataStorage);
             this.playerManager = new PlayerManager(this.dataStorage, server);
+            this.minecraftServer = server;
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             isStopping = true;
@@ -104,6 +109,9 @@ public class ProfessionsFabric implements ModInitializer {
         this.listener = new ProfessionListener();
         ServerPlayConnectionEvents.JOIN.register(this.listener::onPlayerJoin);
         ServerPlayConnectionEvents.DISCONNECT.register(this.listener::onPlayerLeave);
+        TriggerEvents.PLAYER_LOCATION_EVENT.register(player -> {
+            this.listener.onPlayerTick(player, this);
+        });
         BlockTriggers.init(this);
         EntityTriggers.init(this);
         UtilityListener.init(this);
@@ -138,6 +146,10 @@ public class ProfessionsFabric implements ModInitializer {
 
     public static ProfessionsFabric getInstance() {
         return mod;
+    }
+
+    public MinecraftServer getMinecraftServer() {
+        return minecraftServer;
     }
 
     public FabricProfLoader getProfessionLoader() {

@@ -85,11 +85,17 @@ processResources {
 
 tasks.processResources.dependsOn(rootProject.tasks.processResources)
 
+jarJar.enable()
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation(rootProject)
     shade(rootProject)
-    implementation("com.epherical.octo-economy-api:OctoEconomyApi-forge:1.0.1-1.18.2")
+    jarJar(group: 'com.epherical.octo-economy-api', name: 'OctoEconomyApi-forge', version: '[1.0,)') {
+        transitive = false
+    }
+
+    implementation fg.deobf("com.epherical.octo-economy-api:OctoEconomyApi-forge:1.0.1-1.18.2")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 

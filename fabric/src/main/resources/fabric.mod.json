@@ -26,6 +26,9 @@
     ],
     "main": [
       "com.epherical.professions.ProfessionsFabric"
+    ],
+    "cardinal-components": [
+      "com.epherical.professions.integration.cardinal.ChunkComponent"
     ]
   },
   "mixins": [
@@ -34,13 +37,16 @@
   ],
   "depends": {
     "fabricloader": ">=0.13.3",
-    "fabric": "*",
+    "fabric": ">=0.58.0",
     "minecraft": ">=1.18.2"
   },
   "custom": {
     "waila:plugins": {
       "id": "professions:prof_waila",
       "initializer": "com.epherical.professions.integration.wthit.ProfWailaPlugin"
-    }
+    },
+    "cardinal-components": [
+      "professions:p_expo_chunk"
+    ]
   }
 }

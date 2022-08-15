@@ -1,5 +1,6 @@
 package com.epherical.professions;
 
+import com.epherical.octoecon.api.Economy;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.datapack.CommonProfessionLoader;
 import com.epherical.professions.networking.ClientNetworking;
@@ -36,6 +37,8 @@ public abstract class CommonPlatform<T> {
     public abstract boolean isServerEnvironment();
 
     public abstract MinecraftServer server();
+
+    public abstract Economy economy();
 
     public abstract boolean checkPermission(Player player, String perm, int defIntPerm);
 

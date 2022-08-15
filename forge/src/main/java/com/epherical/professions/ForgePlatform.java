@@ -1,5 +1,6 @@
 package com.epherical.professions;
 
+import com.epherical.octoecon.api.Economy;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClientForge;
 import com.epherical.professions.datapack.CommonProfessionLoader;
@@ -14,6 +15,7 @@ import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.rewards.Rewards;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -41,6 +43,16 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
     @Override
     public boolean isServerEnvironment() {
         return FMLEnvironment.dist == Dist.DEDICATED_SERVER;
+    }
+
+    @Override
+    public MinecraftServer server() {
+        return ProfessionsForge.getInstance().getMinecraftServer();
+    }
+
+    @Override
+    public Economy economy() {
+        return ProfessionsForge.getInstance().getEconomy();
     }
 
     @Override
@@ -103,7 +115,7 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
 
     @Override
     public boolean skipReward(RewardType type) {
-        return false;
+        return type.equals(Rewards.PAYMENT_REWARD);
     }
 
     @Override
@@ -113,7 +125,8 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
 
     @Override
     public Component displayInformation(AbstractAction action, Map<RewardType, Component> map) {
-        return new TranslatableComponent(" (%s | %s)",
+        return new TranslatableComponent(" (%s | %s%s)",
+                map.get(Rewards.PAYMENT_REWARD),
                 map.get(Rewards.EXPERIENCE_REWARD),
                 action.extraRewardInformation(map));
     }

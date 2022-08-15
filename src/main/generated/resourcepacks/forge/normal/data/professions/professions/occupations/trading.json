@@ -16,6 +16,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 7.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 7.0
         }
@@ -29,6 +34,11 @@
       "action": "professions:villager_trade",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 0.25,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 0.25
@@ -44,6 +54,11 @@
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
+          "amount": 3.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
           "reward": "professions:occupation_exp",
           "amount": 3.0
         }
@@ -57,6 +72,11 @@
       "action": "professions:villager_trade",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 2.0
@@ -73,6 +93,11 @@
       "action": "professions:villager_trade",
       "conditions": [],
       "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 3.0,
+          "currency": "eights_economy:dollars"
+        },
         {
           "reward": "professions:occupation_exp",
           "amount": 3.0

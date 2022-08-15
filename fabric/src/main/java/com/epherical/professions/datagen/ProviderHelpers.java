@@ -3,14 +3,16 @@ package com.epherical.professions.datagen;
 import com.epherical.octoecon.api.Economy;
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.ProfessionsFabric;
+import com.epherical.professions.datapack.AbstractProfessionLoader;
 import com.epherical.professions.datapack.FabricProfLoader;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.editor.Editor;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.builtin.OccupationExperience;
 import com.epherical.professions.profession.rewards.builtin.PaymentReward;
-import net.minecraft.data.CachedOutput;
+import com.google.gson.Gson;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.IOException;
@@ -34,12 +36,12 @@ public interface ProviderHelpers {
         return path.resolve("resourcepacks/fabric/hardcore/data/" + namespace + "/professions/occupations/" + id.getPath() + ".json");
     }
 
-    default void generate(CachedOutput cache, Profession profession, Path id) throws IOException {
-        DataProvider.saveStable(cache, FabricProfLoader.serialize(profession), id);
+    default void generate(Gson gson, HashCache cache, Profession profession, Path id) throws IOException {
+        DataProvider.save(gson, cache, AbstractProfessionLoader.serialize(profession), id);
     }
 
-    default void generate(CachedOutput cache, Editor editor, Path id) throws IOException {
-        DataProvider.saveStable(cache, FabricProfLoader.serialize(editor), id);
+    default void generate(Gson gson, HashCache cache, Editor editor, Path id) throws IOException {
+        DataProvider.save(gson, cache, AbstractProfessionLoader.serialize(editor), id);
     }
 
     default Parser defaultLevelParser() {

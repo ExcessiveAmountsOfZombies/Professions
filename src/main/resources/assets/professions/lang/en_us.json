@@ -12,6 +12,8 @@
   "professions.action.type.breed": "Breed",
   "professions.action.type.tame": "Tame",
   "professions.action.type.villager_trade": "Villager Trade",
+  "professions.action.type.explore_biome": "Explore",
+  "professions.action.type.explore_structure": "Explore Structure",
 
   "professions.command.join.error.does_not_exist": "Profession does not exist.",
   "professions.command.join.error.no_permission": "You do not have permission to join this profession.",
@@ -71,6 +73,7 @@
   "professions.tooltip.unlock.drop_req": "%s drops at lvl %s.",
   "professions.tooltip.unlock.break_req": "%s can be broken at lvl %s.",
   "professions.tooltip.unlock.tool_use_req": "%s unlocks at lvl %s.",
+  "professions.tooltip.unlock.advancement_req": "Requires achieving %s",
 
   "ftbquests.task.professions.profession": "Profession",
   "ftbquests.task.professions.profession.profession": "Profession Key",
@@ -81,5 +84,6 @@
 
   "key.professions.open_occupation_menu": "Open Occupation Menu",
   "key.professions.show_info": "Show Unlock Information",
+  "key.professions.datapack_menu": "Open Datapack Creator",
   "category.professions.occupation": "Professions"
 }

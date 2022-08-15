@@ -87,6 +87,10 @@ public abstract class AbstractItemAction extends AbstractAction {
         return realItems;
     }
 
+    public List<ActionEntry<Item>> getItems() {
+        return items;
+    }
+
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {
         protected final List<ActionEntry<Item>> items = new ArrayList<>();
 

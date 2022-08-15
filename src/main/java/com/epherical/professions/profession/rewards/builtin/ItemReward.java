@@ -14,6 +14,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -42,7 +43,7 @@ public record ItemReward(Item item, int count) implements Reward {
 
     @Override
     public @NotNull Component rewardChatInfo() {
-        return Component.literal("Item ").setStyle(Style.EMPTY.withColor(TextColor.parseColor("#d14f88"))).append(item.getDescription());
+        return new TextComponent("Item ").setStyle(Style.EMPTY.withColor(TextColor.parseColor("#d14f88"))).append(item.getDescription());
     }
 
     public static class RewardSerializer implements Serializer<ItemReward> {

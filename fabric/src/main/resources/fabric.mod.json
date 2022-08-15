@@ -16,6 +16,7 @@
   "license": "LGPL-3.0",
   "icon": "assets/professions/icon.png",
   "environment": "*",
+  "accessWidener": "professions.accesswidener",
   "entrypoints": {
     "fabric-datagen": [
       "com.epherical.professions.datagen.ProfessionDataGenerator"
@@ -25,14 +26,27 @@
     ],
     "main": [
       "com.epherical.professions.ProfessionsFabric"
+    ],
+    "cardinal-components": [
+      "com.epherical.professions.integration.cardinal.ChunkComponent"
     ]
   },
   "mixins": [
-    "Professions.mixins.json"
+    "Professions.mixins.json",
+    "professions-root.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.13.3",
-    "fabric": "*",
-    "minecraft": ">=1.18.2"
+    "fabric": ">=0.58.0",
+    "minecraft": ">=1.19"
+  },
+  "custom": {
+    "waila:plugins": {
+      "id": "professions:prof_waila",
+      "initializer": "com.epherical.professions.integration.wthit.ProfWailaPlugin"
+    },
+    "cardinal-components": [
+      "professions:p_expo_chunk"
+    ]
   }
 }

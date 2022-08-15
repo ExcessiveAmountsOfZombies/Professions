@@ -3,6 +3,7 @@ package com.epherical.professions.util;
 import com.google.gson.JsonArray;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +43,14 @@ public class ActionEntry<T> {
         return array;
     }
 
+    public List<String> serializeString(Registry<T> registry) {
+        List<String> array = new ArrayList<>();
+        for (Value<T> actionValue : actionValues) {
+            array.add(actionValue.serializable(registry));
+        }
+        return array;
+    }
+
     private void pullValues(Registry<T> registry) {
         if (this.values == null) {
             this.values = Arrays.stream(actionValues)
@@ -72,6 +81,11 @@ public class ActionEntry<T> {
         });
     }
 
+    @SafeVarargs
+    public static <T> ActionEntry<T> of(ResourceKey<T>... keys) {
+        return ofKeys(Arrays.stream(keys));
+    }
+
     public static <T> ActionEntry<T> of(TagKey<T> tag) {
         return fromValues(Stream.of(new TagEntry<>(tag)));
     }
@@ -85,6 +99,10 @@ public class ActionEntry<T> {
         return fromValues(stream.map(SingleEntry::new));
     }
 
+    public static <T> ActionEntry<T> ofKeys(Stream<ResourceKey<T>> stream) {
+        return fromValues(stream.map(ResourceEntry::new));
+    }
+
     private static <T> ActionEntry<T> fromValues(Stream<? extends Value<T>> stream) {
         ActionEntry<T> entry = new ActionEntry<>(stream);
         return entry.actionValues.length == 0 ? (ActionEntry<T>) EMPTY : entry;
@@ -94,6 +112,24 @@ public class ActionEntry<T> {
         Collection<T> getValues(Registry<T> registry);
 
         String serializable(Registry<T> registry);
+    }
+
+    record ResourceEntry<T>(ResourceKey<T> entry) implements Value<T> {
+
+        @Override
+        public Collection<T> getValues(Registry<T> registry) {
+            T t = registry.get(entry);
+            if (t != null) {
+                return Collections.singleton(t);
+            } else {
+                return Collections.emptyList();
+            }
+        }
+
+        @Override
+        public String serializable(Registry<T> registry) {
+            return entry.location().toString();
+        }
     }
 
     record TagEntry<T>(TagKey<T> entry) implements Value<T> {

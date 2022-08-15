@@ -1,6 +1,9 @@
 package com.epherical.professions;
 
+import com.epherical.octoecon.api.Economy;
+import com.epherical.octoecon.api.event.EconomyChangeEvent;
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.capability.ChunkVisited;
 import com.epherical.professions.capability.PlayerOwnable;
 import com.epherical.professions.client.ProfessionsClientForge;
 import com.epherical.professions.commands.ProfessionsCommands;
@@ -14,6 +17,7 @@ import com.epherical.professions.networking.NetworkHandler;
 import com.epherical.professions.triggers.BlockTriggers;
 import com.epherical.professions.triggers.EntityTriggers;
 import com.epherical.professions.triggers.ProfessionListener;
+import com.epherical.professions.util.ChunkVisitedProvider;
 import com.epherical.professions.util.PlayerOwnableProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
@@ -28,6 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.loot.Serializer;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -52,8 +57,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.resource.PathPackResources;
+import net.minecraftforge.resource.PathResourcePack;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -76,6 +80,9 @@ public class ProfessionsForge {
 
     public static boolean isStopping = false;
 
+    private MinecraftServer minecraftServer;
+    private Economy economy;
+
     public ProfessionsForge() {
         mod = this;
         config = new Config();
@@ -89,7 +96,7 @@ public class ProfessionsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeRegConstants::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(config::initConfig);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addPacks);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerEvent);
+        //FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerEvent);
 
         MinecraftForge.EVENT_BUS.register(new ProfPermissions());
         MinecraftForge.EVENT_BUS.register(new ProfessionListener());
@@ -105,11 +112,11 @@ public class ProfessionsForge {
     private void commonInit(FMLCommonSetupEvent event) {
         professionLoader = new ForgeProfLoader();
         MinecraftForge.EVENT_BUS.register(professionLoader);
+        registerEvent();
     }
 
     private void clientInit(FMLClientSetupEvent event) {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ProfessionsClientForge::initClient);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ProfessionsClientForge::registerKeyBindings);
         MinecraftForge.EVENT_BUS.register(new ProfessionsClientForge());
     }
 
@@ -133,14 +140,17 @@ public class ProfessionsForge {
     }
 
 
-    public void registerEvent(RegisterEvent event) {
-        if (event.getRegistryKey().equals(Registry.LOOT_ITEM_REGISTRY)) {
-            Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
-        }
+    public void registerEvent() {
+        Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
     }
 
     public static LootItemConditionType registerLootCondition(String id, Serializer<? extends LootItemCondition> serializer) {
         return Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation(Constants.MOD_ID, id), new LootItemConditionType(serializer));
+    }
+
+    @SubscribeEvent
+    public void onEconomyChange(EconomyChangeEvent event) {
+        this.economy = event.getEconomy();
     }
 
     @SubscribeEvent
@@ -151,6 +161,7 @@ public class ProfessionsForge {
         //this.dataStorage = ProfessionUtilityEvents.STORAGE_CALLBACK.invoker().setStorage(dataStorage);
         //ProfessionUtilityEvents.STORAGE_FINALIZATION_EVENT.invoker().onFinalization(dataStorage);
         this.playerManager = new PlayerManager(this.dataStorage, server);
+        this.minecraftServer = server;
     }
 
     @SubscribeEvent
@@ -166,6 +177,13 @@ public class ProfessionsForge {
     @SubscribeEvent
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.register(PlayerOwnable.class);
+        event.register(ChunkVisited.class);
+    }
+
+    @SubscribeEvent
+    public void attachChunkCapability(AttachCapabilitiesEvent<LevelChunk> event) {
+        ChunkVisitedProvider provider = new ChunkVisitedProvider();
+        event.addCapability(ChunkVisitedProvider.ID, provider);
     }
 
     @SubscribeEvent
@@ -181,26 +199,34 @@ public class ProfessionsForge {
             if (ProfessionConfig.useBuiltinDatapack) { // since we are loading a server datapack, I think this is called after the configs have loaded.
                 event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
                     packConsumer.accept(packConstructor.create("default_normal_professions", Component.nullToEmpty("Default Normal Professions"),
-                            true, () -> new PathPackResources("Default Normal Professions",                                       /// ????
+                            true, () -> new PathResourcePack("Default Normal Professions",                                       /// ????
                                     ModList.get().getModFileById(Constants.MOD_ID).getFile().findResource("resourcepacks/forge/normal")),
                             new PackMetadataSection(Component.nullToEmpty("Default Normal Professions"), 10),
                             Pack.Position.BOTTOM,
                             PackSource.WORLD, false));
                 });
-                event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
+                /*event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
                     packConsumer.accept(packConstructor.create("default_hardcore_professions", Component.nullToEmpty("Default Hardcore Professions"),
-                            true, () -> new PathPackResources("Default Hardcore Professions",
+                            true, () -> new PathResourcePack("Default Hardcore Professions",
                                     ModList.get().getModFileById(Constants.MOD_ID).getFile().findResource("resourcepacks/forge/hardcore")),
                             new PackMetadataSection(Component.nullToEmpty("Default Hardcore Professions"), 10),
                             Pack.Position.BOTTOM,
                             PackSource.WORLD, false));
-                });
+                });*/
             }
         }
     }
 
     public static ProfessionsForge getInstance() {
         return mod;
+    }
+
+    public Economy getEconomy() {
+        return economy;
+    }
+
+    public MinecraftServer getMinecraftServer() {
+        return minecraftServer;
     }
 
     public ForgeProfLoader getProfessionLoader() {

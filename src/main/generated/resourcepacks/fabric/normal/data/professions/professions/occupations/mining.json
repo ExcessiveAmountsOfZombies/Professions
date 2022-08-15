@@ -1,11 +1,50 @@
 {
   "type": "professions:default",
+  "color": "#666E63",
+  "descriptionColor": "#FFFFFF",
+  "description": [
+    "Earn money and experience",
+    "by mining ores and minerals."
+  ],
+  "displayName": "Mining",
+  "maxLevel": 100,
+  "experienceSclEquation": "1000*1.064^(lvl-1)",
+  "incomeSclEquation": "base",
   "actions": [
     {
       "action": "professions:break_block",
+      "conditions": [
+        {
+          "condition": "professions:inverted",
+          "term": {
+            "condition": "professions:tool_matches",
+            "predicate": {
+              "enchantments": [
+                {
+                  "enchantment": "minecraft:silk_touch"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 4.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 4.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
       "blocks": [
         "#minecraft:iron_ores"
-      ],
+      ]
+    },
+    {
+      "action": "professions:break_block",
       "conditions": [
         {
           "condition": "professions:inverted",
@@ -23,21 +62,21 @@
       ],
       "rewards": [
         {
-          "amount": 4.0,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 3.5
         },
         {
-          "amount": 4.0,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "reward": "professions:payment",
+          "amount": 3.5,
+          "currency": "eights_economy:dollars"
         }
-      ]
-    },
-    {
-      "action": "professions:break_block",
+      ],
       "blocks": [
         "#minecraft:copper_ores"
-      ],
+      ]
+    },
+    {
+      "action": "professions:break_block",
       "conditions": [
         {
           "condition": "professions:inverted",
@@ -55,21 +94,21 @@
       ],
       "rewards": [
         {
-          "amount": 3.5,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 5.5
         },
         {
-          "amount": 3.5,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "reward": "professions:payment",
+          "amount": 5.5,
+          "currency": "eights_economy:dollars"
         }
-      ]
-    },
-    {
-      "action": "professions:break_block",
+      ],
       "blocks": [
         "#minecraft:gold_ores"
-      ],
+      ]
+    },
+    {
+      "action": "professions:break_block",
       "conditions": [
         {
           "condition": "professions:inverted",
@@ -87,21 +126,21 @@
       ],
       "rewards": [
         {
-          "amount": 5.5,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 5.5
         },
         {
+          "reward": "professions:payment",
           "amount": 5.5,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "currency": "eights_economy:dollars"
         }
-      ]
-    },
-    {
-      "action": "professions:break_block",
+      ],
       "blocks": [
         "#minecraft:lapis_ores"
-      ],
+      ]
+    },
+    {
+      "action": "professions:break_block",
       "conditions": [
         {
           "condition": "professions:inverted",
@@ -119,21 +158,21 @@
       ],
       "rewards": [
         {
-          "amount": 5.5,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 1.5
         },
         {
-          "amount": 5.5,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "reward": "professions:payment",
+          "amount": 1.5,
+          "currency": "eights_economy:dollars"
         }
-      ]
-    },
-    {
-      "action": "professions:break_block",
+      ],
       "blocks": [
         "#minecraft:coal_ores"
-      ],
+      ]
+    },
+    {
+      "action": "professions:break_block",
       "conditions": [
         {
           "condition": "professions:inverted",
@@ -151,21 +190,21 @@
       ],
       "rewards": [
         {
-          "amount": 1.5,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 12.5
         },
         {
-          "amount": 1.5,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "reward": "professions:payment",
+          "amount": 12.5,
+          "currency": "eights_economy:dollars"
         }
-      ]
-    },
-    {
-      "action": "professions:break_block",
+      ],
       "blocks": [
         "#minecraft:diamond_ores"
-      ],
+      ]
+    },
+    {
+      "action": "professions:break_block",
       "conditions": [
         {
           "condition": "professions:inverted",
@@ -183,21 +222,21 @@
       ],
       "rewards": [
         {
-          "amount": 12.5,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 14.5
         },
         {
-          "amount": 12.5,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "reward": "professions:payment",
+          "amount": 14.5,
+          "currency": "eights_economy:dollars"
         }
-      ]
-    },
-    {
-      "action": "professions:break_block",
+      ],
       "blocks": [
         "#minecraft:emerald_ores"
-      ],
+      ]
+    },
+    {
+      "action": "professions:break_block",
       "conditions": [
         {
           "condition": "professions:inverted",
@@ -215,21 +254,21 @@
       ],
       "rewards": [
         {
-          "amount": 14.5,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 4.5
         },
         {
-          "amount": 14.5,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "reward": "professions:payment",
+          "amount": 4.5,
+          "currency": "eights_economy:dollars"
         }
-      ]
-    },
-    {
-      "action": "professions:break_block",
+      ],
       "blocks": [
         "#minecraft:redstone_ores"
-      ],
+      ]
+    },
+    {
+      "action": "professions:break_block",
       "conditions": [
         {
           "condition": "professions:inverted",
@@ -247,68 +286,51 @@
       ],
       "rewards": [
         {
-          "amount": 4.5,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:payment",
+          "amount": 3.0,
+          "currency": "eights_economy:dollars"
         },
         {
-          "amount": 4.5,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "reward": "professions:occupation_exp",
+          "amount": 3.0
         }
-      ]
-    },
-    {
-      "action": "professions:break_block",
+      ],
       "blocks": [
         "minecraft:nether_quartz_ore"
-      ],
-      "conditions": [
-        {
-          "condition": "professions:inverted",
-          "term": {
-            "condition": "professions:tool_matches",
-            "predicate": {
-              "enchantments": [
-                {
-                  "enchantment": "minecraft:silk_touch"
-                }
-              ]
-            }
-          }
-        }
-      ],
-      "rewards": [
-        {
-          "amount": 3.0,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
-        },
-        {
-          "amount": 3.0,
-          "reward": "professions:occupation_exp"
-        }
       ]
     },
     {
       "action": "professions:break_block",
-      "blocks": [
-        "minecraft:obsidian"
-      ],
       "conditions": [],
       "rewards": [
         {
+          "reward": "professions:payment",
           "amount": 7.0,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "currency": "eights_economy:dollars"
         },
         {
-          "amount": 7.0,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 7.0
         }
+      ],
+      "blocks": [
+        "minecraft:obsidian"
       ]
     },
     {
       "action": "professions:break_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
       "blocks": [
         "minecraft:stone",
         "minecraft:andesite",
@@ -318,58 +340,58 @@
         "minecraft:calcite",
         "minecraft:dripstone_block",
         "minecraft:tuff"
-      ],
-      "conditions": [],
-      "rewards": [
-        {
-          "amount": 1.0,
-          "reward": "professions:occupation_exp"
-        },
-        {
-          "amount": 1.0,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
-        }
       ]
     },
     {
       "action": "professions:break_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
       "blocks": [
         "#minecraft:terracotta"
-      ],
-      "conditions": [],
-      "rewards": [
-        {
-          "amount": 1.0,
-          "reward": "professions:occupation_exp"
-        },
-        {
-          "amount": 1.0,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
-        }
       ]
     },
     {
       "action": "professions:break_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
       "blocks": [
         "minecraft:end_stone"
-      ],
-      "conditions": [],
-      "rewards": [
-        {
-          "amount": 1.0,
-          "reward": "professions:occupation_exp"
-        },
-        {
-          "amount": 1.0,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
-        }
       ]
     },
     {
       "action": "professions:break_block",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
       "blocks": [
         "minecraft:clay",
         "minecraft:gravel",
@@ -378,40 +400,40 @@
         "minecraft:sandstone",
         "minecraft:red_sandstone",
         "minecraft:blackstone"
-      ],
-      "conditions": [],
-      "rewards": [
-        {
-          "amount": 1.0,
-          "reward": "professions:occupation_exp"
-        },
-        {
-          "amount": 1.0,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
-        }
       ]
     },
     {
       "action": "professions:break_block",
-      "blocks": [
-        "minecraft:amethyst_block"
-      ],
       "conditions": [],
       "rewards": [
         {
-          "amount": 2.0,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 2.0
         },
         {
+          "reward": "professions:payment",
           "amount": 1.5,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "currency": "eights_economy:dollars"
         }
+      ],
+      "blocks": [
+        "minecraft:amethyst_block"
       ]
     },
     {
       "action": "professions:tnt_destroy",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 0.5
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 0.5,
+          "currency": "eights_economy:dollars"
+        }
+      ],
       "blocks": [
         "minecraft:stone",
         "minecraft:andesite",
@@ -421,30 +443,44 @@
         "minecraft:tuff",
         "minecraft:calcite",
         "minecraft:dripstone_block"
-      ],
+      ]
+    },
+    {
+      "action": "professions:explore_struct",
       "conditions": [],
       "rewards": [
         {
-          "amount": 0.5,
-          "reward": "professions:occupation_exp"
+          "reward": "professions:occupation_exp",
+          "amount": 20.0
         },
         {
-          "amount": 0.5,
-          "currency": "eights_economy:dollars",
-          "reward": "professions:payment"
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
         }
+      ],
+      "structures": [
+        "minecraft:mineshaft"
+      ]
+    },
+    {
+      "action": "professions:explore_struct",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 30.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "structures": [
+        "minecraft:mineshaft_mesa"
       ]
     }
   ],
-  "color": "#666E63",
-  "description": [
-    "Earn money and experience",
-    "by mining ores and minerals."
-  ],
-  "descriptionColor": "#FFFFFF",
-  "displayName": "Mining",
-  "experienceSclEquation": "1000*1.064^(lvl-1)",
-  "incomeSclEquation": "base",
-  "maxLevel": 100,
   "unlocks": []
 }

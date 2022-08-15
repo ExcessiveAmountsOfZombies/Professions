@@ -2,6 +2,8 @@ package com.epherical.professions.datagen;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.profession.ProfessionBuilder;
+import com.epherical.professions.profession.action.builtin.ExploreBiomeAction;
+import com.epherical.professions.profession.action.builtin.ExploreStructureAction;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
@@ -19,14 +21,15 @@ import com.epherical.professions.profession.conditions.builtin.BlockStatePropert
 import com.epherical.professions.profession.conditions.builtin.FullyGrownCropCondition;
 import com.epherical.professions.profession.conditions.builtin.ToolMatcher;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Registry;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -37,6 +40,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -52,7 +56,7 @@ public class FabricProfessionProvider extends CommonProvider implements DataProv
     }
 
     @Override
-    public void run(CachedOutput cache) throws IOException {
+    public void run(HashCache cache) throws IOException {
         Path path = this.dataGenerator.getOutputFolder();
         ProfessionBuilder alchemy = ProfessionBuilder.profession(
                         TextColor.parseColor("#a100e0"),
@@ -372,10 +376,22 @@ public class FabricProfessionProvider extends CommonProvider implements DataProv
                         TextColor.parseColor("#FFFFFF"),
                         new String[]{
                                 "Earn money and experience",
-                                "by hunting animals and killing monsters."},
+                                "by hunting animals, killing monsters, and exploring"},
                         "Hunting", 100)
                 .addExperienceScaling(defaultLevelParser())
                 .incomeScaling(defaultIncomeParser())
+                .addAction(EXPLORE_BIOME, ExploreBiomeAction.explore()
+                        .biome(ConventionalBiomeTags.IN_OVERWORLD)
+                        .reward(moneyReward(3))
+                        .reward(expReward(6)))
+                .addAction(EXPLORE_BIOME, ExploreBiomeAction.explore()
+                        .biome(ConventionalBiomeTags.IN_NETHER)
+                        .reward(moneyReward(4))
+                        .reward(expReward(8)))
+                .addAction(EXPLORE_BIOME, ExploreBiomeAction.explore()
+                        .biome(ConventionalBiomeTags.IN_THE_END)
+                        .reward(moneyReward(5))
+                        .reward(expReward(9.2)))
                 .addAction(KILL_ENTITY, KillAction.kill()
                         .entity(EntityType.PIG, EntityType.CHICKEN, EntityType.SHEEP, EntityType.COW, EntityType.MOOSHROOM, EntityType.RABBIT)
                         .reward(moneyReward(8))
@@ -510,7 +526,15 @@ public class FabricProfessionProvider extends CommonProvider implements DataProv
                         .block(Blocks.STONE, Blocks.ANDESITE, Blocks.GRANITE, Blocks.DIORITE, Blocks.DEEPSLATE, Blocks.TUFF, Blocks.CALCITE, Blocks.DRIPSTONE_BLOCK)
                         .reward(expReward(0.5))
                         .reward(moneyReward(0.5))
-                        .build());
+                        .build())
+                .addAction(EXPLORE_STRUCT, ExploreStructureAction.explore()
+                        .feature(BuiltinStructures.MINESHAFT)
+                        .reward(expReward(20))
+                        .reward(moneyReward(8)))
+                .addAction(EXPLORE_STRUCT, ExploreStructureAction.explore()
+                        .feature(BuiltinStructures.MINESHAFT_MESA)
+                        .reward(expReward(30))
+                        .reward(moneyReward(10)));
         ProfessionBuilder trading = ProfessionBuilder.profession(
                         TextColor.parseColor("#2dcf08"),
                         TextColor.parseColor("#FFFFFF"),
@@ -624,19 +648,19 @@ public class FabricProfessionProvider extends CommonProvider implements DataProv
                         .reward(moneyReward(1))
                         .build());
 
-        generate(cache, alchemy.build(), createNormalPath(path, new ResourceLocation("professions:alchemy"), false));
-        generate(cache, builder.build(), createNormalPath(path, new ResourceLocation("professions:building"), false));
-        generate(cache, crafting.build(), createNormalPath(path, new ResourceLocation("professions:crafting"), false));
-        generate(cache, enchanting.build(), createNormalPath(path, new ResourceLocation("professions:enchanting"), false));
-        generate(cache, farming.build(), createNormalPath(path, new ResourceLocation("professions:farming"), false));
-        generate(cache, fishing.build(), createNormalPath(path, new ResourceLocation("professions:fishing"), false));
-        generate(cache, hunting.build(), createNormalPath(path, new ResourceLocation("professions:hunting"), false));
-        generate(cache, mining.build(), createNormalPath(path, new ResourceLocation("professions:mining"), false));
-        generate(cache, createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), false));
+        generate(GSON, cache, alchemy.build(), createNormalPath(path, new ResourceLocation("professions:alchemy"), false));
+        generate(GSON, cache, builder.build(), createNormalPath(path, new ResourceLocation("professions:building"), false));
+        generate(GSON, cache, crafting.build(), createNormalPath(path, new ResourceLocation("professions:crafting"), false));
+        generate(GSON, cache, enchanting.build(), createNormalPath(path, new ResourceLocation("professions:enchanting"), false));
+        generate(GSON, cache, farming.build(), createNormalPath(path, new ResourceLocation("professions:farming"), false));
+        generate(GSON, cache, fishing.build(), createNormalPath(path, new ResourceLocation("professions:fishing"), false));
+        generate(GSON, cache, hunting.build(), createNormalPath(path, new ResourceLocation("professions:hunting"), false));
+        generate(GSON, cache, mining.build(), createNormalPath(path, new ResourceLocation("professions:mining"), false));
+        generate(GSON, cache, createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), false));
 
-        generate(cache, trading.build(), createNormalPath(path, new ResourceLocation("professions:trading"), false));
-        generate(cache, smithing.build(), createNormalPath(path, new ResourceLocation("professions:smithing"), false));
-        generate(cache, logging.build(), createNormalPath(path, new ResourceLocation("professions:logging"), false));
+        generate(GSON, cache, trading.build(), createNormalPath(path, new ResourceLocation("professions:trading"), false));
+        generate(GSON, cache, smithing.build(), createNormalPath(path, new ResourceLocation("professions:smithing"), false));
+        generate(GSON, cache, logging.build(), createNormalPath(path, new ResourceLocation("professions:logging"), false));
     }
 
     @Override

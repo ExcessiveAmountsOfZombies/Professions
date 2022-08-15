@@ -16,20 +16,22 @@ public class RewardHandler {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static void handleReward(ProfessionContext.Builder contextBuilder) {
+    public static boolean handleReward(ProfessionContext.Builder contextBuilder) {
         contextBuilder.addParameter(ProfessionParameter.ACTION_LOGGER, new ActionLogger());
         ProfessionContext context = contextBuilder.build();
         try {
             ProfessionalPlayer pPlayer = context.getParameter(ProfessionParameter.THIS_PLAYER);
             ServerPlayer player = pPlayer.getPlayer();
             if (player != null && player.isCreative() && (!ProfessionConfig.allowCreativeModePayments || !Permissions.check(player, "professions.reward.creative", 4))) {
-                return;
+                return false;
             }
             pPlayer.handleAction(context, player);
         } catch (NoSuchElementException e) {
             LOGGER.warn("ProfessionalPlayer did not exist, dumping parameters.");
             LOGGER.warn(context.toString());
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 }

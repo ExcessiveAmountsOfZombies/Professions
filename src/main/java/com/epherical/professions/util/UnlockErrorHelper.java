@@ -1,10 +1,7 @@
 package com.epherical.professions.util;
 
-import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.unlock.Unlock;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 
 public class UnlockErrorHelper {
 
@@ -20,9 +17,11 @@ public class UnlockErrorHelper {
     }
 
     public <T> void levelRequirementNotMet(Unlock.Singular<T> singular) {
-        component.append(Component.translatable("%s %s",
+        // todo; weird code, is this class important?
+        component.append(singular.createUnlockComponent());
+        /*component.append(new TranslatableComponent("%s %s",
                 singular.getProfessionDisplay(),
-                Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))));
+                new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))));*/
     }
 
     public MutableComponent getComponent() {

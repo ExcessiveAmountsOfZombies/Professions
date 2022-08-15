@@ -5,11 +5,14 @@ import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.util.ActionLogger;
 import com.epherical.professions.util.EnchantmentContainer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 
 public record ProfessionParameter<T>(ResourceLocation name) {
     public static final ProfessionParameter<ProfessionalPlayer> THIS_PLAYER = create("this_player");
@@ -22,6 +25,8 @@ public record ProfessionParameter<T>(ResourceLocation name) {
     public static final ProfessionParameter<Recipe<?>> RECIPE_CRAFTED = create("recipe");
     public static final ProfessionParameter<EnchantmentContainer> ENCHANTMENT = create("enchantment");
     public static final ProfessionParameter<ActionLogger> ACTION_LOGGER = create("action_logger");
+    public static final ProfessionParameter<Holder<Biome>> BIOME = create("biome");
+    public static final ProfessionParameter<ConfiguredStructureFeature<?, ?>> CONFIGURED_STRUCTURE = create("configured_structure");
 
 
     public static <T> ProfessionParameter<T> create(String id) {

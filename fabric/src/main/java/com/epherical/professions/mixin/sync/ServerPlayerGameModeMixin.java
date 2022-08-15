@@ -30,12 +30,12 @@ public class ServerPlayerGameModeMixin {
 
     @Inject(method = "handleBlockBreakAction",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V", ordinal = 3))
-    public void professions$breakAborted(BlockPos blockPos, ServerboundPlayerActionPacket.Action action, Direction direction, int i, int j, CallbackInfo ci) {
+    public void professions$breakAborted(BlockPos blockPos, ServerboundPlayerActionPacket.Action action, Direction direction, int i, CallbackInfo ci) {
         SyncEvents.ABORTED_BLOCK_DESTROY_EVENT.invoker().onBlockDestroyAborted(blockPos, this.player, this.level.getBlockState(blockPos), this.level, action);
     }
 
     @Inject(method = "handleBlockBreakAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isAir()Z", ordinal = 2))
-    public void professions$breakDestroyed(BlockPos blockPos, ServerboundPlayerActionPacket.Action action, Direction direction, int i, int j, CallbackInfo ci) {
+    public void professions$breakDestroyed(BlockPos blockPos, ServerboundPlayerActionPacket.Action action, Direction direction, int i, CallbackInfo ci) {
         SyncEvents.ABORTED_BLOCK_DESTROY_EVENT.invoker().onBlockDestroyAborted(blockPos, this.player, this.level.getBlockState(blockPos), this.level, action);
     }
 

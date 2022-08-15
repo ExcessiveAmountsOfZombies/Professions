@@ -16,10 +16,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.Serializer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -27,25 +27,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BlockDropUnlock implements Unlock<Block> {
+public class BlockDropUnlock extends AbstractLevelUnlock<Block> {
     protected final List<ActionEntry<Block>> blocks;
-    protected final int level;
     @Nullable
     protected Set<Block> realBlocks;
 
     public BlockDropUnlock(List<ActionEntry<Block>> blocks, int level) {
+        super(level);
         this.blocks = blocks;
-        this.level = level;
-    }
-
-    @Override
-    public boolean isLocked(Block object, int level) {
-        return level >= this.level && getRealBlocks().contains(object);
-    }
-
-    @Override
-    public int getUnlockLevel() {
-        return level;
     }
 
     @Override
@@ -67,7 +56,7 @@ public class BlockDropUnlock implements Unlock<Block> {
         return UnlockSerializer.BLOCK_DROP_UNLOCK;
     }
 
-    public static class Single extends AbstractSingle<Block> {
+    public static class Single extends AbstractLevelUnlock.AbstractSingle<Block> {
 
         public Single(Block block, int level, Profession professionDisplay) {
             super(block, level, professionDisplay);
@@ -80,9 +69,10 @@ public class BlockDropUnlock implements Unlock<Block> {
 
         @Override
         public Component createUnlockComponent() {
-            return Component.translatable("Unlock drops for %s at level %s",
-                            getObject().getName().setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                            Component.literal(String.valueOf(getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+            // todo: translation
+            return new TranslatableComponent("Drop: - Level %s %s",
+                    new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                    profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
     }
@@ -95,6 +85,10 @@ public class BlockDropUnlock implements Unlock<Block> {
             }
         }
         return realBlocks;
+    }
+
+    public List<ActionEntry<Block>> getBlocks() {
+        return blocks;
     }
 
     public static Builder builder() {
@@ -126,22 +120,22 @@ public class BlockDropUnlock implements Unlock<Block> {
         }
     }
 
-    public static class JsonSerializer implements Serializer<BlockDropUnlock> {
+    public static class JsonSerializer extends JsonUnlockSerializer<BlockDropUnlock> {
 
         @Override
         public void serialize(JsonObject json, BlockDropUnlock value, JsonSerializationContext serializationContext) {
+            super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Block> block : value.blocks) {
                 array.addAll(block.serialize(Registry.BLOCK));
             }
             json.add("blocks", array);
-            json.addProperty("level", value.level);
         }
 
+
         @Override
-        public BlockDropUnlock deserialize(JsonObject json, JsonDeserializationContext serializationContext) {
+        public BlockDropUnlock deserialize(JsonObject json, JsonDeserializationContext context, int level) {
             List<ActionEntry<Block>> blocks = BlockAbstractAction.Serializer.deserializeBlocks(json);
-            int level = GsonHelper.getAsInt(json, "level");
             return new BlockDropUnlock(blocks, level);
         }
     }

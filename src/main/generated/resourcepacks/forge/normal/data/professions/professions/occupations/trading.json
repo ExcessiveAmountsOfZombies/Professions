@@ -1,90 +1,115 @@
 {
   "type": "professions:default",
+  "color": "#2DCF08",
+  "descriptionColor": "#FFFFFF",
+  "description": [
+    "Earn money and experience",
+    "by trading items to villagers."
+  ],
+  "displayName": "Trading",
+  "maxLevel": 100,
+  "experienceSclEquation": "1000*1.064^(lvl-1)",
+  "incomeSclEquation": "base",
   "actions": [
     {
       "action": "professions:villager_trade",
       "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 7.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 7.0
+        }
+      ],
       "items": [
         "minecraft:emerald",
         "minecraft:diamond"
-      ],
-      "rewards": [
-        {
-          "amount": 7.0,
-          "reward": "professions:occupation_exp"
-        }
       ]
     },
     {
       "action": "professions:villager_trade",
       "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 0.25,
+          "currency": "eights_economy:dollars"
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 0.25
+        }
+      ],
       "items": [
         "minecraft:paper",
         "minecraft:rotten_flesh"
-      ],
-      "rewards": [
-        {
-          "amount": 0.25,
-          "reward": "professions:occupation_exp"
-        }
       ]
     },
     {
       "action": "professions:villager_trade",
       "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 3.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 3.0
+        }
+      ],
       "items": [
         "minecraft:gold_ingot",
         "minecraft:iron_ingot"
-      ],
-      "rewards": [
-        {
-          "amount": 3.0,
-          "reward": "professions:occupation_exp"
-        }
       ]
     },
     {
       "action": "professions:villager_trade",
       "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 2.0
+        }
+      ],
       "items": [
         "minecraft:wheat",
         "minecraft:carrot",
         "minecraft:potato",
         "minecraft:beetroot"
-      ],
-      "rewards": [
-        {
-          "amount": 2.0,
-          "reward": "professions:occupation_exp"
-        }
       ]
     },
     {
       "action": "professions:villager_trade",
       "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:payment",
+          "amount": 3.0,
+          "currency": "eights_economy:dollars"
+        },
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 3.0
+        }
+      ],
       "items": [
         "minecraft:tropical_fish",
         "minecraft:salmon",
         "minecraft:cod",
         "minecraft:pufferfish"
-      ],
-      "rewards": [
-        {
-          "amount": 3.0,
-          "reward": "professions:occupation_exp"
-        }
       ]
     }
   ],
-  "color": "#2DCF08",
-  "description": [
-    "Earn money and experience",
-    "by trading items to villagers."
-  ],
-  "descriptionColor": "#FFFFFF",
-  "displayName": "Trading",
-  "experienceSclEquation": "1000*1.064^(lvl-1)",
-  "incomeSclEquation": "base",
-  "maxLevel": 100,
   "unlocks": []
 }

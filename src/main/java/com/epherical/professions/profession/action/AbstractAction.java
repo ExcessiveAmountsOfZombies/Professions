@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.Serializer;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +72,7 @@ public abstract class AbstractAction implements Action {
     }
 
     public final Component allRewardInformation() {
-        MutableComponent hoverComp = Component.literal("");
+        MutableComponent hoverComp = new TextComponent("");
         for (Component value : getRewardInformation().values()) {
             hoverComp.append(value);
         }
@@ -81,7 +82,7 @@ public abstract class AbstractAction implements Action {
     public final Component extraRewardInformation(Map<RewardType, Component> base) {
         Style style = Style.EMPTY;
         int i = 0;
-        MutableComponent hoverComponent = Component.literal("");
+        MutableComponent hoverComponent = new TextComponent("");
         for (Map.Entry<RewardType, Component> entry : base.entrySet()) {
             if (CommonPlatform.platform.skipReward(entry.getKey()) || entry.getKey().equals(Rewards.EXPERIENCE_REWARD)) {
                 continue;
@@ -93,13 +94,21 @@ public abstract class AbstractAction implements Action {
         style = style.withHoverEvent(hoverEvent);
         MutableComponent mainComponent;
         if (i > 0) {
-            mainComponent = Component.literal(" & More");
+            mainComponent = new TextComponent(" & More");
             style = style.withBold(true).withUnderlined(true).withColor(ProfessionConfig.moreRewards);
             mainComponent.setStyle(style);
         } else {
-            mainComponent = Component.literal("").setStyle(Style.EMPTY.withColor(ProfessionConfig.noMoreRewards));
+            mainComponent = new TextComponent("").setStyle(Style.EMPTY.withColor(ProfessionConfig.noMoreRewards));
         }
         return mainComponent;
+    }
+
+    public ActionCondition[] getConditions() {
+        return conditions;
+    }
+
+    public Reward[] getRewards() {
+        return rewards;
     }
 
     public abstract static class ActionSerializer<T extends AbstractAction> implements Serializer<T> {

@@ -23,6 +23,10 @@ repositories {
             password = project.findProperty("gpr.key")
         }
     }
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+    }
 
     repositories {
         maven { url "https://maven.bai.lol" }
@@ -38,7 +42,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.18.1:2021.12.19")
+        parchment("org.parchmentmc.data:parchment-1.18.2:2022.07.10")
     }
     shade(rootProject)
     compileOnly(rootProject)
@@ -59,6 +63,12 @@ dependencies {
     modCompileOnly "curse.maven:ftb-quests-fabric-438496:3725770"
     modCompileOnly "curse.maven:ftb-library-fabric-438495:3725484"
     //modCompileOnly "mcp.mobius.waila:wthit-api:fabric-5.1.1"
+
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.1"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-chunk:5.0.1"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.1"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-chunk:5.0.1"
+
 }
 
 processResources {

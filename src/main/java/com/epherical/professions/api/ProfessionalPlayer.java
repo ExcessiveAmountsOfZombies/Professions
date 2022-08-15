@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface ProfessionalPlayer {
@@ -62,10 +63,8 @@ public interface ProfessionalPlayer {
 
     List<Occupation> getInactiveOccupations();
 
-    <T> UnlockableData getUnlockableData(UnlockType<T> unlockType, T object);
-
+    <T> List<Unlock.Singular<T>> getLockedKnowledge(T object, Set<UnlockType<T>> unlockTypes);
     <T> List<Unlock.Singular<T>> getLockedKnowledge(UnlockType<T> unlockType, T object);
-
     <T> List<Unlock.Singular<T>> getLockedKnowledge(T object);
 
 }

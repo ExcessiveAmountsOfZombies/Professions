@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,9 +56,9 @@ public class OccupationScreen<T> extends Screen {
     private final List<Widget> renderables = Lists.newArrayList();
     private final List<Hidden> buttonsThatHide = Lists.newArrayList();
 
-    private final MutableComponent NO_ENTRIES = Component.translatable("professions.gui.no_entries")
+    private final MutableComponent NO_ENTRIES = new TranslatableComponent("professions.gui.no_entries")
             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
-    private final MutableComponent NO_ENTRIES_LEAVE = Component.translatable("professions.gui.no_entries.leave")
+    private final MutableComponent NO_ENTRIES_LEAVE = new TranslatableComponent("professions.gui.no_entries.leave")
             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
 
     public OccupationScreen(List<T> list, Minecraft minecraft, OccupationListCreator<T> creator, CommandButtons buttons) {
@@ -82,7 +83,7 @@ public class OccupationScreen<T> extends Screen {
                 button == CommandButtons.INFO ? 16 : 24);
         // column 1
         initWidget(new CommandButton(false, this.width / 2 - 24, this.height / 2 - 76,
-                Component.translatable("professions.gui.join"),
+                new TranslatableComponent("professions.gui.join"),
                 button1 -> {
                     if (button != CommandButtons.JOIN) {
                         addPrevious(this);
@@ -90,7 +91,7 @@ public class OccupationScreen<T> extends Screen {
                     CommonPlatform.platform.sendButtonPacket(CommandButtons.JOIN);
                 }));
         initWidget(new CommandButton(false, this.width / 2 - 24, this.height / 2 - 76 + 20 + 3,
-                Component.translatable("professions.gui.leave"),
+                new TranslatableComponent("professions.gui.leave"),
                 button1 -> {
                     if (button != CommandButtons.LEAVE) {
                         addPrevious(this);
@@ -99,7 +100,7 @@ public class OccupationScreen<T> extends Screen {
                 }));
         // column 2
         initWidget(new CommandButton(false, this.width / 2 - 24 + 40, this.height / 2 - 76,
-                Component.translatable("professions.gui.top"),
+                new TranslatableComponent("professions.gui.top"),
                 button1 -> {
                     if (button != CommandButtons.TOP) {
                         addPrevious(this);
@@ -109,7 +110,7 @@ public class OccupationScreen<T> extends Screen {
 
         if (button != CommandButtons.INFO) {
             CommandButton infoButton = new CommandButton(true, this.width / 2 - 24 + 40, this.height / 2 - 76 + 20 + 3,
-                    Component.translatable("professions.gui.info"),
+                    new TranslatableComponent("professions.gui.info"),
                     button1 -> {
                         addPrevious(this);
                         CommonPlatform.platform.getClientNetworking().attemptInfoPacket(professionHolder.getProfession().getKey());
@@ -121,13 +122,13 @@ public class OccupationScreen<T> extends Screen {
 
         // row 3
         initWidget(new CommandButton(false, this.width / 2 + 100 + (38 + 3) / 2, this.height / 2 - 86,
-                Component.translatable("professions.gui.close"),
+                new TranslatableComponent("professions.gui.close"),
                 button1 -> this.minecraft.setScreen(null), true, 16, 16, CommandButton.SmallIcon.BAD));
 
 
         if (prevScreen != null) {
             initWidget(new CommandButton(false, this.width / 2 + 100 - 18 + (38 + 3) / 2, this.height / 2 - 86,
-                    Component.translatable("professions.gui.close"),
+                    new TranslatableComponent("professions.gui.close"),
                     button1 -> {
                         Screen screen = prevScreen;
                         prevScreen = null;

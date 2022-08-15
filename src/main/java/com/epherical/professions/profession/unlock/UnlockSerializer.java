@@ -2,6 +2,7 @@ package com.epherical.professions.profession.unlock;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.RegistryConstants;
+import com.epherical.professions.profession.unlock.builtin.AdvancementUnlock;
 import com.epherical.professions.profession.unlock.builtin.BlockBreakUnlock;
 import com.epherical.professions.profession.unlock.builtin.BlockDropUnlock;
 import com.epherical.professions.profession.unlock.builtin.ToolUnlock;
@@ -13,6 +14,7 @@ public interface UnlockSerializer<T extends Unlock<?>> {
     UnlockSerializer<BlockDropUnlock> BLOCK_DROP_UNLOCK = register(Constants.modID("block_drop"), new BlockDropUnlock.NetworkSerializer());
     UnlockSerializer<BlockBreakUnlock> BLOCK_BREAK_UNLOCK = register(Constants.modID("block_break"), new BlockBreakUnlock.NetworkSerializer());
     UnlockSerializer<ToolUnlock> TOOL_UNLOCK = register(Constants.modID("tool"), new ToolUnlock.NetworkSerializer());
+    UnlockSerializer<AdvancementUnlock> ADVANCEMENT_UNLOCK = register(Constants.modID("advancement"), new AdvancementUnlock.NetworkSerializer());
 
     T fromNetwork(FriendlyByteBuf buf);
 

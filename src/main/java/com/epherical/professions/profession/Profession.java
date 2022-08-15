@@ -21,6 +21,8 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +62,7 @@ public class Profession {
         this.unlocks = unlocks;
         this.experienceScalingEquation = experienceScalingEquation;
         this.incomeScalingEquation = incomeScalingEquation;
-        this.displayComponent = Component.literal(displayName).setStyle(Style.EMPTY.withColor(color));
+        this.displayComponent = new TextComponent(displayName).setStyle(Style.EMPTY.withColor(color));
     }
 
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
@@ -101,6 +103,14 @@ public class Profession {
         return unlocks;
     }
 
+    public Parser getExperienceScalingEquation() {
+        return experienceScalingEquation;
+    }
+
+    public Parser getIncomeScalingEquation() {
+        return incomeScalingEquation;
+    }
+
     @Nullable
     public Collection<Action> getActions(ActionType type) {
         return actions.get(type);
@@ -129,14 +139,15 @@ public class Profession {
     }
 
     public Component createBrowseMessage() {
-        MutableComponent name = Component.literal(displayName).setStyle(Style.EMPTY.withColor(color));
-        MutableComponent level = Component.literal("" + maxLevel).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
-        MutableComponent hoverText = Component.literal("").setStyle(Style.EMPTY.withColor(descriptionColor));
+        MutableComponent name = new TextComponent(displayName).setStyle(Style.EMPTY.withColor(color));
+        MutableComponent level = new TextComponent("" + maxLevel).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+        MutableComponent hoverText = new TextComponent("").setStyle(Style.EMPTY.withColor(descriptionColor));
         for (String s : getDescription()) {
             hoverText.append(s);
         }
 
-        return Component.translatable("%s. Max Level: %s", name, level)
+        // todo: translation
+        return new TranslatableComponent("%s. Max Level: %s", name, level)
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText)));
     }
@@ -174,8 +185,7 @@ public class Profession {
 
     /**
      * Only call on the CLIENT
-     *
-     * @return
+     * @return a List of professions from the network
      */
     public static List<Profession> fromNetwork(FriendlyByteBuf buf) {
         int size = buf.readVarInt();
@@ -261,9 +271,8 @@ public class Profession {
             }
             Map<UnlockType<?>, Collection<Unlock<?>>> map = new HashMap<>();
             if (buffer.readBoolean()) {
-                map = buffer.readMap(buf -> {
-                    return RegistryConstants.UNLOCKS.get(buf.readResourceLocation());
-                }, buf -> {
+                map = buffer.readMap(buf ->
+                        RegistryConstants.UNLOCKS.get(buf.readResourceLocation()), buf -> {
                     int size = buf.readVarInt();
                     Collection<Unlock<?>> unlocks = new ArrayList<>();
                     for (int i = 0; i < size; i++) {

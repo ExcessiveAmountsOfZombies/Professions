@@ -1,5 +1,6 @@
 package com.epherical.professions;
 
+import com.epherical.octoecon.api.Economy;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClient;
 import com.epherical.professions.datapack.CommonProfessionLoader;
@@ -18,9 +19,12 @@ import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 public class FabricPlatform extends CommonPlatform<FabricPlatform> {
@@ -39,6 +43,16 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
     @Override
     public boolean isServerEnvironment() {
         return FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER;
+    }
+
+    @Override
+    public MinecraftServer server() {
+        return ProfessionsFabric.getInstance().getMinecraftServer();
+    }
+
+    @Override
+    public Economy economy() {
+        return ProfessionsFabric.getEconomy();
     }
 
     @Override
@@ -98,13 +112,18 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
 
     @Override
     public boolean skipReward(RewardType type) {
-        return type.equals(FabricRegConstants.PAYMENT_REWARD);
+        return type.equals(Rewards.PAYMENT_REWARD);
+    }
+
+    @Override
+    public Path getRootConfigPath() {
+        return FabricLoader.getInstance().getConfigDir().resolve("professions");
     }
 
     @Override
     public Component displayInformation(AbstractAction action, Map<RewardType, Component> map) {
-        return Component.translatable(" (%s | %s%s)",
-                map.get(FabricRegConstants.PAYMENT_REWARD),
+        return new TranslatableComponent(" (%s | %s%s)",
+                map.get(Rewards.PAYMENT_REWARD),
                 map.get(Rewards.EXPERIENCE_REWARD),
                 action.extraRewardInformation(map));
     }

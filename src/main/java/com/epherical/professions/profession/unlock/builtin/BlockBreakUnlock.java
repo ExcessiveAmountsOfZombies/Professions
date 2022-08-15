@@ -20,6 +20,10 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.Serializer;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -27,25 +31,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BlockBreakUnlock implements Unlock<Block> {
+public class BlockBreakUnlock extends AbstractLevelUnlock<Block> {
     protected final List<ActionEntry<Block>> blocks;
-    protected final int level;
     @Nullable
     protected Set<Block> realBlocks;
 
     public BlockBreakUnlock(List<ActionEntry<Block>> blocks, int level) {
+        super(level);
         this.blocks = blocks;
-        this.level = level;
-    }
-
-    @Override
-    public boolean isLocked(Block object, int level) {
-        return level >= this.level && getRealBlocks().contains(object);
-    }
-
-    @Override
-    public int getUnlockLevel() {
-        return level;
     }
 
     @Override
@@ -67,7 +60,7 @@ public class BlockBreakUnlock implements Unlock<Block> {
         return UnlockSerializer.BLOCK_BREAK_UNLOCK;
     }
 
-    public static class Single extends AbstractSingle<Block> {
+    public static class Single extends AbstractLevelUnlock.AbstractSingle<Block> {
 
         public Single(Block block, int level, Profession professionDisplay) {
             super(block, level, professionDisplay);
@@ -80,9 +73,10 @@ public class BlockBreakUnlock implements Unlock<Block> {
 
         @Override
         public Component createUnlockComponent() {
-            return Component.translatable("Unlock drops for %s at level %s",
-                            getObject().getName().setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                            Component.literal(String.valueOf(getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+            // todo; translation
+            return new TranslatableComponent("Break: - Level %s %s",
+                    new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                    profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
     }
@@ -95,6 +89,10 @@ public class BlockBreakUnlock implements Unlock<Block> {
             }
         }
         return realBlocks;
+    }
+
+    public List<ActionEntry<Block>> getBlocks() {
+        return blocks;
     }
 
     public static Builder builder() {
@@ -126,22 +124,21 @@ public class BlockBreakUnlock implements Unlock<Block> {
         }
     }
 
-    public static class JsonSerializer implements Serializer<BlockBreakUnlock> {
+    public static class JsonSerializer extends JsonUnlockSerializer<BlockBreakUnlock> {
 
         @Override
         public void serialize(JsonObject json, BlockBreakUnlock value, JsonSerializationContext serializationContext) {
+            super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Block> block : value.blocks) {
                 array.addAll(block.serialize(Registry.BLOCK));
             }
             json.add("blocks", array);
-            json.addProperty("level", value.level);
         }
 
         @Override
-        public BlockBreakUnlock deserialize(JsonObject json, JsonDeserializationContext serializationContext) {
+        public BlockBreakUnlock deserialize(JsonObject json, JsonDeserializationContext context, int level) {
             List<ActionEntry<Block>> blocks = BlockAbstractAction.Serializer.deserializeBlocks(json);
-            int level = GsonHelper.getAsInt(json, "level");
             return new BlockBreakUnlock(blocks, level);
         }
     }

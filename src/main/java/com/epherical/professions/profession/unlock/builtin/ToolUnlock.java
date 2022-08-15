@@ -15,12 +15,11 @@ import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.storage.loot.Serializer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -28,25 +27,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ToolUnlock implements Unlock<Item> {
+public class ToolUnlock extends AbstractLevelUnlock<Item> {
     protected final List<ActionEntry<Item>> items;
-    protected final int level;
     @Nullable
     protected Set<Item> real;
 
     public ToolUnlock(List<ActionEntry<Item>> items, int level) {
+        super(level);
         this.items = items;
-        this.level = level;
-    }
-
-    @Override
-    public boolean isLocked(Item object, int level) {
-        return level >= this.level && convertToReal().contains(object);
-    }
-
-    @Override
-    public int getUnlockLevel() {
-        return level;
     }
 
     @Override
@@ -78,11 +66,15 @@ public class ToolUnlock implements Unlock<Item> {
         return real;
     }
 
+    public List<ActionEntry<Item>> getItems() {
+        return items;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
-    public static class Single extends AbstractSingle<Item> {
+    public static class Single extends AbstractLevelUnlock.AbstractSingle<Item> {
 
         public Single(Item item, int level, Profession professionDisplay) {
             super(item, level, professionDisplay);
@@ -95,9 +87,10 @@ public class ToolUnlock implements Unlock<Item> {
 
         @Override
         public Component createUnlockComponent() {
-            return Component.translatable("Unlock use of %s at level %s",
-                            ((MutableComponent) getObject().getDescription()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                            Component.literal(String.valueOf(getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+            // todo: translation
+            return new TranslatableComponent("Use: - Level %s %s",
+                    new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                    profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
     }
@@ -127,22 +120,21 @@ public class ToolUnlock implements Unlock<Item> {
         }
     }
 
-    public static class JsonSerializer implements Serializer<ToolUnlock> {
+    public static class JsonSerializer extends JsonUnlockSerializer<ToolUnlock> {
 
         @Override
         public void serialize(JsonObject json, ToolUnlock value, JsonSerializationContext serializationContext) {
+            super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Item> block : value.items) {
                 array.addAll(block.serialize(Registry.ITEM));
             }
             json.add("items", array);
-            json.addProperty("level", value.level);
         }
 
         @Override
-        public ToolUnlock deserialize(JsonObject json, JsonDeserializationContext serializationContext) {
+        public ToolUnlock deserialize(JsonObject json, JsonDeserializationContext context, int level) {
             List<ActionEntry<Item>> items = AbstractItemAction.Serializer.deserializeItems(json);
-            int level = GsonHelper.getAsInt(json, "level");
             return new ToolUnlock(items, level);
         }
     }

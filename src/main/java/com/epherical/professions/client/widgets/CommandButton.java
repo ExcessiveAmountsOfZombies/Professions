@@ -77,6 +77,9 @@ public class CommandButton extends Button implements Hidden {
     public enum SmallIcon {
         GOOD,
         BAD,
-        BACK
+        BACK,
+        DROP_DOWN_OPEN,
+        DROP_DOWN_CLOSE,
+        ADD
     }
 }

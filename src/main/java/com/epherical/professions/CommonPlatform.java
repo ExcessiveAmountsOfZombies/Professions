@@ -1,18 +1,21 @@
 package com.epherical.professions;
 
+import com.epherical.octoecon.api.Economy;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.datapack.CommonProfessionLoader;
-import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.networking.ClientNetworking;
+import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.action.AbstractAction;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.rewards.RewardType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 public abstract class CommonPlatform<T> {
@@ -32,6 +35,10 @@ public abstract class CommonPlatform<T> {
     public abstract boolean isClientEnvironment();
 
     public abstract boolean isServerEnvironment();
+
+    public abstract MinecraftServer server();
+
+    public abstract Economy economy();
 
     public abstract boolean checkPermission(Player player, String perm, int defIntPerm);
 
@@ -57,12 +64,13 @@ public abstract class CommonPlatform<T> {
 
     public abstract boolean skipReward(RewardType type);
 
+    public abstract Path getRootConfigPath();
+
     /**
      * Some platforms may not have the same key rewards that should be displayed in /professions info.
      * E.G forge does not have a payment reward, only experience.
      */
     public abstract Component displayInformation(AbstractAction action, Map<RewardType, Component> map);
-
 
 
 }

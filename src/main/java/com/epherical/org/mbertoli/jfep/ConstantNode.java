@@ -1,23 +1,23 @@
-/**    
-  * Copyright 2006 Bertoli Marco
-
-  *  Licensed under the Apache License, Version 2.0 (the "License");
-  *  you may not use this file except in compliance with the License.
-  *  You may obtain a copy of the License at
-
-  *  http://www.apache.org/licenses/LICENSE-2.0
-
-  *  Unless required by applicable law or agreed to in writing, software
-  *  distributed under the License is distributed on an "AS IS" BASIS,
-  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  *  See the License for the specific language governing permissions and
-  *  limitations under the License.
-  */
+/**
+ * Copyright 2006 Bertoli Marco
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.epherical.org.mbertoli.jfep;
 
 /**
- * <p><b>Name:</b> ConstantNode</p> 
- * <p><b>Description:</b> 
+ * <p><b>Name:</b> ConstantNode</p>
+ * <p><b>Description:</b>
  * A constant value node
  * </p>
  * <p><b>Date:</b> 08/dic/06
@@ -27,16 +27,16 @@ package com.epherical.org.mbertoli.jfep;
  */
 public class ConstantNode implements ExpressionNode {
     /** List of built-in constant names */
-    public static final String[] CONSTANTS = new String[] {"pi", "e"};
+    public static final String[] CONSTANTS = new String[]{"pi", "e"};
     /** List of built-in constant values */
-    public static final double[] VALUES = new double[] {Math.PI, Math.E};
+    public static final double[] VALUES = new double[]{Math.PI, Math.E};
     /** Value of the constant */
     protected double constant;
     /** Name of the constant. Only if it's built-in */
     protected String name;
     /** An empty array with children */
     protected ExpressionNode[] children = new ExpressionNode[0];
-    
+
     /**
      * Builds a constant node
      * @param constant constant to be put in node
@@ -45,14 +45,14 @@ public class ConstantNode implements ExpressionNode {
         this.constant = constant;
         name = null;
     }
-    
+
     /**
      * Builds a constant node, with an unique constant
      * @param name name of the constant in the CONSTANTS array
      */
     public ConstantNode(String name) {
         this.name = name;
-        for (int i=0; i<CONSTANTS.length;i++)
+        for (int i = 0; i < CONSTANTS.length; i++)
             if (CONSTANTS[i].equals(name)) {
                 constant = VALUES[i];
                 return;
@@ -115,7 +115,7 @@ public class ConstantNode implements ExpressionNode {
     public void setVariable(String name, double value) {
         // Nothing to be done here...
     }
-    
+
     /* (non-Javadoc)
      * @see ExpressionNode#getChildrenNodes()
      */

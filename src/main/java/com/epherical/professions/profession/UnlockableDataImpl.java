@@ -36,7 +36,7 @@ public class UnlockableDataImpl implements UnlockableData {
 
     @Override
     public <T> UnlockableValues<Unlock.Singular<T>> getUnlock(T object) {
-        return (UnlockableValues<Unlock.Singular<T>>)(UnlockableValues<?>) unlocks.get(object);
+        return (UnlockableValues<Unlock.Singular<T>>) (UnlockableValues<?>) unlocks.get(object);
     }
 
     @Override

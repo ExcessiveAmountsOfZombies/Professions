@@ -18,8 +18,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -119,10 +117,10 @@ public class AdvancementUnlock implements Unlock<Item> {
             if (advancement != null) {
                 toUse = advancement.getChatComponent();
             } else {
-                toUse = new TextComponent(value.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+                toUse = Component.literal(value.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
             }
             // todo: translation
-            return new TranslatableComponent("Achieve: - %s", toUse).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
+            return Component.translatable("Achieve: - %s", toUse).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
 
         @Override

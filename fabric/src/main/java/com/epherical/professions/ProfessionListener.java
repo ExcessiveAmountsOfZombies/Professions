@@ -14,7 +14,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.structure.Structure;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,9 +67,9 @@ public class ProfessionListener {
                         component.addPlayerToChunk(uuid);
                         access.setUnsaved(true);
                     }
-                    Set<ConfiguredStructureFeature<?, ?>> configuredStructureFeatures = player.getLevel().structureFeatureManager().getAllStructuresAt(player.getOnPos()).keySet();
-                    for (ConfiguredStructureFeature<?, ?> configuredStructureFeature : configuredStructureFeatures) {
-                        if (player.getLevel().structureFeatureManager().getStructureAt(player.getOnPos(), configuredStructureFeature).isValid()) {
+                    Set<Structure> configuredStructureFeatures = player.getLevel().structureManager().getAllStructuresAt(player.getOnPos()).keySet();
+                    for (Structure configuredStructureFeature : configuredStructureFeatures) {
+                        if (player.getLevel().structureManager().getStructureAt(player.getOnPos(), configuredStructureFeature).isValid()) {
                             builder = new ProfessionContext.Builder(player.getLevel())
                                     .addRandom(player.getLevel().random)
                                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.EXPLORE_STRUCT)

@@ -16,8 +16,8 @@ import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.LevelDisplay;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -83,8 +83,8 @@ public class NetworkHandler {
                 for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
                     Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
                     if (actionsFor != null && !actionsFor.isEmpty()) {
-                        ActionDisplay display = new ActionDisplay(new TranslatableComponent("%s",
-                                new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                        ActionDisplay display = new ActionDisplay(Component.translatable("%s",
+                                        Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), actionsFor);
                         displays.add(display);
                     }
@@ -327,19 +327,39 @@ public class NetworkHandler {
     }
 
     // Serverbound Packets
-    public record OpenUI(ResourceLocation location) {}
-    public record Attempt(ResourceLocation subChannel, ResourceLocation professionKey) {}
-    public record Button(CommandButtons button) {}
-    public record SynchronizeResponse() {}
+    public record OpenUI(ResourceLocation location) {
+    }
+
+    public record Attempt(ResourceLocation subChannel, ResourceLocation professionKey) {
+    }
+
+    public record Button(CommandButtons button) {
+    }
+
+    public record SynchronizeResponse() {
+    }
 
     // Clientbound Packets
-    public record RespondUI(ResourceLocation location, List<Occupation> occupations) {}
-    public record RespondInfo(List<ActionDisplay> displays) {}
-    public record ButtonJoin(List<Profession> professions) {}
-    public record ButtonLeave(List<Occupation> occupations) {}
-    public record ButtonInfo(Collection<Profession> professions) {}
-    public record SynchronizeRequest() {}
-    public record SyncData(List<Occupation> occupations) {}
+    public record RespondUI(ResourceLocation location, List<Occupation> occupations) {
+    }
+
+    public record RespondInfo(List<ActionDisplay> displays) {
+    }
+
+    public record ButtonJoin(List<Profession> professions) {
+    }
+
+    public record ButtonLeave(List<Occupation> occupations) {
+    }
+
+    public record ButtonInfo(Collection<Profession> professions) {
+    }
+
+    public record SynchronizeRequest() {
+    }
+
+    public record SyncData(List<Occupation> occupations) {
+    }
 
     public static class ButtonTop {
         private Collection<ProfessionalPlayer> players;

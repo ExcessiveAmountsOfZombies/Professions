@@ -22,10 +22,10 @@ import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
 import com.epherical.professions.trigger.UtilityListener;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.loot.v1.FabricLootPoolBuilder;
-import net.fabricmc.fabric.api.loot.v1.event.LootTableLoadingCallback;
+import net.fabricmc.fabric.api.loot.v2.FabricLootPoolBuilder;
+import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -75,7 +75,7 @@ public class ProfessionsFabric implements ModInitializer {
             ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation("professions", "fabric/normal"), FabricLoader.getInstance().getModContainer("professions").get(), ResourcePackActivationType.DEFAULT_ENABLED);
             //ResourceManagerHelper.registerBuiltinResourcePack(new ResourceLocation("professions", "fabric/hardcore"), FabricLoader.getInstance().getModContainer("professions").get(), ResourcePackActivationType.DEFAULT_ENABLED);
         }
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             this.commands = new ProfessionsCommands(this, dispatcher);
         });
 
@@ -95,12 +95,12 @@ public class ProfessionsFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             isStopping = true;
         });
-        LootTableLoadingCallback.EVENT.register((resourceManager, manager, id, supplier, setter) -> {
+        LootTableEvents.MODIFY.register((resourceManager, manager, id, supplier, setter) -> {
             List<LootPool> pools = ((LootTableBuilderAccessor) supplier).getPools();
             // this is probably really awful to do, adding our condition check to EVERY SINGLE lootpool in the game.
             if (!pools.isEmpty()) {
                 for (int i = 0; i < pools.size(); i++) {
-                    LootPool.Builder builder = FabricLootPoolBuilder.of(pools.get(i));
+                    LootPool.Builder builder = FabricLootPoolBuilder.copyOf(pools.get(i));
                     builder.when(UnlockCondition::new);
                     pools.set(i, builder.build());
                 }

@@ -8,9 +8,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(StatePropertiesPredicate.RangedPropertyMatcher.class)
 public interface RangedPropertyMatcherAccess {
 
-    @Accessor("minValue") @Nullable
+    @Accessor("minValue")
+    @Nullable
     String getMinValue();
 
-    @Accessor("maxValue") @Nullable
+    @Accessor("maxValue")
+    @Nullable
     String getMaxValue();
 }

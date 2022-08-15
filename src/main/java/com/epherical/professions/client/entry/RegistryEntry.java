@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class RegistryEntry<DE, T> extends DatapackEntry<DE, RegistryEntry<DE, T>
                          Deserializer<DE, RegistryEntry<DE, T>> deserializer, Type... types) {
         super(x, y, width, serializationKey, types);
         this.value = defaultValue;
-        this.tooltip = new TextComponent(registry.getKey(defaultValue).toString());
+        this.tooltip = Component.literal(registry.getKey(defaultValue).toString());
         this.registry = registry;
         this.deserializer = deserializer;
 
@@ -108,7 +107,7 @@ public class RegistryEntry<DE, T> extends DatapackEntry<DE, RegistryEntry<DE, T>
             for (Map.Entry<ResourceKey<T>, T> entry : registry.entrySet()) {
                 RegistryObjectEntry<DE, T> objectEntry = new RegistryObjectEntry<>(x + 7, y + 23, 160, entry.getKey(), entry.getValue(), (object) -> {
                     this.value = object.getObject();
-                    this.tooltip = new TextComponent(registry.getKey(this.value).toString());
+                    this.tooltip = Component.literal(registry.getKey(this.value).toString());
                     this.button.icon = CommandButton.SmallIcon.DROP_DOWN_OPEN;
                     this.button.opened = false;
                     screen.markScreenDirty();
@@ -129,7 +128,7 @@ public class RegistryEntry<DE, T> extends DatapackEntry<DE, RegistryEntry<DE, T>
     }
 
     private void update() {
-        this.tooltip = new TextComponent(registry.getKey(this.value).toString());
+        this.tooltip = Component.literal(registry.getKey(this.value).toString());
     }
 
     public void setValue(T value) {
@@ -152,7 +151,7 @@ public class RegistryEntry<DE, T> extends DatapackEntry<DE, RegistryEntry<DE, T>
         button.y = y + 2 + yScroll;
     }
 
-    public interface ClickRegistryObjectEntry<V,T> {
+    public interface ClickRegistryObjectEntry<V, T> {
         void action(RegistryObjectEntry<V, T> entry);
     }
 }

@@ -9,13 +9,10 @@ import com.epherical.professions.profession.unlock.Unlocks;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
@@ -43,7 +40,7 @@ public class UnlockCondition implements LootItemCondition {
             if (player == null || player.getActiveOccupations().size() == 0) {
                 return true; // don't affect the loot if it's not relevant
             }
-            MutableComponent msg = new TextComponent("");
+            MutableComponent msg = Component.literal("");
             int level = 0;
             boolean canUseTool = true, canDropEntity = true, canDropBlock = true;
             /*ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
@@ -58,7 +55,7 @@ public class UnlockCondition implements LootItemCondition {
 
             BlockState blockBroken = context.getParamOrNull(LootContextParams.BLOCK_STATE);
             // todo: translations
-            MutableComponent error = new TextComponent("=-=-=-= Level Requirements =-=-=-=");
+            MutableComponent error = Component.literal("=-=-=-= Level Requirements =-=-=-=");
             if (blockBroken != null) {
                 List<Unlock.Singular<Block>> lockedKnowledge = player.getLockedKnowledge(Unlocks.BLOCK_DROP_UNLOCK, blockBroken.getBlock());
                 for (Unlock.Singular<Block> singular : lockedKnowledge) {
@@ -70,12 +67,12 @@ public class UnlockCondition implements LootItemCondition {
                 }
             }
             if (!(canUseTool && canDropEntity && canDropBlock)) {
-                Component hover = new TextComponent("Hover to see which occupations prevented the drop.")
-                                .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)
-                                        .withUnderlined(true)
-                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, error)));
-                serverPlayer.sendMessage(new TranslatableComponent("Drops for this action are not unlocked yet. %s", hover)
-                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
+                Component hover = Component.literal("Hover to see which occupations prevented the drop.")
+                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)
+                                .withUnderlined(true)
+                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, error)));
+                serverPlayer.sendSystemMessage(Component.translatable("Drops for this action are not unlocked yet. %s", hover)
+                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return false;
             }
         }

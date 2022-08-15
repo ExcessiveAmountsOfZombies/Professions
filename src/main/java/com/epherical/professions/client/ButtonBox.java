@@ -77,5 +77,6 @@ public class ButtonBox<T extends ButtonBox<T>> extends Box implements GuiEventLi
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {}
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    }
 }

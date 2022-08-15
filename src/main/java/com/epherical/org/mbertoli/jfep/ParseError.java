@@ -1,23 +1,23 @@
-/**    
-  * Copyright 2006 Bertoli Marco
-
-  *  Licensed under the Apache License, Version 2.0 (the "License");
-  *  you may not use this file except in compliance with the License.
-  *  You may obtain a copy of the License at
-
-  *  http://www.apache.org/licenses/LICENSE-2.0
-
-  *  Unless required by applicable law or agreed to in writing, software
-  *  distributed under the License is distributed on an "AS IS" BASIS,
-  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  *  See the License for the specific language governing permissions and
-  *  limitations under the License.
-  */
+/**
+ * Copyright 2006 Bertoli Marco
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.epherical.org.mbertoli.jfep;
 
 /**
- * <p><b>Name:</b> ParseError</p> 
- * <p><b>Description:</b> 
+ * <p><b>Name:</b> ParseError</p>
+ * <p><b>Description:</b>
  * Thrown if the parser encountres an irrecoverable error.
  * </p>
  * <p><b>Date:</b> 08/dic/06
@@ -27,14 +27,15 @@ package com.epherical.org.mbertoli.jfep;
  */
 public class ParseError extends RuntimeException {
     private int position;
+
     /**
      * Basic constructor
      * @param str Error description
      * @param position Position that generated error in input string
      */
-    public ParseError (String str, int position) {
-      super(str);
-      this.position = position;
+    public ParseError(String str, int position) {
+        super(str);
+        this.position = position;
     }
 
     /**
@@ -42,7 +43,7 @@ public class ParseError extends RuntimeException {
      * @return position
      */
     public int getPosition() {
-      return position;
+        return position;
     }
 
     public ParseError(String message) {

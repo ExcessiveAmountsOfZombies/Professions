@@ -18,7 +18,8 @@ public class SmallIconButton extends Button {
 
 
     public SmallIconButton(int i, int j, int k, int l, Component component, CommandButton.SmallIcon icon, ButtonPress<SmallIconButton> onPress) {
-        super(i, j, k, l, component, button -> {});
+        super(i, j, k, l, component, button -> {
+        });
         this.onPress = onPress;
         this.icon = icon;
     }

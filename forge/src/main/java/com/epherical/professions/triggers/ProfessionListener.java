@@ -16,10 +16,10 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -37,7 +37,7 @@ public class ProfessionListener {
         if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayer)) {
             return;
         }
-        BlockEntity entity = event.getWorld().getBlockEntity(event.getPos());
+        BlockEntity entity = event.getLevel().getBlockEntity(event.getPos());
         if (entity != null) {
             entity.getCapability(PlayerOwnableImpl.OWNING_CAPABILITY).ifPresent(ownable -> {
                 ownable.setPlacedBy((ServerPlayer) event.getEntity());
@@ -47,23 +47,23 @@ public class ProfessionListener {
 
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!event.getPlayer().getLevel().isClientSide) {
-            ProfessionsForge.getInstance().getPlayerManager().playerJoined((ServerPlayer) event.getPlayer());
+        if (!event.getEntity().getLevel().isClientSide) {
+            ProfessionsForge.getInstance().getPlayerManager().playerJoined((ServerPlayer) event.getEntity());
         }
 
     }
 
     @SubscribeEvent
     public void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (!event.getPlayer().getLevel().isClientSide) {
-            ProfessionsForge.getInstance().getPlayerManager().playerQuit((ServerPlayer) event.getPlayer());
-            playerPositions.remove(event.getPlayer().getUUID());
+        if (!event.getEntity().getLevel().isClientSide) {
+            ProfessionsForge.getInstance().getPlayerManager().playerQuit((ServerPlayer) event.getEntity());
+            playerPositions.remove(event.getEntity().getUUID());
         }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = false)
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (event.isCanceled() || event.getWorld().isClientSide()) {
+        if (event.isCanceled() || event.getLevel().isClientSide()) {
             return;
         }
 
@@ -77,12 +77,12 @@ public class ProfessionListener {
     }
 
     @SubscribeEvent()
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent event) {
-        LivingEntity entity = event.getEntityLiving();
+    public void onEntityUpdate(LivingEvent.LivingTickEvent event) {
+        LivingEntity entity = event.getEntity();
         if (event.isCanceled() || entity.level.isClientSide || !(entity instanceof ServerPlayer)) {
             return;
         }
-        ServerPlayer player = (ServerPlayer) event.getEntityLiving();
+        ServerPlayer player = (ServerPlayer) event.getEntity();
         UUID uuid = player.getUUID();
         if (!playerPositions.containsKey(uuid)) {
             playerPositions.put(uuid, player.chunkPosition());
@@ -106,8 +106,8 @@ public class ProfessionListener {
                             chunkVisited.addPlayerToChunk(uuid);
                             access.setUnsaved(true);
                         }
-                        Set<ConfiguredStructureFeature<?, ?>> configuredStructureFeatures = player.getLevel().structureFeatureManager().getAllStructuresAt(player.getOnPos()).keySet();
-                        for (ConfiguredStructureFeature<?, ?> configuredStructureFeature : configuredStructureFeatures) {
+                        Set<Structure> configuredStructureFeatures = player.getLevel().structureManager().getAllStructuresAt(player.getOnPos()).keySet();
+                        for (Structure configuredStructureFeature : configuredStructureFeatures) {
                             builder = new ProfessionContext.Builder(player.getLevel())
                                     .addRandom(player.getLevel().random)
                                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.EXPLORE_STRUCT)

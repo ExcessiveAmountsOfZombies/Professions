@@ -5,5 +5,5 @@ import net.minecraft.world.level.block.state.StateHolder;
 
 public interface StatePropertiesPredicateHelper {
 
-    <S extends StateHolder<?, S>> boolean professions$anyMatches(StateDefinition<?, S>  properties, S targetProperty);
+    <S extends StateHolder<?, S>> boolean professions$anyMatches(StateDefinition<?, S> properties, S targetProperty);
 }

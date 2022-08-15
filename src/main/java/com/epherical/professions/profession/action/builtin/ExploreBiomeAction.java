@@ -23,7 +23,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -73,7 +72,7 @@ public class ExploreBiomeAction extends AbstractAction {
         for (Biome realBiome : getRealBiomes(registry)) {
             ResourceLocation key = registry.getKey(realBiome);
             if (key != null) {
-                components.add(new TextComponent(key.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))
+                components.add(Component.literal(key.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))
                         .append(CommonPlatform.platform.displayInformation(this, map)));
             }
         }
@@ -87,7 +86,7 @@ public class ExploreBiomeAction extends AbstractAction {
         for (Biome realBiome : getRealBiomes(biomes)) {
             ResourceLocation key = biomes.getKey(realBiome);
             if (key != null) {
-                ActionDisplay.Icon icon = new ActionDisplay.Icon(Items.GRASS_BLOCK, new TextComponent(key.toString())
+                ActionDisplay.Icon icon = new ActionDisplay.Icon(Items.GRASS_BLOCK, Component.literal(key.toString())
                         .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), allRewardInformation(), actionType);
                 comps.add(icon);
             }

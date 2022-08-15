@@ -1,14 +1,14 @@
 package com.epherical.professions.mixin;
 
 import com.epherical.professions.events.trigger.TriggerEvents;
-import net.minecraft.advancements.critereon.LocationTrigger;
+import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(LocationTrigger.class)
+@Mixin(PlayerTrigger.class)
 public class TickTriggerMixin {
 
 

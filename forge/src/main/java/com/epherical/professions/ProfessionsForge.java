@@ -57,7 +57,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.resource.PathResourcePack;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.resource.PathPackResources;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -96,7 +97,7 @@ public class ProfessionsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeRegConstants::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(config::initConfig);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addPacks);
-        //FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerEvent);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerEvent);
 
         MinecraftForge.EVENT_BUS.register(new ProfPermissions());
         MinecraftForge.EVENT_BUS.register(new ProfessionListener());
@@ -112,11 +113,13 @@ public class ProfessionsForge {
     private void commonInit(FMLCommonSetupEvent event) {
         professionLoader = new ForgeProfLoader();
         MinecraftForge.EVENT_BUS.register(professionLoader);
-        registerEvent();
     }
 
     private void clientInit(FMLClientSetupEvent event) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ProfessionsClientForge::initClient);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ProfessionsClientForge::registerKeyBindings);
+            return ProfessionsClientForge::initClient;
+        });
         MinecraftForge.EVENT_BUS.register(new ProfessionsClientForge());
     }
 
@@ -140,8 +143,10 @@ public class ProfessionsForge {
     }
 
 
-    public void registerEvent() {
-        Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
+    public void registerEvent(RegisterEvent event) {
+        if (event.getRegistryKey().equals(Registry.LOOT_ITEM_REGISTRY)) {
+            Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
+        }
     }
 
     public static LootItemConditionType registerLootCondition(String id, Serializer<? extends LootItemCondition> serializer) {
@@ -199,7 +204,7 @@ public class ProfessionsForge {
             if (ProfessionConfig.useBuiltinDatapack) { // since we are loading a server datapack, I think this is called after the configs have loaded.
                 event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
                     packConsumer.accept(packConstructor.create("default_normal_professions", Component.nullToEmpty("Default Normal Professions"),
-                            true, () -> new PathResourcePack("Default Normal Professions",                                       /// ????
+                            true, () -> new PathPackResources("Default Normal Professions",                                       /// ????
                                     ModList.get().getModFileById(Constants.MOD_ID).getFile().findResource("resourcepacks/forge/normal")),
                             new PackMetadataSection(Component.nullToEmpty("Default Normal Professions"), 10),
                             Pack.Position.BOTTOM,

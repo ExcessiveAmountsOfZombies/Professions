@@ -87,7 +87,7 @@ public class ProfessionEditor extends DatapackEditor<Profession> {
             return new CompoundAwareEntry<>(embed + 8, y, 90, embed + 14, this.width - 14, RegistryConstants.UNLOCK_KEY,
                     new RegistryEntry<>(embed + 14, y, this.width - 14, RegistryConstants.UNLOCKS, Unlocks.BLOCK_DROP_UNLOCK, Optional.of("unlock"),
                             (unlock, entry) -> entry.setValue(unlock.getType()), DatapackEntry.Type.REMOVE),
-            (unlock, entry) -> entry.getEntry().deserialize(unlock));
+                    (unlock, entry) -> entry.getEntry().deserialize(unlock));
         }, (profession, entry) -> {
             for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entrySet : profession.getUnlocks().entrySet()) {
                 for (Unlock<?> unlock : entrySet.getValue()) {

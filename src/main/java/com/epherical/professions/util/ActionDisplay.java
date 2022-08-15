@@ -75,7 +75,7 @@ public class ActionDisplay {
             }
             Component name = buf.readComponent();
             Component actionInformation = buf.readComponent();
-            Component actionType =  buf.readComponent();
+            Component actionType = buf.readComponent();
             return new Icon(item, name, actionInformation, actionType);
         }
 

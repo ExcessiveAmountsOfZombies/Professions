@@ -15,7 +15,8 @@ public abstract class DatapackEditor<T> {
 
     protected int width;
 
-    public DatapackEditor() {}
+    public DatapackEditor() {
+    }
 
     public void setWidth(int width) {
         this.width = width;

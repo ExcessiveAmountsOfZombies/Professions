@@ -9,7 +9,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -97,7 +96,7 @@ public class CommonClient {
 
         if (!isKeyDown && !comps.isEmpty()) {
             // todo; translations
-            lines.add(new TranslatableComponent("Hold %s to see Professions info", keyDisplayName));
+            lines.add(Component.translatable("Hold %s to see Professions info", keyDisplayName));
         } else if (!comps.isEmpty()) {
             lines.addAll(comps);
         }

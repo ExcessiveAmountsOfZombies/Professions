@@ -16,8 +16,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
@@ -70,9 +68,9 @@ public class BlockDropUnlock extends AbstractLevelUnlock<Block> {
         @Override
         public Component createUnlockComponent() {
             // todo: translation
-            return new TranslatableComponent("Drop: - Level %s %s",
-                    new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                    profession.getDisplayComponent())
+            return Component.translatable("Drop: - Level %s %s",
+                            Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                            profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
     }

@@ -16,8 +16,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
@@ -88,9 +86,9 @@ public class ToolUnlock extends AbstractLevelUnlock<Item> {
         @Override
         public Component createUnlockComponent() {
             // todo: translation
-            return new TranslatableComponent("Use: - Level %s %s",
-                    new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                    profession.getDisplayComponent())
+            return Component.translatable("Use: - Level %s %s",
+                            Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                            profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
     }

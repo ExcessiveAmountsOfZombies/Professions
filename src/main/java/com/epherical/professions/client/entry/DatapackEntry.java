@@ -13,7 +13,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -330,9 +329,9 @@ public abstract class DatapackEntry<T, SELF> extends AbstractWidget implements P
 
 
     public enum Type {
-        ADD(new TextComponent("Add")),
-        REMOVE(new TextComponent("Remove")),
-        EDIT(new TextComponent("Edit"));
+        ADD(Component.literal("Add")),
+        REMOVE(Component.literal("Remove")),
+        EDIT(Component.literal("Edit"));
 
         private final Component text;
 

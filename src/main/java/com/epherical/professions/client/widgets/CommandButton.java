@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 
 import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
 
@@ -17,7 +16,6 @@ public class CommandButton extends Button implements Hidden {
     private boolean hidden;
     private boolean small;
     private SmallIcon icon;
-
 
 
     public CommandButton(boolean hiddenByDefault, int i, int j, Component component, OnPress onPress, boolean small, int width, int height, SmallIcon icon) {

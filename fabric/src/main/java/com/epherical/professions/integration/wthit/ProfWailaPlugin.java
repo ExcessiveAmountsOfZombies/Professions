@@ -16,9 +16,8 @@ import mcp.mobius.waila.api.ITooltip;
 import mcp.mobius.waila.api.IWailaPlugin;
 import mcp.mobius.waila.api.TooltipPosition;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
@@ -45,10 +44,10 @@ public class ProfWailaPlugin implements IWailaPlugin, IBlockComponentProvider, I
             }
             Block block = accessor.getBlock();
             for (Unlock.Singular<Block> blockSingular : pPlayer.getLockedKnowledge(Unlocks.BLOCK_DROP_UNLOCK, block)) {
-                tooltip.addLine(new TextComponent("❌ ").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors))
-                        .append(new TranslatableComponent(blockSingular.getType().getTranslationKey(),
-                                blockSingular.getProfessionDisplay(),
-                                blockSingular.createUnlockComponent())
+                tooltip.addLine(Component.literal("❌ ").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors))
+                        .append(Component.translatable(blockSingular.getType().getTranslationKey(),
+                                        blockSingular.getProfessionDisplay(),
+                                        blockSingular.createUnlockComponent())
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))));
             }
         }

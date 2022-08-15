@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,7 +53,7 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
     public boolean hasUser(UUID uuid) {
         Path path = resolve(uuid);
         try {
-            return Files.exists(path) && Files.size(path) > 0 ;
+            return Files.exists(path) && Files.size(path) > 0;
         } catch (IOException e) {
             e.printStackTrace();
         }

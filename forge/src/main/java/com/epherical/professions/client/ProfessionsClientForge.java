@@ -5,9 +5,9 @@ import com.epherical.professions.networking.NetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -20,18 +20,21 @@ public class ProfessionsClientForge {
     public static void initClient() {
         clientHandler = new NetworkHandler.Client();
         commonClient = new CommonClient();
-        ClientRegistry.registerKeyBinding(commonClient.getOccupationMenu());
-        ClientRegistry.registerKeyBinding(commonClient.getProfessionData());
-        ClientRegistry.registerKeyBinding(commonClient.getOpenDatapackMenu());
+    }
+
+    public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
+        event.register(commonClient.getOccupationMenu());
+        event.register(commonClient.getProfessionData());
+        event.register(commonClient.getOpenDatapackMenu());
     }
 
     @SubscribeEvent
-    public void handleInput(InputEvent.KeyInputEvent event) {
+    public void handleInput(InputEvent.Key event) {
         commonClient.openMenus(Minecraft.getInstance());
     }
 
     @SubscribeEvent
-    public void onClientLogout(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+    public void onClientLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         if (event.getPlayer() == null) {
             return;
         }
@@ -43,7 +46,7 @@ public class ProfessionsClientForge {
 
     @SubscribeEvent
     public void onToolTip(ItemTooltipEvent event) {
-        commonClient.appendToolTip(event.getPlayer(), event.getItemStack().getItem(), commonClient.getProfessionData().getKey().getValue(),
+        commonClient.appendToolTip(event.getEntity(), event.getItemStack().getItem(), commonClient.getProfessionData().getKey().getValue(),
                 commonClient.getProfessionData().getKey().getDisplayName(), event.getToolTip());
     }
 

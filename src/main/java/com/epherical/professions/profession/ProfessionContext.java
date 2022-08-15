@@ -2,13 +2,14 @@ package com.epherical.professions.profession;
 
 import com.google.common.collect.Maps;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
-public record ProfessionContext(ServerLevel level, Random random, Map<ProfessionParameter<?>, Object> parameters) {
+public record ProfessionContext(ServerLevel level, RandomSource random,
+                                Map<ProfessionParameter<?>, Object> parameters) {
 
     public boolean hasParameter(ProfessionParameter<?> parameter) {
         return this.parameters.containsKey(parameter);
@@ -28,7 +29,7 @@ public record ProfessionContext(ServerLevel level, Random random, Map<Profession
         return (T) this.parameters.get(parameter);
     }
 
-    public Random random() {
+    public RandomSource random() {
         return random;
     }
 
@@ -48,13 +49,13 @@ public record ProfessionContext(ServerLevel level, Random random, Map<Profession
     public static class Builder {
         private final ServerLevel level;
         private final Map<ProfessionParameter<?>, Object> parameters = Maps.newIdentityHashMap();
-        private Random random;
+        private RandomSource random;
 
         public Builder(ServerLevel level) {
             this.level = level;
         }
 
-        public Builder addRandom(Random random) {
+        public Builder addRandom(RandomSource random) {
             this.random = random;
             return this;
         }

@@ -1,23 +1,23 @@
-/**    
-  * Copyright 2006 Bertoli Marco
-
-  *  Licensed under the Apache License, Version 2.0 (the "License");
-  *  you may not use this file except in compliance with the License.
-  *  You may obtain a copy of the License at
-
-  *  http://www.apache.org/licenses/LICENSE-2.0
-
-  *  Unless required by applicable law or agreed to in writing, software
-  *  distributed under the License is distributed on an "AS IS" BASIS,
-  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  *  See the License for the specific language governing permissions and
-  *  limitations under the License.
-  */
+/**
+ * Copyright 2006 Bertoli Marco
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.epherical.org.mbertoli.jfep;
 
 /**
- * <p><b>Name:</b> OperatorNode</p> 
- * <p><b>Description:</b> 
+ * <p><b>Name:</b> OperatorNode</p>
+ * <p><b>Description:</b>
  * A Node that holds an arithmetic operation (+,-,*,/,^)
  * </p>
  * <p><b>Date:</b> 08/dic/06
@@ -27,14 +27,14 @@ package com.epherical.org.mbertoli.jfep;
  */
 public class OperatorNode implements ExpressionNode {
     /** List of supported operators */
-    public static final char[] OPERATIONS = new char[] {'+', '-', '*', '/', '%', '^'};
+    public static final char[] OPERATIONS = new char[]{'+', '-', '*', '/', '%', '^'};
     /** Children nodes */
     protected ExpressionNode left, right; // Children nodes
     /** Operation of this node */
     protected char operation;
     /** An array with children */
     protected ExpressionNode[] children;
-    
+
     /**
      * Creates a new operation node
      * @param left left child
@@ -46,9 +46,9 @@ public class OperatorNode implements ExpressionNode {
         this.operation = operation;
         this.left = left;
         this.right = right;
-        children = new ExpressionNode[] {left, right};
+        children = new ExpressionNode[]{left, right};
     }
-    
+
     /* (non-Javadoc)
      * @see jmt.engine.math.parser.ExpressionNode#count()
      */
@@ -82,12 +82,18 @@ public class OperatorNode implements ExpressionNode {
      */
     public double getValue() {
         switch (operation) {
-            case '+': return left.getValue() + right.getValue();
-            case '-': return left.getValue() - right.getValue();
-            case '*': return left.getValue() * right.getValue();
-            case '/': return left.getValue() / right.getValue();
-            case '%': return left.getValue() % right.getValue();
-            case '^': return Math.pow(left.getValue(), right.getValue());
+            case '+':
+                return left.getValue() + right.getValue();
+            case '-':
+                return left.getValue() - right.getValue();
+            case '*':
+                return left.getValue() * right.getValue();
+            case '/':
+                return left.getValue() / right.getValue();
+            case '%':
+                return left.getValue() % right.getValue();
+            case '^':
+                return Math.pow(left.getValue(), right.getValue());
         }
         // Never reached
         return 0;
@@ -100,7 +106,7 @@ public class OperatorNode implements ExpressionNode {
         left.setVariable(name, value);
         right.setVariable(name, value);
     }
-    
+
     /* (non-Javadoc)
      * @see org.mbertoli.jfep.ExpressionNode#getChildrenNodes()
      */
@@ -112,8 +118,8 @@ public class OperatorNode implements ExpressionNode {
      * @see java.lang.Object#clone()
      */
     public Object clone() {
-        ExpressionNode n_left = (ExpressionNode)left.clone();
-        ExpressionNode n_right = (ExpressionNode)right.clone();
+        ExpressionNode n_left = (ExpressionNode) left.clone();
+        ExpressionNode n_right = (ExpressionNode) right.clone();
         return new OperatorNode(n_left, n_right, operation);
     }
 
@@ -135,7 +141,7 @@ public class OperatorNode implements ExpressionNode {
             str.append(')');
         return str.toString();
     }
-    
+
     /**
      * Helper method for toString. Determines if brackets are needed.
      * @param child Child Node to analize
@@ -148,21 +154,21 @@ public class OperatorNode implements ExpressionNode {
             return false;
         if (child.getType() == FUNCTION_NODE)
             return childSubtype == '-';
-        
+
         // At this point child is operational node. We must check precedences.
         switch (this.getSubtype().charAt(0)) {
-        case '+':
-            return false;
-        case '-':
-            return (childSubtype == '+' || childSubtype == '-') && !isleft;
-        case '*':
-            return childSubtype == '+' || childSubtype == '-' || childSubtype == '%';
-        case '/':
-            return !(childSubtype == '*' && isleft);
-        case '%':
-            return true;
-        case '^':
-            return true;
+            case '+':
+                return false;
+            case '-':
+                return (childSubtype == '+' || childSubtype == '-') && !isleft;
+            case '*':
+                return childSubtype == '+' || childSubtype == '-' || childSubtype == '%';
+            case '/':
+                return !(childSubtype == '*' && isleft);
+            case '%':
+                return true;
+            case '^':
+                return true;
         }
         return true; // This statement will never be reached
     }

@@ -9,7 +9,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 
 import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
@@ -22,7 +21,7 @@ public class ProfessionEntryButton extends Button {
     public ProfessionEntryButton(Profession profession, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
         super(i, j, k, l, Component.nullToEmpty(""), onPress, tooltip);
         this.profession = profession;
-        this.name = new TextComponent(profession.getDisplayName()).setStyle(Style.EMPTY.withColor(profession.getColor()));
+        this.name = Component.literal(profession.getDisplayName()).setStyle(Style.EMPTY.withColor(profession.getColor()));
     }
 
     @Override

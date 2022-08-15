@@ -19,9 +19,9 @@ public class UnlockErrorHelper {
     public <T> void levelRequirementNotMet(Unlock.Singular<T> singular) {
         // todo; weird code, is this class important?
         component.append(singular.createUnlockComponent());
-        /*component.append(new TranslatableComponent("%s %s",
+        /*component.append(Component.translatable("%s %s",
                 singular.getProfessionDisplay(),
-                new TextComponent(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))));*/
+                Component.literal(String.valueOf(singular.getUnlockLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))));*/
     }
 
     public MutableComponent getComponent() {

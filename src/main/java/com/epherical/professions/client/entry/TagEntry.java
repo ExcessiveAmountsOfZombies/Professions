@@ -92,7 +92,7 @@ public class TagEntry<V, T> extends DatapackEntry<V, TagEntry<V, T>> {
         if (suggestions.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
         }*/
-            return box.keyPressed(keyCode, scanCode, modifiers);
+        return box.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

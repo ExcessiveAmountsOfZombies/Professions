@@ -19,7 +19,6 @@ import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -122,7 +121,7 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
 
     @Override
     public Component displayInformation(AbstractAction action, Map<RewardType, Component> map) {
-        return new TranslatableComponent(" (%s | %s%s)",
+        return Component.translatable(" (%s | %s%s)",
                 map.get(Rewards.PAYMENT_REWARD),
                 map.get(Rewards.EXPERIENCE_REWARD),
                 action.extraRewardInformation(map));

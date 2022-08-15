@@ -23,8 +23,6 @@ import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
@@ -97,6 +95,10 @@ public abstract class BlockAbstractAction extends AbstractAction {
         return realBlocks;
     }
 
+    public List<ActionEntry<Block>> getBlocks() {
+        return blocks;
+    }
+
     @Override
     public boolean test(ProfessionContext professionContext) {
         BlockState state = professionContext.getPossibleParameter(ProfessionParameter.THIS_BLOCKSTATE);
@@ -126,14 +128,10 @@ public abstract class BlockAbstractAction extends AbstractAction {
             seconds = 0;
         }
         // need bright colors in the action bar for whatever reason, otherwise would use variables/errors
-        MutableComponent message = new TranslatableComponent("professions.block.cooldown",
-                        new TextComponent(String.valueOf(seconds)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+        MutableComponent message = Component.translatable("professions.block.cooldown",
+                        Component.literal(String.valueOf(seconds)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
-        player.sendMessage(message, ChatType.GAME_INFO, Util.NIL_UUID);
-    }
-
-    public List<ActionEntry<Block>> getBlocks() {
-        return blocks;
+        player.sendSystemMessage(message, ChatType.GAME_INFO);
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {

@@ -64,7 +64,9 @@ public interface ProfessionalPlayer {
     List<Occupation> getInactiveOccupations();
 
     <T> List<Unlock.Singular<T>> getLockedKnowledge(T object, Set<UnlockType<T>> unlockTypes);
+
     <T> List<Unlock.Singular<T>> getLockedKnowledge(UnlockType<T> unlockType, T object);
+
     <T> List<Unlock.Singular<T>> getLockedKnowledge(T object);
 
 }

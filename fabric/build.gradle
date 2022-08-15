@@ -62,7 +62,7 @@ dependencies {
     modImplementation(include("com.epherical.octo-economy-api:octoeconomyapi:1.0.1"))
     modCompileOnly "curse.maven:ftb-quests-fabric-438496:3725770"
     modCompileOnly "curse.maven:ftb-library-fabric-438495:3725484"
-    //modCompileOnly "mcp.mobius.waila:wthit-api:fabric-5.1.1"
+    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-5.10.0"
 
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.1"
     modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-chunk:5.0.1"

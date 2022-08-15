@@ -17,12 +17,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.Serializer;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,9 +68,9 @@ public class BlockBreakUnlock extends AbstractLevelUnlock<Block> {
         @Override
         public Component createUnlockComponent() {
             // todo; translation
-            return new TranslatableComponent("Break: - Level %s %s",
-                    new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                    profession.getDisplayComponent())
+            return Component.translatable("Break: - Level %s %s",
+                            Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                            profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors));
         }
     }

@@ -455,7 +455,7 @@
         },
         {
           "reward": "professions:payment",
-          "amount": 10.0,
+          "amount": 8.0,
           "currency": "eights_economy:dollars"
         }
       ],
@@ -473,7 +473,7 @@
         },
         {
           "reward": "professions:payment",
-          "amount": 15.0,
+          "amount": 10.0,
           "currency": "eights_economy:dollars"
         }
       ],

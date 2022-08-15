@@ -444,6 +444,42 @@
         "minecraft:calcite",
         "minecraft:dripstone_block"
       ]
+    },
+    {
+      "action": "professions:explore_struct",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 20.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 8.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "structures": [
+        "minecraft:mineshaft"
+      ]
+    },
+    {
+      "action": "professions:explore_struct",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 30.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 10.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "structures": [
+        "minecraft:mineshaft_mesa"
+      ]
     }
   ],
   "unlocks": []

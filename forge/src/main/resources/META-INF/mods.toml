@@ -33,3 +33,9 @@ Professions that earn you configurable rewards.
    versionRange="[1.18.2,)"
    ordering="NONE"
    side="SERVER"
+[[dependencies.professions]]
+modId="octo_economy_api"
+mandatory=true
+versionRange="[1.0.0,2.0.0)"
+ordering="BEFORE"
+side="BOTH"

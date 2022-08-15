@@ -27,6 +27,7 @@ configurations {
 mixin {
     add sourceSets.main, "professions.refmap.json"
     config "professions.mixins.json"
+    config "professions-root.mixins.json"
 }
 
 minecraft {
@@ -135,8 +136,7 @@ jar {
                 "Implementation-Title": "${archives_base_name}",
                 "Implementation-Version": "${mod_version}",
                 "Implementation-Vendor" :"epherical.com",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs": "professions.mixins.json"
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }

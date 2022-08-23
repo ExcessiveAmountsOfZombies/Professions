@@ -19,7 +19,6 @@ import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -131,7 +130,7 @@ public abstract class BlockAbstractAction extends AbstractAction {
         MutableComponent message = Component.translatable("professions.block.cooldown",
                         Component.literal(String.valueOf(seconds)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
-        player.sendSystemMessage(message, ChatType.GAME_INFO);
+        player.sendSystemMessage(message, true);
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {

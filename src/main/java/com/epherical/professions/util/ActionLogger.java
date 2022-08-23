@@ -4,7 +4,6 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.progression.Occupation;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -59,7 +58,7 @@ public class ActionLogger {
             if (ProfessionConfig.logInChat) {
                 player.sendSystemMessage(message);
             } else {
-                player.sendSystemMessage(message, ChatType.GAME_INFO);
+                player.sendSystemMessage(message, true);
             }
         }
     }

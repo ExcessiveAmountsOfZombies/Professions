@@ -9,7 +9,6 @@ import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.progression.ProfessionalPlayerImpl;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -161,7 +160,7 @@ public class PlayerManager {
                             occupation.getProfession().getDisplayComponent(),
                             Component.literal("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
-            server.getPlayerList().broadcastSystemMessage(message, ChatType.SYSTEM);
+            server.getPlayerList().broadcastSystemMessage(message, false);
         } else {
             message = Component.translatable("professions.level_up.local",
                             occupation.getProfession().getDisplayComponent(),

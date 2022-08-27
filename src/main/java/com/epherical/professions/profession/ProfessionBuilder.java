@@ -3,6 +3,10 @@ package com.epherical.professions.profession;
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.modifiers.BasicModifiers;
+import com.epherical.professions.profession.modifiers.Modifiers;
+import com.epherical.professions.profession.modifiers.milestones.Milestone;
+import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.google.common.collect.LinkedHashMultimap;
@@ -21,6 +25,7 @@ public class ProfessionBuilder {
     protected LinkedHashMultimap<UnlockType<?>, Unlock<?>> unlocks;
     protected Parser experienceScalingEquation;
     protected Parser incomeScalingEquation;
+    protected Modifiers modifiers;
 
     protected ResourceLocation key;
 
@@ -32,6 +37,7 @@ public class ProfessionBuilder {
         this.maxLevel = maxLevel;
         this.actions = LinkedHashMultimap.create();
         this.unlocks = LinkedHashMultimap.create();
+        this.modifiers = new BasicModifiers(new Milestone[0], new Perk[0]);
     }
 
     public static ProfessionBuilder profession(TextColor professionColor, TextColor descriptionColor, String[] description, String displayName, int maxLevel) {
@@ -108,12 +114,17 @@ public class ProfessionBuilder {
         return this;
     }
 
+    public ProfessionBuilder setModifiers(Modifiers modifiers) {
+        this.modifiers = modifiers;
+        return this;
+    }
+
     public void setKey(ResourceLocation key) {
         this.key = key;
     }
 
     public Profession build() {
         return new Profession(professionColor, descriptionColor, description, displayName, maxLevel,
-                actions.asMap(), unlocks.asMap(), experienceScalingEquation, incomeScalingEquation, key);
+                actions.asMap(), unlocks.asMap(), experienceScalingEquation, incomeScalingEquation, key, modifiers);
     }
 }

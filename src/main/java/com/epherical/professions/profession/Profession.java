@@ -5,6 +5,8 @@ import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.modifiers.BasicModifiers;
+import com.epherical.professions.profession.modifiers.Modifiers;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.profession.unlock.UnlockType;
@@ -44,13 +46,14 @@ public class Profession {
     protected final Map<UnlockType<?>, Collection<Unlock<?>>> unlocks;
     protected final Parser experienceScalingEquation;
     protected final Parser incomeScalingEquation;
+    protected Modifiers modifiers;
 
     protected ResourceLocation key;
 
     protected final Component displayComponent;
 
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
-                      Map<UnlockType<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation) {
+                      Map<UnlockType<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation, Modifiers modifiers) {
         this.color = color;
         this.description = description;
         this.descriptionColor = descriptionColor;
@@ -61,11 +64,12 @@ public class Profession {
         this.experienceScalingEquation = experienceScalingEquation;
         this.incomeScalingEquation = incomeScalingEquation;
         this.displayComponent = Component.literal(displayName).setStyle(Style.EMPTY.withColor(color));
+        this.modifiers = modifiers;
     }
 
     public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
-                      Map<UnlockType<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation, ResourceLocation key) {
-        this(color, descriptionColor, description, displayName, maxLevel, actions, unlocks, experienceScalingEquation, incomeScalingEquation);
+                      Map<UnlockType<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation, ResourceLocation key, Modifiers modifiers) {
+        this(color, descriptionColor, description, displayName, maxLevel, actions, unlocks, experienceScalingEquation, incomeScalingEquation, modifiers);
         this.key = key;
     }
 
@@ -107,6 +111,10 @@ public class Profession {
 
     public Parser getIncomeScalingEquation() {
         return incomeScalingEquation;
+    }
+
+    public Modifiers getBenefits() {
+        return modifiers;
     }
 
     @Nullable
@@ -223,6 +231,8 @@ public class Profession {
             Parser incomeScaling = new Parser(GsonHelper.getAsString(object, "incomeSclEquation"));
             builder.setExperienceScalingEquation(experienceScaling);
             builder.setIncomeScalingEquation(incomeScaling);
+            BasicModifiers modifiers = GsonHelper.getAsObject(object, "modifiers", context, BasicModifiers.class);
+            builder.setModifiers(modifiers);
             return builder;
         }
 
@@ -255,6 +265,7 @@ public class Profession {
                 }
             }
             object.add("unlocks", unlockArray);
+            object.add("modifiers", context.serialize(src.modifiers));
             return object;
         }
 
@@ -283,7 +294,7 @@ public class Profession {
                     return unlocks;
                 });
             }
-            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), ImmutableMap.copyOf(map), null, null);
+            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), ImmutableMap.copyOf(map), null, null, null);
             profession.setKey(location);
             return profession;
         }

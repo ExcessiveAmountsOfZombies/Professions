@@ -41,15 +41,14 @@ public class CommonClient {
                 InputConstants.UNKNOWN.getValue(),
                 "category.professions.occupation"
         );
-
     }
 
     public void openMenus(Minecraft client) {
-        if (getOpenDatapackMenu().isDown()) {
+        if (getOpenDatapackMenu().consumeClick()) {
             client.setScreen(new MenuScreen());
         }
 
-        if (occupationMenu.isDown()) {
+        if (occupationMenu.consumeClick()) {
             if (client.isLocalServer()) {
                 ProfessionalPlayer player = CommonPlatform.platform.getPlayerManager().getPlayer(client.player.getUUID());
                 client.setScreen(new OccupationScreen<>(player.getActiveOccupations(), client, OccupationScreen::createOccupationEntries, null));

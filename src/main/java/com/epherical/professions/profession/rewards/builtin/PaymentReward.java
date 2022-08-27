@@ -100,7 +100,11 @@ public record PaymentReward(double amount, ResourceLocation currency) implements
 
         @Override
         public Reward build() {
-            return new PaymentReward(amount, new ResourceLocation(currency.getIdentity()));
+            ResourceLocation location = new ResourceLocation(ProfessionConfig.overriddenCurrencyID);
+            if (currency != null) {
+                location = new ResourceLocation(currency.getIdentity());
+            }
+            return new PaymentReward(amount, location);
         }
     }
 }

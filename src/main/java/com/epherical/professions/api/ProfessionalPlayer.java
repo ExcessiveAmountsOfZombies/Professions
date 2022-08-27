@@ -3,6 +3,7 @@ package com.epherical.professions.api;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
+import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.unlock.Unlock;
@@ -68,5 +69,9 @@ public interface ProfessionalPlayer {
     <T> List<Unlock.Singular<T>> getLockedKnowledge(UnlockType<T> unlockType, T object);
 
     <T> List<Unlock.Singular<T>> getLockedKnowledge(T object);
+
+    List<Perk> unlockedPerks();
+
+    boolean canUsePerk(String permission, ProfessionalPlayer player);
 
 }

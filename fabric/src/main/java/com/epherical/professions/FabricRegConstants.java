@@ -10,7 +10,8 @@ import static com.epherical.professions.RegistryConstants.*;
 
 public class FabricRegConstants {
 
-    public static void init() {}
+    public static void init() {
+    }
 
     static {
         PROFESSION_SERIALIZER = FabricRegistryBuilder.from(new MappedRegistry<>(PROFESSION_TYPE_KEY, Lifecycle.experimental(), null)).buildAndRegister();
@@ -20,7 +21,8 @@ public class FabricRegConstants {
         REWARDS = FabricRegistryBuilder.from(new MappedRegistry<>(REWARD_KEY, Lifecycle.experimental(), null)).buildAndRegister();
         UNLOCKS = FabricRegistryBuilder.from(new MappedRegistry<>(UNLOCK_KEY, Lifecycle.experimental(), null)).buildAndRegister();
         UNLOCK_TYPE = FabricRegistryBuilder.from(new MappedRegistry<>(UNLOCK_TYPE_KEY, Lifecycle.experimental(), null)).buildAndRegister();
-
+        MILESTONE_TYPE = FabricRegistryBuilder.from(new MappedRegistry<>(MILESTONE_TYPE_KEY, Lifecycle.experimental(), null)).buildAndRegister();
+        PERK_TYPE = FabricRegistryBuilder.from(new MappedRegistry<>(PERK_TYPE_KEY, Lifecycle.experimental(), null)).buildAndRegister();
         Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
     }
 

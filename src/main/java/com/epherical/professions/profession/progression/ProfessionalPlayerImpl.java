@@ -9,6 +9,7 @@ import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.UnlockableValues;
 import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.util.ActionLogger;
@@ -188,6 +189,21 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     @Override
     public <T> List<Unlock.Singular<T>> getLockedKnowledge(T object) {
         return getLockedKnowledge(object, null);
+    }
+
+    @Override
+    public List<Perk> unlockedPerks() {
+        return null;
+    }
+
+    @Override
+    public boolean canUsePerk(String permission, ProfessionalPlayer player) {
+        for (Occupation activeOccupation : getActiveOccupations()) {
+            if (activeOccupation.getProfession().getBenefits().canUsePerk(permission, player, activeOccupation)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<Occupation> getOccupations(boolean active) {

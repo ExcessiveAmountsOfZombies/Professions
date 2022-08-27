@@ -18,6 +18,8 @@ public class ForgeRegConstants {
         REWARDS = new MappedRegistry<>(REWARD_KEY, Lifecycle.experimental(), null);
         UNLOCKS = new MappedRegistry<>(UNLOCK_KEY, Lifecycle.experimental(), null);
         UNLOCK_TYPE = new MappedRegistry<>(UNLOCK_TYPE_KEY, Lifecycle.experimental(), null);
+        MILESTONE_TYPE = new MappedRegistry<>(MILESTONE_TYPE_KEY, Lifecycle.experimental(), null);
+        PERK_TYPE = new MappedRegistry<>(PERK_TYPE_KEY, Lifecycle.experimental(), null);
 
         /*PROFESSION_SERIALIZER = event.create(new RegistryBuilder<ProfessionSerializer<?>>()
                 .onClear((owner, stage) -> {

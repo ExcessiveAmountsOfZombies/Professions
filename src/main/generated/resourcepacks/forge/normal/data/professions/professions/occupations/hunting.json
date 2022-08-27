@@ -190,5 +190,9 @@
       ]
     }
   ],
-  "unlocks": []
+  "unlocks": [],
+  "modifiers": {
+    "milestones": [],
+    "perks": []
+  }
 }

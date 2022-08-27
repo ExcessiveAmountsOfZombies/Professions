@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.progression;
 
+import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.Profession;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -31,7 +32,7 @@ public class NullOccupation extends Occupation {
     }
 
     @Override
-    public boolean checkIfLevelUp() {
+    public boolean checkIfLevelUp(ProfessionalPlayer player) {
         return false;
     }
 

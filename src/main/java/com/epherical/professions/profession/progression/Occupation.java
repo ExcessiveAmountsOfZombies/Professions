@@ -29,6 +29,7 @@ public class Occupation {
     private final UnlockableData data;
     private double exp;
     private int level;
+    private int receivedBenefitsUpToLevel;
     private OccupationSlot slot;
     private transient int maxExp = -1;
 
@@ -36,6 +37,7 @@ public class Occupation {
         this.profession = profession;
         this.exp = exp;
         this.level = level;
+        this.receivedBenefitsUpToLevel = level;
         this.slot = slot;
         this.data = new UnlockableDataImpl(this);
     }
@@ -48,6 +50,7 @@ public class Occupation {
         this.exp = exp;
         this.maxExp = maxExp;
         this.level = level;
+        this.receivedBenefitsUpToLevel = level;
         this.slot = OccupationSlot.ACTIVE;
         this.data = new UnlockableDataImpl(this);
     }
@@ -71,18 +74,20 @@ public class Occupation {
     public boolean addExp(double exp, ProfessionalPlayer player) {
         player.needsToBeSaved();
         this.exp += exp;
-        return checkIfLevelUp();
+        return checkIfLevelUp(player);
     }
 
     public void setLevel(int level, ProfessionalPlayer player) {
         player.needsToBeSaved();
         this.level = level;
+        // todo; add a giveMilestones parameter
+        profession.getBenefits().handleLevelUp(player, this);
         this.exp = 0;
         resetMaxExperience();
-        checkIfLevelUp();
+        checkIfLevelUp(player);
     }
 
-    public boolean checkIfLevelUp() {
+    public boolean checkIfLevelUp(ProfessionalPlayer player) {
         boolean willLevel = false;
 
         while (exp >= maxExp) {
@@ -90,6 +95,7 @@ public class Occupation {
                 break;
             }
             level++;
+            profession.getBenefits().handleLevelUp(player, this);
             exp -= maxExp;
             willLevel = true;
             resetMaxExperience();
@@ -112,6 +118,14 @@ public class Occupation {
 
     public int getLevel() {
         return level;
+    }
+
+    public int getReceivedBenefitsUpToLevel() {
+        return receivedBenefitsUpToLevel;
+    }
+
+    public void setReceivedBenefitsUpToLevel(int receivedBenefitsUpToLevel) {
+        this.receivedBenefitsUpToLevel = receivedBenefitsUpToLevel;
     }
 
     public UnlockableData getData() {

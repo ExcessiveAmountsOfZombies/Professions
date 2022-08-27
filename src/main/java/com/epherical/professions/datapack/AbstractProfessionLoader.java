@@ -11,6 +11,11 @@ import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.conditions.ActionConditions;
 import com.epherical.professions.profession.editor.Append;
 import com.epherical.professions.profession.editor.Editor;
+import com.epherical.professions.profession.modifiers.BasicModifiers;
+import com.epherical.professions.profession.modifiers.milestones.Milestone;
+import com.epherical.professions.profession.modifiers.milestones.Milestones;
+import com.epherical.professions.profession.modifiers.perks.Perk;
+import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.epherical.professions.profession.unlock.Unlock;
@@ -96,9 +101,13 @@ public abstract class AbstractProfessionLoader extends SimpleJsonResourceReloadL
                 .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
                 .registerTypeHierarchyAdapter(Action.class, Actions.createGsonAdapter())
                 .registerTypeHierarchyAdapter(Unlock.class, Unlocks.createGsonAdapter())
+                .registerTypeHierarchyAdapter(Milestone.class, Milestones.createGsonAdapter())
+                .registerTypeHierarchyAdapter(Perk.class, Perks.createGsonAdapter())
+                .registerTypeAdapter(BasicModifiers.class, new BasicModifiers.ModifierSerializer())
                 .registerTypeAdapter(Append.class, ProfessionEditorSerializer.APPEND_EDITOR)
                 .registerTypeAdapter(Profession.class, ProfessionSerializer.DEFAULT_PROFESSION)
                 .registerTypeAdapter(ProfessionBuilder.class, ProfessionSerializer.DEFAULT_PROFESSION);
+        // todo; event
         //ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;
     }

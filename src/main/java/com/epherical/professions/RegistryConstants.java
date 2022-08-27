@@ -6,6 +6,8 @@ import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.conditions.ActionConditionType;
 import com.epherical.professions.profession.editor.Editor;
+import com.epherical.professions.profession.modifiers.milestones.MilestoneType;
+import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.profession.unlock.UnlockType;
@@ -23,7 +25,8 @@ public class RegistryConstants {
     public static final ResourceKey<Registry<RewardType>> REWARD_KEY = ResourceKey.createRegistryKey(modID("professions/rewards"));
     public static final ResourceKey<Registry<UnlockType<?>>> UNLOCK_KEY = ResourceKey.createRegistryKey(modID("professions/unlocks"));
     public static final ResourceKey<Registry<UnlockSerializer<?>>> UNLOCK_TYPE_KEY = ResourceKey.createRegistryKey(modID("professions/unlock_type"));
-
+    public static final ResourceKey<Registry<MilestoneType>> MILESTONE_TYPE_KEY =  ResourceKey.createRegistryKey(modID("professions/milestone_type"));
+    public static final ResourceKey<Registry<PerkType>> PERK_TYPE_KEY = ResourceKey.createRegistryKey(modID("professions/perk_type"));
 
     public static Registry<ProfessionSerializer<? extends Profession, ?>> PROFESSION_SERIALIZER;
     public static Registry<ProfessionEditorSerializer<? extends Editor>> PROFESSION_EDITOR_SERIALIZER;
@@ -32,5 +35,7 @@ public class RegistryConstants {
     public static Registry<RewardType> REWARDS;
     public static Registry<UnlockType<?>> UNLOCKS;
     public static Registry<UnlockSerializer<?>> UNLOCK_TYPE;
+    public static Registry<MilestoneType> MILESTONE_TYPE;
+    public static Registry<PerkType> PERK_TYPE;
 
 }

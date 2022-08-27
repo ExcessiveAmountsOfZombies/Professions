@@ -5,12 +5,10 @@ import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.events.SyncEvents;
 import com.epherical.professions.events.trigger.TriggerEvents;
-import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ProfessionUtil;
 import com.epherical.professions.util.mixins.PlayerOwnable;
 import com.google.common.collect.Maps;
-import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -22,7 +20,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -122,6 +119,26 @@ public class UtilityListener {
             }).run();
             runnables.remove(server.getTickCount());
         });
+
+        /*PermissionCheckEvent.EVENT.register(PermissionCheckEvent.CONTENT_PHASE, (sharedSuggestionProvider, s) -> {
+            if (sharedSuggestionProvider instanceof CommandSourceStack stack) {
+                try {
+                    ServerPlayer player = stack.getPlayerOrException();
+                    ProfessionalPlayer pPlayer = ProfessionsFabric.getInstance().getPlayerManager().getPlayer(player.getUUID());
+                    // todo: permissions are called often, we will want a filter, or maybe even some async code here,
+                    //  or even some cache
+                    if (pPlayer != null && pPlayer.canUsePerk(s, pPlayer)) {
+                        return TriState.TRUE;
+                    }
+
+                } catch (CommandSyntaxException e) {
+                    return TriState.DEFAULT;
+                }
+            } else {
+                return TriState.DEFAULT;
+            }
+            return TriState.DEFAULT;
+        });*/
     }
 
     private static void removeMobEffect(ServerPlayer player) {

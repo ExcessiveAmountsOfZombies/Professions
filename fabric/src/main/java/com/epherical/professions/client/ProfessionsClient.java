@@ -32,7 +32,7 @@ public class ProfessionsClient implements ClientModInitializer {
         FormatRegistry.init();
 
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
             commonClient.openMenus(client);
         });
 

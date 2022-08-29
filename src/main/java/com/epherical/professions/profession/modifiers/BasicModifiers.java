@@ -44,19 +44,16 @@ public class BasicModifiers implements Modifiers {
                 milestone.giveMilestoneReward(player, occupation);
             }
         }
-
-        occupation.setReceivedBenefitsUpToLevel(occupation.getLevel());
-    }
-
-    @Override
-    public boolean canUsePerk(String permission, ProfessionalPlayer player, Occupation occupation) {
-        for (Perk perk : perks) {
-            if (perk.applyPerkToPlayer(permission, player, occupation)) {
-                return true;
+        for (Perk allPerk : occupation.getData().allPerks()) {
+            allPerk.removeOldPerkData(player.getPlayer(), occupation);
+            if (allPerk.canApplyPerkToPlayer("", player, occupation)) {
+                if (player.getPlayer() != null) {
+                    allPerk.applyPerkToPlayer(player.getPlayer(), occupation);
+                }
             }
         }
 
-        return false;
+        occupation.setReceivedBenefitsUpToLevel(occupation.getLevel());
     }
 
     public static class ModifierSerializer implements JsonSerializer<BasicModifiers>, JsonDeserializer<BasicModifiers> {

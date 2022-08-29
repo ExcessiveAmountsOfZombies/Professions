@@ -4,6 +4,7 @@ import com.epherical.professions.data.Storage;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.modifiers.perks.Perk;
+import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.unlock.Unlock;
@@ -60,6 +61,8 @@ public interface ProfessionalPlayer {
 
     Occupation getOccupation(Profession profession);
 
+    void updateOccupationPerks();
+
     List<Occupation> getActiveOccupations();
 
     List<Occupation> getInactiveOccupations();
@@ -70,8 +73,6 @@ public interface ProfessionalPlayer {
 
     <T> List<Unlock.Singular<T>> getLockedKnowledge(T object);
 
-    List<Perk> unlockedPerks();
-
-    boolean canUsePerk(String permission, ProfessionalPlayer player);
+    List<Perk> getPerkByType(PerkType perkType);
 
 }

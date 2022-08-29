@@ -29,7 +29,7 @@ public class CommandMilestone extends AbstractLevelMilestone {
         if (context.getPlayer() != null) {
             ServerPlayer player = context.getPlayer();
             String replacement = command.formatted(player.getDisplayName().getContents());
-            player.getServer().getCommands().performCommand(player.getServer().createCommandSourceStack(), replacement);
+            player.getServer().getCommands().performPrefixedCommand(player.getServer().createCommandSourceStack(), replacement);
             return true;
         }
 

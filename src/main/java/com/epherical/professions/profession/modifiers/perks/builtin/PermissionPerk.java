@@ -7,6 +7,7 @@ import com.epherical.professions.profession.progression.Occupation;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.Serializer;
 
@@ -33,8 +34,18 @@ public class PermissionPerk implements Perk {
     }
 
     @Override
-    public boolean applyPerkToPlayer(String permission, ProfessionalPlayer context, Occupation occupation) {
+    public boolean canApplyPerkToPlayer(String permission, ProfessionalPlayer context, Occupation occupation) {
         return occupation.getLevel() >= level && permission.equalsIgnoreCase(this.permission);
+    }
+
+    @Override
+    public void applyPerkToPlayer(ServerPlayer player, Occupation occupation) {
+        // nothing to apply
+    }
+
+    @Override
+    public void removeOldPerkData(ServerPlayer player, Occupation occupation) {
+        // nothing to remove
     }
 
 

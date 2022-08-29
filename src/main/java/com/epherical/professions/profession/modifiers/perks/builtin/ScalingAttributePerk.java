@@ -32,7 +32,11 @@ public class ScalingAttributePerk extends AbstractAttributePerk {
             if (modifier != null) {
                 base = modifier.getAmount();
             }
-            instance.addTransientModifier(new AttributeModifier(OUR_UUID, name, (increaseBy * occupation.getLevel()) + base, AttributeModifier.Operation.ADDITION));
+            double amount = (increaseBy * occupation.getLevel() - level) + base;
+            if (amount != 0) {
+                // scales bad
+                instance.addTransientModifier(new AttributeModifier(OUR_UUID, name, amount, AttributeModifier.Operation.ADDITION));
+            }
         }
     }
 

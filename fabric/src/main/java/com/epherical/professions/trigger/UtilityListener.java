@@ -123,8 +123,14 @@ public class UtilityListener {
         /*PermissionCheckEvent.EVENT.register(PermissionCheckEvent.CONTENT_PHASE, (sharedSuggestionProvider, s) -> {
             if (sharedSuggestionProvider instanceof CommandSourceStack stack) {
                 try {
+
                     ServerPlayer player = stack.getPlayerOrException();
                     ProfessionalPlayer pPlayer = ProfessionsFabric.getInstance().getPlayerManager().getPlayer(player.getUUID());
+                    if (pPlayer != null) {
+                        for (Perk perkType : pPlayer.getPerkByType(Perks.PERMISSION_PERK_TYPE)) {
+                        }
+                    }
+
                     // todo: permissions are called often, we will want a filter, or maybe even some async code here,
                     //  or even some cache
                     if (pPlayer != null && pPlayer.canUsePerk(s, pPlayer)) {

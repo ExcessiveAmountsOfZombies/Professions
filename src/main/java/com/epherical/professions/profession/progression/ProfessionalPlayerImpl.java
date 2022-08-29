@@ -10,6 +10,7 @@ import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.UnlockableValues;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.modifiers.perks.Perk;
+import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.util.ActionLogger;
@@ -192,18 +193,12 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     }
 
     @Override
-    public List<Perk> unlockedPerks() {
-        return null;
-    }
-
-    @Override
-    public boolean canUsePerk(String permission, ProfessionalPlayer player) {
+    public List<Perk> getPerkByType(PerkType perkType) {
+        List<Perk> perks = new ArrayList<>();
         for (Occupation activeOccupation : getActiveOccupations()) {
-            if (activeOccupation.getProfession().getBenefits().canUsePerk(permission, player, activeOccupation)) {
-                return true;
-            }
+            perks.addAll(activeOccupation.getData().getPerkByType(perkType));
         }
-        return false;
+        return perks;
     }
 
     private List<Occupation> getOccupations(boolean active) {
@@ -224,6 +219,13 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
             }
         }
         return null;
+    }
+
+    @Override
+    public void updateOccupationPerks() {
+        for (Occupation activeOccupation : getActiveOccupations()) {
+            activeOccupation.getProfession().getBenefits().handleLevelUp(this, activeOccupation);
+        }
     }
 
     public void resetMaxExperience() {

@@ -1,6 +1,8 @@
 package com.epherical.professions.api;
 
 import com.epherical.professions.profession.UnlockableValues;
+import com.epherical.professions.profession.modifiers.perks.Perk;
+import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
 
@@ -16,4 +18,8 @@ public interface UnlockableData {
     Collection<Unlock.Singular<?>> getUnlockables();
 
     List<Unlock.Singular<?>> getUnlockedKnowledge();
+
+    Collection<Perk> getPerkByType(PerkType type);
+
+    Collection<Perk> allPerks();
 }

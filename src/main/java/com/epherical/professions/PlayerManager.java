@@ -50,6 +50,8 @@ public class PlayerManager {
             pPlayer = storage.getUser(player.getUUID());
             if (pPlayer != null) {
                 pPlayer.setPlayer(player);
+                pPlayer.updateOccupationPerks();
+                player.setHealth(player.getHealth());
             }
             players.put(player.getUUID(), pPlayer);
         }

@@ -1,9 +1,13 @@
 package com.epherical.professions.profession;
 
 import com.epherical.professions.api.UnlockableData;
+import com.epherical.professions.profession.modifiers.perks.Perk;
+import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,10 +19,12 @@ public class UnlockableDataImpl implements UnlockableData {
     private final Occupation occupation;
     // i really don't like this, but I'm not sure how to handle it better.
     private final Map<Object, UnlockableValues<Unlock.Singular<?>>> unlocks;
+    private final Multimap<PerkType, Perk> perks;
 
     public UnlockableDataImpl(Occupation occupation) {
         this.occupation = occupation;
         this.unlocks = new HashMap<>();
+        this.perks = HashMultimap.create();
         if (occupation.getProfession() != null) {
             for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
                 for (Unlock<?> unlock : entry.getValue()) {
@@ -30,6 +36,9 @@ public class UnlockableDataImpl implements UnlockableData {
                         }
                     }
                 }
+            }
+            for (Perk perk : occupation.getProfession().getBenefits().getPerks()) {
+                perks.put(perk.getType(), perk);
             }
         }
     }
@@ -57,6 +66,16 @@ public class UnlockableDataImpl implements UnlockableData {
     public List<Unlock.Singular<?>> getUnlockedKnowledge() {
         return List.of();
         //return unlocks.values().stream().filter(singular -> singular.getUnlockLevel() <= occupation.getLevel()).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Perk> getPerkByType(PerkType type) {
+        return perks.get(type);
+    }
+
+    @Override
+    public Collection<Perk> allPerks() {
+        return perks.values();
     }
 
 }

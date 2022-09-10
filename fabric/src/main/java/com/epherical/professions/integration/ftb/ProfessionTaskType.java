@@ -123,6 +123,11 @@ public class ProfessionTaskType extends BooleanTask {
     }
 
     @Override
+    public int autoSubmitOnPlayerTick() {
+        return 20;
+    }
+
+    @Override
     public TaskType getType() {
         return FTBIntegration.PROFESSION;
     }

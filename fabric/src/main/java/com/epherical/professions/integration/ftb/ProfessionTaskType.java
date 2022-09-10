@@ -16,7 +16,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -122,6 +121,11 @@ public class ProfessionTaskType extends BooleanTask {
         }
 
         return false;
+    }
+
+    @Override
+    public int autoSubmitOnPlayerTick() {
+        return 20;
     }
 
     @Override

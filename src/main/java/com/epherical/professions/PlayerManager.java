@@ -216,6 +216,7 @@ public class PlayerManager {
         if (server != null) {
             synchronizedPlayers.clear();
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                playerQuit(player);
                 playerJoined(player);
             }
         }

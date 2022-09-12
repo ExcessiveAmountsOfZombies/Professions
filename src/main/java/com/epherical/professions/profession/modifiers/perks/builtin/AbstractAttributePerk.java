@@ -96,10 +96,10 @@ public abstract class AbstractAttributePerk implements Perk {
         public T deserialize(@NotNull JsonObject jsonObject, @NotNull JsonDeserializationContext jsonDeserializationContext) {
             double increaseBy = GsonHelper.getAsDouble(jsonObject, "increaseBy");
             int level = GsonHelper.getAsInt(jsonObject, "level");
-            Attribute attribute = Registry.ATTRIBUTE.get(new ResourceLocation(GsonHelper.getAsString(jsonObject, "attribute")));
+            String key = GsonHelper.getAsString(jsonObject, "attribute");
+            Attribute attribute = Registry.ATTRIBUTE.get(new ResourceLocation(key));
             if (attribute == null) {
-                LOGGER.warn("Tried to deserialize an attribute that was null");
-                throw new RuntimeException("Tried to deserialize an attribute that was null");
+                throw new RuntimeException("Tried to deserialize an attribute that is not registered " + key);
             }
             return deserialize(jsonObject, jsonDeserializationContext, increaseBy, level, attribute);
         }

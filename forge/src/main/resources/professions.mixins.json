@@ -2,7 +2,7 @@
   "required": true,
   "package": "com.epherical.professions.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "professions.refmap.json",
+  "refmap": "Professions-refmap.json",
   "mixins": [
     "EnchantmentMixin",
     "GameProfileCacheMixin",

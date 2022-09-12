@@ -25,7 +25,7 @@ configurations {
 }
 
 mixin {
-    add sourceSets.main, "professions.refmap.json"
+    add sourceSets.main, "Professions-refmap.json"
     config "professions.mixins.json"
     config "professions-root.mixins.json"
 }

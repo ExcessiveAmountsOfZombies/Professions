@@ -66,12 +66,6 @@ public class ProfessionsFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // TODO: /reload needs to refresh all data, it doesn't seem to do that currently
-        // TODO: better error handling, doesn't point to any particular profession, or anything.
-        // Caused by: java.lang.RuntimeException: Tried to deserialize an attribute that was null
-        //	at com.epherical.professions.profession.modifiers.perks.builtin.AbstractAttributePerk$AttributeSerializer.deserialize(AbstractAttributePerk.java:102) ~[classes/:?]
-        //	at com.epherical.professions.profession.modifiers.perks.builtin.AbstractAttributePerk$AttributeSerializer.deserialize(AbstractAttributePerk.java:79) ~[classes/:?]
-        //	at net.minecraft.world.level.storage.loot.GsonAdapterFactory$JsonAdapter.deserialize(GsonAdapterFactory.java:102) ~[minecraft-project-@fabric-merged-named.jar:?]
         CommonPlatform.create(new FabricPlatform());
         startup = true;
         mod = this;

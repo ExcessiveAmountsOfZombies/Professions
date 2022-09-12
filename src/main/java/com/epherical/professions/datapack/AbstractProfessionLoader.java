@@ -62,21 +62,26 @@ public abstract class AbstractProfessionLoader extends SimpleJsonResourceReloadL
         Multimap<ResourceLocation, Editor> editsMade = HashMultimap.create();
 
         object.forEach((location, jsonElement) -> {
-            JsonObject jsonObject = GsonHelper.convertToJsonObject(jsonElement, "profession");
-            if (jsonObject.has("type")) {
-                ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "type"));
-                ProfessionSerializer<? extends Profession, ? extends ProfessionBuilder> nullable = RegistryConstants.PROFESSION_SERIALIZER.get(type);
-                nullable = nullable != null ? nullable : ProfessionSerializer.DEFAULT_PROFESSION;
-                ProfessionBuilder profession = GSON.fromJson(jsonElement, nullable.getBuilderType());
-                profession.setKey(location);
-                temp.put(location, profession);
-            } else if (jsonObject.has("function_type")) {
-                ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "function_type"));
-                Editor editor = RegistryConstants.PROFESSION_EDITOR_SERIALIZER.getOptional(type)
-                        .orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported editor type '" + type + "'"))
-                        .deserialize(jsonObject, GSON);
-                editor.setLocation(location);
-                editsMade.put(editor.getProfessionKey(), editor);
+            try {
+                JsonObject jsonObject = GsonHelper.convertToJsonObject(jsonElement, "profession");
+                if (jsonObject.has("type")) {
+                    ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "type"));
+                    ProfessionSerializer<? extends Profession, ? extends ProfessionBuilder> nullable = RegistryConstants.PROFESSION_SERIALIZER.get(type);
+                    nullable = nullable != null ? nullable : ProfessionSerializer.DEFAULT_PROFESSION;
+                    ProfessionBuilder profession = GSON.fromJson(jsonElement, nullable.getBuilderType());
+                    profession.setKey(location);
+                    temp.put(location, profession);
+                } else if (jsonObject.has("function_type")) {
+                    ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonObject, "function_type"));
+                    Editor editor = RegistryConstants.PROFESSION_EDITOR_SERIALIZER.getOptional(type)
+                            .orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported editor type '" + type + "'"))
+                            .deserialize(jsonObject, GSON);
+                    editor.setLocation(location);
+                    editsMade.put(editor.getProfessionKey(), editor);
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Could not finish deserializing profession {}, reason(s) for failing: {}", location.toString(), e.getMessage());
+                throw e;
             }
         });
         // TODO: there should probably be some sort of editing order.

@@ -5,10 +5,12 @@ import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.events.SyncEvents;
 import com.epherical.professions.events.trigger.TriggerEvents;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ProfessionUtil;
 import com.epherical.professions.util.mixins.PlayerOwnable;
 import com.google.common.collect.Maps;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -48,6 +50,17 @@ public class UtilityListener {
                 owned.professions$setPlacedBy(player);
             }
         });
+
+        ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
+            ProfessionalPlayer pPlayer = CommonPlatform.platform.getPlayerManager().getPlayer(oldPlayer.getUUID());
+            if (pPlayer != null) {
+                pPlayer.setPlayer(newPlayer);
+                for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
+                    activeOccupation.getProfession().getBenefits().handleLevelUp(pPlayer, activeOccupation);
+                }
+            }
+        });
+
 
         PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
             if (world.isClientSide) {

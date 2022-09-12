@@ -3,6 +3,7 @@ package com.epherical.professions.profession.modifiers.perks.builtin;
 import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.epherical.professions.profession.progression.Occupation;
+import com.epherical.professions.util.AttributeDisplay;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,6 +39,11 @@ public class ScalingAttributePerk extends AbstractAttributePerk {
                 instance.addTransientModifier(new AttributeModifier(OUR_UUID, name, amount, AttributeModifier.Operation.ADDITION));
             }
         }
+    }
+
+    @Override
+    public void addAttributeData(Occupation occupation, AttributeDisplay display) {
+        display.addData(occupation, increaseBy * occupation.getLevel() - level, attribute);
     }
 
     public static class PerkSerializer extends AttributeSerializer<ScalingAttributePerk> {

@@ -21,5 +21,7 @@ public interface UnlockableData {
 
     Collection<Perk> getPerkByType(PerkType type);
 
+    Collection<Perk> getUnlockedPerkByType(PerkType type, ProfessionalPlayer player);
+
     Collection<Perk> allPerks();
 }

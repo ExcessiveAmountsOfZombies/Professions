@@ -1,5 +1,6 @@
 package com.epherical.professions.profession;
 
+import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.api.UnlockableData;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.PerkType;
@@ -71,6 +72,11 @@ public class UnlockableDataImpl implements UnlockableData {
     @Override
     public Collection<Perk> getPerkByType(PerkType type) {
         return perks.get(type);
+    }
+
+
+    public Collection<Perk> getUnlockedPerkByType(PerkType type, ProfessionalPlayer player) {
+        return perks.get(type).stream().filter(perk -> perk.canApplyPerkToPlayer("", player, occupation)).toList();
     }
 
     @Override

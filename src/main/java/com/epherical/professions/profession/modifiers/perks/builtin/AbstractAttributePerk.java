@@ -3,6 +3,7 @@ package com.epherical.professions.profession.modifiers.perks.builtin;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.progression.Occupation;
+import com.epherical.professions.util.AttributeDisplay;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -69,6 +70,10 @@ public abstract class AbstractAttributePerk implements Perk {
     @Override
     public int getLevel() {
         return level;
+    }
+
+    public void addAttributeData(Occupation occupation, AttributeDisplay display) {
+        display.addData(occupation, increaseBy, attribute);
     }
 
     public abstract static class AttributeSerializer<T extends AbstractAttributePerk> implements Serializer<T> {

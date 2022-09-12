@@ -8,9 +8,14 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.modifiers.perks.Perk;
+import com.epherical.professions.profession.modifiers.perks.Perks;
+import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
+import com.epherical.professions.profession.modifiers.perks.builtin.SingleAttributePerk;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.util.ActionLogger;
+import com.epherical.professions.util.AttributeDisplay;
 import com.epherical.professions.util.mixins.GameProfileHelper;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
@@ -28,9 +33,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 
@@ -115,6 +123,26 @@ public class ProfessionsCommands {
                 .then(Commands.literal("leaveall")
                         .requires(require(LEAVE_ALL))
                         .executes(this::leaveAll))
+                .then(Commands.literal("profile")
+                        .requires(require(PROFILE))
+                        .executes(this::profile)
+                        .then(Commands.argument("player", StringArgumentType.string())
+                                .suggests(playerProvider)
+                                .executes(this::profile)))
+                /*.then(Commands.literal("unlocks")
+                        .requires(Permissions.require("professions.command.unlocks", 0))
+                        .then(Commands.argument("occupation", StringArgumentType.string())
+                                .suggests(occupationProvider)
+                                .executes(this::unlocks)
+                                .then(Commands.argument("page", IntegerArgumentType.integer(1))
+                                        .executes(this::unlocks))))
+                .then(Commands.literal("perks")
+                        .requires(Permissions.require("professions.command.perks", 0))
+                        .then(Commands.argument("occupation", StringArgumentType.string())
+                                .suggests(occupationProvider)
+                                .executes(this::perks)
+                                .then(Commands.argument("page", IntegerArgumentType.integer(1))
+                                        .executes(this::perks))))*/
                 .then(Commands.literal("info")
                         .requires(require(INFO))
                         .then(Commands.argument("occupation", StringArgumentType.string())
@@ -193,6 +221,90 @@ public class ProfessionsCommands {
         return 1;
     }
 
+    private int profile(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+        String playerArg = "";
+        try {
+            playerArg = StringArgumentType.getString(stack, "player");
+        } catch (IllegalArgumentException ignored) {}
+
+        try {
+            ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
+            GameProfile profile = getGameProfile(stack, playerArg);
+            if (profile == null) {
+                return 0;
+            }
+
+            PlayerManager manager = mod.getPlayerManager();
+            ProfessionalPlayer pPlayer = manager.getPlayer(commandPlayer.getUUID());
+            if (pPlayer == null) {
+                return 0;
+            }
+
+            Style borders = Style.EMPTY.withColor(ProfessionConfig.headerBorders);
+
+            stack.getSource().sendSuccess(new TextComponent("╔══╦════╦══╗")
+                    .setStyle(borders), false);
+            stack.getSource().sendSuccess(new TranslatableComponent("╠══╩%s╿╩══╣", new TextComponent("Profile").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                    .setStyle(borders), false);
+            stack.getSource().sendSuccess(new TranslatableComponent("║ Name: %s", new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                    .setStyle(borders), false);
+            stack.getSource().sendSuccess(new TranslatableComponent("║ %s", new TextComponent("/stats command")
+                    .setStyle(Style.EMPTY
+                            .withColor(ProfessionConfig.variables)
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent("Click to run command")))
+                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions stats " + profile.getName()))))
+                    .setStyle(borders), false);
+            stack.getSource().sendSuccess(new TextComponent("╠══════════╣")
+                    .setStyle(borders), false);
+            stack.getSource().sendSuccess(new TextComponent("║ Perks Unlocked")
+                    .setStyle(borders), false);
+
+
+            AttributeDisplay display = new AttributeDisplay();
+            // better method?
+            for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
+                for (Perk perk : activeOccupation.getData().getUnlockedPerkByType(Perks.SINGLE_ATTRIBUTE_PERK, pPlayer)) {
+                    SingleAttributePerk cast = (SingleAttributePerk) perk;
+                    cast.addAttributeData(activeOccupation, display);
+                }
+                for (Perk perk : activeOccupation.getData().getUnlockedPerkByType(Perks.SCALING_ATTRIBUTE_PERK, pPlayer)) {
+                    ScalingAttributePerk cast = (ScalingAttributePerk) perk;
+                    cast.addAttributeData(activeOccupation, display);
+                }
+            }
+            Map<Attribute, MutableComponent> values = display.getValues();
+            if (values.size() == 0) {
+                stack.getSource().sendSuccess(new TextComponent("║      No Perks")
+                        .setStyle(borders), false);
+                stack.getSource().sendSuccess(new TextComponent("║")
+                        .setStyle(borders), false);
+                stack.getSource().sendSuccess(new TextComponent("║      Unlocked")
+                        .setStyle(borders), false);
+            } else {
+                int inc = 0;
+                MutableComponent comp = new TextComponent("║").setStyle(borders);
+                for (MutableComponent value : values.values()) {
+                    inc++;
+                    comp.append(" ").append(value);
+                    if (inc % 3 == 0) {
+                        stack.getSource().sendSuccess(comp, false);
+                        // todo; this is bugged
+                        comp = new TextComponent("║").setStyle(borders);
+                    }
+                }
+                if (comp != null) {
+                    stack.getSource().sendSuccess(comp, false);
+                }
+            }
+
+            stack.getSource().sendSuccess(new TextComponent("╠══╩════╩══╣").setStyle(borders), false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // don't display errors to clients
+        }
+        return 0;
+    }
+
     private int join(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
         ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
 
@@ -240,6 +352,35 @@ public class ProfessionsCommands {
         }
 
         return 1;
+    }
+
+    private int unlocks(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+        int page = 1;
+        ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+        try {
+            page = IntegerArgumentType.getInteger(stack, "page");
+        } catch (IllegalArgumentException ignored) {
+        }
+
+        // no displaying errors to clients.
+        try {
+            Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
+            if (profession == null) {
+                stack.getSource().sendFailure(new TranslatableComponent("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                return 0;
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return 0;
+    }
+
+    private int perks(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+        return 0;
     }
 
     private int info(CommandContext<CommandSourceStack> stack) {

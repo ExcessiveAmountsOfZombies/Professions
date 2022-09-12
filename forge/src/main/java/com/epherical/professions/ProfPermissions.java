@@ -2,13 +2,11 @@ package com.epherical.professions;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionDynamicContextKey;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
-import org.stringtemplate.v4.ST;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +22,7 @@ public class ProfPermissions {
     public static final PermissionNode<Boolean> HELP = new PermissionNode<>(Constants.MOD_ID, "command.help", PermissionTypes.BOOLEAN, ProfPermissions::defaultTrue);
     public static final PermissionNode<Boolean> JOIN = new PermissionNode<>(Constants.MOD_ID, "command.join", PermissionTypes.BOOLEAN, ProfPermissions::defaultTrue);
     public static final PermissionNode<Boolean> LEAVE = new PermissionNode<>(Constants.MOD_ID, "command.leave", PermissionTypes.BOOLEAN, ProfPermissions::defaultTrue);
+    public static final PermissionNode<Boolean> PROFILE = new PermissionNode<>(Constants.MOD_ID, "command.profile", PermissionTypes.BOOLEAN, ProfPermissions::defaultTrue);
     public static final PermissionNode<Boolean> LEAVE_ALL = new PermissionNode<>(Constants.MOD_ID, "command.leaveall", PermissionTypes.BOOLEAN, ProfPermissions::defaultTrue);
     public static final PermissionNode<Boolean> INFO = new PermissionNode<>(Constants.MOD_ID, "command.info", PermissionTypes.BOOLEAN, ProfPermissions::defaultTrue);
     public static final PermissionNode<Boolean> STATS = new PermissionNode<>(Constants.MOD_ID, "command.stats", PermissionTypes.BOOLEAN, ProfPermissions::defaultTrue);
@@ -48,7 +47,7 @@ public class ProfPermissions {
     public void registerPermissions(PermissionGatherEvent.Nodes event) {
         event.addNodes(HELP, JOIN, LEAVE, LEAVE_ALL, INFO, STATS, BROWSE, TOP,
                         RELOAD, FIRE, FIRE_ALL, EMPLOY, SET_LEVEL, CREATIVE_PAYMENT, BYPASSS_LEAVE_PREVENTION,
-                START_PROFESSION, JOIN_PROFESSION);
+                START_PROFESSION, JOIN_PROFESSION, PROFILE);
         for (PermissionNode<?> node : event.getNodes()) {
             NODES.put(node.getNodeName(), node);
         }

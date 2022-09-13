@@ -11,6 +11,7 @@
     "FurnaceCraftingMixin",
     "GameProfileCacheMixin",
     "InventoryMenuSlotMixin",
+    "ItemUseOnMixin",
     "LootTableBuilderAccessor",
     "PlaceBlockTriggerMixin",
     "StatePropertiesPredicateMixin",

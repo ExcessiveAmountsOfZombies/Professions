@@ -135,13 +135,6 @@
       ]
     },
     {
-      "unlock": "professions:equip_unlock",
-      "level": 12,
-      "items": [
-        "minecraft:diamond_chestplate"
-      ]
-    },
-    {
       "unlock": "professions:tool_unlock",
       "level": 22,
       "items": [

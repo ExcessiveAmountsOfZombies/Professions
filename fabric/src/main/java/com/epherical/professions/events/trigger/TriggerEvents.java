@@ -4,15 +4,19 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.UUID;
 
@@ -90,6 +94,19 @@ public final class TriggerEvents {
         }
     });
 
+    public static final Event<PlayerUseItemOn> PLAYER_USE_ITEM_ON_EVENT = EventFactory.createArrayBacked(PlayerUseItemOn.class, calls ->
+            (player, level, stack, hand, hitResult) -> {
+                for (PlayerUseItemOn event : calls) {
+                    InteractionResult result = event.onPlayerUse(player, level, stack, hand, hitResult);
+
+                    if (result != InteractionResult.PASS) {
+                        return result;
+                    }
+                }
+
+                return InteractionResult.PASS;
+            });
+
 
     public interface PlaceBlock {
         /**
@@ -155,6 +172,10 @@ public final class TriggerEvents {
 
     public interface PlayerLocation {
         void onPlayerTick(ServerPlayer player);
+    }
+
+    public interface PlayerUseItemOn {
+        InteractionResult onPlayerUse(ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult hitResult);
     }
 
 }

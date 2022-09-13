@@ -6,6 +6,7 @@ import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.events.SyncEvents;
 import com.epherical.professions.events.trigger.TriggerEvents;
 import com.epherical.professions.profession.progression.Occupation;
+import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ProfessionUtil;
 import com.epherical.professions.util.mixins.PlayerOwnable;
@@ -22,11 +23,13 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -59,6 +62,25 @@ public class UtilityListener {
                     activeOccupation.getProfession().getBenefits().handleLevelUp(pPlayer, activeOccupation);
                 }
             }
+        });
+
+        TriggerEvents.PLAYER_USE_ITEM_ON_EVENT.register((player, level, stack, hand, hitResult) -> {
+            if (player.isSpectator()) {
+                return InteractionResult.PASS;
+            }
+
+            ProfessionalPlayer pPlayer = ProfessionsFabric.getInstance().getPlayerManager().getPlayer(player.getUUID());
+            if (pPlayer == null) {
+                return InteractionResult.PASS;
+            }
+            List<Unlock.Singular<Item>> lockedKnowledge = pPlayer.getLockedKnowledge(stack.getItem(), Set.of(Unlocks.INTERACTION_UNLOCK));
+            for (Unlock.Singular<Item> singular : lockedKnowledge) {
+                if (!singular.canUse(pPlayer)) {
+                    return InteractionResult.FAIL;
+                }
+            }
+
+            return InteractionResult.PASS;
         });
 
 

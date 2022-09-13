@@ -5,6 +5,7 @@ import com.epherical.professions.profession.unlock.builtin.AdvancementUnlock;
 import com.epherical.professions.profession.unlock.builtin.BlockBreakUnlock;
 import com.epherical.professions.profession.unlock.builtin.BlockDropUnlock;
 import com.epherical.professions.profession.unlock.builtin.EquipmentUnlock;
+import com.epherical.professions.profession.unlock.builtin.InteractionUnlock;
 import com.epherical.professions.profession.unlock.builtin.ToolUnlock;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +22,7 @@ public class Unlocks {
     public static final UnlockType<Item> TOOL_UNLOCK = register(modID("tool_unlock"), new ToolUnlock.JsonSerializer(), Item.class, "professions.tooltip.unlock.tool_use_req");
     public static final UnlockType<Item> ADVANCEMENT_UNLOCK = register(modID("need_advancement"), new AdvancementUnlock.JsonSerializer(), Item.class, "professions.tooltip.unlock.advancement_req");
     public static final UnlockType<Item> EQUIPMENT_UNLOCK = register(modID("equip_unlock"), new EquipmentUnlock.JsonDeserializer(), Item.class, "professions.tooltip.unlock.equipment_req");
-    public static final UnlockType<Item> FULL_DAMAGE = register(modID("full_damage"), );
+    public static final UnlockType<Item> INTERACTION_UNLOCK = register(modID("interaction_unlock"), new InteractionUnlock.JsonDeserializer(), Item.class, "professions.tooltip.unlock.interaction_req");
 
 
     public static Object createGsonAdapter() {

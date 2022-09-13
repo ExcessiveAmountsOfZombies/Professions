@@ -169,6 +169,7 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
     public <T> List<Unlock.Singular<T>> getLockedKnowledge(T object, Set<UnlockType<T>> unlockTypes) {
         List<Unlock.Singular<T>> unlocks = new ArrayList<>();
         for (Occupation active : getActiveOccupations()) {
+
             UnlockableValues<Unlock.Singular<T>> unlock = active.getData().getUnlock(object);
             if (unlock != null) {
                 unlocks.addAll(unlock.getValues().stream().filter(singular -> {

@@ -10,6 +10,7 @@
     "FishingMixin",
     "FurnaceCraftingMixin",
     "GameProfileCacheMixin",
+    "InventoryMenuSlotMixin",
     "LootTableBuilderAccessor",
     "PlaceBlockTriggerMixin",
     "StatePropertiesPredicateMixin",

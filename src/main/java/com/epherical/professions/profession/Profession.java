@@ -7,6 +7,8 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.modifiers.BasicModifiers;
 import com.epherical.professions.profession.modifiers.Modifiers;
+import com.epherical.professions.profession.modifiers.milestones.Milestone;
+import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.profession.unlock.UnlockType;
@@ -294,7 +296,7 @@ public class Profession {
                     return unlocks;
                 });
             }
-            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), ImmutableMap.copyOf(map), null, null, null);
+            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), ImmutableMap.copyOf(map), null, null, new BasicModifiers(new Milestone[0], new Perk[0]));
             profession.setKey(location);
             return profession;
         }

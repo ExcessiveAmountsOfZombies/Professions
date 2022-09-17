@@ -210,7 +210,7 @@ public class CommonConfig {
         allowCreativeModePayments = node.node("allowCreativeModePayments").getBoolean(allowCreativeModePayments);
 
         overrideCurrencyID = node.node("currency").node("overrideCurrencyID").getBoolean(overrideCurrencyID);
-        overriddenCurrencyID = node.node("currency").node("overridenCurrencyID").getString(overriddenCurrencyID);
+        overriddenCurrencyID = node.node("currency").node("overriddenCurrencyID").getString(overriddenCurrencyID);
 
         announceLevelUps = node.node("announce").node("levelUps").getBoolean(announceLevelUps);
         announceEveryXLevel = node.node("announce").node("every-x-levels").getInt(announceEveryXLevel);

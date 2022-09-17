@@ -37,7 +37,7 @@ minecraft {
 
 dependencies {
     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
-    implementation('com.epherical.octo-economy-api:OctoEconomyApi:1.0.1-1.18.2')
+    implementation('com.epherical.octo-economy-api:OctoEconomyApi:1.1.0-1.18.2')
     api('org.jetbrains:annotations:23.0.0')
     compileOnly('net.luckperms:api:5.4')
 }

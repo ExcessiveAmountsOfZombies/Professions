@@ -21,6 +21,22 @@ public abstract class AbstractLevelMilestone implements Milestone {
     }
 
 
+    public abstract static class Builder<T extends Builder<T>> implements Milestone.Builder {
+        private int level;
+
+        public T level(int level) {
+            this.level = level;
+            return instance();
+        }
+
+        protected abstract T instance();
+
+        public int getLevel() {
+            return level;
+        }
+    }
+
+
     public static abstract class AbstractLevelMilestoneSerializer<T extends AbstractLevelMilestone> implements Serializer<T> {
 
 

@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.modifiers.perks.builtin;
 
+import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.epherical.professions.profession.progression.Occupation;
@@ -44,6 +45,23 @@ public class ScalingAttributePerk extends AbstractAttributePerk {
     @Override
     public void addAttributeData(Occupation occupation, AttributeDisplay display) {
         display.addData(occupation, increaseBy * occupation.getLevel() - level, attribute);
+    }
+
+    public static Builder scaling() {
+        return new Builder();
+    }
+
+    public static class Builder extends AbstractAttributePerk.Builder<Builder> {
+
+        @Override
+        public Perk build() {
+            return new ScalingAttributePerk(getIncreaseBy(), getLevel(), getAttribute());
+        }
+
+        @Override
+        protected Builder instance() {
+            return this;
+        }
     }
 
     public static class PerkSerializer extends AttributeSerializer<ScalingAttributePerk> {

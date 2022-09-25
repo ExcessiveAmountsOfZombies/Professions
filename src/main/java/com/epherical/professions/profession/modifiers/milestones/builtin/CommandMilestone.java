@@ -1,6 +1,7 @@
 package com.epherical.professions.profession.modifiers.milestones.builtin;
 
 import com.epherical.professions.api.ProfessionalPlayer;
+import com.epherical.professions.profession.modifiers.milestones.Milestone;
 import com.epherical.professions.profession.modifiers.milestones.MilestoneType;
 import com.epherical.professions.profession.modifiers.milestones.Milestones;
 import com.epherical.professions.profession.progression.Occupation;
@@ -34,6 +35,29 @@ public class CommandMilestone extends AbstractLevelMilestone {
         }
 
         return false;
+    }
+
+    public static Builder commandMilestone() {
+        return new Builder();
+    }
+
+    public static class Builder extends AbstractLevelMilestone.Builder<Builder> {
+        private String command = "";
+
+        @Override
+        public Milestone build() {
+            return new CommandMilestone(getLevel(), command);
+        }
+
+        public Builder command(String command) {
+            this.command = command;
+            return this;
+        }
+
+        @Override
+        protected Builder instance() {
+            return this;
+        }
     }
 
     public static class MilestoneSerializer extends AbstractLevelMilestoneSerializer<CommandMilestone> {

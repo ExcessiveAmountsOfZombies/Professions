@@ -2,6 +2,7 @@ package com.epherical.professions.profession.action.builtin;
 
 import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.AbstractAction;
@@ -9,6 +10,7 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.util.ActionDisplay;
@@ -24,6 +26,7 @@ import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -34,13 +37,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class ExploreBiomeAction extends AbstractAction {
+public class ExploreBiomeAction extends AbstractAction<Biome> {
     protected final List<ActionEntry<Biome>> entries;
     @Nullable
-    protected List<Biome> realBiomes;
+    protected Set<Biome> realBiomes;
 
 
     protected ExploreBiomeAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Biome>> biomes) {
@@ -95,9 +100,19 @@ public class ExploreBiomeAction extends AbstractAction {
         return comps;
     }
 
-    protected List<Biome> getRealBiomes(Registry<Biome> biomes) {
+    @Override
+    public List<Action.Singular<Biome>> convertToSingle(Profession profession) {
+        List<Action.Singular<Biome>> list = new ArrayList<>();
+        Registry<Biome> biomes = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
+        for (Biome items : getRealBiomes(biomes)) {
+            list.add(new ExploreBiomeAction.Single(items, profession));
+        }
+        return list;
+    }
+
+    protected Set<Biome> getRealBiomes(Registry<Biome> biomes) {
         if (realBiomes == null) {
-            realBiomes = new ArrayList<>();
+            realBiomes = new HashSet<>();
             for (ActionEntry<Biome> item : entries) {
                 realBiomes.addAll(item.getActionValues(biomes));
             }
@@ -170,6 +185,33 @@ public class ExploreBiomeAction extends AbstractAction {
                 }
             }
             return new ExploreBiomeAction(conditions, rewards, biomes);
+        }
+    }
+
+    public class Single extends AbstractSingle<Biome> {
+
+        public Single(Biome value, Profession profession) {
+            super(value, profession);
+        }
+
+        @Override
+        public ActionType getType() {
+            return ExploreBiomeAction.this.getType();
+        }
+
+        @Override
+        public Component createActionComponent() {
+            return new TranslatableComponent(getType().getTranslationKey());
+        }
+
+        @Override
+        public boolean handleAction(ProfessionContext context, Occupation player) {
+            return ExploreBiomeAction.this.handleAction(context, player);
+        }
+
+        @Override
+        public void giveRewards(ProfessionContext context, Occupation occupation) {
+            ExploreBiomeAction.this.giveRewards(context, occupation);
         }
     }
 }

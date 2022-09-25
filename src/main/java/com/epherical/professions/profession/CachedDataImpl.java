@@ -1,12 +1,15 @@
 package com.epherical.professions.profession;
 
+import com.epherical.professions.api.CachedData;
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.api.UnlockableData;
+import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
+import com.epherical.professions.util.SeededValueList;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -16,15 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UnlockableDataImpl implements UnlockableData {
+public class CachedDataImpl implements CachedData {
     private final Occupation occupation;
     // i really don't like this, but I'm not sure how to handle it better.
-    private final Map<Object, UnlockableValues<Unlock.Singular<?>>> unlocks;
+    private final Map<Object, SeededValueList<Unlock.Singular<?>>> unlocks;
     private final Multimap<PerkType, Perk> perks;
+    private final Map<Object, SeededValueList<Action.Singular<?>>> actions;
 
-    public UnlockableDataImpl(Occupation occupation) {
+    public CachedDataImpl(Occupation occupation) {
         this.occupation = occupation;
         this.unlocks = new HashMap<>();
+        this.actions = new HashMap<>();
         this.perks = HashMultimap.create();
         if (occupation.getProfession() != null) {
             for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : occupation.getProfession().getUnlocks().entrySet()) {
@@ -33,7 +38,7 @@ public class UnlockableDataImpl implements UnlockableData {
                         if (unlocks.containsKey(singular.getObject())) {
                             unlocks.get(singular.getObject()).addValue(singular);
                         } else {
-                            unlocks.put(singular.getObject(), new UnlockableValues<>(singular));
+                            unlocks.put(singular.getObject(), new SeededValueList<>(singular));
                         }
                     }
                 }
@@ -41,12 +46,23 @@ public class UnlockableDataImpl implements UnlockableData {
             for (Perk perk : occupation.getProfession().getBenefits().getPerks()) {
                 perks.put(perk.getType(), perk);
             }
+            for (Map.Entry<ActionType, Collection<Action<?>>> entry : occupation.getProfession().getActions().entrySet()) {
+                for (Action<?> action : entry.getValue()) {
+                    for (Action.Singular<?> o : action.convertToSingle(occupation.getProfession())) {
+                        if (actions.containsKey(o.getObject())) {
+                            actions.get(o.getObject()).addValue(o);
+                        } else {
+                            actions.put(o.getObject(), new SeededValueList<>(o));
+                        }
+                    }
+                }
+            }
         }
     }
 
     @Override
-    public <T> UnlockableValues<Unlock.Singular<T>> getUnlock(T object) {
-        return (UnlockableValues<Unlock.Singular<T>>)(UnlockableValues<?>) unlocks.get(object);
+    public <T> SeededValueList<Unlock.Singular<T>> getUnlock(T object) {
+        return (SeededValueList<Unlock.Singular<T>>)(SeededValueList<?>) unlocks.get(object);
     }
 
     @Override
@@ -58,7 +74,7 @@ public class UnlockableDataImpl implements UnlockableData {
     public Collection<Unlock.Singular<?>> getUnlockables() {
         return unlocks.values()
                 .stream()
-                .map(UnlockableValues::getValues)
+                .map(SeededValueList::getValues)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
@@ -82,6 +98,11 @@ public class UnlockableDataImpl implements UnlockableData {
     @Override
     public Collection<Perk> allPerks() {
         return perks.values();
+    }
+
+    @Override
+    public <T> SeededValueList<Action.Singular<T>> getActions() {
+        return null;
     }
 
 }

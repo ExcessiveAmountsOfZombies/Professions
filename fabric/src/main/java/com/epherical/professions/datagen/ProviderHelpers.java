@@ -4,7 +4,6 @@ import com.epherical.octoecon.api.Economy;
 import com.epherical.org.mbertoli.jfep.Parser;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.datapack.AbstractProfessionLoader;
-import com.epherical.professions.datapack.FabricProfLoader;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.editor.Editor;
 import com.epherical.professions.profession.rewards.Reward;
@@ -45,7 +44,7 @@ public interface ProviderHelpers {
     }
 
     default Parser defaultLevelParser() {
-        return new Parser("(1000)*((1.064)^(lvl-1))");
+        return new Parser("(1000)*((1.03706264)^(lvl-1))");
     }
 
     default Parser defaultIncomeParser() {

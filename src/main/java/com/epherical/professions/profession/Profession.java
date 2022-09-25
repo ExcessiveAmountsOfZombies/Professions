@@ -46,7 +46,7 @@ public class Profession {
     protected final String[] description;
     protected final String displayName;
     protected final int maxLevel;
-    protected final Map<ActionType, Collection<Action>> actions;
+    protected final Map<ActionType, Collection<Action<?>>> actions;
     protected final Map<UnlockType<?>, Collection<Unlock<?>>> unlocks;
     protected final Parser experienceScalingEquation;
     protected final Parser incomeScalingEquation;
@@ -56,7 +56,7 @@ public class Profession {
 
     protected final Component displayComponent;
 
-    public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
+    public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action<?>>> actions,
                       Map<UnlockType<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation, Modifiers modifiers) {
         this.color = color;
         this.description = description;
@@ -71,7 +71,7 @@ public class Profession {
         this.modifiers = modifiers;
     }
 
-    public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action>> actions,
+    public Profession(TextColor color, TextColor descriptionColor, String[] description, String displayName, int maxLevel, Map<ActionType, Collection<Action<?>>> actions,
                       Map<UnlockType<?>, Collection<Unlock<?>>> unlocks, Parser experienceScalingEquation, Parser incomeScalingEquation, ResourceLocation key, Modifiers modifiers) {
         this(color, descriptionColor, description, displayName, maxLevel, actions, unlocks, experienceScalingEquation, incomeScalingEquation, modifiers);
         this.key = key;
@@ -101,7 +101,7 @@ public class Profession {
         return color;
     }
 
-    public Map<ActionType, Collection<Action>> getActions() {
+    public Map<ActionType, Collection<Action<?>>> getActions() {
         return actions;
     }
 
@@ -122,7 +122,7 @@ public class Profession {
     }
 
     @Nullable
-    public Collection<Action> getActions(ActionType type) {
+    public Collection<Action<?>> getActions(ActionType type) {
         return actions.get(type);
     }
 
@@ -222,8 +222,8 @@ public class Profession {
             int maxLevel = GsonHelper.getAsInt(object, "maxLevel");
             ProfessionBuilder builder = ProfessionBuilder.profession(
                     professionColor, descriptionColor, description, displayName, maxLevel);
-            Action[] actions = GsonHelper.getAsObject(object, "actions", new Action[0], context, Action[].class);
-            for (Action action : actions) {
+            Action<?>[] actions = GsonHelper.getAsObject(object, "actions", new Action[0], context, Action[].class);
+            for (Action<?> action : actions) {
                 builder.addAction(action.getType(), action);
             }
             Unlock<?>[] unlocks = GsonHelper.getAsObject(object, "unlocks", new Unlock[0], context, Unlock[].class);
@@ -255,8 +255,8 @@ public class Profession {
             object.addProperty("experienceSclEquation", src.experienceScalingEquation.getExpression());
             object.addProperty("incomeSclEquation", src.incomeScalingEquation.getExpression());
             JsonArray actionArray = new JsonArray();
-            for (Collection<Action> value : src.actions.values()) {
-                for (Action action : value) {
+            for (Collection<Action<?>> value : src.actions.values()) {
+                for (Action<?> action : value) {
                     actionArray.add(context.serialize(action));
                 }
             }

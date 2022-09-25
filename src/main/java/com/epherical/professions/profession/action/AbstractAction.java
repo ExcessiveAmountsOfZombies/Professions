@@ -2,6 +2,7 @@ package com.epherical.professions.profession.action;
 
 import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.conditions.ActionCondition;
 import com.epherical.professions.profession.progression.Occupation;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public abstract class AbstractAction implements Action {
+public abstract class AbstractAction<T> implements Action<T> {
     protected final ActionCondition[] conditions;
     protected final Reward[] rewards;
     private final Predicate<ProfessionContext> predicate;
@@ -154,5 +155,31 @@ public abstract class AbstractAction implements Action {
         public Reward[] getRewards() {
             return rewards.toArray(new Reward[0]);
         }
+    }
+
+    public abstract static class AbstractSingle<T> implements Action.Singular<T> {
+        protected final T value;
+        protected final Profession profession;
+
+        public AbstractSingle(T value, Profession profession) {
+            this.value = value;
+            this.profession = profession;
+        }
+
+        @Override
+        public T getObject() {
+            return value;
+        }
+
+        @Override
+        public Component getProfessionDisplay() {
+            return profession.getDisplayComponent();
+        }
+
+        @Override
+        public Profession getProfession() {
+            return profession;
+        }
+
     }
 }

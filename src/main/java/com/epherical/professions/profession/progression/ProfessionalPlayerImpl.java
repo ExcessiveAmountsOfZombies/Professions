@@ -7,13 +7,13 @@ import com.epherical.professions.data.Storage;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
-import com.epherical.professions.profession.UnlockableValues;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.util.ActionLogger;
+import com.epherical.professions.util.SeededValueList;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonDeserializationContext;
@@ -74,10 +74,10 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         CommonPlatform.platform.sendBeforeActionHandledEvent(context, this);
         for (Occupation occupation : occupations) {
             if (occupation.isActive()) {
-                Collection<Action> actions = occupation.getProfession().getActions(context.getParameter(ProfessionParameter.ACTION_TYPE));
+                Collection<Action<?>> actions = occupation.getProfession().getActions(context.getParameter(ProfessionParameter.ACTION_TYPE));
                 if (actions != null && !actions.isEmpty()) {
                     ActionLogger logger = context.getParameter(ProfessionParameter.ACTION_LOGGER);
-                    for (Action action : actions) {
+                    for (Action<?> action : actions) {
                         if (action.handleAction(context, occupation)) {
                             logger.startMessage(occupation);
                             action.giveRewards(context, occupation);
@@ -170,7 +170,7 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
         List<Unlock.Singular<T>> unlocks = new ArrayList<>();
         for (Occupation active : getActiveOccupations()) {
 
-            UnlockableValues<Unlock.Singular<T>> unlock = active.getData().getUnlock(object);
+            SeededValueList<Unlock.Singular<T>> unlock = active.getData().getUnlock(object);
             if (unlock != null) {
                 unlocks.addAll(unlock.getValues().stream().filter(singular -> {
                     if (unlockTypes == null) {

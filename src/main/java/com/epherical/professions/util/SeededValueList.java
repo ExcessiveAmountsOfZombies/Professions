@@ -1,15 +1,13 @@
-package com.epherical.professions.profession;
-
-import com.epherical.professions.profession.unlock.Unlock;
+package com.epherical.professions.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UnlockableValues<T extends Unlock.Singular<?>> {
+public class SeededValueList<T> {
 
     private List<T> values;
 
-    public UnlockableValues(T seedValue) {
+    public SeededValueList(T seedValue) {
         this.values = new ArrayList<>();
         this.values.add(seedValue);
     }

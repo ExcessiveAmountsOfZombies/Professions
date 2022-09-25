@@ -1,10 +1,10 @@
 package com.epherical.professions.profession.progression;
 
 import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.api.CachedData;
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.api.UnlockableData;
+import com.epherical.professions.profession.CachedDataImpl;
 import com.epherical.professions.profession.Profession;
-import com.epherical.professions.profession.UnlockableDataImpl;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -26,7 +26,7 @@ import java.util.Objects;
 public class Occupation {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Profession profession;
-    private final UnlockableData data;
+    private final CachedData data;
     private double exp;
     private int level;
     private int receivedBenefitsUpToLevel;
@@ -39,7 +39,7 @@ public class Occupation {
         this.level = level;
         this.receivedBenefitsUpToLevel = level;
         this.slot = slot;
-        this.data = new UnlockableDataImpl(this);
+        this.data = new CachedDataImpl(this);
     }
 
     /**
@@ -52,7 +52,7 @@ public class Occupation {
         this.level = level;
         this.receivedBenefitsUpToLevel = level;
         this.slot = OccupationSlot.ACTIVE;
-        this.data = new UnlockableDataImpl(this);
+        this.data = new CachedDataImpl(this);
     }
 
     public boolean isActive() {
@@ -128,7 +128,7 @@ public class Occupation {
         this.receivedBenefitsUpToLevel = receivedBenefitsUpToLevel;
     }
 
-    public UnlockableData getData() {
+    public CachedData getData() {
         return data;
     }
 

@@ -2,12 +2,14 @@ package com.epherical.professions.profession.action.builtin.items;
 
 import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.util.ActionDisplay;
@@ -24,6 +26,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -92,6 +95,16 @@ public class EnchantAction extends AbstractItemAction {
         return components;
     }
 
+    @Override
+    public List<Action.Singular<Item>> convertToSingle(Profession profession) {
+        List<Action.Singular<Item>> list = new ArrayList<>();
+        for (Item realEntity : getRealItems()) {
+            // todo; enchantment containers
+            list.add(new EnchantAction.Single(realEntity, profession));
+        }
+        return list;
+    }
+
     public List<EnchantmentContainer> getEnchantments() {
         return enchantments;
     }
@@ -148,6 +161,33 @@ public class EnchantAction extends AbstractItemAction {
         @Override
         public Action build() {
             return new EnchantAction(getConditions(), getRewards(), this.items, enchants);
+        }
+    }
+
+    public class Single extends AbstractSingle<Item> {
+
+        public Single(Item value, Profession profession) {
+            super(value, profession);
+        }
+
+        @Override
+        public ActionType getType() {
+            return EnchantAction.this.getType();
+        }
+
+        @Override
+        public Component createActionComponent() {
+            return new TranslatableComponent(getType().getTranslationKey());
+        }
+
+        @Override
+        public boolean handleAction(ProfessionContext context, Occupation player) {
+            return EnchantAction.this.handleAction(context, player);
+        }
+
+        @Override
+        public void giveRewards(ProfessionContext context, Occupation occupation) {
+            EnchantAction.this.giveRewards(context, occupation);
         }
     }
 

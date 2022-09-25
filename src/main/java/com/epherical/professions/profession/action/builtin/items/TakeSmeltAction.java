@@ -1,17 +1,22 @@
 package com.epherical.professions.profession.action.builtin.items;
 
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TakeSmeltAction extends AbstractItemAction {
@@ -24,6 +29,15 @@ public class TakeSmeltAction extends AbstractItemAction {
     @Override
     public ActionType getType() {
         return Actions.TAKE_COOKED_ITEM;
+    }
+
+    @Override
+    public List<Action.Singular<Item>> convertToSingle(Profession profession) {
+        List<Action.Singular<Item>> list = new ArrayList<>();
+        for (Item items : getRealItems()) {
+            list.add(new TakeSmeltAction.Single(items, profession));
+        }
+        return list;
     }
 
     public static Builder takeSmelt() {
@@ -53,6 +67,33 @@ public class TakeSmeltAction extends AbstractItemAction {
         @Override
         public Action build() {
             return new TakeSmeltAction(this.getConditions(), this.getRewards(), this.items);
+        }
+    }
+
+    public class Single extends AbstractSingle<Item> {
+
+        public Single(Item value, Profession profession) {
+            super(value, profession);
+        }
+
+        @Override
+        public ActionType getType() {
+            return TakeSmeltAction.this.getType();
+        }
+
+        @Override
+        public Component createActionComponent() {
+            return new TranslatableComponent(getType().getTranslationKey());
+        }
+
+        @Override
+        public boolean handleAction(ProfessionContext context, Occupation player) {
+            return TakeSmeltAction.this.handleAction(context, player);
+        }
+
+        @Override
+        public void giveRewards(ProfessionContext context, Occupation occupation) {
+            TakeSmeltAction.this.giveRewards(context, occupation);
         }
     }
 }

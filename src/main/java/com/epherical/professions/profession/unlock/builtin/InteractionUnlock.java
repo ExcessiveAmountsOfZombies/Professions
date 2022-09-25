@@ -119,7 +119,7 @@ public class InteractionUnlock extends AbstractLevelUnlock<Item> {
 
         @Override
         public Unlock<Item> build() {
-            return new ToolUnlock(items, level);
+            return new InteractionUnlock(items, level);
         }
     }
 

@@ -74,8 +74,8 @@ public class ProfessionEditor extends DatapackEditor<Profession> {
                             (action, entry) -> entry.setValue(action.getType()), DatapackEntry.Type.REMOVE),
                     (action, entry) -> entry.getEntry().deserialize(action));
         }, (profession, entry) -> {
-            for (Map.Entry<ActionType, Collection<Action>> entrySet : profession.getActions().entrySet()) {
-                for (Action action : entrySet.getValue()) {
+            for (Map.Entry<ActionType, Collection<Action<?>>> entrySet : profession.getActions().entrySet()) {
+                for (Action<?> action : entrySet.getValue()) {
                     CompoundAwareEntry<Action, ActionType> entry1 = entry.createEntry();
                     entry1.deserialize(action);
                     entry.addEntry(entry1);

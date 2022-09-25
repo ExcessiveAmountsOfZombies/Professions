@@ -14,6 +14,8 @@ public interface CachedData {
 
     <T> SeededValueList<Unlock.Singular<T>> getUnlock(T object);
 
+    <T> SeededValueList<Action.Singular<T>> getAction(T object);
+
     Occupation getOccupation();
 
     Collection<Unlock.Singular<?>> getUnlockables();

@@ -66,6 +66,11 @@ public class CachedDataImpl implements CachedData {
     }
 
     @Override
+    public <T> SeededValueList<Action.Singular<T>> getAction(T object) {
+        return (SeededValueList<Action.Singular<T>>)(SeededValueList<?>) actions.get(object);
+    }
+
+    @Override
     public Occupation getOccupation() {
         return occupation;
     }

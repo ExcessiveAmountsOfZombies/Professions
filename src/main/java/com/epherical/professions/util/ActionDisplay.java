@@ -15,9 +15,9 @@ public class ActionDisplay {
 
     private final Collection<Icon> actionInformation;
 
-    public ActionDisplay(Component header, Collection<Action> actions) {
+    public ActionDisplay(Component header, Collection<Action<?>> actions) {
         actionInformation = new ArrayList<>();
-        for (Action action : actions) {
+        for (Action<?> action : actions) {
             actionInformation.addAll(action.clientFriendlyInformation(header));
         }
     }

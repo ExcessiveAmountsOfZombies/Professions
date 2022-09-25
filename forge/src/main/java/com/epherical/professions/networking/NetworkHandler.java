@@ -81,7 +81,7 @@ public class NetworkHandler {
                 Profession profession = loader.getProfession(attempt.professionKey);
                 List<ActionDisplay> displays = new ArrayList<>();
                 for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
-                    Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
+                    Collection<Action<?>> actionsFor = profession != null ? profession.getActions(actionType) : null;
                     if (actionsFor != null && !actionsFor.isEmpty()) {
                         ActionDisplay display = new ActionDisplay(new TranslatableComponent("%s",
                                 new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))

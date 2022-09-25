@@ -401,12 +401,12 @@ public class ProfessionsCommands {
             List<Component> components = new ArrayList<>();
 
             for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
-                Collection<Action> actionsFor = profession.getActions(actionType);
+                Collection<Action<?>> actionsFor = profession.getActions(actionType);
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     components.add(new TranslatableComponent("=-=-=| %s |=-=-=",
                             new TranslatableComponent(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
-                    for (Action action : actionsFor) {
+                    for (Action<?> action : actionsFor) {
                         components.addAll(action.displayInformation());
                     }
                 }

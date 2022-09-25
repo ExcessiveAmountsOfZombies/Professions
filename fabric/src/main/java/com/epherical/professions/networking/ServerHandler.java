@@ -125,7 +125,7 @@ public class ServerHandler {
             FriendlyByteBuf response = new FriendlyByteBuf(Unpooled.buffer());
             Collection<ActionDisplay> displays = new ArrayList<>();
             for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
-                Collection<Action> actionsFor = profession != null ? profession.getActions(actionType) : null;
+                Collection<Action<?>> actionsFor = profession != null ? profession.getActions(actionType) : null;
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     ActionDisplay display = new ActionDisplay(Component.translatable("%s",
                                     Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))

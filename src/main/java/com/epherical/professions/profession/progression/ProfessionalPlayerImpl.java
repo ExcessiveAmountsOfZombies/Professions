@@ -8,6 +8,7 @@ import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
+import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.unlock.Unlock;
@@ -200,6 +201,29 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
             perks.addAll(activeOccupation.getData().getPerkByType(perkType));
         }
         return perks;
+    }
+
+    @Override
+    public <T> List<Action.Singular<T>> getActions(T object, Set<ActionType> unlockTypes) {
+        List<Action.Singular<T>> unlocks = new ArrayList<>();
+        for (Occupation active : getActiveOccupations()) {
+
+            SeededValueList<Action.Singular<T>> unlock = active.getData().getAction(object);
+            if (unlock != null) {
+                unlocks.addAll(unlock.getValues().stream().filter(singular -> {
+                    if (unlockTypes == null) {
+                        return true;
+                    }
+                    return unlockTypes.contains(singular.getType());
+                }).toList());
+            }
+        }
+        return unlocks;
+    }
+
+    @Override
+    public <T> List<Action.Singular<T>> getActions(T object) {
+        return getActions(object, null);
     }
 
     private List<Occupation> getOccupations(boolean active) {

@@ -76,6 +76,41 @@ public abstract class AbstractAttributePerk implements Perk {
         display.addData(occupation, increaseBy, attribute);
     }
 
+    public abstract static class Builder<T extends Builder<T>> implements Perk.Builder {
+        private int level;
+        private double increaseBy;
+        private Attribute attribute;
+
+        public T level(int level) {
+            this.level = level;
+            return instance();
+        }
+
+        public T increaseBy(double increaseBy) {
+            this.increaseBy = increaseBy;
+            return instance();
+        }
+
+        public T attribute(Attribute attribute) {
+            this.attribute = attribute;
+            return instance();
+        }
+
+        protected abstract T instance();
+
+        public int getLevel() {
+            return level;
+        }
+
+        public Attribute getAttribute() {
+            return attribute;
+        }
+
+        public double getIncreaseBy() {
+            return increaseBy;
+        }
+    }
+
     public abstract static class AttributeSerializer<T extends AbstractAttributePerk> implements Serializer<T> {
 
         @Override

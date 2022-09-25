@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.modifiers.perks.builtin;
 
+import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.google.gson.JsonDeserializationContext;
@@ -16,6 +17,23 @@ public class SingleAttributePerk extends AbstractAttributePerk {
     @Override
     public PerkType getType() {
         return Perks.SINGLE_ATTRIBUTE_PERK;
+    }
+
+    public static Builder single() {
+        return new Builder();
+    }
+
+    public static class Builder extends AbstractAttributePerk.Builder<Builder> {
+
+        @Override
+        public Perk build() {
+            return new SingleAttributePerk(getIncreaseBy(), getLevel(), getAttribute());
+        }
+
+        @Override
+        protected Builder instance() {
+            return this;
+        }
     }
 
 

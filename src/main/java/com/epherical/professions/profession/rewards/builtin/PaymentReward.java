@@ -76,7 +76,8 @@ public record PaymentReward(double amount, ResourceLocation currency) implements
         @Override
         public void serialize(JsonObject json, PaymentReward value, JsonSerializationContext serializationContext) {
             json.addProperty("amount", value.amount);
-            json.addProperty("currency", value.currency.toString());  json.addProperty("currency", "eights_economy:dollars");
+            json.addProperty("currency", value.currency.toString());
+            json.addProperty("currency", "eights_economy:dollars");
         }
 
         @Override

@@ -1,11 +1,11 @@
 package com.epherical.professions.triggers;
 
-import com.epherical.professions.ProfPermissions;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.util.ActionLogger;
+import com.epherical.professions.util.ProfPermissions;
 import com.mojang.logging.LogUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.permission.PermissionAPI;

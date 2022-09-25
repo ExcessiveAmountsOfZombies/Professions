@@ -42,7 +42,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.slf4j.Logger;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -241,21 +240,21 @@ public class ProfessionsCommands {
 
             Style borders = Style.EMPTY.withColor(ProfessionConfig.headerBorders);
 
-            stack.getSource().sendSuccess(new TextComponent("╔══╦════╦══╗")
+            stack.getSource().sendSuccess(Component.literal("╔══╦════╦══╗")
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(new TranslatableComponent("╠══╩%s╿╩══╣", new TextComponent("Profile").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+            stack.getSource().sendSuccess(Component.translatable("╠══╩%s╿╩══╣", Component.literal("Profile").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(new TranslatableComponent("║ Name: %s", new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+            stack.getSource().sendSuccess(Component.translatable("║ Name: %s", Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(new TranslatableComponent("║ %s", new TextComponent("/stats command")
+            stack.getSource().sendSuccess(Component.translatable("║ %s", Component.literal("/stats command")
                     .setStyle(Style.EMPTY
                             .withColor(ProfessionConfig.variables)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent("Click to run command")))
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to run command")))
                             .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions stats " + profile.getName()))))
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(new TextComponent("╠══════════╣")
+            stack.getSource().sendSuccess(Component.literal("╠══════════╣")
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(new TextComponent("║ Perks Unlocked")
+            stack.getSource().sendSuccess(Component.literal("║ Perks Unlocked")
                     .setStyle(borders), false);
 
 
@@ -273,22 +272,22 @@ public class ProfessionsCommands {
             }
             Map<Attribute, MutableComponent> values = display.getValues();
             if (values.size() == 0) {
-                stack.getSource().sendSuccess(new TextComponent("║      No Perks")
+                stack.getSource().sendSuccess(Component.literal("║      No Perks")
                         .setStyle(borders), false);
-                stack.getSource().sendSuccess(new TextComponent("║")
+                stack.getSource().sendSuccess(Component.literal("║")
                         .setStyle(borders), false);
-                stack.getSource().sendSuccess(new TextComponent("║      Unlocked")
+                stack.getSource().sendSuccess(Component.literal("║      Unlocked")
                         .setStyle(borders), false);
             } else {
                 int inc = 0;
-                MutableComponent comp = new TextComponent("║").setStyle(borders);
+                MutableComponent comp = Component.literal("║").setStyle(borders);
                 for (MutableComponent value : values.values()) {
                     inc++;
                     comp.append(" ").append(value);
                     if (inc % 3 == 0) {
                         stack.getSource().sendSuccess(comp, false);
                         // todo; this is bugged
-                        comp = new TextComponent("║").setStyle(borders);
+                        comp = Component.literal("║").setStyle(borders);
                     }
                 }
                 if (comp != null) {
@@ -296,7 +295,7 @@ public class ProfessionsCommands {
                 }
             }
 
-            stack.getSource().sendSuccess(new TextComponent("╠══╩════╩══╣").setStyle(borders), false);
+            stack.getSource().sendSuccess(Component.literal("╠══╩════╩══╣").setStyle(borders), false);
         } catch (Exception e) {
             e.printStackTrace();
             // don't display errors to clients
@@ -365,7 +364,7 @@ public class ProfessionsCommands {
         try {
             Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
             if (profession == null) {
-                stack.getSource().sendFailure(new TranslatableComponent("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                stack.getSource().sendFailure(Component.translatable("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 return 0;
             }
 

@@ -5,11 +5,10 @@ import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
@@ -35,7 +34,7 @@ public class AttributeDisplay {
     public Map<Attribute, MutableComponent> getValues() {
         Map<Attribute, MutableComponent> componentMap = new HashMap<>();
         for (Map.Entry<Attribute, Collection<AttributeValue>> entry : occupationMultimap.asMap().entrySet()) {
-            TextComponent component = new TextComponent(attributeCharacter.getOrDefault(entry.getKey(), "⚠"));
+            MutableComponent component = Component.literal(attributeCharacter.getOrDefault(entry.getKey(), "⚠"));
             Map<Profession, Double> values = new HashMap<>();
             for (AttributeValue attributeValue : entry.getValue()) {
                 Occupation occupation = attributeValue.occupation;
@@ -46,15 +45,15 @@ public class AttributeDisplay {
                 }
             }
             double totalValue = 0.0d;
-            TranslatableComponent attributeName = new TranslatableComponent(entry.getKey().getDescriptionId());
-            MutableComponent hoverComponent = new TextComponent("").append(attributeName).append(" By Occupation.\n");
+            MutableComponent attributeName = Component.translatable(entry.getKey().getDescriptionId());
+            MutableComponent hoverComponent = Component.literal("").append(attributeName).append(" By Occupation.\n");
             int size = values.entrySet().size();
             int increment = 0;
             for (Map.Entry<Profession, Double> profEntry : values.entrySet()) {
                 increment++;
                 hoverComponent.append(profEntry.getKey().getDisplayComponent())
                         .append(" ")
-                        .append(new TextComponent("+" + String.format("%.2f", profEntry.getValue())).setStyle(Style.EMPTY.withColor(ProfessionConfig.money)));
+                        .append(net.minecraft.network.chat.Component.literal("+" + String.format("%.2f", profEntry.getValue())).setStyle(Style.EMPTY.withColor(ProfessionConfig.money)));
                 if (increment != size) {
                     hoverComponent.append("\n");
                 }
@@ -64,7 +63,7 @@ public class AttributeDisplay {
             component.setStyle(Style.EMPTY
                     .withColor(ProfessionConfig.descriptors)
                     .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverComponent)));
-            component.append(new TextComponent(" " + String.format("%.2f", totalValue)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)));
+            component.append(Component.literal(" " + String.format("%.2f", totalValue)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)));
 
             componentMap.put(entry.getKey(), component);
         }

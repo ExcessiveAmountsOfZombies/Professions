@@ -65,6 +65,10 @@ public abstract class AbstractAction implements Action {
     public final Map<RewardType, Component> getRewardInformation() {
         Map<RewardType, Component> map = new HashMap<>();
         for (Reward reward : rewards) {
+            if (reward.getType().equals(Rewards.PAYMENT_REWARD) && CommonPlatform.platform.economy() == null) {
+                map.put(reward.getType(), Component.literal(""));
+                continue;
+            }
             map.put(reward.getType(), reward.rewardChatInfo());
         }
         return map;

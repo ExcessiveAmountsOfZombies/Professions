@@ -24,11 +24,15 @@ import java.util.Set;
 @Mixin(Player.class)
 public abstract class PlayerEquipmentMixin {
 
-    @Shadow @Final private GameProfile gameProfile;
+    @Shadow
+    @Final
+    private GameProfile gameProfile;
 
-    @Shadow public abstract boolean addItem(ItemStack stack);
+    @Shadow
+    public abstract boolean addItem(ItemStack stack);
 
-    @Shadow public abstract @Nullable ItemEntity drop(ItemStack itemStack, boolean includeThrowerName);
+    @Shadow
+    public abstract @Nullable ItemEntity drop(ItemStack itemStack, boolean includeThrowerName);
 
     @Inject(method = "setItemSlot", at = @At(value = "HEAD"), cancellable = true)
     public void professions$unlockPreventEquip(EquipmentSlot slot, ItemStack itemStack, CallbackInfo ci) {

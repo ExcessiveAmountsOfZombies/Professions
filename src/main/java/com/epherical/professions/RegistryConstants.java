@@ -25,7 +25,7 @@ public class RegistryConstants {
     public static final ResourceKey<Registry<RewardType>> REWARD_KEY = ResourceKey.createRegistryKey(modID("professions/rewards"));
     public static final ResourceKey<Registry<UnlockType<?>>> UNLOCK_KEY = ResourceKey.createRegistryKey(modID("professions/unlocks"));
     public static final ResourceKey<Registry<UnlockSerializer<?>>> UNLOCK_TYPE_KEY = ResourceKey.createRegistryKey(modID("professions/unlock_type"));
-    public static final ResourceKey<Registry<MilestoneType>> MILESTONE_TYPE_KEY =  ResourceKey.createRegistryKey(modID("professions/milestone_type"));
+    public static final ResourceKey<Registry<MilestoneType>> MILESTONE_TYPE_KEY = ResourceKey.createRegistryKey(modID("professions/milestone_type"));
     public static final ResourceKey<Registry<PerkType>> PERK_TYPE_KEY = ResourceKey.createRegistryKey(modID("professions/perk_type"));
 
     public static Registry<ProfessionSerializer<? extends Profession, ?>> PROFESSION_SERIALIZER;

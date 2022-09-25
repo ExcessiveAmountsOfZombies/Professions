@@ -1,5 +1,6 @@
-package com.epherical.professions;
+package com.epherical.professions.util;
 
+import com.epherical.professions.Constants;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;

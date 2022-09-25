@@ -25,6 +25,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.HashMap;
@@ -73,9 +74,15 @@ public class UtilityListener {
             if (pPlayer == null) {
                 return InteractionResult.PASS;
             }
+
+            if (stack.getItem().equals(Items.AIR)) {
+                return InteractionResult.PASS;
+            }
+
             List<Unlock.Singular<Item>> lockedKnowledge = pPlayer.getLockedKnowledge(stack.getItem(), Set.of(Unlocks.INTERACTION_UNLOCK));
             for (Unlock.Singular<Item> singular : lockedKnowledge) {
                 if (!singular.canUse(pPlayer)) {
+
                     return InteractionResult.FAIL;
                 }
             }

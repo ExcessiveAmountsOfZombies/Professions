@@ -20,7 +20,8 @@ public class ItemUseOnMixin {
     public void professions$unlockableInteractions(ServerPlayer player, Level level, ItemStack stack,
                                                    InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
         InteractionResult result = TriggerEvents.PLAYER_USE_ITEM_ON_EVENT.invoker().onPlayerUse(player, level, stack, hand, hitResult);
-        if (result != InteractionResult.PASS) {
+        if (result == InteractionResult.FAIL) {
+            player.inventoryMenu.broadcastFullState();
             cir.setReturnValue(result);
             cir.cancel();
             return;

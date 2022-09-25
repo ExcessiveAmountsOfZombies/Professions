@@ -4,7 +4,7 @@
   "actions": [],
   "unlocks": [
     {
-      "unlock": "professions:tool_unlock",
+      "unlock": "professions:equip_unlock",
       "level": 5,
       "items": [
         "minecraft:iron_helmet",
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "unlock": "professions:tool_unlock",
+      "unlock": "professions:equip_unlock",
       "level": 10,
       "items": [
         "minecraft:golden_helmet",
@@ -24,7 +24,7 @@
       ]
     },
     {
-      "unlock": "professions:tool_unlock",
+      "unlock": "professions:equip_unlock",
       "level": 15,
       "items": [
         "minecraft:diamond_helmet",
@@ -34,7 +34,7 @@
       ]
     },
     {
-      "unlock": "professions:tool_unlock",
+      "unlock": "professions:equip_unlock",
       "level": 25,
       "items": [
         "minecraft:netherite_helmet",

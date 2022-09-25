@@ -117,7 +117,7 @@ public class EquipmentUnlock extends AbstractLevelUnlock<Item> {
 
         @Override
         public Unlock<Item> build() {
-            return new ToolUnlock(items, level);
+            return new EquipmentUnlock(items, level);
         }
     }
 

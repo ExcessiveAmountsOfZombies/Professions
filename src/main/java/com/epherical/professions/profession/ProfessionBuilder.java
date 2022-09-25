@@ -21,7 +21,7 @@ public class ProfessionBuilder {
     protected String displayName;
     protected int maxLevel;
 
-    protected LinkedHashMultimap<ActionType, Action> actions;
+    protected LinkedHashMultimap<ActionType, Action<?>> actions;
     protected LinkedHashMultimap<UnlockType<?>, Unlock<?>> unlocks;
     protected Parser experienceScalingEquation;
     protected Parser incomeScalingEquation;
@@ -79,7 +79,7 @@ public class ProfessionBuilder {
         return this;
     }
 
-    public ProfessionBuilder setActions(LinkedHashMultimap<ActionType, Action> actions) {
+    public ProfessionBuilder setActions(LinkedHashMultimap<ActionType, Action<?>> actions) {
         this.actions = actions;
         return this;
     }

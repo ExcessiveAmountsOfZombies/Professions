@@ -1,6 +1,7 @@
 package com.epherical.professions.client;
 
 import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.Constants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.MenuScreen;
 import com.epherical.professions.client.screen.OccupationScreen;
@@ -15,6 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +70,36 @@ public class CommonClient {
             return;
         }
         List<Component> comps = new ArrayList<>();
+
+        if (Constants.devDebug) {
+            comps.add(new TextComponent("DEV DEBUG"));
+            boolean foundForBlock;
+            boolean foundForItem;
+            if (item instanceof BlockItem blockItem) {
+                List<Unlock.Singular<Block>> list = pPlayer.getLockedKnowledge(blockItem.getBlock());
+                for (Unlock.Singular<Block> blockSingular : list) {
+                    comps.add(blockSingular.createUnlockComponent());
+                }
+                foundForBlock = list.size() == 0;
+                List<Unlock.Singular<Item>> itemList = pPlayer.getLockedKnowledge(blockItem);
+                for (Unlock.Singular<Item> singular : itemList) {
+                    comps.add(singular.createUnlockComponent());
+                }
+                foundForItem = itemList.size() == 0;
+                if (foundForBlock && foundForItem) {
+                    comps.add(new TextComponent("No Unlocks Present."));
+                }
+            } else {
+                List<Unlock.Singular<Item>> list = pPlayer.getLockedKnowledge(item);
+                for (Unlock.Singular<Item> singular : list) {
+                    comps.add(singular.createUnlockComponent());
+                }
+                if (list.size() == 0) {
+                    comps.add(new TextComponent("No Unlocks Present."));
+                }
+            }
+        }
+
         if (item instanceof BlockItem blockItem) {
             List<Unlock.Singular<Block>> list = pPlayer.getLockedKnowledge(blockItem.getBlock());
             for (Unlock.Singular<Block> singular : list) {

@@ -43,7 +43,7 @@ public interface ProviderHelpers {
     }
 
     default Parser defaultLevelParser() {
-        return new Parser("(1000)*((1.064)^(lvl-1))");
+        return new Parser("(1000)*((1.03706264)^(lvl-1))");
     }
 
     default Parser defaultIncomeParser() {

@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractItemAction extends AbstractAction {
+public abstract class AbstractItemAction extends AbstractAction<Item> {
     private static final Logger LOGGER = LogUtils.getLogger();
     protected final List<ActionEntry<Item>> items;
     @Nullable

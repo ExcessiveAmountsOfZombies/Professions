@@ -1,6 +1,7 @@
 package com.epherical.professions.profession.action;
 
 
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.progression.Occupation;
@@ -11,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 import java.util.function.Predicate;
 
-public interface Action extends Predicate<ProfessionContext> {
+public interface Action<T> extends Predicate<ProfessionContext> {
 
     ActionType getType();
 
@@ -22,6 +23,8 @@ public interface Action extends Predicate<ProfessionContext> {
     List<Component> displayInformation();
 
     List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType);
+
+    List<Action.Singular<T>> convertToSingle(Profession profession);
 
     /**
      * Called after it has already been shown the action is successful.
@@ -35,5 +38,22 @@ public interface Action extends Predicate<ProfessionContext> {
     @FunctionalInterface
     interface Builder {
         Action build();
+    }
+
+    interface Singular<T> {
+
+        ActionType getType();
+
+        T getObject();
+
+        Component getProfessionDisplay();
+
+        Profession getProfession();
+
+        Component createActionComponent();
+
+        boolean handleAction(ProfessionContext context, Occupation player);
+
+        void giveRewards(ProfessionContext context, Occupation occupation);
     }
 }

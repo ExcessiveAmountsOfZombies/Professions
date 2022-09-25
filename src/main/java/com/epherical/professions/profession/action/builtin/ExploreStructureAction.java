@@ -2,6 +2,7 @@ package com.epherical.professions.profession.action.builtin;
 
 import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.AbstractAction;
@@ -9,6 +10,7 @@ import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.RewardType;
 import com.epherical.professions.util.ActionDisplay;
@@ -33,13 +35,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class ExploreStructureAction extends AbstractAction {
+public class ExploreStructureAction extends AbstractAction<ConfiguredStructureFeature<?, ?>> {
     protected final List<ActionEntry<Structure>> entries;
     @Nullable
-    protected List<Structure> realEntries;
+    protected Set<Structure> realEntries;
 
     protected ExploreStructureAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Structure>> entries) {
         super(conditions, rewards);
@@ -96,9 +100,19 @@ public class ExploreStructureAction extends AbstractAction {
         return comps;
     }
 
-    protected List<Structure> getRealFeatures(Registry<Structure> features) {
+    @Override
+    public List<Singular<ConfiguredStructureFeature<?, ?>>> convertToSingle(Profession profession) {
+        List<Action.Singular<ConfiguredStructureFeature<?, ?>>> list = new ArrayList<>();
+        Registry<ConfiguredStructureFeature<?, ?>> registry = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
+        for (ConfiguredStructureFeature<?, ?> items : getRealFeatures(registry)) {
+            list.add(new ExploreStructureAction.Single(items, profession));
+        }
+        return list;
+    }
+
+    protected Set<Structure> getRealFeatures(Registry<Structure> features) {
         if (realEntries == null) {
-            realEntries = new ArrayList<>();
+            realEntries = new HashSet<>();
             for (ActionEntry<Structure> entry : entries) {
                 realEntries.addAll(entry.getActionValues(features));
             }
@@ -165,6 +179,33 @@ public class ExploreStructureAction extends AbstractAction {
                 }
             }
             return new ExploreStructureAction(conditions, rewards, structs);
+        }
+    }
+
+    public class Single extends AbstractSingle<ConfiguredStructureFeature<?, ?>> {
+
+        public Single(ConfiguredStructureFeature<?, ?> value, Profession profession) {
+            super(value, profession);
+        }
+
+        @Override
+        public ActionType getType() {
+            return ExploreStructureAction.this.getType();
+        }
+
+        @Override
+        public Component createActionComponent() {
+            return new TranslatableComponent(getType().getTranslationKey());
+        }
+
+        @Override
+        public boolean handleAction(ProfessionContext context, Occupation player) {
+            return ExploreStructureAction.this.handleAction(context, player);
+        }
+
+        @Override
+        public void giveRewards(ProfessionContext context, Occupation occupation) {
+            ExploreStructureAction.this.giveRewards(context, occupation);
         }
     }
 }

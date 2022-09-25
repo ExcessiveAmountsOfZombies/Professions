@@ -38,14 +38,16 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public abstract class BlockAbstractAction extends AbstractAction {
+public abstract class BlockAbstractAction extends AbstractAction<Block> {
     private static final Logger LOGGER = LogUtils.getLogger();
     protected final List<ActionEntry<Block>> blocks;
     @Nullable
-    protected List<Block> realBlocks;
+    protected Set<Block> realBlocks;
 
     protected static final Cache<BlockPos, Instant> cache = CacheBuilder
             .newBuilder()
@@ -84,9 +86,9 @@ public abstract class BlockAbstractAction extends AbstractAction {
         return components;
     }
 
-    protected List<Block> getRealBlocks() {
+    protected Set<Block> getRealBlocks() {
         if (realBlocks == null) {
-            realBlocks = new ArrayList<>();
+            realBlocks = new HashSet<>();
             for (ActionEntry<Block> block : blocks) {
                 realBlocks.addAll(block.getActionValues(Registry.BLOCK));
             }

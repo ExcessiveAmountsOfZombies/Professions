@@ -4,6 +4,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
 public class Constants {
+
+    public static final boolean devDebug = Boolean.parseBoolean(System.getProperty("professions-debug", "false"));
+
     public static final String MOD_ID = "professions";
     public static final ResourceLocation MOD_CHANNEL = new ResourceLocation(MOD_ID, "data");
 

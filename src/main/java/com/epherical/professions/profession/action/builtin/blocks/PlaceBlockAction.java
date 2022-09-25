@@ -1,20 +1,25 @@
 package com.epherical.professions.profession.action.builtin.blocks;
 
 import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
 import com.epherical.professions.profession.action.Actions;
 import com.epherical.professions.profession.conditions.ActionCondition;
+import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.Block;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlaceBlockAction extends BlockAbstractAction {
@@ -27,6 +32,15 @@ public class PlaceBlockAction extends BlockAbstractAction {
     @Override
     public ActionType getType() {
         return Actions.PLACE_BLOCK;
+    }
+
+    @Override
+    public List<Action.Singular<Block>> convertToSingle(Profession profession) {
+        List<Action.Singular<Block>> list = new ArrayList<>();
+        for (Block realEntity : getRealBlocks()) {
+            list.add(new PlaceBlockAction.Single(realEntity, profession));
+        }
+        return list;
     }
 
     public static Builder place() {
@@ -60,6 +74,33 @@ public class PlaceBlockAction extends BlockAbstractAction {
         @Override
         public Action build() {
             return new PlaceBlockAction(this.getConditions(), this.getRewards(), blocks);
+        }
+    }
+
+    public class Single extends AbstractSingle<Block> {
+
+        public Single(Block value, Profession profession) {
+            super(value, profession);
+        }
+
+        @Override
+        public ActionType getType() {
+            return PlaceBlockAction.this.getType();
+        }
+
+        @Override
+        public Component createActionComponent() {
+            return new TranslatableComponent(getType().getTranslationKey());
+        }
+
+        @Override
+        public boolean handleAction(ProfessionContext context, Occupation player) {
+            return PlaceBlockAction.this.handleAction(context, player);
+        }
+
+        @Override
+        public void giveRewards(ProfessionContext context, Occupation occupation) {
+            PlaceBlockAction.this.giveRewards(context, occupation);
         }
     }
 }

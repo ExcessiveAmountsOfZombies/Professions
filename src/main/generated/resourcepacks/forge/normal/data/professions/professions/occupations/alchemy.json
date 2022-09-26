@@ -17,24 +17,6 @@
       "rewards": [
         {
           "reward": "professions:occupation_exp",
-          "amount": 300.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 200.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
-      "items": [
-        "minecraft:nether_wart"
-      ]
-    },
-    {
-      "action": "professions:brew",
-      "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
           "amount": 2.0
         },
         {

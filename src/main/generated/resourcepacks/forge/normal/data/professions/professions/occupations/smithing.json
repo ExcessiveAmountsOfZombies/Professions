@@ -1,263 +1,263 @@
 {
   "type": "professions:default",
-  "color": "#84ABAD",
-  "descriptionColor": "#FFFFFF",
-  "description": [
-    "Earn money and experience",
-    "by smithing items."
-  ],
-  "displayName": "Smithing",
-  "maxLevel": 100,
-  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
-  "incomeSclEquation": "base",
   "actions": [
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 1.0
-        }
-      ],
       "items": [
         "minecraft:wooden_sword",
         "minecraft:wooden_axe",
         "minecraft:wooden_hoe",
         "minecraft:wooden_shovel",
         "minecraft:wooden_pickaxe"
+      ],
+      "rewards": [
+        {
+          "amount": 1.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 1.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 6.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 6.0
-        }
-      ],
       "items": [
         "minecraft:leather_helmet",
         "minecraft:leather_chestplate",
         "minecraft:leather_leggings",
         "minecraft:leather_boots"
+      ],
+      "rewards": [
+        {
+          "amount": 6.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 6.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 3.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 3.0
-        }
-      ],
       "items": [
         "minecraft:stone_sword",
         "minecraft:stone_axe",
         "minecraft:stone_hoe",
         "minecraft:stone_shovel",
         "minecraft:stone_pickaxe"
+      ],
+      "rewards": [
+        {
+          "amount": 3.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 3.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 12.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 12.0
-        }
-      ],
       "items": [
         "minecraft:iron_helmet",
         "minecraft:iron_chestplate",
         "minecraft:iron_leggings",
         "minecraft:iron_boots"
+      ],
+      "rewards": [
+        {
+          "amount": 12.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 12.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 5.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 5.0
-        }
-      ],
       "items": [
         "minecraft:iron_sword",
         "minecraft:iron_axe",
         "minecraft:iron_hoe",
         "minecraft:iron_shovel",
         "minecraft:iron_pickaxe"
+      ],
+      "rewards": [
+        {
+          "amount": 5.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 5.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 18.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 18.0
-        }
-      ],
       "items": [
         "minecraft:golden_helmet",
         "minecraft:golden_chestplate",
         "minecraft:golden_leggings",
         "minecraft:golden_boots"
+      ],
+      "rewards": [
+        {
+          "amount": 18.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 18.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 7.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 7.0
-        }
-      ],
       "items": [
         "minecraft:golden_sword",
         "minecraft:golden_axe",
         "minecraft:golden_hoe",
         "minecraft:golden_shovel",
         "minecraft:golden_pickaxe"
+      ],
+      "rewards": [
+        {
+          "amount": 7.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 7.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 24.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 24.0
-        }
-      ],
       "items": [
         "minecraft:diamond_helmet",
         "minecraft:diamond_chestplate",
         "minecraft:diamond_leggings",
         "minecraft:diamond_boots"
+      ],
+      "rewards": [
+        {
+          "amount": 24.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 24.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 12.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 12.0
-        }
-      ],
       "items": [
         "minecraft:diamond_sword",
         "minecraft:diamond_axe",
         "minecraft:diamond_hoe",
         "minecraft:diamond_shovel",
         "minecraft:diamond_pickaxe"
+      ],
+      "rewards": [
+        {
+          "amount": 12.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 12.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:on_item_smelted",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 2.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 2.0
-        }
-      ],
       "items": [
         "minecraft:gold_ingot"
+      ],
+      "rewards": [
+        {
+          "amount": 2.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 2.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:take_smelted_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 1.3,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 1.3
-        }
-      ],
       "items": [
         "minecraft:iron_ingot"
+      ],
+      "rewards": [
+        {
+          "amount": 1.3,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 1.3,
+          "reward": "professions:occupation_exp"
+        }
       ]
     }
   ],
-  "unlocks": [],
+  "color": "#84ABAD",
+  "description": [
+    "Earn money and experience",
+    "by smithing items."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "displayName": "Smithing",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
+  "incomeSclEquation": "base",
+  "maxLevel": 100,
   "modifiers": {
     "milestones": [],
     "perks": [
       {
-        "perk": "professions:scaling_attribute",
         "attribute": "minecraft:generic.max_health",
         "increaseBy": 0.2,
-        "level": 1
+        "level": 1,
+        "perk": "professions:scaling_attribute"
       },
       {
-        "perk": "professions:scaling_attribute",
         "attribute": "minecraft:generic.attack_damage",
         "increaseBy": 0.05,
-        "level": 10
+        "level": 10,
+        "perk": "professions:scaling_attribute"
       }
     ]
-  }
+  },
+  "unlocks": []
 }

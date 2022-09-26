@@ -13,7 +13,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +83,7 @@ public class FishingAction extends AbstractItemAction {
 
         @Override
         public Component createActionComponent() {
-            return new TranslatableComponent(getType().getTranslationKey());
+            return Component.translatable(getType().getTranslationKey());
         }
 
         @Override

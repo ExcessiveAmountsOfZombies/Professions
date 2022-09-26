@@ -12,7 +12,6 @@ import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
@@ -77,7 +76,7 @@ public class CraftingAction extends AbstractItemAction {
 
         @Override
         public Component createActionComponent() {
-            return new TranslatableComponent(getType().getTranslationKey());
+            return Component.translatable(getType().getTranslationKey());
         }
 
         @Override

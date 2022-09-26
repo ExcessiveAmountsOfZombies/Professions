@@ -175,7 +175,7 @@ public class EnchantAction extends AbstractItemAction {
 
         @Override
         public Component createActionComponent() {
-            return new TranslatableComponent(getType().getTranslationKey());
+            return Component.translatable(getType().getTranslationKey());
         }
 
         @Override

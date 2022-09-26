@@ -19,7 +19,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +76,7 @@ public class CommonClient {
         if (Constants.devDebug) {
             boolean foundForBlock;
             boolean foundForItem;
-            comps.add(new TextComponent("Unlocks?").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+            comps.add(Component.literal("Unlocks?").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
             if (item instanceof BlockItem blockItem) {
 
                 List<Unlock.Singular<Block>> list = pPlayer.getLockedKnowledge(blockItem.getBlock());
@@ -93,23 +92,23 @@ public class CommonClient {
                 foundForItem = itemList.size() == 0;
 
                 if (foundForBlock && foundForItem) {
-                    comps.add(new TextComponent("No Unlocks Present."));
+                    comps.add(Component.literal("No Unlocks Present."));
                 }
-                comps.add(new TextComponent("Actions:").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+                comps.add(Component.literal("Actions:").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
 
                 List<Action.Singular<Block>> actions = pPlayer.getActions(blockItem.getBlock());
                 for (Action.Singular<Block> action : actions) {
-                    comps.add(new TextComponent("").append(action.getProfessionDisplay()).append(" - ").append(action.createActionComponent()));
+                    comps.add(Component.literal("").append(action.getProfessionDisplay()).append(" - ").append(action.createActionComponent()));
                 }
                 foundForBlock = actions.size() == 0;
 
                 List<Action.Singular<Item>> actions1 = pPlayer.getActions(blockItem);
                 for (Action.Singular<Item> singular : actions1) {
-                    comps.add(new TextComponent("").append(singular.getProfessionDisplay()).append(" - ").append(singular.createActionComponent()));
+                    comps.add(Component.literal("").append(singular.getProfessionDisplay()).append(" - ").append(singular.createActionComponent()));
                 }
                 foundForItem = actions1.size() == 0;
                 if (foundForBlock && foundForItem) {
-                    comps.add(new TextComponent("No Actions Present."));
+                    comps.add(Component.literal("No Actions Present."));
                 }
             } else {
                 List<Unlock.Singular<Item>> list = pPlayer.getLockedKnowledge(item);
@@ -117,16 +116,16 @@ public class CommonClient {
                     comps.add(singular.createUnlockComponent());
                 }
                 if (list.size() == 0) {
-                    comps.add(new TextComponent("No Unlocks Present."));
+                    comps.add(Component.literal("No Unlocks Present."));
                 }
-                comps.add(new TextComponent("Actions:").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+                comps.add(Component.literal("Actions:").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
 
                 List<Action.Singular<Item>> actions = pPlayer.getActions(item);
                 for (Action.Singular<Item> singular : actions) {
-                    comps.add(new TextComponent("").append(singular.getProfessionDisplay()).append(" - ").append(singular.createActionComponent()));
+                    comps.add(Component.literal("").append(singular.getProfessionDisplay()).append(" - ").append(singular.createActionComponent()));
                 }
                 if (actions.size() == 0) {
-                    comps.add(new TextComponent("No Actions Present"));
+                    comps.add(Component.literal("No Actions Present"));
                 }
             }
             lines.addAll(comps);

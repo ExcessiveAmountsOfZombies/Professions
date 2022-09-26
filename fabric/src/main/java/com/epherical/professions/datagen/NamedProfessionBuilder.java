@@ -1,8 +1,7 @@
 package com.epherical.professions.datagen;
 
 import com.epherical.professions.profession.ProfessionBuilder;
-import com.google.gson.Gson;
-import net.minecraft.data.HashCache;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.IOException;
@@ -23,7 +22,7 @@ public abstract class NamedProfessionBuilder implements ProviderHelpers {
 
     public abstract void addData(ProfessionBuilder builder);
 
-    public void generateNormal(Gson gson, HashCache cache, Path path, ResourceLocation location, boolean isForge) throws IOException {
-        generate(gson, cache, builder.build(), createNormalPath(path, location, isForge));
+    public void generateNormal(CachedOutput cache, Path path, ResourceLocation location, boolean isForge) throws IOException {
+        generate(cache, builder.build(), createNormalPath(path, location, isForge));
     }
 }

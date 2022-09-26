@@ -1,30 +1,9 @@
 {
   "type": "professions:default",
-  "color": "#F2A100",
-  "descriptionColor": "#FFFFFF",
-  "description": [
-    "Earn money and experience",
-    "by crafting."
-  ],
-  "displayName": "Crafting",
-  "maxLevel": 100,
-  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
-  "incomeSclEquation": "base",
   "actions": [
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 2.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 2.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "#minecraft:wooden_pressure_plates",
         "#minecraft:banners",
@@ -47,63 +26,63 @@
         "minecraft:flower_pot",
         "minecraft:lead",
         "minecraft:armor_stand"
+      ],
+      "rewards": [
+        {
+          "amount": 2.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 2.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 4.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 4.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:chest",
         "minecraft:barrel",
         "minecraft:furnace",
         "minecraft:minecart"
+      ],
+      "rewards": [
+        {
+          "amount": 4.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 4.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 6.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 5.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:anvil",
         "minecraft:jukebox",
         "minecraft:tnt"
+      ],
+      "rewards": [
+        {
+          "amount": 6.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 5.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 3.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 3.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:dispenser",
         "minecraft:blast_furnace",
@@ -113,40 +92,40 @@
         "minecraft:observer",
         "minecraft:fishing_rod",
         "minecraft:spyglass"
+      ],
+      "rewards": [
+        {
+          "amount": 3.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 3.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 200.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 200.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:beacon"
+      ],
+      "rewards": [
+        {
+          "amount": 200.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 200.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 10.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 10.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:iron_door",
         "minecraft:iron_bars",
@@ -156,40 +135,40 @@
         "minecraft:detector_rail",
         "minecraft:rail",
         "minecraft:activator_rail"
+      ],
+      "rewards": [
+        {
+          "amount": 10.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 10.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 30.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 30.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:lodestone"
+      ],
+      "rewards": [
+        {
+          "amount": 30.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 30.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 6.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 6.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:comparator",
         "minecraft:compass",
@@ -198,22 +177,22 @@
         "minecraft:repeater",
         "minecraft:daylight_detector",
         "#minecraft:beds"
+      ],
+      "rewards": [
+        {
+          "amount": 6.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 6.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 2.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 2.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:white_concrete_powder",
         "minecraft:orange_concrete_powder",
@@ -233,48 +212,69 @@
         "minecraft:lectern",
         "minecraft:redstone_lamp",
         "minecraft:lightning_rod"
+      ],
+      "rewards": [
+        {
+          "amount": 2.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 2.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:craft_item",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 1.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
-        "#minecraft:carpets",
+        "#minecraft:wool_carpets",
         "minecraft:dropper",
         "minecraft:tripwire_hook",
         "minecraft:trapped_chest",
         "minecraft:redstone_torch",
         "minecraft:torch"
+      ],
+      "rewards": [
+        {
+          "amount": 1.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 1.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     }
   ],
-  "unlocks": [],
+  "color": "#F2A100",
+  "description": [
+    "Earn money and experience",
+    "by crafting."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "displayName": "Crafting",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
+  "incomeSclEquation": "base",
+  "maxLevel": 100,
   "modifiers": {
     "milestones": [],
     "perks": [
       {
-        "perk": "professions:scaling_attribute",
         "attribute": "minecraft:generic.max_health",
         "increaseBy": 0.2,
-        "level": 1
+        "level": 1,
+        "perk": "professions:scaling_attribute"
       },
       {
-        "perk": "professions:scaling_attribute",
         "attribute": "minecraft:generic.attack_damage",
         "increaseBy": 0.05,
-        "level": 10
+        "level": 10,
+        "perk": "professions:scaling_attribute"
       }
     ]
-  }
+  },
+  "unlocks": []
 }

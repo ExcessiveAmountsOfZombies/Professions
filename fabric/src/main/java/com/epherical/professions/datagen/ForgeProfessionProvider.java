@@ -44,21 +44,21 @@ public class ForgeProfessionProvider extends CommonProvider implements DataProvi
         SmithingProvider smithing = new SmithingProvider();
         LoggingProvider logging = new LoggingProvider();
 
-        alchemistProvider.generateNormal(GSON, cache, path, new ResourceLocation("professions:alchemy"), true);
-        builderProvider.generateNormal(GSON, cache, path, new ResourceLocation("professions:building"), true);
-        crafting.generateNormal(GSON, cache, path, new ResourceLocation("professions:crafting"), true);
-        enchanting.generateNormal(GSON, cache, path, new ResourceLocation("professions:enchanting"), true);
-        farming.generateNormal(GSON, cache, path, new ResourceLocation("professions:farming"), true);
-        fishing.generateNormal(GSON, cache, path, new ResourceLocation("professions:fishing"), true);
-        hunting.generateNormal(GSON, cache, path, new ResourceLocation("professions:hunting"), true);
-        mining.generateNormal(GSON, cache, path, new ResourceLocation("professions:mining"), true);
-        trading.generateNormal(GSON, cache, path, new ResourceLocation("professions:trading"), true);
-        smithing.generateNormal(GSON, cache, path, new ResourceLocation("professions:smithing"), true);
-        logging.generateNormal(GSON, cache, path, new ResourceLocation("professions:logging"), true);
+        alchemistProvider.generateNormal(cache, path, new ResourceLocation("professions:alchemy"), true);
+        builderProvider.generateNormal(cache, path, new ResourceLocation("professions:building"), true);
+        crafting.generateNormal(cache, path, new ResourceLocation("professions:crafting"), true);
+        enchanting.generateNormal(cache, path, new ResourceLocation("professions:enchanting"), true);
+        farming.generateNormal(cache, path, new ResourceLocation("professions:farming"), true);
+        fishing.generateNormal(cache, path, new ResourceLocation("professions:fishing"), true);
+        hunting.generateNormal(cache, path, new ResourceLocation("professions:hunting"), true);
+        mining.generateNormal(cache, path, new ResourceLocation("professions:mining"), true);
+        trading.generateNormal(cache, path, new ResourceLocation("professions:trading"), true);
+        smithing.generateNormal(cache, path, new ResourceLocation("professions:smithing"), true);
+        logging.generateNormal(cache, path, new ResourceLocation("professions:logging"), true);
 
 
-        generate(GSON, cache, mining.createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), true));
-        generate(GSON, cache, smithing.createSmithingAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/smithing"), true));
+        generate(cache, mining.createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), true));
+        generate(cache, smithing.createSmithingAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/smithing"), true));
 
     }
 

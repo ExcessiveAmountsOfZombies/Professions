@@ -102,7 +102,7 @@ public class BuilderProvider extends NamedProfessionBuilder {
                         .block(BlockTags.DOORS)
                         .block(BlockTags.TRAPDOORS)
                         .block(BlockTags.TERRACOTTA)
-                        .block(BlockTags.CARPETS)
+                        .block(BlockTags.WOOL_CARPETS)
                         .block(BlockTags.CANDLES)
                         .reward(expReward(1))
                         .reward(moneyReward(1))

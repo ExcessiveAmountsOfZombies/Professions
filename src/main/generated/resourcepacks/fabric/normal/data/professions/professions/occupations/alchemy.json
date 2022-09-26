@@ -1,220 +1,220 @@
 {
   "type": "professions:default",
-  "color": "#A100E0",
-  "descriptionColor": "#FFFFFF",
-  "description": [
-    "Earn money and experience",
-    "by brewing potions."
-  ],
-  "displayName": "Alchemy",
-  "maxLevel": 100,
-  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
-  "incomeSclEquation": "base",
   "actions": [
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 2.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 0.5,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:nether_wart"
+      ],
+      "rewards": [
+        {
+          "amount": 2.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 0.5,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 2.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 0.65,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:redstone",
         "minecraft:glowstone_dust"
+      ],
+      "rewards": [
+        {
+          "amount": 2.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 0.65,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 4.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:fermented_spider_eye"
+      ],
+      "rewards": [
+        {
+          "amount": 4.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 1.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 4.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 0.85,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:gunpowder"
+      ],
+      "rewards": [
+        {
+          "amount": 4.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 0.85,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 6.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:dragon_breath"
+      ],
+      "rewards": [
+        {
+          "amount": 6.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 1.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 0.5
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 0.25,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:sugar"
+      ],
+      "rewards": [
+        {
+          "amount": 0.5,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 0.25,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 10.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 5.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:rabbit_foot",
         "minecraft:turtle_helmet",
         "minecraft:phantom_membrane"
+      ],
+      "rewards": [
+        {
+          "amount": 10.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 5.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 3.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:glistering_melon_slice"
+      ],
+      "rewards": [
+        {
+          "amount": 3.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 1.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 2.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 0.5,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:spider_eye",
         "minecraft:magma_cream",
         "minecraft:blaze_powder"
+      ],
+      "rewards": [
+        {
+          "amount": 2.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 0.5,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     },
     {
       "action": "professions:brew",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 5.0
-        },
-        {
-          "reward": "professions:payment",
-          "amount": 2.0,
-          "currency": "eights_economy:dollars"
-        }
-      ],
       "items": [
         "minecraft:pufferfish",
         "minecraft:golden_carrot",
         "minecraft:ghast_tear"
+      ],
+      "rewards": [
+        {
+          "amount": 5.0,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 2.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
       ]
     }
   ],
-  "unlocks": [],
+  "color": "#A100E0",
+  "description": [
+    "Earn money and experience",
+    "by brewing potions."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "displayName": "Alchemy",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
+  "incomeSclEquation": "base",
+  "maxLevel": 100,
   "modifiers": {
     "milestones": [],
     "perks": [
       {
-        "perk": "professions:scaling_attribute",
         "attribute": "minecraft:generic.max_health",
         "increaseBy": 0.2,
-        "level": 1
+        "level": 1,
+        "perk": "professions:scaling_attribute"
       },
       {
-        "perk": "professions:scaling_attribute",
         "attribute": "minecraft:generic.armor_toughness",
         "increaseBy": 0.02,
-        "level": 10
+        "level": 10,
+        "perk": "professions:scaling_attribute"
       }
     ]
-  }
+  },
+  "unlocks": []
 }

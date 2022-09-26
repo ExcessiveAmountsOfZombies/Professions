@@ -199,7 +199,7 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
 
         @Override
         public Component createActionComponent() {
-            return new TranslatableComponent(getType().getTranslationKey());
+            return Component.translatable(getType().getTranslationKey());
         }
 
         @Override

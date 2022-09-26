@@ -1,84 +1,63 @@
 {
   "type": "professions:default",
-  "color": "#A6542E",
-  "descriptionColor": "#FFFFFF",
-  "description": [
-    "Earn money and experience",
-    "by hunting animals, killing monsters, and exploring"
-  ],
-  "displayName": "Hunting",
-  "maxLevel": 100,
-  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
-  "incomeSclEquation": "base",
   "actions": [
     {
       "action": "professions:explore_biome",
-      "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 2.0
-        }
-      ],
       "biomes": [
         "#c:in_overworld"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "amount": 1.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 2.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:explore_biome",
-      "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 1.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 2.0
-        }
-      ],
       "biomes": [
         "#c:in_nether"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "amount": 1.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 2.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:explore_biome",
+      "biomes": [
+        "#c:in_the_end"
+      ],
       "conditions": [],
       "rewards": [
         {
-          "reward": "professions:payment",
           "amount": 1.0,
-          "currency": "eights_economy:dollars"
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
         },
         {
-          "reward": "professions:occupation_exp",
-          "amount": 2.0
+          "amount": 2.0,
+          "reward": "professions:occupation_exp"
         }
-      ],
-      "biomes": [
-        "#c:in_the_end"
       ]
     },
     {
       "action": "professions:kill_entity",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 8.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 8.0
-        }
-      ],
       "entities": [
         "minecraft:pig",
         "minecraft:chicken",
@@ -86,123 +65,144 @@
         "minecraft:cow",
         "minecraft:mooshroom",
         "minecraft:rabbit"
+      ],
+      "rewards": [
+        {
+          "amount": 8.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 8.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:kill_entity",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 12.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 12.0
-        }
-      ],
       "entities": [
         "minecraft:zombie",
         "minecraft:skeleton",
         "minecraft:spider",
         "minecraft:cave_spider",
         "minecraft:shulker"
+      ],
+      "rewards": [
+        {
+          "amount": 12.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 12.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:kill_entity",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 15.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 15.0
-        }
-      ],
       "entities": [
         "minecraft:blaze",
         "minecraft:wither_skeleton",
         "minecraft:piglin_brute",
         "minecraft:hoglin",
         "minecraft:phantom"
+      ],
+      "rewards": [
+        {
+          "amount": 15.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 15.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:kill_entity",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 100.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 100.0
-        }
-      ],
       "entities": [
         "minecraft:wither"
+      ],
+      "rewards": [
+        {
+          "amount": 100.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 100.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:kill_entity",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 600.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 600.0
-        }
-      ],
       "entities": [
         "minecraft:ender_dragon"
+      ],
+      "rewards": [
+        {
+          "amount": 600.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 600.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     },
     {
       "action": "professions:tame",
       "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 15.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 15.0
-        }
-      ],
       "entities": [
         "minecraft:wolf"
+      ],
+      "rewards": [
+        {
+          "amount": 15.0,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        },
+        {
+          "amount": 15.0,
+          "reward": "professions:occupation_exp"
+        }
       ]
     }
   ],
-  "unlocks": [],
+  "color": "#A6542E",
+  "description": [
+    "Earn money and experience",
+    "by hunting animals, killing monsters, and exploring"
+  ],
+  "descriptionColor": "#FFFFFF",
+  "displayName": "Hunting",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
+  "incomeSclEquation": "base",
+  "maxLevel": 100,
   "modifiers": {
     "milestones": [],
     "perks": [
       {
-        "perk": "professions:scaling_attribute",
         "attribute": "minecraft:generic.max_health",
         "increaseBy": 0.2,
-        "level": 1
+        "level": 1,
+        "perk": "professions:scaling_attribute"
       },
       {
-        "perk": "professions:scaling_attribute",
         "attribute": "minecraft:generic.knockback_resistance",
         "increaseBy": 0.002,
-        "level": 10
+        "level": 10,
+        "perk": "professions:scaling_attribute"
       }
     ]
-  }
+  },
+  "unlocks": []
 }

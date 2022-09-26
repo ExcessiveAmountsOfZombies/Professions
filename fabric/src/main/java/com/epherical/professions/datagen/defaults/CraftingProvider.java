@@ -102,7 +102,7 @@ public class CraftingProvider extends NamedProfessionBuilder {
                         .reward(expReward(2))
                         .reward(moneyReward(2)))
                 .addAction(CRAFTS_ITEM, CraftingAction.craft()
-                        .item(ItemTags.CARPETS)
+                        .item(ItemTags.WOOL_CARPETS)
                         .item(Items.DROPPER, Items.TRIPWIRE_HOOK, Items.TRAPPED_CHEST, Items.REDSTONE_TORCH, Items.TORCH)
                         .reward(expReward(1))
                         .reward(moneyReward(1)));

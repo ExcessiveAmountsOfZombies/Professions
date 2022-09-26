@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ExploreStructureAction extends AbstractAction<ConfiguredStructureFeature<?, ?>> {
+public class ExploreStructureAction extends AbstractAction<Structure> {
     protected final List<ActionEntry<Structure>> entries;
     @Nullable
     protected Set<Structure> realEntries;
@@ -101,10 +101,10 @@ public class ExploreStructureAction extends AbstractAction<ConfiguredStructureFe
     }
 
     @Override
-    public List<Singular<ConfiguredStructureFeature<?, ?>>> convertToSingle(Profession profession) {
-        List<Action.Singular<ConfiguredStructureFeature<?, ?>>> list = new ArrayList<>();
-        Registry<ConfiguredStructureFeature<?, ?>> registry = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
-        for (ConfiguredStructureFeature<?, ?> items : getRealFeatures(registry)) {
+    public List<Singular<Structure>> convertToSingle(Profession profession) {
+        List<Action.Singular<Structure>> list = new ArrayList<>();
+        Registry<Structure> registry = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
+        for (Structure items : getRealFeatures(registry)) {
             list.add(new ExploreStructureAction.Single(items, profession));
         }
         return list;
@@ -182,9 +182,9 @@ public class ExploreStructureAction extends AbstractAction<ConfiguredStructureFe
         }
     }
 
-    public class Single extends AbstractSingle<ConfiguredStructureFeature<?, ?>> {
+    public class Single extends AbstractSingle<Structure> {
 
-        public Single(ConfiguredStructureFeature<?, ?> value, Profession profession) {
+        public Single(Structure value, Profession profession) {
             super(value, profession);
         }
 
@@ -195,7 +195,7 @@ public class ExploreStructureAction extends AbstractAction<ConfiguredStructureFe
 
         @Override
         public Component createActionComponent() {
-            return new TranslatableComponent(getType().getTranslationKey());
+            return Component.translatable(getType().getTranslationKey());
         }
 
         @Override

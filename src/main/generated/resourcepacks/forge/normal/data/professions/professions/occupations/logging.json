@@ -8,7 +8,7 @@
   ],
   "displayName": "Logging",
   "maxLevel": 100,
-  "experienceSclEquation": "1000*1.064^(lvl-1)",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
   "incomeSclEquation": "base",
   "actions": [
     {
@@ -33,6 +33,19 @@
   "unlocks": [],
   "modifiers": {
     "milestones": [],
-    "perks": []
+    "perks": [
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.max_health",
+        "increaseBy": 0.2,
+        "level": 1
+      },
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.attack_damage",
+        "increaseBy": 0.05,
+        "level": 10
+      }
+    ]
   }
 }

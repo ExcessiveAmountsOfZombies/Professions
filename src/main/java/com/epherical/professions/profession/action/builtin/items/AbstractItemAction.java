@@ -29,14 +29,16 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractItemAction extends AbstractAction<Item> {
     private static final Logger LOGGER = LogUtils.getLogger();
     protected final List<ActionEntry<Item>> items;
     @Nullable
-    protected List<Item> realItems;
+    protected Set<Item> realItems;
 
     protected AbstractItemAction(ActionCondition[] conditions, Reward[] rewards, List<ActionEntry<Item>> items) {
         super(conditions, rewards);
@@ -77,9 +79,9 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
         return true;
     }
 
-    protected List<Item> getRealItems() {
+    protected Set<Item> getRealItems() {
         if (realItems == null) {
-            realItems = new ArrayList<>();
+            realItems = new LinkedHashSet<>();
             for (ActionEntry<Item> item : items) {
                 realItems.addAll(item.getActionValues(Registry.ITEM));
             }

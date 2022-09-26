@@ -42,7 +42,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,7 +92,7 @@ public abstract class BlockAbstractAction extends AbstractAction<Block> {
 
     protected Set<Block> getRealBlocks() {
         if (realBlocks == null) {
-            realBlocks = new HashSet<>();
+            realBlocks = new LinkedHashSet<>();
             for (ActionEntry<Block> block : blocks) {
                 realBlocks.addAll(block.getActionValues(Registry.BLOCK));
             }

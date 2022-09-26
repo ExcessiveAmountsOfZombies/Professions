@@ -57,7 +57,8 @@ public class FabricProfessionProvider extends CommonProvider implements DataProv
         logging.generateNormal(GSON, cache, path, new ResourceLocation("professions:logging"), false);
 
 
-        generate(GSON, cache, createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), false));
+        generate(GSON, cache, mining.createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), false));
+        generate(GSON, cache, smithing.createSmithingAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/smithing"), false));
     }
 
     @Override

@@ -3,7 +3,10 @@ package com.epherical.professions.datagen.defaults;
 import com.epherical.professions.datagen.NamedProfessionBuilder;
 import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.builtin.items.TradeAction;
+import com.epherical.professions.profession.modifiers.perks.Perks;
+import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Items;
 
 import static com.epherical.professions.profession.action.Actions.VILLAGER_TRADE;
@@ -50,5 +53,11 @@ public class TradingProvider extends NamedProfessionBuilder {
                         .reward(moneyReward(3))
                         .reward(expReward(3))
                         .build());
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(1).attribute(Attributes.MAX_HEALTH).increaseBy(0.20));
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(10).attribute(Attributes.MOVEMENT_SPEED).increaseBy(0.001));
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(20).attribute(Attributes.ARMOR).increaseBy(0.05));
     }
 }

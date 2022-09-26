@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,7 +81,7 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
 
     protected Set<EntityType<?>> getRealEntities() {
         if (realEntities == null) {
-            realEntities = new HashSet<>();
+            realEntities = new LinkedHashSet<>();
             for (ActionEntry<EntityType<?>> entity : entities) {
                 realEntities.addAll(entity.getActionValues(Registry.ENTITY_TYPE));
             }

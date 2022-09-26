@@ -7,6 +7,7 @@ import com.epherical.professions.profession.modifiers.BasicModifiers;
 import com.epherical.professions.profession.modifiers.Modifiers;
 import com.epherical.professions.profession.modifiers.milestones.Milestone;
 import com.epherical.professions.profession.modifiers.perks.Perk;
+import com.epherical.professions.profession.modifiers.perks.PerkType;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.UnlockType;
 import com.google.common.collect.LinkedHashMultimap;
@@ -26,6 +27,7 @@ public class ProfessionBuilder {
     protected Parser experienceScalingEquation;
     protected Parser incomeScalingEquation;
     protected Modifiers modifiers;
+    protected LinkedHashMultimap<PerkType, Perk> perks;
 
     protected ResourceLocation key;
 
@@ -37,6 +39,7 @@ public class ProfessionBuilder {
         this.maxLevel = maxLevel;
         this.actions = LinkedHashMultimap.create();
         this.unlocks = LinkedHashMultimap.create();
+        this.perks = LinkedHashMultimap.create();
         this.modifiers = new BasicModifiers(new Milestone[0], new Perk[0]);
     }
 
@@ -61,6 +64,16 @@ public class ProfessionBuilder {
 
     public ProfessionBuilder addAction(ActionType type, Action.Builder action) {
         this.actions.put(type, action.build());
+        return this;
+    }
+
+    public ProfessionBuilder addPerk(PerkType perkType, Perk perk) {
+        this.perks.put(perkType, perk);
+        return this;
+    }
+
+    public ProfessionBuilder addPerk(PerkType perkType, Perk.Builder perk) {
+        this.perks.put(perkType, perk.build());
         return this;
     }
 
@@ -124,6 +137,9 @@ public class ProfessionBuilder {
     }
 
     public Profession build() {
+        if (perks.size() > 0) {
+            this.modifiers = new BasicModifiers(new Milestone[0], perks.values().toArray(new Perk[0]));
+        }
         return new Profession(professionColor, descriptionColor, description, displayName, maxLevel,
                 actions.asMap(), unlocks.asMap(), experienceScalingEquation, incomeScalingEquation, key, modifiers);
     }

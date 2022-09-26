@@ -4,13 +4,6 @@
   "actions": [],
   "unlocks": [
     {
-      "unlock": "professions:need_advancement",
-      "items": [
-        "#minecraft:emerald_ores"
-      ],
-      "advancement_id": "minecraft:adventure/adventuring_time"
-    },
-    {
       "unlock": "professions:block_drop",
       "level": 2,
       "blocks": [

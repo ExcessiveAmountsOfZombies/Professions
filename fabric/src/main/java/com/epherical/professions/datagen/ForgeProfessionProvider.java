@@ -57,7 +57,9 @@ public class ForgeProfessionProvider extends CommonProvider implements DataProvi
         logging.generateNormal(GSON, cache, path, new ResourceLocation("professions:logging"), true);
 
 
-        generate(GSON, cache, createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), true));
+        generate(GSON, cache, mining.createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), true));
+        generate(GSON, cache, smithing.createSmithingAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/smithing"), true));
+
     }
 
     @Override

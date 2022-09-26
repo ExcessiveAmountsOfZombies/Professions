@@ -8,7 +8,7 @@
   ],
   "displayName": "Building",
   "maxLevel": 100,
-  "experienceSclEquation": "1000*1.064^(lvl-1)",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
   "incomeSclEquation": "base",
   "actions": [
     {
@@ -44,7 +44,16 @@
         "minecraft:polished_basalt",
         "minecraft:blackstone",
         "minecraft:gilded_blackstone",
-        "minecraft:chiseled_polished_blackstone"
+        "minecraft:chiseled_polished_blackstone",
+        "minecraft:polished_granite",
+        "minecraft:polished_diorite",
+        "minecraft:polished_andesite",
+        "minecraft:calcite",
+        "minecraft:end_stone_bricks",
+        "minecraft:cracked_deepslate_tiles",
+        "minecraft:cracked_deepslate_bricks",
+        "minecraft:packed_ice",
+        "minecraft:blue_ice"
       ]
     },
     {
@@ -117,9 +126,14 @@
       "blocks": [
         "minecraft:prismarine",
         "minecraft:dark_prismarine",
+        "minecraft:prismarine_bricks",
         "minecraft:sea_lantern",
         "minecraft:purpur_block",
-        "minecraft:purpur_pillar"
+        "minecraft:purpur_pillar",
+        "minecraft:chiseled_quartz_block",
+        "minecraft:quartz_block",
+        "minecraft:quartz_bricks",
+        "minecraft:quartz_pillar"
       ]
     },
     {
@@ -148,7 +162,8 @@
         "minecraft:crafting_table",
         "minecraft:enchanting_table",
         "minecraft:jukebox",
-        "minecraft:hopper"
+        "minecraft:hopper",
+        "minecraft:beacon"
       ]
     },
     {
@@ -201,7 +216,23 @@
         "minecraft:brown_stained_glass_pane",
         "minecraft:green_stained_glass_pane",
         "minecraft:red_stained_glass_pane",
-        "minecraft:black_stained_glass_pane"
+        "minecraft:black_stained_glass_pane",
+        "minecraft:chain",
+        "minecraft:exposed_copper",
+        "minecraft:weathered_copper",
+        "minecraft:oxidized_copper",
+        "minecraft:cut_copper",
+        "minecraft:exposed_cut_copper",
+        "minecraft:weathered_cut_copper",
+        "minecraft:oxidized_cut_copper",
+        "minecraft:waxed_copper_block",
+        "minecraft:waxed_exposed_copper",
+        "minecraft:waxed_weathered_copper",
+        "minecraft:waxed_oxidized_copper",
+        "minecraft:waxed_cut_copper",
+        "minecraft:waxed_exposed_cut_copper",
+        "minecraft:waxed_weathered_cut_copper",
+        "minecraft:waxed_oxidized_cut_copper"
       ]
     },
     {
@@ -248,13 +279,28 @@
         "#minecraft:coral_plants",
         "#minecraft:doors",
         "#minecraft:trapdoors",
-        "#minecraft:terracotta"
+        "#minecraft:terracotta",
+        "#minecraft:carpets",
+        "#minecraft:candles"
       ]
     }
   ],
   "unlocks": [],
   "modifiers": {
     "milestones": [],
-    "perks": []
+    "perks": [
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.max_health",
+        "increaseBy": 0.4,
+        "level": 1
+      },
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.movement_speed",
+        "increaseBy": 0.001,
+        "level": 10
+      }
+    ]
   }
 }

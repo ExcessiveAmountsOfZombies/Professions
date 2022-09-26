@@ -5,9 +5,12 @@ import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.builtin.ExploreBiomeAction;
 import com.epherical.professions.profession.action.builtin.entity.KillAction;
 import com.epherical.professions.profession.action.builtin.entity.TameAction;
+import com.epherical.professions.profession.modifiers.perks.Perks;
+import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import static com.epherical.professions.profession.action.Actions.*;
 
@@ -30,16 +33,16 @@ public class HuntingProvider extends NamedProfessionBuilder {
                 .incomeScaling(defaultIncomeParser())
                 .addAction(EXPLORE_BIOME, ExploreBiomeAction.explore()
                         .biome(ConventionalBiomeTags.IN_OVERWORLD)
-                        .reward(moneyReward(3))
-                        .reward(expReward(6)))
+                        .reward(moneyReward(1))
+                        .reward(expReward(2)))
                 .addAction(EXPLORE_BIOME, ExploreBiomeAction.explore()
                         .biome(ConventionalBiomeTags.IN_NETHER)
-                        .reward(moneyReward(4))
-                        .reward(expReward(8)))
+                        .reward(moneyReward(1))
+                        .reward(expReward(2)))
                 .addAction(EXPLORE_BIOME, ExploreBiomeAction.explore()
                         .biome(ConventionalBiomeTags.IN_THE_END)
-                        .reward(moneyReward(5))
-                        .reward(expReward(9.2)))
+                        .reward(moneyReward(1))
+                        .reward(expReward(2)))
                 .addAction(KILL_ENTITY, KillAction.kill()
                         .entity(EntityType.PIG, EntityType.CHICKEN, EntityType.SHEEP, EntityType.COW, EntityType.MOOSHROOM, EntityType.RABBIT)
                         .reward(moneyReward(8))
@@ -70,5 +73,9 @@ public class HuntingProvider extends NamedProfessionBuilder {
                         .reward(moneyReward(15))
                         .reward(expReward(15))
                         .build());
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(1).attribute(Attributes.MAX_HEALTH).increaseBy(0.20));
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(10).attribute(Attributes.KNOCKBACK_RESISTANCE).increaseBy(0.002));
     }
 }

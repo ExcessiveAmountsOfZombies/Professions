@@ -8,7 +8,7 @@
   ],
   "displayName": "Hunting",
   "maxLevel": 100,
-  "experienceSclEquation": "1000*1.064^(lvl-1)",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
   "incomeSclEquation": "base",
   "actions": [
     {
@@ -17,16 +17,16 @@
       "rewards": [
         {
           "reward": "professions:payment",
-          "amount": 3.0,
+          "amount": 1.0,
           "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",
-          "amount": 6.0
+          "amount": 2.0
         }
       ],
       "biomes": [
-        "#forge:is_overworld"
+        "#c:in_overworld"
       ]
     },
     {
@@ -35,19 +35,16 @@
       "rewards": [
         {
           "reward": "professions:payment",
-          "amount": 4.0,
+          "amount": 1.0,
           "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",
-          "amount": 8.0
+          "amount": 2.0
         }
       ],
       "biomes": [
-        "#forge:is_hot/nether",
-        "#forge:is_cold/nether",
-        "#forge:is_dense/nether",
-        "#forge:is_nether"
+        "#c:in_nether"
       ]
     },
     {
@@ -56,16 +53,16 @@
       "rewards": [
         {
           "reward": "professions:payment",
-          "amount": 5.0,
+          "amount": 1.0,
           "currency": "eights_economy:dollars"
         },
         {
           "reward": "professions:occupation_exp",
-          "amount": 9.2
+          "amount": 2.0
         }
       ],
       "biomes": [
-        "#forge:is_end"
+        "#c:in_the_end"
       ]
     },
     {
@@ -193,6 +190,19 @@
   "unlocks": [],
   "modifiers": {
     "milestones": [],
-    "perks": []
+    "perks": [
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.max_health",
+        "increaseBy": 0.2,
+        "level": 1
+      },
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.knockback_resistance",
+        "increaseBy": 0.002,
+        "level": 10
+      }
+    ]
   }
 }

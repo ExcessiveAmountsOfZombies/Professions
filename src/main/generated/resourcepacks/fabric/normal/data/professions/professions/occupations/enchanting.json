@@ -8,7 +8,7 @@
   ],
   "displayName": "Enchanting",
   "maxLevel": 100,
-  "experienceSclEquation": "1000*1.064^(lvl-1)",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
   "incomeSclEquation": "base",
   "actions": [
     {
@@ -160,25 +160,6 @@
       ],
       "items": [
         "minecraft:diamond_axe"
-      ],
-      "enchants": []
-    },
-    {
-      "action": "professions:enchant",
-      "conditions": [],
-      "rewards": [
-        {
-          "reward": "professions:payment",
-          "amount": 16.0,
-          "currency": "eights_economy:dollars"
-        },
-        {
-          "reward": "professions:occupation_exp",
-          "amount": 16.0
-        }
-      ],
-      "items": [
-        "minecraft:diamond_chestplate"
       ],
       "enchants": []
     },
@@ -2124,6 +2105,19 @@
   "unlocks": [],
   "modifiers": {
     "milestones": [],
-    "perks": []
+    "perks": [
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.max_health",
+        "increaseBy": 0.2,
+        "level": 1
+      },
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.movement_speed",
+        "increaseBy": 0.001,
+        "level": 10
+      }
+    ]
   }
 }

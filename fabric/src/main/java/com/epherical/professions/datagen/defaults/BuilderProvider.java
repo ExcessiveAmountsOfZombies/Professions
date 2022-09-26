@@ -1,10 +1,15 @@
 package com.epherical.professions.datagen.defaults;
 
+import com.epherical.professions.Constants;
 import com.epherical.professions.datagen.NamedProfessionBuilder;
 import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockAction;
+import com.epherical.professions.profession.editor.Append;
+import com.epherical.professions.profession.modifiers.perks.Perks;
+import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.Blocks;
 
 import static com.epherical.professions.profession.action.Actions.PLACE_BLOCK;
@@ -102,5 +107,15 @@ public class BuilderProvider extends NamedProfessionBuilder {
                         .reward(expReward(1))
                         .reward(moneyReward(1))
                         .build());
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(1).attribute(Attributes.MAX_HEALTH).increaseBy(0.40));
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(10).attribute(Attributes.MOVEMENT_SPEED).increaseBy(0.001));
+    }
+
+    public Append.Builder createBuildingAppender() {
+        Append.Builder builder = Append.Builder.appender(Constants.modID("building"));
+
+        return builder;
     }
 }

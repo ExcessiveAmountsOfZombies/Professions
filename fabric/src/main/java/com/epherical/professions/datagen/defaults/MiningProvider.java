@@ -1,21 +1,33 @@
 package com.epherical.professions.datagen.defaults;
 
+import com.epherical.professions.Constants;
 import com.epherical.professions.datagen.NamedProfessionBuilder;
 import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.builtin.ExploreStructureAction;
 import com.epherical.professions.profession.action.builtin.blocks.BreakBlockAction;
 import com.epherical.professions.profession.action.builtin.blocks.TntDestroyAction;
 import com.epherical.professions.profession.conditions.builtin.ToolMatcher;
+import com.epherical.professions.profession.editor.Append;
+import com.epherical.professions.profession.modifiers.perks.Perks;
+import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
+import com.epherical.professions.profession.unlock.Unlocks;
+import com.epherical.professions.profession.unlock.builtin.BlockBreakUnlock;
+import com.epherical.professions.profession.unlock.builtin.BlockDropUnlock;
+import com.epherical.professions.profession.unlock.builtin.ToolUnlock;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 
 import static com.epherical.professions.profession.action.Actions.*;
+import static com.epherical.professions.profession.unlock.Unlocks.BLOCK_BREAK_UNLOCK;
+import static com.epherical.professions.profession.unlock.Unlocks.BLOCK_DROP_UNLOCK;
 
 public class MiningProvider extends NamedProfessionBuilder {
 
@@ -132,11 +144,76 @@ public class MiningProvider extends NamedProfessionBuilder {
                         .build())
                 .addAction(EXPLORE_STRUCT, ExploreStructureAction.explore()
                         .feature(BuiltinStructures.MINESHAFT)
-                        .reward(expReward(20))
-                        .reward(moneyReward(8)))
+                        .reward(expReward(3))
+                        .reward(moneyReward(4)))
                 .addAction(EXPLORE_STRUCT, ExploreStructureAction.explore()
                         .feature(BuiltinStructures.MINESHAFT_MESA)
-                        .reward(expReward(30))
-                        .reward(moneyReward(10)));
+                        .reward(expReward(3))
+                        .reward(moneyReward(4)));
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(1).attribute(Attributes.MAX_HEALTH).increaseBy(0.20));
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(10).attribute(Attributes.KNOCKBACK_RESISTANCE).increaseBy(0.002));
+    }
+
+    public Append.Builder createMiningAppender() {
+        return Append.Builder.appender(Constants.modID("mining"))
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(2)
+                        .tag(BlockTags.TERRACOTTA))
+                .addUnlock(BLOCK_BREAK_UNLOCK, BlockBreakUnlock.builder()
+                        .level(2)
+                        .tag(BlockTags.TERRACOTTA))
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(3)
+                        .block(Blocks.CLAY, Blocks.GRAVEL, Blocks.SAND, Blocks.RED_SAND, Blocks.SANDSTONE, Blocks.RED_SANDSTONE))
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(10)
+                        .block(Blocks.BLACKSTONE))
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(7)
+                        .block(Blocks.AMETHYST_BLOCK))
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(5)
+                        .tag(BlockTags.IRON_ORES).build())
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(5)
+                        .tag(BlockTags.REDSTONE_ORES).build())
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(3)
+                        .tag(BlockTags.COAL_ORES).build())
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(3)
+                        .tag(BlockTags.COPPER_ORES).build())
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(10)
+                        .tag(BlockTags.GOLD_ORES).build())
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(10)
+                        .block(Blocks.NETHER_QUARTZ_ORE).build())
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(10)
+                        .tag(BlockTags.LAPIS_ORES).build())
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(20)
+                        .tag(BlockTags.DIAMOND_ORES).build())
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(20)
+                        .tag(BlockTags.EMERALD_ORES).build())
+                .addUnlock(BLOCK_DROP_UNLOCK, BlockDropUnlock.builder()
+                        .level(30)
+                        .block(Blocks.ANCIENT_DEBRIS).build())
+                .addUnlock(Unlocks.TOOL_UNLOCK, ToolUnlock.builder()
+                        .level(5)
+                        .item(Items.IRON_PICKAXE).build())
+                .addUnlock(Unlocks.TOOL_UNLOCK, ToolUnlock.builder()
+                        .level(12)
+                        .item(Items.GOLDEN_PICKAXE).build())
+                .addUnlock(Unlocks.TOOL_UNLOCK, ToolUnlock.builder()
+                        .level(22)
+                        .item(Items.DIAMOND_PICKAXE).build())
+                .addUnlock(Unlocks.TOOL_UNLOCK, ToolUnlock.builder()
+                        .level(34)
+                        .item(Items.NETHERITE_PICKAXE).build());
     }
 }

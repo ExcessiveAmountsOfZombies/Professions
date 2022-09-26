@@ -19,6 +19,7 @@ import com.epherical.professions.triggers.EntityTriggers;
 import com.epherical.professions.triggers.ProfessionListener;
 import com.epherical.professions.util.ChunkVisitedProvider;
 import com.epherical.professions.util.PlayerOwnableProvider;
+import com.epherical.professions.util.ProfPermissions;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -210,14 +211,16 @@ public class ProfessionsForge {
                             Pack.Position.BOTTOM,
                             PackSource.WORLD, false));
                 });
-                /*event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
-                    packConsumer.accept(packConstructor.create("default_hardcore_professions", Component.nullToEmpty("Default Hardcore Professions"),
-                            true, () -> new PathResourcePack("Default Hardcore Professions",
-                                    ModList.get().getModFileById(Constants.MOD_ID).getFile().findResource("resourcepacks/forge/hardcore")),
-                            new PackMetadataSection(Component.nullToEmpty("Default Hardcore Professions"), 10),
-                            Pack.Position.BOTTOM,
-                            PackSource.WORLD, false));
-                });*/
+                if (ProfessionConfig.useHardcoreDatapack) {
+                    event.addRepositorySource((Consumer<Pack> packConsumer, Pack.PackConstructor packConstructor) -> {
+                        packConsumer.accept(packConstructor.create("default_hardcore_professions", Component.nullToEmpty("Default Hardcore Professions"),
+                                true, () -> new PathResourcePack("Default Hardcore Professions",
+                                        ModList.get().getModFileById(Constants.MOD_ID).getFile().findResource("resourcepacks/forge/hardcore")),
+                                new PackMetadataSection(Component.nullToEmpty("Default Hardcore Professions"), 10),
+                                Pack.Position.BOTTOM,
+                                PackSource.WORLD, false));
+                    });
+                }
             }
         }
     }

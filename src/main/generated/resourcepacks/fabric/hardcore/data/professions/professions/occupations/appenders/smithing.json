@@ -1,0 +1,47 @@
+{
+  "function_type": "professions:append",
+  "to_edit_profession_key": "professions:smithing",
+  "actions": [],
+  "unlocks": [
+    {
+      "unlock": "professions:tool_unlock",
+      "level": 5,
+      "items": [
+        "minecraft:iron_helmet",
+        "minecraft:iron_chestplate",
+        "minecraft:iron_leggings",
+        "minecraft:iron_boots"
+      ]
+    },
+    {
+      "unlock": "professions:tool_unlock",
+      "level": 10,
+      "items": [
+        "minecraft:golden_helmet",
+        "minecraft:golden_chestplate",
+        "minecraft:golden_leggings",
+        "minecraft:golden_boots"
+      ]
+    },
+    {
+      "unlock": "professions:tool_unlock",
+      "level": 15,
+      "items": [
+        "minecraft:diamond_helmet",
+        "minecraft:diamond_chestplate",
+        "minecraft:diamond_leggings",
+        "minecraft:diamond_boots"
+      ]
+    },
+    {
+      "unlock": "professions:tool_unlock",
+      "level": 25,
+      "items": [
+        "minecraft:netherite_helmet",
+        "minecraft:netherite_chestplate",
+        "minecraft:netherite_leggings",
+        "minecraft:netherite_boots"
+      ]
+    }
+  ]
+}

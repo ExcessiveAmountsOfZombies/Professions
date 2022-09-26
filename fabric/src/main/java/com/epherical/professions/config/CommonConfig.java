@@ -136,6 +136,12 @@ public class CommonConfig {
                             Default true. If you are a regular user you can ignore this. This is to provide an all in one experience\s
                             without having to download additional files. Modpack developers looking to create or rebalance their own professions\s
                             may want to disable this.""");
+            node.node("useHardcoreDatapack").set(useHardcoreDatapack)
+                            .comment("""
+                                    Default false. Requires 'useBuiltinDatapack' to also be true. The hardcore datapack locks progression\s
+                                    meaning you will need to level up to use certain things. I recommend using autoJoinProfessions and preventLeavingProfession\s
+                                    if you are going to be using this mode.
+                                    """);
             node.node("allowCreativeModePayments").set(allowCreativeModePayments)
                     .comment("This will allow users in creative mode to get paid or not. Defaults to false.");
             node.node("displayXpAsPercentage").set(displayXpAsPercentage)
@@ -204,6 +210,7 @@ public class CommonConfig {
         version = node.node("version").getInt(version);
         maxOccupations = node.node("maxOccupations").getInt(maxOccupations);
         useBuiltinDatapack = node.node("useBuiltinDatapack").getBoolean(useBuiltinDatapack);
+        useHardcoreDatapack = node.node("useHardcoreDatapack").getBoolean(useHardcoreDatapack);
         autoJoinProfessions = node.node("autoJoinProfessions").getBoolean(autoJoinProfessions);
         preventLeavingProfession = node.node("preventLeavingProfession").getBoolean(preventLeavingProfession);
         displayXpAsPercentage = node.node("displayXpAsPercentage").getBoolean(displayXpAsPercentage);

@@ -1,11 +1,18 @@
 package com.epherical.professions.datagen.defaults;
 
+import com.epherical.professions.Constants;
 import com.epherical.professions.datagen.NamedProfessionBuilder;
 import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.builtin.items.CraftingAction;
 import com.epherical.professions.profession.action.builtin.items.SmeltItemAction;
 import com.epherical.professions.profession.action.builtin.items.TakeSmeltAction;
+import com.epherical.professions.profession.editor.Append;
+import com.epherical.professions.profession.modifiers.perks.Perks;
+import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
+import com.epherical.professions.profession.unlock.Unlocks;
+import com.epherical.professions.profession.unlock.builtin.EquipmentUnlock;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Items;
 
 import static com.epherical.professions.profession.action.Actions.*;
@@ -82,5 +89,31 @@ public class SmithingProvider extends NamedProfessionBuilder {
                         .reward(moneyReward(1.3))
                         .reward(expReward(1.3))
                         .build());
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(1).attribute(Attributes.MAX_HEALTH).increaseBy(0.20));
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(10).attribute(Attributes.ATTACK_DAMAGE).increaseBy(0.05));
+    }
+
+    public Append.Builder createSmithingAppender() {
+        Append.Builder builder = Append.Builder.appender(Constants.modID("smithing"));
+        builder.addUnlock(Unlocks.EQUIPMENT_UNLOCK, EquipmentUnlock.builder()
+                .level(5)
+                .item(Items.IRON_HELMET, Items.IRON_CHESTPLATE,
+                        Items.IRON_LEGGINGS, Items.IRON_BOOTS));
+        builder.addUnlock(Unlocks.EQUIPMENT_UNLOCK, EquipmentUnlock.builder()
+                .level(10)
+                .item(Items.GOLDEN_HELMET, Items.GOLDEN_CHESTPLATE,
+                        Items.GOLDEN_LEGGINGS, Items.GOLDEN_BOOTS));
+        builder.addUnlock(Unlocks.EQUIPMENT_UNLOCK, EquipmentUnlock.builder()
+                .level(15)
+                .item(Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE,
+                        Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS));
+        builder.addUnlock(Unlocks.EQUIPMENT_UNLOCK, EquipmentUnlock.builder()
+                .level(25)
+                .item(Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE,
+                        Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS));
+
+        return builder;
     }
 }

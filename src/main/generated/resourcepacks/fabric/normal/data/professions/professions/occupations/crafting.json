@@ -8,7 +8,7 @@
   ],
   "displayName": "Crafting",
   "maxLevel": 100,
-  "experienceSclEquation": "1000*1.064^(lvl-1)",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
   "incomeSclEquation": "base",
   "actions": [
     {
@@ -28,11 +28,25 @@
       "items": [
         "#minecraft:wooden_pressure_plates",
         "#minecraft:banners",
+        "#minecraft:walls",
         "#minecraft:stairs",
         "#minecraft:fences",
+        "#minecraft:boats",
         "#minecraft:wooden_doors",
         "#minecraft:wooden_trapdoors",
-        "#minecraft:wooden_buttons"
+        "#minecraft:wooden_buttons",
+        "#minecraft:candles",
+        "#minecraft:signs",
+        "minecraft:ladder",
+        "minecraft:tinted_glass",
+        "minecraft:stone_pressure_plate",
+        "minecraft:polished_blackstone_pressure_plate",
+        "minecraft:light_weighted_pressure_plate",
+        "minecraft:heavy_weighted_pressure_plate",
+        "minecraft:painting",
+        "minecraft:flower_pot",
+        "minecraft:lead",
+        "minecraft:armor_stand"
       ]
     },
     {
@@ -51,7 +65,9 @@
       ],
       "items": [
         "minecraft:chest",
-        "minecraft:furnace"
+        "minecraft:barrel",
+        "minecraft:furnace",
+        "minecraft:minecart"
       ]
     },
     {
@@ -91,7 +107,12 @@
       "items": [
         "minecraft:dispenser",
         "minecraft:blast_furnace",
-        "minecraft:piston"
+        "minecraft:piston",
+        "minecraft:chain",
+        "minecraft:sticky_piston",
+        "minecraft:observer",
+        "minecraft:fishing_rod",
+        "minecraft:spyglass"
       ]
     },
     {
@@ -130,7 +151,29 @@
         "minecraft:iron_door",
         "minecraft:iron_bars",
         "minecraft:hopper",
-        "minecraft:cauldron"
+        "minecraft:cauldron",
+        "minecraft:powered_rail",
+        "minecraft:detector_rail",
+        "minecraft:rail",
+        "minecraft:activator_rail"
+      ]
+    },
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 30.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 30.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "items": [
+        "minecraft:lodestone"
       ]
     },
     {
@@ -152,13 +195,86 @@
         "minecraft:compass",
         "minecraft:clock",
         "minecraft:brewing_stand",
+        "minecraft:repeater",
+        "minecraft:daylight_detector",
         "#minecraft:beds"
+      ]
+    },
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 2.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 2.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "items": [
+        "minecraft:white_concrete_powder",
+        "minecraft:orange_concrete_powder",
+        "minecraft:magenta_concrete_powder",
+        "minecraft:light_blue_concrete_powder",
+        "minecraft:yellow_concrete_powder",
+        "minecraft:lime_concrete_powder",
+        "minecraft:pink_concrete_powder",
+        "minecraft:gray_concrete_powder",
+        "minecraft:light_gray_concrete_powder",
+        "minecraft:cyan_concrete_powder",
+        "minecraft:blue_concrete_powder",
+        "minecraft:brown_concrete_powder",
+        "minecraft:green_concrete_powder",
+        "minecraft:red_concrete_powder",
+        "minecraft:black_concrete_powder",
+        "minecraft:lectern",
+        "minecraft:redstone_lamp",
+        "minecraft:lightning_rod"
+      ]
+    },
+    {
+      "action": "professions:craft_item",
+      "conditions": [],
+      "rewards": [
+        {
+          "reward": "professions:occupation_exp",
+          "amount": 1.0
+        },
+        {
+          "reward": "professions:payment",
+          "amount": 1.0,
+          "currency": "eights_economy:dollars"
+        }
+      ],
+      "items": [
+        "#minecraft:carpets",
+        "minecraft:dropper",
+        "minecraft:tripwire_hook",
+        "minecraft:trapped_chest",
+        "minecraft:redstone_torch",
+        "minecraft:torch"
       ]
     }
   ],
   "unlocks": [],
   "modifiers": {
     "milestones": [],
-    "perks": []
+    "perks": [
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.max_health",
+        "increaseBy": 0.2,
+        "level": 1
+      },
+      {
+        "perk": "professions:scaling_attribute",
+        "attribute": "minecraft:generic.attack_damage",
+        "increaseBy": 0.05,
+        "level": 10
+      }
+    ]
   }
 }

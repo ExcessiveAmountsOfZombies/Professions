@@ -7,10 +7,13 @@ import com.epherical.professions.profession.action.builtin.blocks.PlaceBlockActi
 import com.epherical.professions.profession.action.builtin.entity.BreedAction;
 import com.epherical.professions.profession.conditions.builtin.BlockStatePropertyAnyCondition;
 import com.epherical.professions.profession.conditions.builtin.FullyGrownCropCondition;
+import com.epherical.professions.profession.modifiers.perks.Perks;
+import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -71,5 +74,9 @@ public class FarmingProvider extends NamedProfessionBuilder {
                         .reward(expReward(5.0))
                         .reward(moneyReward(5.0))
                         .build());
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(1).attribute(Attributes.MAX_HEALTH).increaseBy(0.20));
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(10).attribute(Attributes.MOVEMENT_SPEED).increaseBy(0.001));
     }
 }

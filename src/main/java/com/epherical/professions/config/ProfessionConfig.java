@@ -4,12 +4,13 @@ import net.minecraft.network.chat.TextColor;
 
 public class ProfessionConfig {
 
-    public static int version = 2;
+    public static int version = 3;
 
     public static int maxOccupations = 3;
     public static boolean useBuiltinDatapack = true;
-    public static boolean autoJoinProfessions = false;
-    public static boolean preventLeavingProfession = false;
+    public static boolean useHardcoreDatapack = false;
+    public static boolean autoJoinProfessions = true;
+    public static boolean preventLeavingProfession = true;
     public static boolean displayXpAsPercentage = true;
     public static boolean allowCreativeModePayments = false;
     public static boolean logInChat = false;

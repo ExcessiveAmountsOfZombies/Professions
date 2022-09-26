@@ -3,8 +3,11 @@ package com.epherical.professions.datagen.defaults;
 import com.epherical.professions.datagen.NamedProfessionBuilder;
 import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.builtin.items.EnchantAction;
+import com.epherical.professions.profession.modifiers.perks.Perks;
+import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 
@@ -65,11 +68,6 @@ public class EnchantingProvider extends NamedProfessionBuilder {
                         .item(Items.DIAMOND_AXE)
                         .reward(moneyReward(6))
                         .reward(expReward(6))
-                        .build())
-                .addAction(ENCHANT_ITEM, EnchantAction.enchant()
-                        .item(Items.DIAMOND_CHESTPLATE)
-                        .reward(moneyReward(16))
-                        .reward(expReward(16))
                         .build());
         for (Enchantment enchantment : Registry.ENCHANTMENT) {
             if (enchantment.isCurse() || enchantment.isTreasureOnly() || !enchantment.isDiscoverable()) {
@@ -83,5 +81,9 @@ public class EnchantingProvider extends NamedProfessionBuilder {
                         .build());
             }
         }
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(1).attribute(Attributes.MAX_HEALTH).increaseBy(0.20));
+        builder.addPerk(Perks.SCALING_ATTRIBUTE_PERK, ScalingAttributePerk.scaling()
+                .level(10).attribute(Attributes.MOVEMENT_SPEED).increaseBy(0.001));
     }
 }

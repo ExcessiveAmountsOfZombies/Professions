@@ -29,11 +29,6 @@ public class AlchemistProvider extends NamedProfessionBuilder {
         builder.addExperienceScaling(defaultLevelParser())
                 .incomeScaling(defaultIncomeParser());
         builder.addAction(BREW_ITEM, BrewAction.brew()
-                .item(Items.NETHER_WART)
-                .reward(expReward(300))
-                .reward(moneyReward(200))
-                .build())
-                .addAction(BREW_ITEM, BrewAction.brew()
                         .item(Items.NETHER_WART)
                         .reward(expReward(2))
                         .reward(moneyReward(0.5))

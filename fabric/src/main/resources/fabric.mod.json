@@ -28,7 +28,8 @@
       "com.epherical.professions.ProfessionsFabric"
     ],
     "cardinal-components": [
-      "com.epherical.professions.integration.cardinal.ChunkComponent"
+      "com.epherical.professions.integration.cardinal.ChunkComponent",
+      "com.epherical.professions.integration.cardinal.BlockEntityComponent"
     ]
   },
   "mixins": [
@@ -47,7 +48,8 @@
       "initializer": "com.epherical.professions.integration.wthit.ProfWailaPlugin"
     },
     "cardinal-components": [
-      "professions:p_expo_chunk"
+      "professions:p_expo_chunk",
+      "professions:ownable_be"
     ]
   }
 }

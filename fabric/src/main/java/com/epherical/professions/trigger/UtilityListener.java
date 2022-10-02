@@ -9,7 +9,6 @@ import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ProfessionUtil;
-import com.epherical.professions.util.mixins.PlayerOwnable;
 import com.google.common.collect.Maps;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;

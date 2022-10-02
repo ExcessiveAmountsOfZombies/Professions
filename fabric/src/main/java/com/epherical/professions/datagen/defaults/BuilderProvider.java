@@ -42,8 +42,7 @@ public class BuilderProvider extends NamedProfessionBuilder {
                         .reward(moneyReward(1))
                         .build())
                 .addAction(PLACE_BLOCK, PlaceBlockAction.place()
-                        .block(Blocks.OAK_PLANKS, Blocks.SPRUCE_PLANKS, Blocks.JUNGLE_PLANKS, Blocks.BIRCH_PLANKS, Blocks.ACACIA_PLANKS,
-                                Blocks.DARK_OAK_PLANKS, Blocks.WARPED_PLANKS, Blocks.CRIMSON_PLANKS)
+                        .block(BlockTags.PLANKS)
                         .reward(expReward(1.3))
                         .reward(moneyReward(1.3))
                         .build())

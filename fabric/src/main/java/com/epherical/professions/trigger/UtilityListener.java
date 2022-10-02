@@ -5,11 +5,12 @@ import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.events.SyncEvents;
 import com.epherical.professions.events.trigger.TriggerEvents;
+import com.epherical.professions.integration.cardinal.BlockEntityComponent;
+import com.epherical.professions.integration.cardinal.PlayerOwning;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ProfessionUtil;
-import com.epherical.professions.util.mixins.PlayerOwnable;
 import com.google.common.collect.Maps;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -50,8 +51,9 @@ public class UtilityListener {
         TriggerEvents.PLACE_BLOCK_EVENT.register((player, state, pos) -> {
             ServerLevel level = player.getLevel().getLevel();
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof PlayerOwnable owned) {
-                owned.professions$setPlacedBy(player);
+            PlayerOwning component = blockEntity.getComponent(BlockEntityComponent.PLAYER_OWNABLE);
+            if (component != null) {
+                component.setPlacedBy(player.getUUID());
             }
         });
 

@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -51,9 +52,11 @@ public class UtilityListener {
         TriggerEvents.PLACE_BLOCK_EVENT.register((player, state, pos) -> {
             ServerLevel level = player.getLevel().getLevel();
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            PlayerOwning component = blockEntity.getComponent(BlockEntityComponent.PLAYER_OWNABLE);
-            if (component != null) {
-                component.setPlacedBy(player.getUUID());
+            if (blockEntity != null) {
+                try {
+                    PlayerOwning component = blockEntity.getComponent(BlockEntityComponent.PLAYER_OWNABLE);
+                    component.setPlacedBy(player.getUUID());
+                } catch (NoSuchElementException ignored) {}
             }
         });
 

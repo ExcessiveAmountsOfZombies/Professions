@@ -64,9 +64,9 @@ dependencies {
     modCompileOnly "curse.maven:ftb-library-fabric-438495:3725484"
     modCompileOnly "mcp.mobius.waila:wthit-api:fabric-5.10.0"
 
-    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:4.2.0")
-    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-chunk:4.2.0")
-    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-block:4.2.0")
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.1")
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-chunk:5.0.1")
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-block:5.0.1")
 
 }
 

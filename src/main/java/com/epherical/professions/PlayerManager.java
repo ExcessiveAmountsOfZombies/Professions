@@ -83,7 +83,7 @@ public class PlayerManager {
             return;
         }
 
-        if (player.getActiveOccupations().size() >= ProfessionConfig.maxOccupations) {
+        if (ProfessionConfig.maxOccupations != 0 && player.getActiveOccupations().size() >= ProfessionConfig.maxOccupations) {
             serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.error.max_occupations").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return;
         }

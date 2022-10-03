@@ -5,6 +5,8 @@ import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.events.SyncEvents;
 import com.epherical.professions.events.trigger.TriggerEvents;
+import com.epherical.professions.integration.cardinal.BlockEntityComponent;
+import com.epherical.professions.integration.cardinal.PlayerOwning;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,8 +52,11 @@ public class UtilityListener {
         TriggerEvents.PLACE_BLOCK_EVENT.register((player, state, pos) -> {
             ServerLevel level = player.getLevel().getLevel();
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof PlayerOwnable owned) {
-                owned.professions$setPlacedBy(player);
+            if (blockEntity != null) {
+                try {
+                    PlayerOwning component = blockEntity.getComponent(BlockEntityComponent.PLAYER_OWNABLE);
+                    component.setPlacedBy(player.getUUID());
+                } catch (NoSuchElementException ignored) {}
             }
         });
 

@@ -49,14 +49,7 @@
     {
       "action": "professions:place_block",
       "blocks": [
-        "minecraft:oak_planks",
-        "minecraft:spruce_planks",
-        "minecraft:jungle_planks",
-        "minecraft:birch_planks",
-        "minecraft:acacia_planks",
-        "minecraft:dark_oak_planks",
-        "minecraft:warped_planks",
-        "minecraft:crimson_planks"
+        "#minecraft:planks"
       ],
       "conditions": [],
       "rewards": [

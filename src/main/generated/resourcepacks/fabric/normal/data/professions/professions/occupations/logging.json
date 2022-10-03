@@ -2,6 +2,24 @@
   "type": "professions:default",
   "actions": [
     {
+      "action": "professions:place_block",
+      "blocks": [
+        "#minecraft:saplings"
+      ],
+      "conditions": [],
+      "rewards": [
+        {
+          "amount": 0.5,
+          "reward": "professions:occupation_exp"
+        },
+        {
+          "amount": 0.25,
+          "currency": "eights_economy:dollars",
+          "reward": "professions:payment"
+        }
+      ]
+    },
+    {
       "action": "professions:break_block",
       "blocks": [
         "#minecraft:logs"

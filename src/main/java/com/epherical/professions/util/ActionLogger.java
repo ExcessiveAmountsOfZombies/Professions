@@ -56,6 +56,7 @@ public class ActionLogger {
         if (message != null && player != null) {
             message.append(actionPortion).append(" ").append(money).append(" | ").append(exp);
             if (ProfessionConfig.logInChat) {
+                //player.sendSystemMessage(message, true);
                 player.sendSystemMessage(message);
             } else {
                 player.sendSystemMessage(message, true);

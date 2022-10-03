@@ -91,6 +91,10 @@ public class ProfessionsForge {
         CommonPlatform.create(new ForgePlatform());
         handler = new NetworkHandler();
 
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ProfessionsClientForge::registerKeyBindings);
+            return ProfessionsClientForge::initClient;
+        });
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::sendMessages);
@@ -117,10 +121,6 @@ public class ProfessionsForge {
     }
 
     private void clientInit(FMLClientSetupEvent event) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ProfessionsClientForge::registerKeyBindings);
-            return ProfessionsClientForge::initClient;
-        });
         MinecraftForge.EVENT_BUS.register(new ProfessionsClientForge());
     }
 

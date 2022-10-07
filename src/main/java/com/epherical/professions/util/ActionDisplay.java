@@ -1,10 +1,10 @@
 package com.epherical.professions.util;
 
 import com.epherical.professions.profession.action.Action;
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
@@ -48,12 +48,16 @@ public class ActionDisplay {
     }
 
     public static class Icon {
-        protected final Item representation;
+        protected final ItemStack representation;
         protected final Component name;
         protected final Component actionInformation;
         protected final Component actionType;
 
         public Icon(Item representation, Component name, Component actionInformation, Component actionType) {
+            this(new ItemStack(representation), name, actionInformation, actionType);
+        }
+
+        public Icon(ItemStack representation, Component name, Component actionInformation, Component actionType) {
             this.representation = representation;
             this.name = name;
             this.actionInformation = actionInformation;
@@ -61,17 +65,16 @@ public class ActionDisplay {
         }
 
         public void write(FriendlyByteBuf buf) {
-            buf.writeVarInt(Registry.ITEM.getId(representation));
+            buf.writeItem(representation);
             buf.writeComponent(name);
             buf.writeComponent(actionInformation);
             buf.writeComponent(actionType);
         }
 
         public static Icon read(FriendlyByteBuf buf) {
-            int id = buf.readVarInt();
-            Item item = Registry.ITEM.byId(id);
-            if (item.equals(Items.AIR)) {
-                item = Items.BARRIER;
+            ItemStack item = buf.readItem();
+            if (item.getItem().equals(Items.AIR)) {
+                item = new ItemStack(Items.BARRIER);
             }
             Component name = buf.readComponent();
             Component actionInformation = buf.readComponent();
@@ -91,7 +94,7 @@ public class ActionDisplay {
             return actionType;
         }
 
-        public Item getRepresentation() {
+        public ItemStack getRepresentation() {
             return representation;
         }
     }

@@ -21,7 +21,7 @@ public class InfoEntryButton extends AbstractEntryButton {
 
     public InfoEntryButton(ActionDisplay.Icon component, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
         super(component.getName(), i, j, k, l, onPress, tooltip);
-        item = new ItemStack(component.getRepresentation());
+        item = component.getRepresentation();
         this.icon = component;
     }
 

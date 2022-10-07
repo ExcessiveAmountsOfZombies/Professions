@@ -4,7 +4,7 @@ import net.minecraft.network.chat.TextColor;
 
 public class ProfessionConfig {
 
-    public static int version = 3;
+    public static int version = 4;
 
     public static int maxOccupations = 3;
     public static boolean useBuiltinDatapack = true;
@@ -14,6 +14,7 @@ public class ProfessionConfig {
     public static boolean displayXpAsPercentage = true;
     public static boolean allowCreativeModePayments = false;
     public static boolean logInChat = false;
+    public static boolean displayOutput = false;
 
     public static boolean overrideCurrencyID = false;
     public static String overriddenCurrencyID = "eights_economy:dollars";

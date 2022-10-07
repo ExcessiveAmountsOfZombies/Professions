@@ -196,7 +196,9 @@ public class CommonConfig {
                             "in the same block position.");
 
             node.node("actions").node("logInChat").set(logInChat)
-                    .comment("Will display every valid action in chat. Defaults to false, or rather, defaults to action bar messages instead.");
+                    .comment("Will display every valid action in chat. Defaults to false.");
+            node.node("actions").node("displayOutput").set(displayOutput)
+                    .comment("WIll display every valid action in your action bar. Defaults to false.");
 
 
         } catch (SerializationException e) {
@@ -237,6 +239,7 @@ public class CommonConfig {
         paymentCoolDown = node.node("balancing").node("paymentCoolDown").getLong(paymentCoolDown);
 
         logInChat = node.node("actions").node("logInChat").getBoolean(logInChat);
+        displayOutput = node.node("actions").node("displayOutput").getBoolean(displayOutput);
     }
 
     private boolean canCreateFile(File file) {

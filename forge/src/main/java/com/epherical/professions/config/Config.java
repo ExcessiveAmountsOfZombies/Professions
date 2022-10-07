@@ -35,6 +35,7 @@ public class Config {
     private final ForgeConfigSpec.ConfigValue<Integer> paymentCoolDown;
 
     private final ForgeConfigSpec.ConfigValue<Boolean> logInChat;
+    private final ForgeConfigSpec.ConfigValue<Boolean> displayOutput;
 
     public Config() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -95,8 +96,10 @@ public class Config {
                 .define("paymentCoolDown", (int) ProfessionConfig.paymentCoolDown);
         builder.pop();
         builder.comment("Actions").push("actions");
-        logInChat = builder.comment("Will display every valid action in chat. Defaults to false, or rather, defaults to action bar messages instead.")
+        logInChat = builder.comment("Will display every valid action in chat. Defaults to false.")
                 .define("logInChat", ProfessionConfig.logInChat);
+        displayOutput = builder.comment("Will display valid action output in your action bar. Defaults to false.")
+                .define("displayOutput", ProfessionConfig.displayOutput);
         builder.pop();
         this.configSpec = builder.build();
     }
@@ -123,6 +126,7 @@ public class Config {
             ProfessionConfig.clearProgressOnLeave = clearProgressOnLeave.get();
             ProfessionConfig.paymentCoolDown = paymentCoolDown.get();
             ProfessionConfig.logInChat = logInChat.get();
+            ProfessionConfig.displayOutput = displayOutput.get();
             ProfessionConfig.preventLeavingProfession = preventLeavingProfession.get();
             ProfessionConfig.autoJoinProfessions = autoJoinProfessions.get();
         }

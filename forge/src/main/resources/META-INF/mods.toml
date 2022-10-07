@@ -9,7 +9,7 @@ modId="professions" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 # ${file.jarVersion} will substitute the value of the Implementation-Version as read from the mod's JAR file metadata
 # see the associated build.gradle script for how to populate this completely automatically during a build
-version="1.0.1" #mandatory ugh
+version="1.0.2" #mandatory ugh
 displayName="Professions" #mandatory
 #updateJSONURL="http://myurl.me/" #optional
 displayURL="https://discord.gg/GZjtAn3F6W" #optional

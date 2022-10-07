@@ -58,7 +58,7 @@ public class ActionLogger {
             if (ProfessionConfig.logInChat) {
                 //player.sendSystemMessage(message, true);
                 player.sendSystemMessage(message);
-            } else {
+            } else if (ProfessionConfig.displayOutput) {
                 player.sendSystemMessage(message, true);
             }
         }

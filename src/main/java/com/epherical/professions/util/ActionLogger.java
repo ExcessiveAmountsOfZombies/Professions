@@ -10,6 +10,11 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.UUID;
+
 public class ActionLogger {
 
     private static Style BORDER = Style.EMPTY.withColor(ProfessionConfig.headerBorders);
@@ -27,8 +32,17 @@ public class ActionLogger {
     private boolean actionAdded = false;
     private boolean msgAdded = false;
 
+    private UUID associatedWith;
+
+    private static Timer timer = new Timer("xprates");
+
+    private static Map<UUID, XpRateTimerTask> tasksRunning = new HashMap<>();
+
 
     public void startMessage(Occupation occupation) {
+        if (tasksRunning.containsKey(associatedWith)) {
+            tasksRunning.get(associatedWith).addExperience(occupation, 0);
+        }
         if (!msgAdded) {
             message = Component.translatable("[%s] %s", Component.literal("PR").setStyle(VARIABLE), occupation.getProfession().getDisplayComponent()).setStyle(BORDER);
             msgAdded = true;
@@ -47,8 +61,11 @@ public class ActionLogger {
         money = component;
     }
 
-    public void addExpReward(Component reward) {
+    public void addExpReward(Component reward, double expAmount, Occupation occupation) {
         exp = reward;
+        if (tasksRunning.containsKey(associatedWith)) {
+            tasksRunning.get(associatedWith).addExperience(occupation, expAmount);
+        }
     }
 
 
@@ -64,12 +81,33 @@ public class ActionLogger {
         }
     }
 
+    public void setAssociatedWith(UUID associatedWith) {
+        this.associatedWith = associatedWith;
+    }
+
     public static void reloadStyles() {
         BORDER = Style.EMPTY.withColor(ProfessionConfig.headerBorders);
         VARIABLE = Style.EMPTY.withColor(ProfessionConfig.variables);
         DESCRIPTOR = Style.EMPTY.withColor(ProfessionConfig.descriptors);
         MONEY = Style.EMPTY.withColor(ProfessionConfig.money);
         EXP = Style.EMPTY.withColor(ProfessionConfig.experience);
+    }
+
+
+    public static void schedulePlayerXpRateOutput(UUID uuid, XpRateTimerTask task) {
+        timer.scheduleAtFixedRate(task, 60 * 1000L, 60 * 1000L);
+        tasksRunning.put(uuid, task);
+    }
+
+    public static void removePlayerXpRateOutput(UUID uuid) {
+        XpRateTimerTask remove = tasksRunning.remove(uuid);
+        if (remove != null) {
+            remove.cancel();
+        }
+    }
+
+    public static boolean isRunningXpCalculator(UUID uuid) {
+        return tasksRunning.containsKey(uuid);
     }
 
 

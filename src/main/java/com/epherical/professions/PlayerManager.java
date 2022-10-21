@@ -7,6 +7,7 @@ import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.progression.ProfessionalPlayerImpl;
+import com.epherical.professions.util.ActionLogger;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.network.chat.Component;
@@ -57,6 +58,7 @@ public class PlayerManager {
     public void playerQuit(ServerPlayer player) {
         ProfessionalPlayer pPlayer = players.remove(player.getUUID());
         synchronizedPlayers.remove(player.getUUID());
+        ActionLogger.removePlayerXpRateOutput(player.getUUID());
         if (pPlayer != null) {
             pPlayer.setPlayer(null);
             pPlayer.save(storage);

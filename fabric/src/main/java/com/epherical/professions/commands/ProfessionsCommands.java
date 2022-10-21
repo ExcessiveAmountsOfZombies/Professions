@@ -1,14 +1,17 @@
 package com.epherical.professions.commands;
 
 import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.Constants;
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.datapack.FabricProfLoader;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.editor.Append;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
@@ -17,21 +20,28 @@ import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.util.ActionLogger;
 import com.epherical.professions.util.AttributeDisplay;
+import com.epherical.professions.util.XpRateTimerTask;
 import com.epherical.professions.util.mixins.GameProfileHelper;
+import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.logging.LogUtils;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.Util;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -45,17 +55,25 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ProfessionsCommands {
 
     private final ProfessionsFabric mod;
     private final Logger LOGGER = LogUtils.getLogger();
+
+    public static final SuggestionProvider<CommandSourceStack> SUGGEST_ADVANCEMENTS = (commandContext, suggestionsBuilder) -> {
+        Collection<Advancement> collection = (commandContext.getSource()).getServer().getAdvancements().getAllAdvancements();
+        return SharedSuggestionProvider.suggestResource(collection.stream().map(Advancement::getId), suggestionsBuilder);
+    };
 
     public ProfessionsCommands(ProfessionsFabric mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher) {
         this.mod = mod;
@@ -80,9 +98,12 @@ public class ProfessionsCommands {
     // removexp - removes experience from the player in an occupation - admin command
 
     private void registerCommands(CommandDispatcher<CommandSourceStack> stack) {
+        DynamicCommandExceptionType ERROR_POI_INVALID = new DynamicCommandExceptionType((p_214496_) -> {
+            return Component.translatable("commands.locate.poi.invalid", p_214496_);
+        });
         SuggestionProvider<CommandSourceStack> occupationProvider = (context, builder) -> {
             for (ResourceLocation professionKey : CommonPlatform.platform.getProfessionLoader().getProfessionKeys()) {
-                builder.suggest("\"" + professionKey.toString() + "\"");
+                builder.suggest(professionKey.toString());
             }
             return builder.buildFuture();
         };
@@ -92,12 +113,39 @@ public class ProfessionsCommands {
             }
             return builder.buildFuture();
         };
-        SuggestionProvider<CommandSourceStack> actionProvider = (context, builder) -> {
-            RegistryConstants.ACTION_TYPE.keySet().forEach(location -> {
-                builder.suggest(location.toString());
-            });
-            return builder.buildFuture();
-        };
+
+        if (Constants.devDebug) {
+
+
+            RequiredArgumentBuilder<CommandSourceStack, ResourceLocation> occupation1 = Commands.argument("occupation", ResourceLocationArgument.id());
+            occupation1.suggests(occupationProvider);
+            for (UnlockCommands value : UnlockCommands.values()) {
+                occupation1.then(value.source);
+            }
+
+            LiteralArgumentBuilder<CommandSourceStack> edit = Commands.literal("prfssns")
+                    .requires(Permissions.require("professions.command.admin.uedit", 4))
+                    .then(Commands.literal("append").then(occupation1))
+                    .then(Commands.literal("export")
+                            .then(Commands.argument("suffix", StringArgumentType.string())
+                                    .executes(context -> {
+                                        String suffix = StringArgumentType.getString(context, "suffix");
+                                        for (Map.Entry<ResourceLocation, Append.Builder> entry : UnlockCommands.builderMap.entrySet()) {
+
+                                            JsonElement serialize = FabricProfLoader.serialize(entry.getValue().build());
+                                            try {
+                                                Files.writeString(CommonPlatform.platform.getRootConfigPath().resolve(entry.getKey().getPath()
+                                                        + suffix + ".json"), serialize.toString());
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        UnlockCommands.builderMap.clear();
+                                        return 1;
+                                    })));
+            stack.register(edit);
+        }
+
 
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("professions")
                 .then(Commands.literal("help")
@@ -105,12 +153,12 @@ public class ProfessionsCommands {
                         .executes(this::help))
                 .then(Commands.literal("join")
                         .requires(Permissions.require("professions.command.join", 0))
-                        .then(Commands.argument("occupation", StringArgumentType.string())
+                        .then(Commands.argument("occupation", ResourceLocationArgument.id())
                                 .suggests(occupationProvider)
                                 .executes(this::join)))
                 .then(Commands.literal("leave")
                         .requires(Permissions.require("professions.command.leave", 0))
-                        .then(Commands.argument("occupation", StringArgumentType.string())
+                        .then(Commands.argument("occupation", ResourceLocationArgument.id())
                                 .suggests(occupationProvider)
                                 .executes(this::leave)))
                 .then(Commands.literal("leaveall")
@@ -138,7 +186,7 @@ public class ProfessionsCommands {
                                         .executes(this::perks))))*/
                 .then(Commands.literal("info")
                         .requires(Permissions.require("professions.command.info", 0))
-                        .then(Commands.argument("occupation", StringArgumentType.string())
+                        .then(Commands.argument("occupation", ResourceLocationArgument.id())
                                 .suggests(occupationProvider)
                                 .executes(this::info)
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
@@ -154,7 +202,7 @@ public class ProfessionsCommands {
                         .executes(this::browse))
                 .then(Commands.literal("top")
                         .requires(Permissions.require("professions.command.top", 0))
-                        .then(Commands.argument("occupation", StringArgumentType.string())
+                        .then(Commands.argument("occupation", ResourceLocationArgument.id())
                                 .suggests(occupationProvider)
                                 .executes(this::top)
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
@@ -166,7 +214,7 @@ public class ProfessionsCommands {
                         .requires(Permissions.require("professions.command.fire", 4))
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
-                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                .then(Commands.argument("occupation", ResourceLocationArgument.id())
                                         .suggests(occupationProvider)
                                         .executes(this::fire))))
                 .then(Commands.literal("fireall")
@@ -178,23 +226,26 @@ public class ProfessionsCommands {
                         .requires(Permissions.require("professions.command.employ", 4))
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
-                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                .then(Commands.argument("occupation", ResourceLocationArgument.id())
                                         .suggests(occupationProvider)
                                         .executes(this::employ))))
                 .then(Commands.literal("setlevel")
                         .requires(Permissions.require("professions.command.setlevel", 4))
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
-                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                .then(Commands.argument("occupation", ResourceLocationArgument.id())
                                         .suggests(occupationProvider)
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1))
                                                 .executes(this::setLevel)))))
                 .then(Commands.literal("admin")
                         .then(Commands.literal("checkexp")
                                 .requires(Permissions.require("professions.command.admin.checkexp", 4))
-                                .then(Commands.argument("occupation", StringArgumentType.string())
+                                .then(Commands.argument("occupation", ResourceLocationArgument.id())
                                         .suggests(occupationProvider)
-                                        .executes(this::checkExp))))
+                                        .executes(this::checkExp)))
+                        .then(Commands.literal("xprate")
+                                .requires(Permissions.require("professions.command.admin.xprate", 4))
+                                .executes(this::xpRate)));
                 /*.then(Commands.literal("givexp")
                         .requires(Permissions.require("professions.command.givexp", 4))
                         .then(Commands.argument("player", StringArgumentType.string())
@@ -210,7 +261,8 @@ public class ProfessionsCommands {
                                 .then(Commands.argument("occupation", StringArgumentType.string())
                                         .suggests(occupationProvider)
                                         .then(Commands.argument("xp", IntegerArgumentType.integer(1))
-                                                .executes(this::takexp)))))*/;
+                                                .executes(this::takexp)))))*/
+        ;
         stack.register(command);
     }
 
@@ -226,7 +278,8 @@ public class ProfessionsCommands {
         String playerArg = "";
         try {
             playerArg = StringArgumentType.getString(stack, "player");
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
 
         try {
             ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
@@ -250,10 +303,10 @@ public class ProfessionsCommands {
             stack.getSource().sendSuccess(new TranslatableComponent("║ Name: %s", new TextComponent(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(borders), false);
             stack.getSource().sendSuccess(new TranslatableComponent("║ %s", new TextComponent("/stats command")
-                    .setStyle(Style.EMPTY
-                            .withColor(ProfessionConfig.variables)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent("Click to run command")))
-                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions stats " + profile.getName()))))
+                            .setStyle(Style.EMPTY
+                                    .withColor(ProfessionConfig.variables)
+                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent("Click to run command")))
+                                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions stats " + profile.getName()))))
                     .setStyle(borders), false);
             stack.getSource().sendSuccess(new TextComponent("╠══════════╣")
                     .setStyle(borders), false);
@@ -777,6 +830,28 @@ public class ProfessionsCommands {
                 LOGGER.info("{},{}", i, (int) profession.getExperienceForLevel(i));
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 1;
+    }
+
+    private int xpRate(CommandContext<CommandSourceStack> stack) {
+        try {
+            ServerPlayer serverPlayer = stack.getSource().getPlayerOrException();
+            UUID uuid = serverPlayer.getUUID();
+            ProfessionalPlayer player = mod.getPlayerManager().getPlayer(uuid);
+
+            if (player != null) {
+                if (ActionLogger.isRunningXpCalculator(uuid)) {
+                    serverPlayer.sendSystemMessage(Component.translatable("Disabled xp rate notifier"));
+                    ActionLogger.removePlayerXpRateOutput(uuid);
+                } else {
+                    serverPlayer.sendSystemMessage(Component.translatable("enabled xp rate notifier (re-enable if you die)"));
+                    ActionLogger.schedulePlayerXpRateOutput(uuid, new XpRateTimerTask(serverPlayer));
+                }
+            }
+        } catch (CommandSyntaxException e) {
             e.printStackTrace();
         }
 

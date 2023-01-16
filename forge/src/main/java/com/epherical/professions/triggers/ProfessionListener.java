@@ -1,6 +1,6 @@
 package com.epherical.professions.triggers;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.ProfessionsForge;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.capability.impl.ChunkVisitedImpl;
@@ -67,7 +67,7 @@ public class ProfessionListener {
             return;
         }
 
-        ProfessionalPlayer player = CommonPlatform.platform.getPlayerManager().getPlayer(event.getPlayer().getUUID());
+        ProfessionalPlayer player = ProfessionPlatform.platform.getPlayerManager().getPlayer(event.getPlayer().getUUID());
         if (player == null) {
             return;
         }

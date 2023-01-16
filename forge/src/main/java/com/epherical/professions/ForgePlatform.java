@@ -3,7 +3,7 @@ package com.epherical.professions;
 import com.epherical.octoecon.api.Economy;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClientForge;
-import com.epherical.professions.datapack.CommonProfessionLoader;
+import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.networking.ClientNetworking;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.networking.NetworkHandler;
@@ -27,7 +27,7 @@ import net.minecraftforge.server.permission.nodes.PermissionNode;
 import java.nio.file.Path;
 import java.util.Map;
 
-public class ForgePlatform extends CommonPlatform<ForgePlatform> {
+public class ForgePlatform extends ProfessionPlatform<ForgePlatform> {
 
 
     @Override
@@ -79,7 +79,7 @@ public class ForgePlatform extends CommonPlatform<ForgePlatform> {
     }
 
     @Override
-    public CommonProfessionLoader getProfessionLoader() {
+    public ProfessionLoader getProfessionLoader() {
         return ProfessionsForge.getInstance().getProfessionLoader();
     }
 

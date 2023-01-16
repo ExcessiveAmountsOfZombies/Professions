@@ -2,7 +2,7 @@ package com.epherical.professions;
 
 import com.epherical.octoecon.api.Economy;
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.datapack.CommonProfessionLoader;
+import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.networking.ClientNetworking;
 import com.epherical.professions.networking.CommandButtons;
 import com.epherical.professions.profession.Profession;
@@ -18,15 +18,15 @@ import net.minecraft.world.entity.player.Player;
 import java.nio.file.Path;
 import java.util.Map;
 
-public abstract class CommonPlatform<T> {
+public abstract class ProfessionPlatform<T> {
 
-    public static CommonPlatform<?> platform;
+    public static ProfessionPlatform<?> platform;
 
-    protected CommonPlatform() {
+    protected ProfessionPlatform() {
         platform = this;
     }
 
-    public static <T> void create(CommonPlatform<T> value) {
+    public static <T> void create(ProfessionPlatform<T> value) {
         platform = value;
     }
 
@@ -48,7 +48,7 @@ public abstract class CommonPlatform<T> {
 
     public abstract void sendButtonPacket(CommandButtons buttons);
 
-    public abstract CommonProfessionLoader getProfessionLoader();
+    public abstract ProfessionLoader getProfessionLoader();
 
     public abstract PlayerManager getPlayerManager();
 

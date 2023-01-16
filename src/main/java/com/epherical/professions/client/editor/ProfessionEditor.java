@@ -1,6 +1,6 @@
 package com.epherical.professions.client.editor;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.client.editors.DatapackEditor;
 import com.epherical.professions.client.entry.ArrayEntry;
@@ -106,13 +106,13 @@ public class ProfessionEditor extends DatapackEditor<Profession> {
 
     @Override
     public Collection<Profession> deserializableObjects() {
-        return CommonPlatform.platform.getProfessionLoader().getProfessions();
+        return ProfessionPlatform.platform.getProfessionLoader().getProfessions();
     }
 
     @Override
     public Collection<Button> deserializableObjectButtons(DatapackEditor<Profession> editor) {
         List<Button> buttons = new ArrayList<>();
-        for (Profession profession : CommonPlatform.platform.getProfessionLoader().getProfessions()) {
+        for (Profession profession : ProfessionPlatform.platform.getProfessionLoader().getProfessions()) {
             buttons.add(new Button(0, 0, 0, 20, profession.getDisplayComponent(), button -> {
                 editor.deserialize(profession);
                 Minecraft.getInstance().setScreen(new DatapackScreen(editor));

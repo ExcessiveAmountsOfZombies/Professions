@@ -1,6 +1,6 @@
 package com.epherical.professions.profession.progression;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.api.CachedData;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.CachedDataImpl;
@@ -170,7 +170,7 @@ public class Occupation {
         public Occupation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject object = json.getAsJsonObject();
             String id = GsonHelper.getAsString(object, "prof");
-            Profession profession = CommonPlatform.platform.getProfessionLoader().getProfession(new ResourceLocation(id));
+            Profession profession = ProfessionPlatform.platform.getProfessionLoader().getProfession(new ResourceLocation(id));
             double exp = GsonHelper.getAsInt(object, "exp");
             int level = GsonHelper.getAsInt(object, "lvl");
             OccupationSlot active = OccupationSlot.valueOf(GsonHelper.getAsString(object, "slot").toUpperCase(Locale.ROOT));
@@ -187,7 +187,7 @@ public class Occupation {
             object.addProperty("exp", src.exp);
             object.addProperty("lvl", src.level);
             object.addProperty("slot", src.slot.name());
-            object.addProperty("prof", CommonPlatform.platform.getProfessionLoader().getIDFromProfession(src.profession).toString());
+            object.addProperty("prof", ProfessionPlatform.platform.getProfessionLoader().getIDFromProfession(src.profession).toString());
             return object;
         }
     }

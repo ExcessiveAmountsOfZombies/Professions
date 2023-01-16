@@ -13,3 +13,4 @@ extendable method net/minecraft/client/gui/components/AbstractSelectionList getE
 extendable method net/minecraft/client/gui/components/AbstractSelectionList getRowBottom (I)I
 
 accessible field net/minecraft/client/gui/components/CommandSuggestions pendingSuggestions Ljava/util/concurrent/CompletableFuture;
+accessible method net/minecraft/commands/arguments/ResourceOrTagLocationArgument getRegistryType (Lcom/mojang/brigadier/context/CommandContext;Ljava/lang/String;Lnet/minecraft/resources/ResourceKey;Lcom/mojang/brigadier/exceptions/DynamicCommandExceptionType;)Lnet/minecraft/commands/arguments/ResourceOrTagLocationArgument$Result;

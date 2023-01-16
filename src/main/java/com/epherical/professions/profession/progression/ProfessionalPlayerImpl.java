@@ -1,6 +1,6 @@
 package com.epherical.professions.profession.progression;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.Storage;
@@ -72,7 +72,7 @@ public class ProfessionalPlayerImpl implements ProfessionalPlayer {
 
     @Override
     public void handleAction(ProfessionContext context, ServerPlayer player) {
-        CommonPlatform.platform.sendBeforeActionHandledEvent(context, this);
+        ProfessionPlatform.platform.sendBeforeActionHandledEvent(context, this);
         for (Occupation occupation : occupations) {
             if (occupation.isActive()) {
                 Collection<Action<?>> actions = occupation.getProfession().getActions(context.getParameter(ProfessionParameter.ACTION_TYPE));

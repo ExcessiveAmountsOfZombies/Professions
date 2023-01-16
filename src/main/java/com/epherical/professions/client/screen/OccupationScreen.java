@@ -1,6 +1,6 @@
 package com.epherical.professions.client.screen;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.client.widgets.CommandButton;
 import com.epherical.professions.client.widgets.Hidden;
 import com.epherical.professions.client.widgets.HoldsProfession;
@@ -83,7 +83,7 @@ public class OccupationScreen<T> extends Screen {
                     if (button != CommandButtons.JOIN) {
                         addPrevious(this);
                     }
-                    CommonPlatform.platform.sendButtonPacket(CommandButtons.JOIN);
+                    ProfessionPlatform.platform.sendButtonPacket(CommandButtons.JOIN);
                 }));
         initWidget(new CommandButton(false, this.width / 2 - 24, this.height / 2 - 76 + 20 + 3,
                 Component.translatable("professions.gui.leave"),
@@ -91,7 +91,7 @@ public class OccupationScreen<T> extends Screen {
                     if (button != CommandButtons.LEAVE) {
                         addPrevious(this);
                     }
-                    CommonPlatform.platform.sendButtonPacket(CommandButtons.LEAVE);
+                    ProfessionPlatform.platform.sendButtonPacket(CommandButtons.LEAVE);
                 }));
         // column 2
         initWidget(new CommandButton(false, this.width / 2 - 24 + 40, this.height / 2 - 76,
@@ -100,7 +100,7 @@ public class OccupationScreen<T> extends Screen {
                     if (button != CommandButtons.TOP) {
                         addPrevious(this);
                     }
-                    CommonPlatform.platform.sendButtonPacket(CommandButtons.TOP);
+                    ProfessionPlatform.platform.sendButtonPacket(CommandButtons.TOP);
                 }));
 
         if (button != CommandButtons.INFO) {
@@ -108,7 +108,7 @@ public class OccupationScreen<T> extends Screen {
                     Component.translatable("professions.gui.info"),
                     button1 -> {
                         addPrevious(this);
-                        CommonPlatform.platform.getClientNetworking().attemptInfoPacket(professionHolder.getProfession().getKey());
+                        ProfessionPlatform.platform.getClientNetworking().attemptInfoPacket(professionHolder.getProfession().getKey());
                     });
 
             initWidget(infoButton);

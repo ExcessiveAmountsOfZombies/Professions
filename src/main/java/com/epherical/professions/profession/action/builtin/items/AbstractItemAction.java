@@ -1,6 +1,6 @@
 package com.epherical.professions.profession.action.builtin.items;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -58,7 +58,7 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
         Map<RewardType, Component> map = getRewardInformation();
         for (Item item : getRealItems()) {
             components.add(((MutableComponent) item.getDescription()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))
-                    .append(CommonPlatform.platform.displayInformation(this, map)));
+                    .append(ProfessionPlatform.platform.displayInformation(this, map)));
         }
         return components;
     }

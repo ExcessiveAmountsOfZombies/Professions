@@ -3,7 +3,7 @@ package com.epherical.professions.profession.rewards.builtin;
 import com.epherical.octoecon.api.Currency;
 import com.epherical.octoecon.api.Economy;
 import com.epherical.octoecon.api.user.UniqueUser;
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -35,7 +35,7 @@ public record PaymentReward(double amount, ResourceLocation currency) implements
 
     @Override
     public void giveReward(ProfessionContext context, Action action, Occupation occupation) {
-        Economy economy = CommonPlatform.platform.economy();
+        Economy economy = ProfessionPlatform.platform.economy();
         if (economy != null) {
             UUID playerID = context.getParameter(ProfessionParameter.THIS_PLAYER).getUuid();
             UniqueUser user = economy.getOrCreatePlayerAccount(playerID);

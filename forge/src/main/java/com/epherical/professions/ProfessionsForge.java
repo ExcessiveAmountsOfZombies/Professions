@@ -6,7 +6,7 @@ import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.capability.ChunkVisited;
 import com.epherical.professions.capability.PlayerOwnable;
 import com.epherical.professions.client.ProfessionsClientForge;
-import com.epherical.professions.commands.ProfessionsCommands;
+import com.epherical.professions.commands.ProfessionForgeCommands;
 import com.epherical.professions.config.Config;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.FileStorage;
@@ -58,6 +58,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.resource.PathPackResources;
 
@@ -67,11 +68,11 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 @Mod("professions")
-public class ProfessionsForge {
+public class ProfessionsForge extends ProfessionMod {
 
     private static ProfessionsForge mod;
     private PlayerManager playerManager;
-    private ProfessionsCommands commands;
+    private ProfessionForgeCommands commands;
     private Config config;
 
     private Storage<ProfessionalPlayer, UUID> dataStorage;
@@ -88,7 +89,7 @@ public class ProfessionsForge {
     public ProfessionsForge() {
         mod = this;
         config = new Config();
-        CommonPlatform.create(new ForgePlatform());
+        ProfessionPlatform.create(new ForgePlatform());
         handler = new NetworkHandler();
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
@@ -99,7 +100,7 @@ public class ProfessionsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonInit);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::sendMessages);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::readMessages);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeRegConstants::createRegistries);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::createRegistries);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(config::initConfig);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addPacks);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerEvent);
@@ -113,6 +114,10 @@ public class ProfessionsForge {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getConfigSpec());
 
 
+    }
+
+    private void createRegistries(NewRegistryEvent event) {
+        RegistryConstants.init();
     }
 
     private void commonInit(FMLCommonSetupEvent event) {
@@ -177,7 +182,7 @@ public class ProfessionsForge {
 
     @SubscribeEvent
     public void registerCommands(RegisterCommandsEvent event) {
-        commands = new ProfessionsCommands(this, event.getDispatcher());
+        commands = new ProfessionForgeCommands(this, event.getDispatcher());
     }
 
     @SubscribeEvent

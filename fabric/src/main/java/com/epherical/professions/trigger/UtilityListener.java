@@ -1,6 +1,6 @@
 package com.epherical.professions.trigger;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.ProfessionsFabric;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.events.SyncEvents;
@@ -61,7 +61,7 @@ public class UtilityListener {
         });
 
         ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
-            ProfessionalPlayer pPlayer = CommonPlatform.platform.getPlayerManager().getPlayer(oldPlayer.getUUID());
+            ProfessionalPlayer pPlayer = ProfessionPlatform.platform.getPlayerManager().getPlayer(oldPlayer.getUUID());
             if (pPlayer != null) {
                 pPlayer.setPlayer(newPlayer);
                 for (Occupation activeOccupation : pPlayer.getActiveOccupations()) {
@@ -101,7 +101,7 @@ public class UtilityListener {
                 return true;
             }
 
-            ProfessionalPlayer pPlayer = CommonPlatform.platform.getPlayerManager().getPlayer(player.getUUID());
+            ProfessionalPlayer pPlayer = ProfessionPlatform.platform.getPlayerManager().getPlayer(player.getUUID());
             if (pPlayer == null) {
                 return true;
             }

@@ -1,6 +1,6 @@
 package com.epherical.professions.profession.action.builtin;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
@@ -74,12 +74,12 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
     public List<Component> displayInformation() {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
-        Registry<Structure> registry = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
+        Registry<Structure> registry = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
         for (Structure feature : getRealFeatures(registry)) {
             ResourceLocation key = registry.getKey(feature);
             if (key != null) {
                 components.add(Component.literal(key.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))
-                        .append(CommonPlatform.platform.displayInformation(this, map)));
+                        .append(ProfessionPlatform.platform.displayInformation(this, map)));
             }
         }
         return components;
@@ -88,7 +88,7 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
     @Override
     public List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType) {
         List<ActionDisplay.Icon> comps = new ArrayList<>();
-        Registry<Structure> registry = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
+        Registry<Structure> registry = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
         for (Structure feature : getRealFeatures(registry)) {
             ResourceLocation key = registry.getKey(feature);
             if (key != null) {
@@ -103,7 +103,7 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
     @Override
     public List<Singular<Structure>> convertToSingle(Profession profession) {
         List<Action.Singular<Structure>> list = new ArrayList<>();
-        Registry<Structure> registry = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
+        Registry<Structure> registry = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
         for (Structure items : getRealFeatures(registry)) {
             list.add(new ExploreStructureAction.Single(items, profession));
         }

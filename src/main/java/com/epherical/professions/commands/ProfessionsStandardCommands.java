@@ -1,17 +1,13 @@
 package com.epherical.professions.commands;
 
-import com.epherical.professions.CommonPlatform;
-import com.epherical.professions.Constants;
 import com.epherical.professions.PlayerManager;
-import com.epherical.professions.ProfessionsFabric;
+import com.epherical.professions.ProfessionMod;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
-import com.epherical.professions.datapack.FabricProfLoader;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
-import com.epherical.professions.profession.editor.Append;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
@@ -22,20 +18,17 @@ import com.epherical.professions.util.ActionLogger;
 import com.epherical.professions.util.AttributeDisplay;
 import com.epherical.professions.util.XpRateTimerTask;
 import com.epherical.professions.util.mixins.GameProfileHelper;
-import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.logging.LogUtils;
-import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -52,29 +45,31 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.slf4j.Logger;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class ProfessionsCommands {
+public abstract class ProfessionsStandardCommands {
 
-    private final ProfessionsFabric mod;
     private final Logger LOGGER = LogUtils.getLogger();
+
+    private final ProfessionMod mod;
 
     public static final SuggestionProvider<CommandSourceStack> SUGGEST_ADVANCEMENTS = (commandContext, suggestionsBuilder) -> {
         Collection<Advancement> collection = (commandContext.getSource()).getServer().getAdvancements().getAllAdvancements();
         return SharedSuggestionProvider.suggestResource(collection.stream().map(Advancement::getId), suggestionsBuilder);
     };
 
-    public ProfessionsCommands(ProfessionsFabric mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher) {
+
+    public ProfessionsStandardCommands(ProfessionMod mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher) {
         this.mod = mod;
-        registerCommands(stackCommandDispatcher);
+        this.registerCommands(stackCommandDispatcher);
     }
     // Commands to add
     // help - shows commands they have access to
@@ -94,13 +89,42 @@ public class ProfessionsCommands {
     // givexp - adds experience to the player in an occupation - admin command
     // removexp - removes experience from the player in an occupation - admin command
 
+    public abstract Predicate<CommandSourceStack> helpPredicate();
+
+    public abstract Predicate<CommandSourceStack> joinPredicate();
+
+    public abstract Predicate<CommandSourceStack> leavePredicate();
+
+    public abstract Predicate<CommandSourceStack> leaveAllPredicate();
+
+    public abstract Predicate<CommandSourceStack> profilePredicate();
+
+    public abstract Predicate<CommandSourceStack> infoPredicate();
+
+    public abstract Predicate<CommandSourceStack> statsPredicate();
+
+    public abstract Predicate<CommandSourceStack> browsePredicate();
+
+    public abstract Predicate<CommandSourceStack> topPredicate();
+
+    public abstract Predicate<CommandSourceStack> reloadPredicate();
+
+    public abstract Predicate<CommandSourceStack> firePredicate();
+
+    public abstract Predicate<CommandSourceStack> fireAllPredicate();
+
+    public abstract Predicate<CommandSourceStack> employPredicate();
+
+    public abstract Predicate<CommandSourceStack> setLevelPredicate();
+
+    public abstract Predicate<CommandSourceStack> checkXpPredicate();
+
+    public abstract Predicate<CommandSourceStack> xpRatePredicate();
+
     private void registerCommands(CommandDispatcher<CommandSourceStack> stack) {
-        DynamicCommandExceptionType ERROR_POI_INVALID = new DynamicCommandExceptionType((p_214496_) -> {
-            return Component.translatable("commands.locate.poi.invalid", p_214496_);
-        });
         SuggestionProvider<CommandSourceStack> occupationProvider = (context, builder) -> {
-            for (ResourceLocation professionKey : CommonPlatform.platform.getProfessionLoader().getProfessionKeys()) {
-                builder.suggest(professionKey.toString());
+            for (ResourceLocation professionKey : mod.getProfessionLoader().getProfessionKeys()) {
+                builder.suggest("\"" + professionKey.toString() + "\"");
             }
             return builder.buildFuture();
         };
@@ -111,9 +135,7 @@ public class ProfessionsCommands {
             return builder.buildFuture();
         };
 
-        if (Constants.devDebug) {
-
-
+        /*if (Constants.devDebug) {
             RequiredArgumentBuilder<CommandSourceStack, ResourceLocation> occupation1 = Commands.argument("occupation", ResourceLocationArgument.id());
             occupation1.suggests(occupationProvider);
             for (UnlockCommands value : UnlockCommands.values()) {
@@ -141,28 +163,27 @@ public class ProfessionsCommands {
                                         return 1;
                                     })));
             stack.register(edit);
-        }
-
+        }*/
 
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("professions")
                 .then(Commands.literal("help")
-                        .requires(Permissions.require("professions.command.help", 0))
+                        .requires(helpPredicate())
                         .executes(this::help))
                 .then(Commands.literal("join")
-                        .requires(Permissions.require("professions.command.join", 0))
-                        .then(Commands.argument("occupation", ResourceLocationArgument.id())
+                        .requires(joinPredicate())
+                        .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(occupationProvider)
                                 .executes(this::join)))
                 .then(Commands.literal("leave")
-                        .requires(Permissions.require("professions.command.leave", 0))
-                        .then(Commands.argument("occupation", ResourceLocationArgument.id())
+                        .requires(leavePredicate())
+                        .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(occupationProvider)
                                 .executes(this::leave)))
                 .then(Commands.literal("leaveall")
-                        .requires(Permissions.require("professions.command.leaveall", 0))
+                        .requires(leaveAllPredicate())
                         .executes(this::leaveAll))
                 .then(Commands.literal("profile")
-                        .requires(Permissions.require("professions.command.profile", 0))
+                        .requires(profilePredicate())
                         .executes(this::profile)
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
@@ -182,67 +203,65 @@ public class ProfessionsCommands {
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                         .executes(this::perks))))*/
                 .then(Commands.literal("info")
-                        .requires(Permissions.require("professions.command.info", 0))
-                        .then(Commands.argument("occupation", ResourceLocationArgument.id())
+                        .requires(infoPredicate())
+                        .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(occupationProvider)
                                 .executes(this::info)
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                         .executes(this::info))))
                 .then(Commands.literal("stats")
-                        .requires(Permissions.require("professions.command.stats", 0))
+                        .requires(statsPredicate())
                         .executes(this::stats)
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
                                 .executes(this::stats)))
                 .then(Commands.literal("browse")
-                        .requires(Permissions.require("professions.command.browse", 0))
+                        .requires(browsePredicate())
                         .executes(this::browse))
                 .then(Commands.literal("top")
-                        .requires(Permissions.require("professions.command.top", 0))
-                        .then(Commands.argument("occupation", ResourceLocationArgument.id())
+                        .requires(topPredicate())
+                        .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(occupationProvider)
-                                .executes(this::top)
-                                .then(Commands.argument("page", IntegerArgumentType.integer(1))
-                                        .executes(this::top))))
+                                .executes(this::top)))
                 .then(Commands.literal("reload")
-                        .requires(Permissions.require("professions.command.reload", 4))
+                        .requires(reloadPredicate())
                         .executes(this::reload))
                 .then(Commands.literal("fire")
-                        .requires(Permissions.require("professions.command.fire", 4))
+                        .requires(firePredicate())
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
-                                .then(Commands.argument("occupation", ResourceLocationArgument.id())
+                                .then(Commands.argument("occupation", StringArgumentType.string())
                                         .suggests(occupationProvider)
                                         .executes(this::fire))))
                 .then(Commands.literal("fireall")
-                        .requires(Permissions.require("professions.command.fireall", 4))
+                        .requires(fireAllPredicate())
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
                                 .executes(this::fireAll)))
                 .then(Commands.literal("employ")
-                        .requires(Permissions.require("professions.command.employ", 4))
+                        .requires(employPredicate())
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
-                                .then(Commands.argument("occupation", ResourceLocationArgument.id())
+                                .then(Commands.argument("occupation", StringArgumentType.string())
                                         .suggests(occupationProvider)
                                         .executes(this::employ))))
                 .then(Commands.literal("setlevel")
-                        .requires(Permissions.require("professions.command.setlevel", 4))
+                        .requires(setLevelPredicate())
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
-                                .then(Commands.argument("occupation", ResourceLocationArgument.id())
+                                .then(Commands.argument("occupation", StringArgumentType.string())
                                         .suggests(occupationProvider)
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1))
                                                 .executes(this::setLevel)))))
                 .then(Commands.literal("admin")
                         .then(Commands.literal("checkexp")
-                                .requires(Permissions.require("professions.command.admin.checkexp", 4))
+                                .requires(checkXpPredicate())
                                 .then(Commands.argument("occupation", ResourceLocationArgument.id())
                                         .suggests(occupationProvider)
                                         .executes(this::checkExp)))
                         .then(Commands.literal("xprate")
-                                .requires(Permissions.require("professions.command.admin.xprate", 4))
-                                .executes(this::xpRate)));
+                                .requires(xpRatePredicate())
+                                .executes(this::xpRate)))
                 /*.then(Commands.literal("givexp")
                         .requires(Permissions.require("professions.command.givexp", 4))
                         .then(Commands.argument("player", StringArgumentType.string())
@@ -258,9 +277,9 @@ public class ProfessionsCommands {
                                 .then(Commands.argument("occupation", StringArgumentType.string())
                                         .suggests(occupationProvider)
                                         .then(Commands.argument("xp", IntegerArgumentType.integer(1))
-                                                .executes(this::takexp)))))*/
-        ;
+                                                .executes(this::takexp)))))*/;
         stack.register(command);
+
     }
 
     private int help(CommandContext<CommandSourceStack> stack) {
@@ -300,10 +319,10 @@ public class ProfessionsCommands {
             stack.getSource().sendSuccess(Component.translatable("║ Name: %s", Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(borders), false);
             stack.getSource().sendSuccess(Component.translatable("║ %s", Component.literal("/stats command")
-                            .setStyle(Style.EMPTY
-                                    .withColor(ProfessionConfig.variables)
-                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to run command")))
-                                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions stats " + profile.getName()))))
+                    .setStyle(Style.EMPTY
+                            .withColor(ProfessionConfig.variables)
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to run command")))
+                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions stats " + profile.getName()))))
                     .setStyle(borders), false);
             stack.getSource().sendSuccess(Component.literal("╠══════════╣")
                     .setStyle(borders), false);
@@ -454,7 +473,7 @@ public class ProfessionsCommands {
                 Collection<Action<?>> actionsFor = profession.getActions(actionType);
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     components.add(Component.translatable("=-=-=| %s |=-=-=",
-                                    Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                            Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
                     for (Action<?> action : actionsFor) {
                         components.addAll(action.displayInformation());
@@ -533,8 +552,8 @@ public class ProfessionsCommands {
                         progression = Component.literal((String.format("%.1f", percentage * 100) + "%")).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
                     } else {
                         progression = Component.translatable("%s/%s exp",
-                                        Component.literal((String.format("%.1f", activeOccupation.getExp()))).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                                        Component.literal(String.valueOf(activeOccupation.getMaxExp())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                Component.literal((String.format("%.1f", activeOccupation.getExp()))).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                                Component.literal(String.valueOf(activeOccupation.getMaxExp())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
                     }
                     HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_TEXT, progression);
@@ -543,7 +562,7 @@ public class ProfessionsCommands {
                             .append(Component.literal("|".repeat((int) (55 - bars))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors).withHoverEvent(event)))
                             .append(Component.literal(" " + activeOccupation.getProfession().getDisplayName()).setStyle(Style.EMPTY.withColor(activeOccupation.getProfession().getColor()))
                                     .append(Component.translatable("professions.command.stats.level", Component.literal("" + activeOccupation.getLevel())
-                                                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))));
                     components.add(mainComponent);
                 }
@@ -554,8 +573,7 @@ public class ProfessionsCommands {
                     }
                 } else {
                     commandPlayer.sendSystemMessage(Component.translatable("professions.command.stats.error.other_not_in_any_professions",
-                                    Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                                    Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 }
             } else {
                 commandPlayer.sendSystemMessage(Component.translatable("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
@@ -611,29 +629,27 @@ public class ProfessionsCommands {
             // if it's not a database, im not going to open all the files to see whose on top, so it will only show
             // the top players who are online.
             int messagesPerPage = 12;
-            Collection<ProfessionalPlayer> players;
+            Collection<ProfessionalPlayer> players = Collections.emptyList();
             if (!mod.getDataStorage().isDatabase()) {
                 players = mod.getPlayerManager().getPlayers();
                 players = players.stream()
                         .filter(player -> player.isOccupationActive(profession))
                         .sorted(Comparator.comparing(player -> player.getOccupation(profession).getLevel()))
+                        .limit(messagesPerPage)
                         .collect(Collectors.toList());
-            } else {
-                int finalTop = page * 12;
-                int from = finalTop - 12;
-                players = mod.getDataStorage().getUsers(from, 12, profession);
             }
             int messages = players.size();
 
             int maxPage = Math.max(messages / messagesPerPage, 1);
-            maxPage = (messages % messagesPerPage != 0) && messages > messagesPerPage ? maxPage + 1 : maxPage;
-            int begin = page == 1 ? 0 : Math.min(messages, ((page - 1) * messagesPerPage));
+            maxPage = messages % messagesPerPage != 0 ? maxPage + 1 : maxPage;
+            // todo: add multiple pages, but for now just display top 12
+            /*int begin = page == 1 ? 0 : Math.min(messages, ((page - 1) * messagesPerPage));
             int end = page == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (page * messagesPerPage));
 
             if (page > maxPage) {
                 stack.getSource().sendFailure(Component.literal("That page doesn't exist!"));
                 return 0;
-            }
+            }*/
 
             if (messages == 0) {
                 stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_players").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
@@ -641,10 +657,9 @@ public class ProfessionsCommands {
             }
 
             stack.getSource().sendSuccess(Component.translatable("professions.command.top.header",
-                            Component.literal("" + messages).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), profession.getDisplayComponent())
+                    Component.literal("" + messages).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), false);
-            int position = 1 + messagesPerPage * (page - 1);
-
+            int position = 1;
             for (ProfessionalPlayer player : players) {
                 Component playerName;
                 if (player == null) {
@@ -655,13 +670,12 @@ public class ProfessionsCommands {
                     playerName = player.getPlayer().getDisplayName();
                 }
                 MutableComponent msg = Component.translatable("professions.command.top.position",
-                                Component.literal("" + position).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                                playerName,
-                                Component.literal("" + player.getOccupation(profession).getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                                Component.literal("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                        Component.literal("" + position).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                        playerName,
+                        Component.literal("" + player.getOccupation(profession).getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                        Component.literal("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                         .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
                 stack.getSource().sendSuccess(msg, false);
-                position++;
             }
 
             MutableComponent previous = Component.translatable("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
@@ -777,9 +791,9 @@ public class ProfessionsCommands {
                 if (occupation != null) {
                     occupation.setLevel(level, player);
                     commandPlayer.sendSystemMessage(Component.translatable("professions.command.setlevel.success",
-                                    occupation.getProfession().getDisplayComponent(),
-                                    Component.literal(String.valueOf(occupation.getLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                                    Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                            occupation.getProfession().getDisplayComponent(),
+                            Component.literal(String.valueOf(occupation.getLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                            Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
                 }
             }
@@ -842,10 +856,10 @@ public class ProfessionsCommands {
 
             if (player != null) {
                 if (ActionLogger.isRunningXpCalculator(uuid)) {
-                    serverPlayer.sendSystemMessage(Component.translatable("Disabled xp rate notifier"));
+                    serverPlayer.sendMessage(new TranslatableComponent("Disabled xp rate notifier"), Util.NIL_UUID);
                     ActionLogger.removePlayerXpRateOutput(uuid);
                 } else {
-                    serverPlayer.sendSystemMessage(Component.translatable("enabled xp rate notifier (re-enable if you die)"));
+                    serverPlayer.sendMessage(new TranslatableComponent("enabled xp rate notifier (re-enable if you die)"), Util.NIL_UUID);
                     ActionLogger.schedulePlayerXpRateOutput(uuid, new XpRateTimerTask(serverPlayer));
                 }
             }

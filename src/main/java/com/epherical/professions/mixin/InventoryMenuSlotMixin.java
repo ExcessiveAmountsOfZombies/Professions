@@ -1,6 +1,6 @@
 package com.epherical.professions.mixin;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
@@ -25,7 +25,7 @@ public class InventoryMenuSlotMixin {
         Slot slot = (Slot) (Object) this;
         Inventory inventory = (Inventory) slot.container;
         if (inventory.player instanceof ServerPlayer serverPlayer) {
-            ProfessionalPlayer player = CommonPlatform.platform.getPlayerManager().getPlayer(serverPlayer.getUUID());
+            ProfessionalPlayer player = ProfessionPlatform.platform.getPlayerManager().getPlayer(serverPlayer.getUUID());
             if (player == null) {
                 return;
             }

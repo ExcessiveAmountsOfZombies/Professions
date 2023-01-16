@@ -1,7 +1,7 @@
 package com.epherical.professions.client;
 
-import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.Constants;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.screen.MenuScreen;
 import com.epherical.professions.client.screen.OccupationScreen;
@@ -54,10 +54,10 @@ public class CommonClient {
 
         if (occupationMenu.consumeClick()) {
             if (client.isLocalServer()) {
-                ProfessionalPlayer player = CommonPlatform.platform.getPlayerManager().getPlayer(client.player.getUUID());
+                ProfessionalPlayer player = ProfessionPlatform.platform.getPlayerManager().getPlayer(client.player.getUUID());
                 client.setScreen(new OccupationScreen<>(player.getActiveOccupations(), client, OccupationScreen::createOccupationEntries, null));
             } else {
-                CommonPlatform.platform.getClientNetworking().sendOccupationPacket();
+                ProfessionPlatform.platform.getClientNetworking().sendOccupationPacket();
             }
 
         }
@@ -67,7 +67,7 @@ public class CommonClient {
         if (player == null) {
             return;
         }
-        ProfessionalPlayer pPlayer = CommonPlatform.platform.getPlayerManager().getPlayer(player.getUUID());
+        ProfessionalPlayer pPlayer = ProfessionPlatform.platform.getPlayerManager().getPlayer(player.getUUID());
         if (pPlayer == null) {
             return;
         }

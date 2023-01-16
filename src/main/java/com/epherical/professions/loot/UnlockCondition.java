@@ -1,7 +1,7 @@
 package com.epherical.professions.loot;
 
-import com.epherical.professions.CommonPlatform;
 import com.epherical.professions.Constants;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.unlock.Unlock;
@@ -36,7 +36,7 @@ public class UnlockCondition implements LootItemCondition {
     public boolean test(LootContext context) {
         Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
         if ((entity instanceof ServerPlayer serverPlayer)) {
-            ProfessionalPlayer player = CommonPlatform.platform.getPlayerManager().getPlayer(serverPlayer.getUUID());
+            ProfessionalPlayer player = ProfessionPlatform.platform.getPlayerManager().getPlayer(serverPlayer.getUUID());
             if (player == null || player.getActiveOccupations().size() == 0) {
                 return true; // don't affect the loot if it's not relevant
             }

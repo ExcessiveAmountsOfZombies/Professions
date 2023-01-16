@@ -1,5 +1,6 @@
 package com.epherical.professions.profession.action;
 
+import com.epherical.professions.commands.ProfessionsStandardCommands;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.world.level.storage.loot.Serializer;
 import net.minecraft.world.level.storage.loot.SerializerType;
@@ -18,7 +19,7 @@ public class ActionType extends SerializerType<Action> {
     }
 
     /**
-     * see {@link com.epherical.professions.commands.ProfessionsCommands#info(CommandContext)}
+     * see {@link ProfessionsStandardCommands#info(CommandContext)}
      *
      * @return the display name to be shown in chat when players use /professions info
      */

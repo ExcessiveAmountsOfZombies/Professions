@@ -1,10 +1,10 @@
 package com.epherical.professions.client;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.client.editor.BoxSelectionWidget;
 import com.epherical.professions.client.editors.DatapackEditor;
 import com.epherical.professions.client.screen.DatapackScreen;
-import com.epherical.professions.datapack.AbstractProfessionLoader;
+import com.epherical.professions.datapack.ProfessionLoader;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -36,9 +36,9 @@ public class SaveSideBar extends Box {
                 try {
                     JsonObject object = new JsonObject();
                     entry.getEditor().serialize(object);
-                    Files.createDirectories(CommonPlatform.platform.getRootConfigPath().resolve(formattedSavePath));
-                    Files.writeString(CommonPlatform.platform.getRootConfigPath().resolve(formattedSavePath + entry.getFileName().getPath() + ".json"),
-                            AbstractProfessionLoader.serialize(object));
+                    Files.createDirectories(ProfessionPlatform.platform.getRootConfigPath().resolve(formattedSavePath));
+                    Files.writeString(ProfessionPlatform.platform.getRootConfigPath().resolve(formattedSavePath + entry.getFileName().getPath() + ".json"),
+                            ProfessionLoader.serialize(object));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

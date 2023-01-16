@@ -1,6 +1,6 @@
 package com.epherical.professions.profession.action.builtin.entity;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.ProfessionContext;
 import com.epherical.professions.profession.ProfessionParameter;
@@ -63,7 +63,7 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
         Map<RewardType, Component> map = getRewardInformation();
         for (EntityType<?> entity : getRealEntities()) {
             components.add((entity.getDescription().copy()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))
-                    .append(CommonPlatform.platform.displayInformation(this, map)));
+                    .append(ProfessionPlatform.platform.displayInformation(this, map)));
         }
         return components;
     }

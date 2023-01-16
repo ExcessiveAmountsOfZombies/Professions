@@ -1,6 +1,6 @@
 package com.epherical.professions.mixin.unlocks;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.profession.unlock.Unlocks;
@@ -37,7 +37,7 @@ public abstract class PlayerEquipmentMixin {
     @Inject(method = "setItemSlot", at = @At(value = "HEAD"), cancellable = true)
     public void professions$unlockPreventEquip(EquipmentSlot slot, ItemStack itemStack, CallbackInfo ci) {
         if (slot.getType() == EquipmentSlot.Type.ARMOR) {
-            ProfessionalPlayer professionalPlayer = CommonPlatform.platform.getPlayerManager().getPlayer(this.gameProfile.getId());
+            ProfessionalPlayer professionalPlayer = ProfessionPlatform.platform.getPlayerManager().getPlayer(this.gameProfile.getId());
             if (professionalPlayer != null) {
                 List<Unlock.Singular<Item>> lockedKnowledge = professionalPlayer.getLockedKnowledge(itemStack.getItem(), Set.of(Unlocks.EQUIPMENT_UNLOCK, Unlocks.ADVANCEMENT_UNLOCK));
                 for (Unlock.Singular<Item> itemSingular : lockedKnowledge) {

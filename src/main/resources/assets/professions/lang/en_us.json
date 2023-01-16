@@ -68,6 +68,7 @@
   "professions.gui.top": "Top",
   "professions.gui.close": "Close",
   "professions.gui.no_entries": "You aren't in any professions.",
+  "professions.gui.joined_everything": "There are either no professions to join, or you have joined them all.",
   "professions.gui.no_entries.leave": "Go back. (click join)",
 
   "professions.tooltip.unlock.drop_req": "%s drops at lvl %s.",

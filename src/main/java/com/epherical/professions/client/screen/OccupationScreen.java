@@ -54,6 +54,8 @@ public class OccupationScreen<T> extends Screen {
 
     private final MutableComponent NO_ENTRIES = new TranslatableComponent("professions.gui.no_entries")
             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+    private final MutableComponent JOINED_ALL = new TranslatableComponent("professions.gui.joined_everything")
+            .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
     private final MutableComponent NO_ENTRIES_LEAVE = new TranslatableComponent("professions.gui.no_entries.leave")
             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
 
@@ -144,7 +146,12 @@ public class OccupationScreen<T> extends Screen {
         renderOccupationWindow(poseStack, ofx, ofy);
 
         if (entries.size() == 0) {
-            drawCenteredString(poseStack, font, NO_ENTRIES, ((this.width - imageWidth) / 2) + 83, ofy + 50, -1);
+            if (button != null && button == CommandButtons.JOIN) {
+                drawCenteredString(poseStack, font, JOINED_ALL, ((this.width) / 2), ofy + 58, -1);
+            } else {
+                drawCenteredString(poseStack, font, NO_ENTRIES, ((this.width - imageWidth) / 2) + 83, ofy + 50, -1);
+            }
+
             if (button == CommandButtons.LEAVE) {
                 drawCenteredString(poseStack, font, NO_ENTRIES_LEAVE, ((this.width - imageWidth) / 2) + 83, ofy + 70, -1);
             }

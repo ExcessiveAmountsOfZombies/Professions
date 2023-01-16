@@ -105,6 +105,9 @@ public class ProfessionsForge extends ProfessionMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addPacks);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerEvent);
 
+        // if single player, it will stay null, if it's a server it will be populated later.
+        this.playerManager = new PlayerManager(null, null);
+
         MinecraftForge.EVENT_BUS.register(new ProfPermissions());
         MinecraftForge.EVENT_BUS.register(new ProfessionListener());
         MinecraftForge.EVENT_BUS.register(new BlockTriggers(this));

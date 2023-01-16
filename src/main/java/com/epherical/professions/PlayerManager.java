@@ -56,7 +56,7 @@ public class PlayerManager {
             }
             players.put(player.getUUID(), pPlayer);
         }
-        CommonPlatform.platform.sendSyncRequest(player);
+        ProfessionPlatform.platform.sendSyncRequest(player);
     }
 
     public void playerQuit(ServerPlayer player) {
@@ -97,7 +97,7 @@ public class PlayerManager {
         if (!player.joinOccupation(profession, slot)) {
             return;
         }
-        CommonPlatform.platform.professionJoinEvent(player, profession, slot, player.getPlayer());
+        ProfessionPlatform.platform.professionJoinEvent(player, profession, slot, player.getPlayer());
         serverPlayer.sendMessage(new TranslatableComponent("professions.command.join.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
 
         storage.saveUser(player);
@@ -109,14 +109,14 @@ public class PlayerManager {
             return false;
         }
 
-        if (CommonPlatform.platform.isClientEnvironment() && ProfessionConfig.preventLeavingProfession && CommonPlatform.platform.checkPermission(serverPlayer, "professions.bypass.leave_prevention")) {
+        if (ProfessionPlatform.platform.isClientEnvironment() && ProfessionConfig.preventLeavingProfession && ProfessionPlatform.platform.checkPermission(serverPlayer, "professions.bypass.leave_prevention")) {
             // todo translations
             serverPlayer.sendMessage(new TranslatableComponent("Allowing you to leave profession, but only because cheats are enabled.").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
             return false;
 
         }
 
-        if (ProfessionConfig.preventLeavingProfession && !CommonPlatform.platform.checkPermission(serverPlayer, "professions.bypass.leave_prevention")) {
+        if (ProfessionConfig.preventLeavingProfession && !ProfessionPlatform.platform.checkPermission(serverPlayer, "professions.bypass.leave_prevention")) {
             serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.error.disabled_in_config").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)), Util.NIL_UUID);
             return false;
         }
@@ -128,7 +128,7 @@ public class PlayerManager {
         if (!player.leaveOccupation(profession)) {
             return false;
         }
-        CommonPlatform.platform.professionLeaveEvent(player, profession, serverPlayer);
+        ProfessionPlatform.platform.professionLeaveEvent(player, profession, serverPlayer);
         storage.saveUser(player);
         serverPlayer.sendMessage(new TranslatableComponent("professions.command.leave.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), Util.NIL_UUID);
         return true;
@@ -230,8 +230,8 @@ public class PlayerManager {
 
     private boolean hasPermission(ServerPlayer player, Profession profession) {
         String profKey = profession.getKey().toString().replaceAll(":", ".");
-        return CommonPlatform.platform.checkPermission(player, "professions.join", 0) &&
-                CommonPlatform.platform.checkDynamicPermission(player, "professions.start", profKey.toLowerCase(Locale.ROOT), 0);
+        return ProfessionPlatform.platform.checkPermission(player, "professions.join", 0) &&
+                ProfessionPlatform.platform.checkDynamicPermission(player, "professions.start", profKey.toLowerCase(Locale.ROOT), 0);
     }
 
     public List<Occupation> synchronizePlayer(ServerPlayer player) {
@@ -247,7 +247,7 @@ public class PlayerManager {
     }
 
     public boolean isSynchronized(UUID uuid) {
-        return synchronizedPlayers.contains(uuid) || CommonPlatform.platform.isClientEnvironment();
+        return synchronizedPlayers.contains(uuid) || ProfessionPlatform.platform.isClientEnvironment();
     }
 
 

@@ -1,6 +1,6 @@
 package com.epherical.professions.client.screen;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.client.widgets.CommandButton;
 import com.epherical.professions.client.widgets.Hidden;
 import com.epherical.professions.client.widgets.HoldsProfession;
@@ -16,7 +16,6 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -31,11 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 
 public class OccupationScreen<T> extends Screen {
@@ -88,7 +84,7 @@ public class OccupationScreen<T> extends Screen {
                     if (button != CommandButtons.JOIN) {
                         addPrevious(this);
                     }
-                    CommonPlatform.platform.sendButtonPacket(CommandButtons.JOIN);
+                    ProfessionPlatform.platform.sendButtonPacket(CommandButtons.JOIN);
                 }));
         initWidget(new CommandButton(false, this.width / 2 - 24, this.height / 2 - 76 + 20 + 3,
                 new TranslatableComponent("professions.gui.leave"),
@@ -96,7 +92,7 @@ public class OccupationScreen<T> extends Screen {
                     if (button != CommandButtons.LEAVE) {
                         addPrevious(this);
                     }
-                    CommonPlatform.platform.sendButtonPacket(CommandButtons.LEAVE);
+                    ProfessionPlatform.platform.sendButtonPacket(CommandButtons.LEAVE);
                 }));
         // column 2
         initWidget(new CommandButton(false, this.width / 2 - 24 + 40, this.height / 2 - 76,
@@ -105,7 +101,7 @@ public class OccupationScreen<T> extends Screen {
                     if (button != CommandButtons.TOP) {
                         addPrevious(this);
                     }
-                    CommonPlatform.platform.sendButtonPacket(CommandButtons.TOP);
+                    ProfessionPlatform.platform.sendButtonPacket(CommandButtons.TOP);
                 }));
 
         if (button != CommandButtons.INFO) {
@@ -113,7 +109,7 @@ public class OccupationScreen<T> extends Screen {
                     new TranslatableComponent("professions.gui.info"),
                     button1 -> {
                         addPrevious(this);
-                        CommonPlatform.platform.getClientNetworking().attemptInfoPacket(professionHolder.getProfession().getKey());
+                        ProfessionPlatform.platform.getClientNetworking().attemptInfoPacket(professionHolder.getProfession().getKey());
                     });
 
             initWidget(infoButton);

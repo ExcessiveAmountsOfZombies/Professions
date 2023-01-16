@@ -1,6 +1,6 @@
 package com.epherical.professions.client.widgets;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.networking.CommandButtons;
@@ -125,7 +125,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
             this.button = new OccupationEntryButton(listing, 0, 0, 92, 24, button1 -> {
                 if (parent.getButton() != null) {
                     if (parent.getButton().equals(CommandButtons.LEAVE)) {
-                        CommonPlatform.platform.getClientNetworking().attemptLeavePacket(button.getOccupation().getProfession().getKey());
+                        ProfessionPlatform.platform.getClientNetworking().attemptLeavePacket(button.getOccupation().getProfession().getKey());
                     }
                 }
 
@@ -178,15 +178,15 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
                 if (parent.getButton() != null) {
                     switch (parent.getButton()) {
                         case JOIN -> {
-                            CommonPlatform.platform.getClientNetworking().attemptJoinPacket(profession.getKey());
-                            CommonPlatform.platform.getClientNetworking().sendOccupationPacket();
+                            ProfessionPlatform.platform.getClientNetworking().attemptJoinPacket(profession.getKey());
+                            ProfessionPlatform.platform.getClientNetworking().sendOccupationPacket();
                         }
                         case LEAVE -> {
-                            CommonPlatform.platform.getClientNetworking().attemptLeavePacket(profession.getKey());
-                            CommonPlatform.platform.getClientNetworking().sendOccupationPacket();
+                            ProfessionPlatform.platform.getClientNetworking().attemptLeavePacket(profession.getKey());
+                            ProfessionPlatform.platform.getClientNetworking().sendOccupationPacket();
                         }
                         case INFO -> {
-                            CommonPlatform.platform.getClientNetworking().attemptInfoPacket(profession.getKey());
+                            ProfessionPlatform.platform.getClientNetworking().attemptInfoPacket(profession.getKey());
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 package com.epherical.professions.data;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,7 +84,7 @@ public class FileStorage implements Storage<ProfessionalPlayer, UUID> {
         }
         ProfessionalPlayerImpl player = new ProfessionalPlayerImpl(uuid);
         if (ProfessionConfig.autoJoinProfessions) {
-            for (Profession profession : CommonPlatform.platform.getProfessionLoader().getProfessions()) {
+            for (Profession profession : ProfessionPlatform.platform.getProfessionLoader().getProfessions()) {
                 player.joinOccupation(profession, OccupationSlot.ACTIVE);
             }
         }

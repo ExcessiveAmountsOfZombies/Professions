@@ -1,7 +1,7 @@
 package com.epherical.professions.commands;
 
 import com.epherical.professions.PlayerManager;
-import com.epherical.professions.ProfessionsForge;
+import com.epherical.professions.ProfessionMod;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
@@ -16,6 +16,7 @@ import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.util.ActionLogger;
 import com.epherical.professions.util.AttributeDisplay;
+import com.epherical.professions.util.XpRateTimerTask;
 import com.epherical.professions.util.mixins.GameProfileHelper;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
@@ -26,9 +27,13 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.logging.LogUtils;
 import net.minecraft.Util;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -40,8 +45,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraftforge.server.permission.PermissionAPI;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,18 +53,25 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.epherical.professions.ProfPermissions.*;
+public abstract class ProfessionsStandardCommands {
 
-public class ProfessionsCommands {
+    private final Logger LOGGER = LogUtils.getLogger();
 
-    private final ProfessionsForge mod;
+    private final ProfessionMod mod;
 
-    public ProfessionsCommands(ProfessionsForge mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher) {
+    public static final SuggestionProvider<CommandSourceStack> SUGGEST_ADVANCEMENTS = (commandContext, suggestionsBuilder) -> {
+        Collection<Advancement> collection = (commandContext.getSource()).getServer().getAdvancements().getAllAdvancements();
+        return SharedSuggestionProvider.suggestResource(collection.stream().map(Advancement::getId), suggestionsBuilder);
+    };
+
+
+    public ProfessionsStandardCommands(ProfessionMod mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher) {
         this.mod = mod;
-        registerCommands(stackCommandDispatcher);
+        this.registerCommands(stackCommandDispatcher);
     }
     // Commands to add
     // help - shows commands they have access to
@@ -80,17 +91,37 @@ public class ProfessionsCommands {
     // givexp - adds experience to the player in an occupation - admin command
     // removexp - removes experience from the player in an occupation - admin command
 
-    private Predicate<CommandSourceStack> require(PermissionNode<Boolean> node) {
-        return commandSourceStack -> {
-            try {
-                ServerPlayer player = commandSourceStack.getPlayerOrException();
-                return PermissionAPI.getPermission(player, node);
-            } catch (CommandSyntaxException e) {
-                e.printStackTrace();
-            }
-            return false;
-        };
-    }
+    public abstract Predicate<CommandSourceStack> helpPredicate();
+
+    public abstract Predicate<CommandSourceStack> joinPredicate();
+
+    public abstract Predicate<CommandSourceStack> leavePredicate();
+
+    public abstract Predicate<CommandSourceStack> leaveAllPredicate();
+
+    public abstract Predicate<CommandSourceStack> profilePredicate();
+
+    public abstract Predicate<CommandSourceStack> infoPredicate();
+
+    public abstract Predicate<CommandSourceStack> statsPredicate();
+
+    public abstract Predicate<CommandSourceStack> browsePredicate();
+
+    public abstract Predicate<CommandSourceStack> topPredicate();
+
+    public abstract Predicate<CommandSourceStack> reloadPredicate();
+
+    public abstract Predicate<CommandSourceStack> firePredicate();
+
+    public abstract Predicate<CommandSourceStack> fireAllPredicate();
+
+    public abstract Predicate<CommandSourceStack> employPredicate();
+
+    public abstract Predicate<CommandSourceStack> setLevelPredicate();
+
+    public abstract Predicate<CommandSourceStack> checkXpPredicate();
+
+    public abstract Predicate<CommandSourceStack> xpRatePredicate();
 
     private void registerCommands(CommandDispatcher<CommandSourceStack> stack) {
         SuggestionProvider<CommandSourceStack> occupationProvider = (context, builder) -> {
@@ -106,26 +137,55 @@ public class ProfessionsCommands {
             return builder.buildFuture();
         };
 
+        /*if (Constants.devDebug) {
+            RequiredArgumentBuilder<CommandSourceStack, ResourceLocation> occupation1 = Commands.argument("occupation", ResourceLocationArgument.id());
+            occupation1.suggests(occupationProvider);
+            for (UnlockCommands value : UnlockCommands.values()) {
+                occupation1.then(value.source);
+            }
+
+            LiteralArgumentBuilder<CommandSourceStack> edit = Commands.literal("prfssns")
+                    .requires(Permissions.require("professions.command.admin.uedit", 4))
+                    .then(Commands.literal("append").then(occupation1))
+                    .then(Commands.literal("export")
+                            .then(Commands.argument("suffix", StringArgumentType.string())
+                                    .executes(context -> {
+                                        String suffix = StringArgumentType.getString(context, "suffix");
+                                        for (Map.Entry<ResourceLocation, Append.Builder> entry : UnlockCommands.builderMap.entrySet()) {
+
+                                            JsonElement serialize = FabricProfLoader.serialize(entry.getValue().build());
+                                            try {
+                                                Files.writeString(CommonPlatform.platform.getRootConfigPath().resolve(entry.getKey().getPath()
+                                                        + suffix + ".json"), serialize.toString());
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        UnlockCommands.builderMap.clear();
+                                        return 1;
+                                    })));
+            stack.register(edit);
+        }*/
 
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("professions")
                 .then(Commands.literal("help")
-                        .requires(require(HELP))
+                        .requires(helpPredicate())
                         .executes(this::help))
                 .then(Commands.literal("join")
-                        .requires(require(JOIN))
+                        .requires(joinPredicate())
                         .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(occupationProvider)
                                 .executes(this::join)))
                 .then(Commands.literal("leave")
-                        .requires(require(LEAVE))
+                        .requires(leavePredicate())
                         .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(occupationProvider)
                                 .executes(this::leave)))
                 .then(Commands.literal("leaveall")
-                        .requires(require(LEAVE_ALL))
+                        .requires(leaveAllPredicate())
                         .executes(this::leaveAll))
                 .then(Commands.literal("profile")
-                        .requires(require(PROFILE))
+                        .requires(profilePredicate())
                         .executes(this::profile)
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
@@ -145,56 +205,65 @@ public class ProfessionsCommands {
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                         .executes(this::perks))))*/
                 .then(Commands.literal("info")
-                        .requires(require(INFO))
+                        .requires(infoPredicate())
                         .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(occupationProvider)
                                 .executes(this::info)
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                         .executes(this::info))))
                 .then(Commands.literal("stats")
-                        .requires(require(STATS))
+                        .requires(statsPredicate())
                         .executes(this::stats)
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
                                 .executes(this::stats)))
                 .then(Commands.literal("browse")
-                        .requires(require(BROWSE))
+                        .requires(browsePredicate())
                         .executes(this::browse))
                 .then(Commands.literal("top")
-                        .requires(require(TOP))
+                        .requires(topPredicate())
                         .then(Commands.argument("occupation", StringArgumentType.string())
                                 .suggests(occupationProvider)
                                 .executes(this::top)))
                 .then(Commands.literal("reload")
-                        .requires(require(RELOAD))
+                        .requires(reloadPredicate())
                         .executes(this::reload))
                 .then(Commands.literal("fire")
-                        .requires(require(FIRE))
+                        .requires(firePredicate())
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
                                 .then(Commands.argument("occupation", StringArgumentType.string())
                                         .suggests(occupationProvider)
                                         .executes(this::fire))))
                 .then(Commands.literal("fireall")
-                        .requires(require(FIRE_ALL))
+                        .requires(fireAllPredicate())
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
                                 .executes(this::fireAll)))
                 .then(Commands.literal("employ")
-                        .requires(require(EMPLOY))
+                        .requires(employPredicate())
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
                                 .then(Commands.argument("occupation", StringArgumentType.string())
                                         .suggests(occupationProvider)
                                         .executes(this::employ))))
                 .then(Commands.literal("setlevel")
-                        .requires(require(SET_LEVEL))
+                        .requires(setLevelPredicate())
                         .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(playerProvider)
                                 .then(Commands.argument("occupation", StringArgumentType.string())
                                         .suggests(occupationProvider)
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1))
                                                 .executes(this::setLevel)))))
+                .then(Commands.literal("admin")
+                        .then(Commands.literal("checkexp")
+                                .requires(checkXpPredicate())
+                                .then(Commands.argument("occupation", ResourceLocationArgument.id())
+                                        .suggests(occupationProvider)
+                                        .executes(this::checkExp)))
+                        .then(Commands.literal("xprate")
+                                .requires(xpRatePredicate())
+                                .executes(this::xpRate)))
                 /*.then(Commands.literal("givexp")
                         .requires(Permissions.require("professions.command.givexp", 4))
                         .then(Commands.argument("player", StringArgumentType.string())
@@ -212,6 +281,7 @@ public class ProfessionsCommands {
                                         .then(Commands.argument("xp", IntegerArgumentType.integer(1))
                                                 .executes(this::takexp)))))*/;
         stack.register(command);
+
     }
 
     private int help(CommandContext<CommandSourceStack> stack) {
@@ -226,7 +296,8 @@ public class ProfessionsCommands {
         String playerArg = "";
         try {
             playerArg = StringArgumentType.getString(stack, "player");
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
 
         try {
             ServerPlayer commandPlayer = stack.getSource().getPlayerOrException();
@@ -738,6 +809,50 @@ public class ProfessionsCommands {
             profile = commandPlayer.getGameProfile();
         }
         return profile;
+    }
+
+    private int checkExp(CommandContext<CommandSourceStack> stack) {
+        ResourceLocation potentialProfession = ResourceLocation.tryParse(StringArgumentType.getString(stack, "occupation"));
+        try {
+            Profession profession = mod.getProfessionLoader().getProfession(potentialProfession);
+            if (profession == null) {
+                stack.getSource().sendFailure(new TextComponent("Could not find that profession"));
+                return 0;
+            }
+            int start = 1;
+            int max = Math.min(profession.getMaxLevel(), 100);
+            LOGGER.info("CSV experience check");
+            LOGGER.info("Level,Experience");
+            for (int i = start; i <= max; i++) {
+                LOGGER.info("{},{}", i, (int) profession.getExperienceForLevel(i));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 1;
+    }
+
+    private int xpRate(CommandContext<CommandSourceStack> stack) {
+        try {
+            ServerPlayer serverPlayer = stack.getSource().getPlayerOrException();
+            UUID uuid = serverPlayer.getUUID();
+            ProfessionalPlayer player = mod.getPlayerManager().getPlayer(uuid);
+
+            if (player != null) {
+                if (ActionLogger.isRunningXpCalculator(uuid)) {
+                    serverPlayer.sendMessage(new TranslatableComponent("Disabled xp rate notifier"), Util.NIL_UUID);
+                    ActionLogger.removePlayerXpRateOutput(uuid);
+                } else {
+                    serverPlayer.sendMessage(new TranslatableComponent("enabled xp rate notifier (re-enable if you die)"), Util.NIL_UUID);
+                    ActionLogger.schedulePlayerXpRateOutput(uuid, new XpRateTimerTask(serverPlayer));
+                }
+            }
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+        }
+
+        return 1;
     }
 
 }

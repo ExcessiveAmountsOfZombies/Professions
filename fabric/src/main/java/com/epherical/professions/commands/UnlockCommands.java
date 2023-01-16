@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.epherical.professions.commands.ProfessionsCommands.SUGGEST_ADVANCEMENTS;
+import static com.epherical.professions.commands.ProfessionsFabricCommands.SUGGEST_ADVANCEMENTS;
 
 public enum UnlockCommands {
 

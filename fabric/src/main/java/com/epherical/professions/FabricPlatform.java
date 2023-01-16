@@ -3,7 +3,7 @@ package com.epherical.professions;
 import com.epherical.octoecon.api.Economy;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.client.ProfessionsClient;
-import com.epherical.professions.datapack.CommonProfessionLoader;
+import com.epherical.professions.datapack.ProfessionLoader;
 import com.epherical.professions.events.OccupationEvents;
 import com.epherical.professions.networking.ClientHandler;
 import com.epherical.professions.networking.ClientNetworking;
@@ -27,7 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import java.nio.file.Path;
 import java.util.Map;
 
-public class FabricPlatform extends CommonPlatform<FabricPlatform> {
+public class FabricPlatform extends ProfessionPlatform<FabricPlatform> {
 
 
     @Override
@@ -76,7 +76,7 @@ public class FabricPlatform extends CommonPlatform<FabricPlatform> {
     }
 
     @Override
-    public CommonProfessionLoader getProfessionLoader() {
+    public ProfessionLoader getProfessionLoader() {
         return ProfessionsFabric.getInstance().getProfessionLoader();
     }
 

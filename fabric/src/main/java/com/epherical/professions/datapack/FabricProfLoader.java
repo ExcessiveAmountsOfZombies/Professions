@@ -10,7 +10,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.util.Map;
 
-public class FabricProfLoader extends AbstractProfessionLoader implements IdentifiableResourceReloadListener, CommonProfessionLoader {
+public class FabricProfLoader extends ProfessionLoader implements IdentifiableResourceReloadListener {
 
     public FabricProfLoader() {
         super();

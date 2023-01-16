@@ -3,7 +3,7 @@ package com.epherical.professions;
 import com.epherical.octoecon.api.Economy;
 import com.epherical.octoecon.api.event.EconomyEvents;
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.commands.ProfessionsCommands;
+import com.epherical.professions.commands.ProfessionsFabricCommands;
 import com.epherical.professions.config.CommonConfig;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.FileStorage;
@@ -15,9 +15,6 @@ import com.epherical.professions.integration.ftb.FTBIntegration;
 import com.epherical.professions.loot.UnlockCondition;
 import com.epherical.professions.mixin.LootTableBuilderAccessor;
 import com.epherical.professions.networking.ServerHandler;
-import com.epherical.professions.profession.ProfessionEditorSerializer;
-import com.epherical.professions.profession.ProfessionSerializer;
-import com.epherical.professions.profession.unlock.UnlockSerializer;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
 import com.epherical.professions.trigger.UtilityListener;
@@ -45,12 +42,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class ProfessionsFabric implements ModInitializer {
+public class ProfessionsFabric extends ProfessionMod implements ModInitializer {
 
     private static ProfessionsFabric mod;
     private ProfessionListener listener;
     private PlayerManager playerManager;
-    private ProfessionsCommands commands;
+    private ProfessionsFabricCommands commands;
     private CommonConfig config;
 
     private static @Nullable Economy economy;
@@ -66,7 +63,7 @@ public class ProfessionsFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        CommonPlatform.create(new FabricPlatform());
+        ProfessionPlatform.create(new FabricPlatform());
         startup = true;
         mod = this;
         this.config = new CommonConfig(false, "professions.conf");
@@ -78,10 +75,11 @@ public class ProfessionsFabric implements ModInitializer {
             }
         }
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
-            this.commands = new ProfessionsCommands(this, dispatcher);
+            this.commands = new ProfessionsFabricCommands(this, dispatcher);
         });
 
-        init();
+        RegistryConstants.init();
+        Constants.UNLOCK_CONDITION = registerLootCondition("unlock_condition", new UnlockCondition.Serializer());
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(professionLoader);
         EconomyEvents.ECONOMY_CHANGE_EVENT.register(economy -> {
             this.economy = economy;
@@ -127,13 +125,6 @@ public class ProfessionsFabric implements ModInitializer {
         playerManager = new PlayerManager(null, null);
     }
 
-    private static void init() {
-        // dumb way to load classes, it'll change later
-        var init = ProfessionSerializer.DEFAULT_PROFESSION;
-        var clazz = ProfessionEditorSerializer.APPEND_EDITOR;
-        var bozo = UnlockSerializer.BLOCK_DROP_UNLOCK;
-    }
-
     public static LootItemConditionType registerLootCondition(String id, Serializer<? extends LootItemCondition> serializer) {
         return Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation(Constants.MOD_ID, id), new LootItemConditionType(serializer));
     }
@@ -164,10 +155,5 @@ public class ProfessionsFabric implements ModInitializer {
 
     public CommonConfig getConfig() {
         return config;
-    }
-
-    static {
-        // todo: dont like, maybe find a better way to classload this? is there a better way?
-        FabricRegConstants.init();
     }
 }

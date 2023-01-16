@@ -11,7 +11,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Map;
 
-public class ForgeProfLoader extends AbstractProfessionLoader implements CommonProfessionLoader {
+public class ForgeProfLoader extends ProfessionLoader {
 
     public ForgeProfLoader() {
         super();

@@ -43,14 +43,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractProfessionLoader extends SimpleJsonResourceReloadListener {
+public abstract class ProfessionLoader extends SimpleJsonResourceReloadListener {
     protected static final Logger LOGGER = LogUtils.getLogger();
     protected static final Gson GSON = createProfessionSerializer()
             .setPrettyPrinting()
             .create();
     protected Map<ResourceLocation, Profession> professionMap = ImmutableMap.of();
 
-    public AbstractProfessionLoader() {
+    public ProfessionLoader() {
         super(GSON, "professions/occupations");
     }
 

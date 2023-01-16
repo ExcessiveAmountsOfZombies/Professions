@@ -1,6 +1,6 @@
 package com.epherical.professions.profession.action.builtin;
 
-import com.epherical.professions.CommonPlatform;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
 import com.epherical.professions.profession.ProfessionContext;
@@ -74,12 +74,12 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
     public List<Component> displayInformation() {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
-        Registry<Biome> registry = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<Biome> registry = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
         for (Biome realBiome : getRealBiomes(registry)) {
             ResourceLocation key = registry.getKey(realBiome);
             if (key != null) {
                 components.add(new TextComponent(key.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))
-                        .append(CommonPlatform.platform.displayInformation(this, map)));
+                        .append(ProfessionPlatform.platform.displayInformation(this, map)));
             }
         }
         return components;
@@ -88,7 +88,7 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
     @Override
     public List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType) {
         List<ActionDisplay.Icon> comps = new ArrayList<>();
-        Registry<Biome> biomes = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<Biome> biomes = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
         for (Biome realBiome : getRealBiomes(biomes)) {
             ResourceLocation key = biomes.getKey(realBiome);
             if (key != null) {
@@ -103,7 +103,7 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
     @Override
     public List<Action.Singular<Biome>> convertToSingle(Profession profession) {
         List<Action.Singular<Biome>> list = new ArrayList<>();
-        Registry<Biome> biomes = CommonPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<Biome> biomes = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
         for (Biome items : getRealBiomes(biomes)) {
             list.add(new ExploreBiomeAction.Single(items, profession));
         }

@@ -28,7 +28,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.logging.LogUtils;
-import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -856,10 +855,10 @@ public abstract class ProfessionsStandardCommands {
 
             if (player != null) {
                 if (ActionLogger.isRunningXpCalculator(uuid)) {
-                    serverPlayer.sendMessage(new TranslatableComponent("Disabled xp rate notifier"), Util.NIL_UUID);
+                    serverPlayer.sendSystemMessage(Component.translatable("Disabled xp rate notifier"));
                     ActionLogger.removePlayerXpRateOutput(uuid);
                 } else {
-                    serverPlayer.sendMessage(new TranslatableComponent("enabled xp rate notifier (re-enable if you die)"), Util.NIL_UUID);
+                    serverPlayer.sendSystemMessage(Component.translatable("enabled xp rate notifier (re-enable if you die)"));
                     ActionLogger.schedulePlayerXpRateOutput(uuid, new XpRateTimerTask(serverPlayer));
                 }
             }

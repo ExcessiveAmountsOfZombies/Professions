@@ -66,7 +66,7 @@ public abstract class AbstractAction<T> implements Action<T> {
     public final Map<RewardType, Component> getRewardInformation() {
         Map<RewardType, Component> map = new HashMap<>();
         for (Reward reward : rewards) {
-            if (reward.getType().equals(Rewards.PAYMENT_REWARD) && CommonPlatform.platform.economy() == null) {
+            if (reward.getType().equals(Rewards.PAYMENT_REWARD) && ProfessionPlatform.platform.economy() == null) {
                 map.put(reward.getType(), Component.literal(""));
                 continue;
             }

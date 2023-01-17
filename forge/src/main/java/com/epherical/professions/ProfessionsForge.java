@@ -12,6 +12,7 @@ import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.data.FileStorage;
 import com.epherical.professions.data.Storage;
 import com.epherical.professions.datapack.ForgeProfLoader;
+import com.epherical.professions.integration.ftb.FTBIntegration;
 import com.epherical.professions.loot.UnlockCondition;
 import com.epherical.professions.networking.NetworkHandler;
 import com.epherical.professions.triggers.BlockTriggers;
@@ -107,6 +108,10 @@ public class ProfessionsForge extends ProfessionMod {
         MinecraftForge.EVENT_BUS.register(new BlockTriggers(this));
         MinecraftForge.EVENT_BUS.register(new EntityTriggers(this));
         MinecraftForge.EVENT_BUS.register(this);
+
+        if (ModList.get().isLoaded("ftbquests")) {
+            FTBIntegration.init();
+        }
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.getConfigSpec());
 

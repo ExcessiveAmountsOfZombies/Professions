@@ -14,9 +14,8 @@ import dev.ftb.mods.ftbquests.quest.task.BooleanTask;
 import dev.ftb.mods.ftbquests.quest.task.TaskType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -71,7 +70,7 @@ public class ProfessionTaskType extends BooleanTask {
     public void getConfig(ConfigGroup config) {
         super.getConfig(config);
         TooltipList tooltipList = new TooltipList();
-        tooltipList.add(new TextComponent("This should be a key from the datapack professions."));
+        tooltipList.add(Component.literal("This should be a key from the datapack professions."));
         config.addString("profession", professionKey.toString(), s -> {
             this.professionKey = new ResourceLocation(s);
         }, "professions:unknown").addInfo(tooltipList);
@@ -88,13 +87,13 @@ public class ProfessionTaskType extends BooleanTask {
     public void addMouseOverText(TooltipList list, TeamData teamData) {
         list.blankLine();
         if (action == ProfessionEventAction.JOIN) {
-            list.add(new TranslatableComponent("ftbquests.task.professions.profession.join_req",
-                    new TextComponent(professionKey.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+            list.add(Component.translatable("ftbquests.task.professions.profession.join_req",
+                            Component.literal(professionKey.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
         } else {
-            list.add(new TranslatableComponent("ftbquests.task.professions.profession.level_req",
-                    new TextComponent(professionKey.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)),
-                    new TextComponent(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+            list.add(Component.translatable("ftbquests.task.professions.profession.level_req",
+                            Component.literal(professionKey.toString()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)),
+                            Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
         }
         super.addMouseOverText(list, teamData);

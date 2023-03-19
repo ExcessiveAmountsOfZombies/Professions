@@ -10,7 +10,7 @@ import net.minecraftforge.server.permission.nodes.PermissionNode;
 
 import java.util.function.Predicate;
 
-import static com.epherical.professions.ProfPermissions.*;
+import static com.epherical.professions.util.ProfPermissions.*;
 
 public class ProfessionForgeCommands extends ProfessionsStandardCommands {
 

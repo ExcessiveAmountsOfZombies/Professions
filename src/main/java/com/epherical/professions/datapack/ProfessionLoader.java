@@ -16,6 +16,7 @@ import com.epherical.professions.profession.modifiers.milestones.Milestone;
 import com.epherical.professions.profession.modifiers.milestones.Milestones;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.Perks;
+import com.epherical.professions.profession.operation.ObjectOperation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.epherical.professions.profession.unlock.Unlock;
@@ -100,7 +101,7 @@ public abstract class ProfessionLoader extends SimpleJsonResourceReloadListener 
         this.professionMap = ImmutableMap.copyOf(result);
     }
 
-    private static GsonBuilder createProfessionSerializer() {
+    public static GsonBuilder createProfessionSerializer() {
         GsonBuilder builder = new GsonBuilder()
                 .registerTypeHierarchyAdapter(Reward.class, Rewards.createGsonAdapter())
                 .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
@@ -111,7 +112,8 @@ public abstract class ProfessionLoader extends SimpleJsonResourceReloadListener 
                 .registerTypeAdapter(BasicModifiers.class, new BasicModifiers.ModifierSerializer())
                 .registerTypeAdapter(Append.class, ProfessionEditorSerializer.APPEND_EDITOR)
                 .registerTypeAdapter(Profession.class, ProfessionSerializer.DEFAULT_PROFESSION)
-                .registerTypeAdapter(ProfessionBuilder.class, ProfessionSerializer.DEFAULT_PROFESSION);
+                .registerTypeAdapter(ProfessionBuilder.class, ProfessionSerializer.DEFAULT_PROFESSION)
+                .registerTypeAdapter(ObjectOperation.class, new ObjectOperation.OperationSerializer<>());
         // todo; event
         //ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;

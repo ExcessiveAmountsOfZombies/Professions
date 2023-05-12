@@ -118,6 +118,11 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
         return realBiomes;
     }
 
+    @Override
+    public void addActionEntry(ActionEntry<Biome> entry) {
+        entries.add(entry);
+    }
+
     public List<ActionEntry<Biome>> getEntries() {
         return entries;
     }

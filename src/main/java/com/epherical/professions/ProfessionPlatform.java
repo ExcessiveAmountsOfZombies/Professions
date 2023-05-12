@@ -58,6 +58,8 @@ public abstract class ProfessionPlatform<T> {
 
     public abstract void professionLeaveEvent(ProfessionalPlayer player, Profession profession, ServerPlayer serverPlayer);
 
+    public abstract void datapackFinishedLoadingEvent();
+
     public abstract void sendSyncRequest(ServerPlayer player);
 
     public abstract ClientNetworking getClientNetworking();

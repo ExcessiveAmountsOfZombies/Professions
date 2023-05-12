@@ -7,6 +7,7 @@ import com.epherical.professions.profession.ProfessionParameter;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.util.ActionDisplay;
+import com.epherical.professions.util.ActionEntry;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
@@ -25,6 +26,12 @@ public interface Action<T> extends Predicate<ProfessionContext> {
     List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType);
 
     List<Action.Singular<T>> convertToSingle(Profession profession);
+
+    @Deprecated()
+    // TODO; this is a result of technical debt in switching from V1 to V2 of our data loading process.
+    //  ideally the action wouldn't be formed until it has its single action entry, but we'll figure out how to solve
+    //  that later.
+    void addActionEntry(ActionEntry<T> entry);
 
     /**
      * Called after it has already been shown the action is successful.

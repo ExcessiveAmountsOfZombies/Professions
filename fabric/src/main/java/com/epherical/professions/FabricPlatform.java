@@ -100,6 +100,11 @@ public class FabricPlatform extends ProfessionPlatform<FabricPlatform> {
     }
 
     @Override
+    public void datapackFinishedLoadingEvent() {
+
+    }
+
+    @Override
     public void sendSyncRequest(ServerPlayer player) {
         ServerHandler.sendSyncRequest(player);
     }

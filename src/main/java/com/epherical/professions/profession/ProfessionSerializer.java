@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface ProfessionSerializer<T extends Profession, V extends ProfessionBuilder> extends JsonDeserializer<V>, JsonSerializer<T> {
+    @Deprecated
     ProfessionSerializer<Profession, ProfessionBuilder> DEFAULT_PROFESSION = registerSerializer(Constants.modID("default"), new Profession.Serializer());
+    ProfessionSerializer<Profession, ProfessionBuilder> DEFAULT_PROFESSION_V2 = registerSerializer(Constants.modID("default_v2"), new Profession.SerializerV2());
 
     T fromServer(FriendlyByteBuf buf);
 

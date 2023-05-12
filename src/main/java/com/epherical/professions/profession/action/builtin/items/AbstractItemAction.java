@@ -89,6 +89,11 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
         return realItems;
     }
 
+    @Override
+    public void addActionEntry(ActionEntry<Item> entry) {
+        items.add(entry);
+    }
+
     public List<ActionEntry<Item>> getItems() {
         return items;
     }
@@ -120,7 +125,7 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
         }
 
         public static List<ActionEntry<Item>> deserializeItems(JsonObject object) {
-            JsonArray array = GsonHelper.getAsJsonArray(object, "items");
+            JsonArray array = GsonHelper.getAsJsonArray(object, "items", new JsonArray());
             List<ActionEntry<Item>> items = new ArrayList<>();
             for (JsonElement element : array) {
                 String id = element.getAsString();

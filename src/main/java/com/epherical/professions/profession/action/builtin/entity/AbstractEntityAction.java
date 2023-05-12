@@ -89,6 +89,11 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
         return realEntities;
     }
 
+    @Override
+    public void addActionEntry(ActionEntry<EntityType<?>> entry) {
+        entities.add(entry);
+    }
+
     public List<ActionEntry<EntityType<?>>> getEntities() {
         return entities;
     }

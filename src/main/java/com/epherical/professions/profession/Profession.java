@@ -335,4 +335,132 @@ public class Profession {
             return Profession.class;
         }
     }
+
+    public static class SerializerV2 extends Serializer {
+
+
+        @Override
+        public ProfessionBuilder deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject object = GsonHelper.convertToJsonObject(json, "profession object");
+            TextColor professionColor = TextColor.parseColor(GsonHelper.getAsString(object, "color", "#FF0000"));
+            TextColor descriptionColor = TextColor.parseColor(GsonHelper.getAsString(object, "descriptionColor", "#FFFFFF"));
+            String[] description = GsonHelper.getAsObject(object, "description", context, String[].class);
+            String displayName = GsonHelper.getAsString(object, "displayName");
+            int maxLevel = GsonHelper.getAsInt(object, "maxLevel");
+            ProfessionBuilder builder = ProfessionBuilder.profession(
+                    professionColor, descriptionColor, description, displayName, maxLevel);
+            /*Action<?>[] actions = GsonHelper.getAsObject(object, "actions", new Action[0], context, Action[].class);
+            for (Action<?> action : actions) {
+                builder.addAction(action.getType(), action);
+            }
+            Unlock<?>[] unlocks = GsonHelper.getAsObject(object, "unlocks", new Unlock[0], context, Unlock[].class);
+            for (Unlock<?> unlock : unlocks) {
+                builder.addUnlock(unlock.getType(), unlock);
+            }*/
+            Parser experienceScaling = new Parser(GsonHelper.getAsString(object, "experienceSclEquation"));
+            Parser incomeScaling = new Parser(GsonHelper.getAsString(object, "incomeSclEquation"));
+            builder.setExperienceScalingEquation(experienceScaling);
+            builder.setIncomeScalingEquation(incomeScaling);
+            BasicModifiers modifiers = GsonHelper.getAsObject(object, "modifiers", context, BasicModifiers.class);
+            builder.setModifiers(modifiers);
+            return builder;
+        }
+
+        @Override
+        public JsonElement serialize(Profession src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject object = new JsonObject();
+            object.addProperty("type", RegistryConstants.PROFESSION_SERIALIZER.getKey(src.getSerializer()).toString());
+            object.addProperty("color", src.color.serialize());
+            object.addProperty("descriptionColor", src.descriptionColor.serialize());
+            JsonArray array = new JsonArray();
+            for (String s : src.description) {
+                array.add(s);
+            }
+            object.add("description", array);
+            object.addProperty("displayName", src.displayName);
+            object.addProperty("maxLevel", src.maxLevel);
+            object.addProperty("experienceSclEquation", src.experienceScalingEquation.getExpression());
+            object.addProperty("incomeSclEquation", src.incomeScalingEquation.getExpression());
+            /*JsonArray actionArray = new JsonArray();
+            for (Collection<Action<?>> value : src.actions.values()) {
+                for (Action<?> action : value) {
+                    actionArray.add(context.serialize(action));
+                }
+            }
+            object.add("actions", actionArray);*/
+            /*JsonArray unlockArray = new JsonArray();
+            for (Collection<Unlock<?>> value : src.unlocks.values()) {
+                for (Unlock<?> unlock : value) {
+                    unlockArray.add(context.serialize(unlock));
+                }
+            }
+            object.add("unlocks", unlockArray);*/
+            object.add("modifiers", context.serialize(src.modifiers));
+            return object;
+        }
+
+        @Override
+        public Profession fromServer(FriendlyByteBuf buffer) {
+            ResourceLocation location = buffer.readResourceLocation();
+            TextColor color = TextColor.parseColor(buffer.readUtf());
+            TextColor descColor = TextColor.parseColor(buffer.readUtf());
+            String displayName = buffer.readUtf();
+            String[] description = new String[buffer.readVarInt()];
+            for (int i = 0; i < description.length; i++) {
+                description[i] = buffer.readUtf();
+            }
+            Map<UnlockType<?>, Collection<Unlock<?>>> map = new HashMap<>();
+            if (buffer.readBoolean()) {
+                map = buffer.readMap(buf ->
+                        RegistryConstants.UNLOCKS.get(buf.readResourceLocation()), buf -> {
+                    int size = buf.readVarInt();
+                    Collection<Unlock<?>> unlocks = new ArrayList<>();
+                    for (int i = 0; i < size; i++) {
+                        UnlockSerializer<?> serializer = RegistryConstants.UNLOCK_TYPE.get(buf.readResourceLocation());
+                        if (serializer != null) {
+                            unlocks.add(serializer.fromNetwork(buf));
+                        }
+                    }
+                    return unlocks;
+                });
+            }
+            Profession profession = new Profession(color, descColor, description, displayName, -1, ImmutableMap.of(), ImmutableMap.copyOf(map), null, null, new BasicModifiers(new Milestone[0], new Perk[0]));
+            profession.setKey(location);
+            return profession;
+        }
+
+        @Override
+        public void toClient(FriendlyByteBuf buf, Profession profession, boolean sendUnlocks) {
+            buf.writeResourceLocation(profession.key);
+            buf.writeUtf(profession.color.serialize());
+            buf.writeUtf(profession.descriptionColor.serialize());
+            buf.writeUtf(profession.displayName);
+            buf.writeVarInt(profession.description.length);
+            for (String s : profession.description) {
+                buf.writeUtf(s);
+            }
+            buf.writeBoolean(sendUnlocks);
+            if (sendUnlocks) {
+                buf.writeMap(profession.getUnlocks(), (buf1, unlockType) -> {
+                    buf.writeResourceLocation(RegistryConstants.UNLOCKS.getKey(unlockType));
+                }, (buf1, unlocks1) -> {
+                    buf.writeVarInt(unlocks1.size());
+                    for (Unlock unlock : unlocks1) {
+                        buf.writeResourceLocation(RegistryConstants.UNLOCK_TYPE.getKey(unlock.getSerializer()));
+                        unlock.getSerializer().toNetwork(buf, unlock); // todo: figure out generics
+                    }
+                });
+            }
+        }
+
+        @Override
+        public Class<ProfessionBuilder> getBuilderType() {
+            return ProfessionBuilder.class;
+        }
+
+        @Override
+        public Class<Profession> getType() {
+            return Profession.class;
+        }
+    }
 }

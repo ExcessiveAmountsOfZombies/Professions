@@ -23,6 +23,9 @@ public class KillAction extends AbstractEntityAction {
         super(conditions, rewards, types);
     }
 
+
+
+
     @Override
     public ActionType getType() {
         return Actions.KILL_ENTITY;

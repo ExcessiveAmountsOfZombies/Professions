@@ -1,0 +1,30 @@
+{
+  "type": "professions:default_v2",
+  "color": "#666E63",
+  "description": [
+    "Earn money and experience",
+    "by mining ores and minerals."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "displayName": "Mining",
+  "experienceSclEquation": "1000*1.03706264^(lvl-1)",
+  "incomeSclEquation": "base",
+  "maxLevel": 100,
+  "modifiers": {
+    "milestones": [],
+    "perks": [
+      {
+        "attribute": "minecraft:generic.max_health",
+        "increaseBy": 0.2,
+        "level": 1,
+        "perk": "professions:scaling_attribute"
+      },
+      {
+        "attribute": "minecraft:generic.knockback_resistance",
+        "increaseBy": 0.002,
+        "level": 10,
+        "perk": "professions:scaling_attribute"
+      }
+    ]
+  }
+}

@@ -96,6 +96,11 @@ public abstract class BlockAbstractAction extends AbstractAction<Block> {
         return realBlocks;
     }
 
+    @Override
+    public void addActionEntry(ActionEntry<Block> entry) {
+        blocks.add(entry);
+    }
+
     public List<ActionEntry<Block>> getBlocks() {
         return blocks;
     }

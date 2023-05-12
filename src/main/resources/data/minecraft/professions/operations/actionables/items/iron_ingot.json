@@ -1,0 +1,46 @@
+{
+  "actions": [
+    {
+      "action": {
+        "action": "professions:on_item_smelted",
+        "conditions": [],
+        "rewards": [
+          {
+            "amount": 2.0,
+            "reward": "professions:occupation_exp"
+          },
+          {
+            "amount": 2.0,
+            "currency": "eights_economy:dollars",
+            "reward": "professions:payment"
+          }
+        ]
+      },
+      "occupations": [
+        "professions:smithing",
+        "professions:crafting",
+        "rework:mining"
+      ]
+    },
+    {
+      "occupations": [
+        "professions:trading"
+      ],
+      "single_action": {
+        "action": "professions:villager_trade",
+        "conditions": [],
+        "rewards": [
+          {
+            "amount": 3.0,
+            "currency": "eights_economy:dollars",
+            "reward": "professions:payment"
+          },
+          {
+            "amount": 3.0,
+            "reward": "professions:occupation_exp"
+          }
+        ]
+      }
+    }
+  ]
+}

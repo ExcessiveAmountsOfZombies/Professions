@@ -5,6 +5,7 @@
   "refmap": "Professions-refmap.json",
   "mixins": [
     "InventoryMenuSlotMixin",
+    "MixinReloadableServerResources",
     "accessor.EnchantmentPredicateAccess",
     "accessor.ItemPredicateAccess",
     "accessor.RangedPropertyMatcherAccess",

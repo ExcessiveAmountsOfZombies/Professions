@@ -120,6 +120,11 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
         return realEntries;
     }
 
+    @Override
+    public void addActionEntry(ActionEntry<Structure> entry) {
+        entries.add(entry);
+    }
+
     public static Builder explore() {
         return new Builder();
     }

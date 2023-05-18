@@ -19,9 +19,7 @@ As we go down this next list, it goes from most generic, to most specific. The m
 applied last, so if something is defined in the class folder, if you specifically define it in the object
 folder, it will use the object definition rather than the class or tag definition.
 
-* `/operations/classes/` Any data that goes in this folder, will operate on a class level. 
-There are some prebuilt classes, and mod developers will be able to add their own as well.
-* `/operations/tags/` If you want to operate on the tag level, you would place entries in this folder.
+* `/operations/actionables/<type>` If you want to operate on the tag level, you would place entries in this folder.
 * `/operations/objects/<type>` Each folder will house a different type of, whether it's blocks,
 items, biomes, or something else.
 

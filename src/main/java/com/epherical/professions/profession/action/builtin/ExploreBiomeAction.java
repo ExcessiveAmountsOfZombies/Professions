@@ -176,7 +176,7 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
 
         @Override
         public ExploreBiomeAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
-            JsonArray array = GsonHelper.getAsJsonArray(object, "biomes");
+            JsonArray array = GsonHelper.getAsJsonArray(object, "biomes", new JsonArray());
             List<ActionEntry<Biome>> biomes = new ArrayList<>();
             for (JsonElement element : array) {
                 String id = element.getAsString();

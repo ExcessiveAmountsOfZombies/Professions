@@ -1,4 +1,5 @@
 {
+  "type": "professions:item",
   "actions": [
     {
       "single_action": {

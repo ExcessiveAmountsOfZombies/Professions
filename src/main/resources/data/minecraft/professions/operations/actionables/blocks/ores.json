@@ -1,0 +1,53 @@
+{
+  "type": "professions:tag",
+  "actions": [
+    {
+      "occupations": [
+        "professions:mining",
+        "professions:crafting",
+        "rework:mining"
+      ],
+      "single_action": {
+        "action": "professions:break_block",
+        "conditions": [
+          {
+            "condition": "professions:inverted",
+            "term": {
+              "condition": "professions:tool_matches",
+              "predicate": {
+                "enchantments": [
+                  {
+                    "enchantment": "minecraft:silk_touch"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "rewards": [
+          {
+            "amount": 2.0,
+            "reward": "professions:occupation_exp"
+          },
+          {
+            "amount": 2.0,
+            "currency": "eights_economy:dollars",
+            "reward": "professions:payment"
+          }
+        ]
+      }
+    }
+  ],
+  "unlocks": [
+    {
+      "unlock": "professions:block_break",
+      "level": 2,
+      "occupations": [
+        {
+          "occupation": "professions:mining",
+          "level": 3
+        }
+      ]
+    }
+  ]
+}

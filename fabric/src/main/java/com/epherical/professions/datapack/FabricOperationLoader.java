@@ -1,16 +1,16 @@
 package com.epherical.professions.datapack;
 
-import com.epherical.professions.profession.operation.ObjectOperation;
+import com.epherical.professions.profession.operation.AbstractOperation;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
-public class FabricOperationLoader<OP extends ObjectOperation<?>, T> extends OperationLoader<OP, T> implements IdentifiableResourceReloadListener {
+public class FabricOperationLoader<OP extends AbstractOperation<T>, T> extends OperationLoader<OP, T> implements IdentifiableResourceReloadListener {
 
 
-    public FabricOperationLoader(String dataLocation, Class<? extends OP> clazz, ResourceKey<Registry<T>> resourceKey) {
-        super(dataLocation, clazz, resourceKey);
+    public FabricOperationLoader(String dataLocation, ResourceKey<Registry<T>> resourceKey) {
+        super(dataLocation, resourceKey);
     }
 
     @Override

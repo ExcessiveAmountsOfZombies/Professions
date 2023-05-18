@@ -1,47 +1,28 @@
 package com.epherical.professions.profession.operation;
 
-import com.epherical.professions.profession.ProfessionBuilder;
-import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.unlock.Unlock;
 import com.epherical.professions.util.ActionEntry;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.GsonHelper;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-public class ObjectOperation<T> {
+public class ObjectOperation<T> extends AbstractOperation<T> {
 
-    private List<ProfessionAction<T>> actions;
-    private List<Unlock<T>> unlocks;
-
-    private ResourceKey<? extends Registry<?>> resourceKey;
 
     public ObjectOperation(List<ProfessionAction<T>> actions, List<Unlock<T>> unlocks) {
-        this.unlocks = unlocks;
-        this.actions = actions;
+        super(actions, unlocks);
     }
 
-    public void setKey(ResourceKey<? extends Registry<?>> object) {
-        resourceKey = object;
+    @Override
+    public ActionEntry<T> getActionEntryType(MinecraftServer server, ResourceKey<Registry<T>> registry, ResourceLocation key) {
+        return ActionEntry.of(ResourceKey.create(registry, key));
     }
 
 
-    public void applyData(MinecraftServer server, Map<ResourceLocation, ProfessionBuilder> builderMap) {
+    /*public void applyData(MinecraftServer server, Map<ResourceLocation, ProfessionBuilder> builderMap) {
         for (ProfessionAction<T> action : actions) {
             for (ResourceLocation occupation : action.getOccupations()) {
                 ProfessionBuilder professionBuilder = builderMap.get(occupation);
@@ -57,11 +38,16 @@ public class ObjectOperation<T> {
                 }
             }
         }
+    }*/
 
+    public static class OperationSerializer<V> extends AbstractOperationSerializer<ObjectOperation<V>, V> {
+        @Override
+        public ObjectOperation<V> deserialize(List<ProfessionAction<V>> professionActions, List<Unlock<V>> unlocks) {
+            return new ObjectOperation<>(professionActions, unlocks);
+        }
     }
 
-
-    public static class OperationSerializer<T> implements JsonSerializer<ObjectOperation<T>>, JsonDeserializer<ObjectOperation<T>> {
+    /*public static class OperationSerializer<T> implements JsonSerializer<ObjectOperation<T>>, JsonDeserializer<ObjectOperation<T>> {
 
         @Override
         public JsonElement serialize(ObjectOperation<T> src, Type typeOfSrc, JsonSerializationContext context) {
@@ -95,5 +81,5 @@ public class ObjectOperation<T> {
             }
             return new ObjectOperation<>(list, List.of());
         }
-    }
+    }*/
 }

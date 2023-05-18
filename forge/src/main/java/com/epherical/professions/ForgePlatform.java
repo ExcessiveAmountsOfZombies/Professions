@@ -104,6 +104,11 @@ public class ForgePlatform extends ProfessionPlatform<ForgePlatform> {
     }
 
     @Override
+    public void datapackFinishedLoadingEvent() {
+
+    }
+
+    @Override
     public void sendSyncRequest(ServerPlayer player) {
         NetworkHandler.Server.sendSyncRequest(player);
     }

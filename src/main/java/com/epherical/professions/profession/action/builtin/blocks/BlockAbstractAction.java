@@ -167,7 +167,7 @@ public abstract class BlockAbstractAction extends AbstractAction<Block> {
         }
 
         public static List<ActionEntry<Block>> deserializeBlocks(JsonObject object) {
-            JsonArray array = GsonHelper.getAsJsonArray(object, "blocks");
+            JsonArray array = GsonHelper.getAsJsonArray(object, "blocks", new JsonArray());
             List<ActionEntry<Block>> blocks = new ArrayList<>();
             for (JsonElement element : array) {
                 String blockID = element.getAsString();

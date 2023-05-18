@@ -17,6 +17,7 @@ import com.epherical.professions.profession.modifiers.milestones.Milestones;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.epherical.professions.profession.operation.ObjectOperation;
+import com.epherical.professions.profession.operation.TagOperation;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.epherical.professions.profession.unlock.Unlock;
@@ -113,7 +114,8 @@ public abstract class ProfessionLoader extends SimpleJsonResourceReloadListener 
                 .registerTypeAdapter(Append.class, ProfessionEditorSerializer.APPEND_EDITOR)
                 .registerTypeAdapter(Profession.class, ProfessionSerializer.DEFAULT_PROFESSION)
                 .registerTypeAdapter(ProfessionBuilder.class, ProfessionSerializer.DEFAULT_PROFESSION)
-                .registerTypeAdapter(ObjectOperation.class, new ObjectOperation.OperationSerializer<>());
+                .registerTypeAdapter(ObjectOperation.class, new ObjectOperation.OperationSerializer<>())
+                .registerTypeAdapter(TagOperation.class, new TagOperation.TagOperationSerializer<>());
         // todo; event
         //ProfessionUtilityEvents.SERIALIZER_CALLBACK.invoker().addProfessionSerializer(builder);
         return builder;

@@ -1,7 +1,8 @@
 {
+  "type": "professions:item",
   "actions": [
     {
-      "action": {
+      "single_action": {
         "action": "professions:on_item_smelted",
         "conditions": [],
         "rewards": [

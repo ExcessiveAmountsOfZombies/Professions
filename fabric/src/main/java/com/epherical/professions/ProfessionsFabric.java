@@ -17,7 +17,7 @@ import com.epherical.professions.integration.ftb.FTBIntegration;
 import com.epherical.professions.loot.UnlockCondition;
 import com.epherical.professions.mixin.LootTableBuilderAccessor;
 import com.epherical.professions.networking.ServerHandler;
-import com.epherical.professions.profession.operation.ObjectOperation;
+import com.epherical.professions.profession.operation.AbstractOperation;
 import com.epherical.professions.trigger.BlockTriggers;
 import com.epherical.professions.trigger.EntityTriggers;
 import com.epherical.professions.trigger.UtilityListener;
@@ -92,17 +92,23 @@ public class ProfessionsFabric extends ProfessionMod implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(fabricProfLoaderV2);
         // TODO: add a page to display future rewards
 
-        FabricOperationLoader<ObjectOperation<Item>, Item> ITEM_ACTIONS = new FabricOperationLoader("professions/operations/actionables/items", ObjectOperation.class, Registry.ITEM_REGISTRY);
-        FabricOperationLoader<ObjectOperation<Block>, Block> BLOCK_ACTIONS = new FabricOperationLoader("professions/operations/actionables/blocks", ObjectOperation.class, Registry.BLOCK_REGISTRY);
-        FabricOperationLoader<ObjectOperation<EntityType<?>>, EntityType<?>> ENTITY_ACTIONS = new FabricOperationLoader("professions/operations/actionables/entities", ObjectOperation.class, Registry.ENTITY_TYPE_REGISTRY);
-        FabricOperationLoader<ObjectOperation<Biome>, Biome> BIOME_ACTIONS = new FabricOperationLoader("professions/operations/actionables/biomes", ObjectOperation.class, Registry.BIOME_REGISTRY);
+        // TODO; we can abstract this better
+        FabricOperationLoader<AbstractOperation<Item>, Item> ITEM_ACTIONS = new FabricOperationLoader("professions/operations/actionables/items", Registry.ITEM_REGISTRY);
+        FabricOperationLoader<AbstractOperation<Block>, Block> BLOCK_ACTIONS = new FabricOperationLoader("professions/operations/actionables/blocks", Registry.BLOCK_REGISTRY);
+        FabricOperationLoader<AbstractOperation<EntityType<?>>, EntityType<?>> ENTITY_ACTIONS = new FabricOperationLoader("professions/operations/actionables/entities", Registry.ENTITY_TYPE_REGISTRY);
+        FabricOperationLoader<AbstractOperation<Biome>, Biome> BIOME_ACTIONS = new FabricOperationLoader("professions/operations/actionables/biomes", Registry.BIOME_REGISTRY);
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(ITEM_ACTIONS);
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(BLOCK_ACTIONS);
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(ENTITY_ACTIONS);
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(BIOME_ACTIONS);
+
 
         // TODO; delete temporary data afterwards to reduce memory consumption?
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
             if (success) {
                 ITEM_ACTIONS.finishLoading(server, fabricProfLoaderV2.getBuilderMap());
+                BLOCK_ACTIONS.finishLoading(server, fabricProfLoaderV2.getBuilderMap());
                 fabricProfLoaderV2.finishLoading();
             }
             System.out.println("FINISHED RELOADING DATAPACK");
@@ -110,6 +116,7 @@ public class ProfessionsFabric extends ProfessionMod implements ModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             ITEM_ACTIONS.finishLoading(server, fabricProfLoaderV2.getBuilderMap());
+            BLOCK_ACTIONS.finishLoading(server, fabricProfLoaderV2.getBuilderMap());
             fabricProfLoaderV2.finishLoading();
         });
 

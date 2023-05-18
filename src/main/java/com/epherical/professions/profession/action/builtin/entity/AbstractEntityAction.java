@@ -125,7 +125,7 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
         }
 
         public List<ActionEntry<EntityType<?>>> deserializeEntities(JsonObject object) {
-            JsonArray array = GsonHelper.getAsJsonArray(object, "entities");
+            JsonArray array = GsonHelper.getAsJsonArray(object, "entities", new JsonArray());
             List<ActionEntry<EntityType<?>>> entities = new ArrayList<>();
             for (JsonElement element : array) {
                 String entityID = element.getAsString();

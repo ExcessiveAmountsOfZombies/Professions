@@ -1,10 +1,11 @@
 package com.epherical.professions.datapack;
 
 import com.epherical.professions.profession.ProfessionBuilder;
+import com.epherical.professions.profession.operation.AbstractOperation;
 import com.epherical.professions.profession.operation.ObjectOperation;
+import com.epherical.professions.profession.operation.TagOperation;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -19,21 +20,19 @@ import java.util.Map;
 
 import static com.epherical.professions.datapack.ProfessionLoader.GSON;
 
-public class OperationLoader<OP extends ObjectOperation<?>, T> extends SimpleJsonResourceReloadListener {
+public class OperationLoader<OP extends AbstractOperation<T>, T> extends SimpleJsonResourceReloadListener {
 
-    private final Class<? extends OP> clazz;
+    private static Map<ResourceLocation, Class<?>> operationTypes = new HashMap<>();
 
     private final String directory;
 
     protected Map<ResourceLocation, OP> operation = new HashMap<>();
 
-    private final ResourceKey<? extends Registry<T>> resourceKey;
+    private final ResourceKey<Registry<T>> resourceKey;
 
-    public OperationLoader(String dataLocation, Class<? extends OP> clazz, ResourceKey<Registry<T>> resourceKey) {
+    public OperationLoader(String dataLocation, ResourceKey<Registry<T>> resourceKey) {
         super(GSON, dataLocation);
         this.directory = dataLocation;
-        this.clazz = clazz;
-        // todo; maybe enforce key type.
         this.resourceKey = resourceKey;
     }
 
@@ -42,11 +41,16 @@ public class OperationLoader<OP extends ObjectOperation<?>, T> extends SimpleJso
         object.forEach((resourceLocation, jsonElement) -> {
             JsonObject jsonObject = GsonHelper.convertToJsonObject(jsonElement, "dataLocation");
             try {
-                OP type = GSON.fromJson(jsonObject, clazz);
-                type.setKey((ResourceKey<? extends Registry<?>>) ResourceKey.create(resourceKey, resourceLocation));
-                // TODO; Datapack reloading fails this could cause an issue. we could end up with inconsistent data.
-                operation.put(resourceLocation, type);
-            } catch (JsonSyntaxException e) {
+                // TODO; maybe we make our own extension of GsonHelper to give better errors?
+                ResourceLocation operationType = new ResourceLocation(GsonHelper.getAsString(jsonObject, "type"));
+                Class<OP> aClass = (Class<OP>) operationTypes.get(operationType);
+                if (aClass != null) {
+                    OP op = GSON.fromJson(jsonObject, aClass);
+                    // TODO; Datapack reloading fails this could cause an issue. we could end up with inconsistent data.
+                    op.setKey( resourceKey, resourceLocation);
+                    operation.put(resourceLocation, op);
+                }
+            } catch (Exception e) {
                 String fileLocation = resourceLocation.getNamespace() + "/" + directory + "/" + resourceLocation.getPath() + ".json";
                 ProfessionLoader.LOGGER.warn("Operation could not be loaded, likely file is {}. ERROR: {}", fileLocation, e.getMessage());
                 throw e;
@@ -62,5 +66,10 @@ public class OperationLoader<OP extends ObjectOperation<?>, T> extends SimpleJso
 
     public String getDirectory() {
         return directory;
+    }
+
+    static {
+        operationTypes.put(new ResourceLocation("professions:item"), ObjectOperation.class);
+        operationTypes.put(new ResourceLocation("professions:tag"), TagOperation.class);
     }
 }

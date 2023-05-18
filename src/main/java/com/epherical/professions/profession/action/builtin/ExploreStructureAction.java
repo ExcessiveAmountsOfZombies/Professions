@@ -171,7 +171,7 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
 
         @Override
         public ExploreStructureAction deserialize(JsonObject object, JsonDeserializationContext context, ActionCondition[] conditions, Reward[] rewards) {
-            JsonArray array = GsonHelper.getAsJsonArray(object, "structures");
+            JsonArray array = GsonHelper.getAsJsonArray(object, "structures", new JsonArray());
             List<ActionEntry<Structure>> structs = new ArrayList<>();
             for (JsonElement element : array) {
                 String id = element.getAsString();

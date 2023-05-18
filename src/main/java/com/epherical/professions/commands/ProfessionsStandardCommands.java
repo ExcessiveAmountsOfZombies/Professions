@@ -2,22 +2,41 @@ package com.epherical.professions.commands;
 
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionMod;
+import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.RegistryConstants;
 import com.epherical.professions.api.ProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.profession.Profession;
+import com.epherical.professions.profession.ProfessionBuilder;
+import com.epherical.professions.profession.ProfessionEditorSerializer;
+import com.epherical.professions.profession.ProfessionSerializer;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.action.ActionType;
+import com.epherical.professions.profession.action.Actions;
+import com.epherical.professions.profession.conditions.ActionCondition;
+import com.epherical.professions.profession.conditions.ActionConditions;
+import com.epherical.professions.profession.editor.Append;
+import com.epherical.professions.profession.modifiers.BasicModifiers;
+import com.epherical.professions.profession.modifiers.milestones.Milestone;
+import com.epherical.professions.profession.modifiers.milestones.Milestones;
 import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
 import com.epherical.professions.profession.modifiers.perks.builtin.SingleAttributePerk;
+import com.epherical.professions.profession.operation.ObjectOperation;
+import com.epherical.professions.profession.operation.TagOperation;
 import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.profession.progression.OccupationSlot;
+import com.epherical.professions.profession.rewards.Reward;
+import com.epherical.professions.profession.rewards.Rewards;
+import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ActionLogger;
 import com.epherical.professions.util.AttributeDisplay;
 import com.epherical.professions.util.XpRateTimerTask;
 import com.epherical.professions.util.mixins.GameProfileHelper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -28,11 +47,15 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.logging.LogUtils;
+import net.minecraft.FileUtil;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataProvider;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -42,8 +65,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.level.storage.LevelResource;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -260,7 +287,10 @@ public abstract class ProfessionsStandardCommands {
                                         .executes(this::checkExp)))
                         .then(Commands.literal("xprate")
                                 .requires(xpRatePredicate())
-                                .executes(this::xpRate)))
+                                .executes(this::xpRate))
+                        .then(Commands.literal("convert_new_format")
+                                .requires(commandSourceStack -> commandSourceStack.hasPermission(4))
+                                .executes(this::convertOldProfessionsToNewFormat)))
                 /*.then(Commands.literal("givexp")
                         .requires(Permissions.require("professions.command.givexp", 4))
                         .then(Commands.argument("player", StringArgumentType.string())
@@ -279,6 +309,46 @@ public abstract class ProfessionsStandardCommands {
                                                 .executes(this::takexp)))))*/;
         stack.register(command);
 
+    }
+
+    private int convertOldProfessionsToNewFormat(CommandContext<CommandSourceStack> stack) {
+        Gson gson = new GsonBuilder()
+                .registerTypeHierarchyAdapter(Reward.class, Rewards.createGsonAdapter())
+                .registerTypeHierarchyAdapter(ActionCondition.class, ActionConditions.createGsonAdapter())
+                .registerTypeHierarchyAdapter(Action.class, Actions.createGsonAdapter())
+                .registerTypeHierarchyAdapter(Unlock.class, Unlocks.createGsonAdapter())
+                .registerTypeHierarchyAdapter(Milestone.class, Milestones.createGsonAdapter())
+                .registerTypeHierarchyAdapter(Perk.class, Perks.createGsonAdapter())
+                .registerTypeAdapter(BasicModifiers.class, new BasicModifiers.ModifierSerializer())
+                .registerTypeAdapter(Append.class, ProfessionEditorSerializer.APPEND_EDITOR)
+                .registerTypeAdapter(Profession.class, ProfessionSerializer.DEFAULT_PROFESSION_V2)
+                .registerTypeAdapter(ProfessionBuilder.class, ProfessionSerializer.DEFAULT_PROFESSION_V2)
+                .registerTypeAdapter(ObjectOperation.class, new ObjectOperation.OperationSerializer<>())
+                .registerTypeAdapter(TagOperation.class, new TagOperation.TagOperationSerializer<>())
+                .setPrettyPrinting().create();
+
+        Path generatedDir = stack.getSource().getServer().getWorldPath(LevelResource.GENERATED_DIR).normalize();
+        for (Profession profession : ProfessionPlatform.platform.getProfessionLoader().getProfessions()) {
+            Path professionSavePath = createPathToProfession(generatedDir, "occupations", profession.getKey(), ".json");
+            try {
+                DataProvider.saveStable(CachedOutput.NO_CACHE, gson.toJsonTree(profession), professionSavePath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Path individualActionPath = createPathToProfession(generatedDir, "actionables", "aaaa", ".json");
+        }
+
+        return 1;
+    }
+
+    private Path createPathToProfession(Path currentPath, String type, ResourceLocation key, String extension) {
+        try {
+            Path path = currentPath.resolve(key.getNamespace());
+            Path path1 = path.resolve(type);
+            return FileUtil.createPathToResource(path1, key.getPath(), extension);
+        } catch (InvalidPathException invalidpathexception) {
+            throw new ResourceLocationException("Invalid resource path: " + key, invalidpathexception);
+        }
     }
 
     private int help(CommandContext<CommandSourceStack> stack) {
@@ -318,10 +388,10 @@ public abstract class ProfessionsStandardCommands {
             stack.getSource().sendSuccess(Component.translatable("║ Name: %s", Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(borders), false);
             stack.getSource().sendSuccess(Component.translatable("║ %s", Component.literal("/stats command")
-                    .setStyle(Style.EMPTY
-                            .withColor(ProfessionConfig.variables)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to run command")))
-                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions stats " + profile.getName()))))
+                            .setStyle(Style.EMPTY
+                                    .withColor(ProfessionConfig.variables)
+                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to run command")))
+                                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions stats " + profile.getName()))))
                     .setStyle(borders), false);
             stack.getSource().sendSuccess(Component.literal("╠══════════╣")
                     .setStyle(borders), false);
@@ -472,7 +542,7 @@ public abstract class ProfessionsStandardCommands {
                 Collection<Action<?>> actionsFor = profession.getActions(actionType);
                 if (actionsFor != null && !actionsFor.isEmpty()) {
                     components.add(Component.translatable("=-=-=| %s |=-=-=",
-                            Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+                                    Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
                     for (Action<?> action : actionsFor) {
                         components.addAll(action.displayInformation());
@@ -551,8 +621,8 @@ public abstract class ProfessionsStandardCommands {
                         progression = Component.literal((String.format("%.1f", percentage * 100) + "%")).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
                     } else {
                         progression = Component.translatable("%s/%s exp",
-                                Component.literal((String.format("%.1f", activeOccupation.getExp()))).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                                Component.literal(String.valueOf(activeOccupation.getMaxExp())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                        Component.literal((String.format("%.1f", activeOccupation.getExp()))).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                                        Component.literal(String.valueOf(activeOccupation.getMaxExp())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
                     }
                     HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_TEXT, progression);
@@ -561,7 +631,7 @@ public abstract class ProfessionsStandardCommands {
                             .append(Component.literal("|".repeat((int) (55 - bars))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors).withHoverEvent(event)))
                             .append(Component.literal(" " + activeOccupation.getProfession().getDisplayName()).setStyle(Style.EMPTY.withColor(activeOccupation.getProfession().getColor()))
                                     .append(Component.translatable("professions.command.stats.level", Component.literal("" + activeOccupation.getLevel())
-                                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))));
                     components.add(mainComponent);
                 }
@@ -572,7 +642,7 @@ public abstract class ProfessionsStandardCommands {
                     }
                 } else {
                     commandPlayer.sendSystemMessage(Component.translatable("professions.command.stats.error.other_not_in_any_professions",
-                                    Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                            Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))).setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                 }
             } else {
                 commandPlayer.sendSystemMessage(Component.translatable("professions.command.error.missing_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
@@ -656,7 +726,7 @@ public abstract class ProfessionsStandardCommands {
             }
 
             stack.getSource().sendSuccess(Component.translatable("professions.command.top.header",
-                    Component.literal("" + messages).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), profession.getDisplayComponent())
+                            Component.literal("" + messages).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), false);
             int position = 1;
             for (ProfessionalPlayer player : players) {
@@ -669,10 +739,10 @@ public abstract class ProfessionsStandardCommands {
                     playerName = player.getPlayer().getDisplayName();
                 }
                 MutableComponent msg = Component.translatable("professions.command.top.position",
-                        Component.literal("" + position).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                        playerName,
-                        Component.literal("" + player.getOccupation(profession).getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                        Component.literal("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                Component.literal("" + position).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                                playerName,
+                                Component.literal("" + player.getOccupation(profession).getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                                Component.literal("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                         .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
                 stack.getSource().sendSuccess(msg, false);
             }
@@ -790,9 +860,9 @@ public abstract class ProfessionsStandardCommands {
                 if (occupation != null) {
                     occupation.setLevel(level, player);
                     commandPlayer.sendSystemMessage(Component.translatable("professions.command.setlevel.success",
-                            occupation.getProfession().getDisplayComponent(),
-                            Component.literal(String.valueOf(occupation.getLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
-                            Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                                    occupation.getProfession().getDisplayComponent(),
+                                    Component.literal(String.valueOf(occupation.getLevel())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                                    Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
                 }
             }

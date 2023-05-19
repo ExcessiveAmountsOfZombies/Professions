@@ -1,5 +1,11 @@
 # Profession Data Rework
 
+1.1.0 is a TRANSITION version. It serves no purpose except to add the command `/professions admin convert_new_format` 
+This will convert the currently loaded data into the new format, except for enchanting, to be used in 2.0.0. If you don't
+have any custom data, skip 1.1.0 and just wait until 2.0.0.
+
+The purpose is to remove the appenders, and make it easier to configure and override things that you don't want.
+
 Previously, all operations that an occupation could have would be stored in the occupation.json file.
 This included all the actions, the unlocks, milestones, and data that makes up the occupation.
 
@@ -15,11 +21,8 @@ considered objects.
 * `data/<nmspace>/professions/occupations` All occupation metadata goes in here.
 * `data/<nmspace>/professions/operations` All operation data goes in here. 
 
-As we go down this next list, it goes from most generic, to most specific. The most specific data is
-applied last, so if something is defined in the class folder, if you specifically define it in the object
-folder, it will use the object definition rather than the class or tag definition.
 
-* `/operations/actionables/<type>` If you want to operate on the tag level, you would place entries in this folder.
-* `/operations/objects/<type>` Each folder will house a different type of, whether it's blocks,
-items, biomes, or something else.
+* `/operations/actionables/<type>`
 
+Each registry that has an applicable action will have a folder, so blocks, biomes, entity_types, items, etc. The tags for
+those things will also be placed in those same folders.

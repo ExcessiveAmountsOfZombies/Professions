@@ -54,6 +54,11 @@ public class BlockDropUnlock extends AbstractLevelUnlock<Block> {
         return UnlockSerializer.BLOCK_DROP_UNLOCK;
     }
 
+    @Override
+    public void addActionEntry(ActionEntry<Block> entry) {
+        blocks.add(entry);
+    }
+
     public static class Single extends AbstractLevelUnlock.AbstractSingle<Block> {
 
         public Single(Block block, int level, Profession professionDisplay) {

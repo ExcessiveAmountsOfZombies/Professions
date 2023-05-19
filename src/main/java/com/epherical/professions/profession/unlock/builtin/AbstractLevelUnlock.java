@@ -15,9 +15,15 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractLevelUnlock<T> implements Unlock<T> {
 
-    protected final int level;
+    protected int level;
 
     public AbstractLevelUnlock(int level) {
+        this.level = level;
+    }
+
+
+    @Deprecated
+    public void setLevel(int level) {
         this.level = level;
     }
 

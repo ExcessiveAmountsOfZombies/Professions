@@ -57,6 +57,11 @@ public class InteractionUnlock extends AbstractLevelUnlock<Item> {
         return INTERACTION_UNLOCK;
     }
 
+    @Override
+    public void addActionEntry(ActionEntry<Item> entry) {
+        items.add(entry);
+    }
+
     protected Set<Item> convertToReal() {
         if (real == null) {
             real = new HashSet<>();

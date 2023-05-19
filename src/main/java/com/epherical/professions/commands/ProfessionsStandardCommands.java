@@ -30,6 +30,7 @@ import com.epherical.professions.profession.progression.OccupationSlot;
 import com.epherical.professions.profession.rewards.Reward;
 import com.epherical.professions.profession.rewards.Rewards;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.UnlockType;
 import com.epherical.professions.profession.unlock.Unlocks;
 import com.epherical.professions.util.ActionLogger;
 import com.epherical.professions.util.AttributeDisplay;
@@ -335,7 +336,18 @@ public abstract class ProfessionsStandardCommands {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            Path individualActionPath = createPathToProfession(generatedDir, "actionables", "aaaa", ".json");
+            for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : profession.getUnlocks().entrySet()) {
+                for (Unlock<?> unlock : entry.getValue()) {
+                    //unlock.
+                }
+            }
+            for (Map.Entry<ActionType, Collection<Action<?>>> entry : profession.getActions().entrySet()) {
+                for (Action<?> action : entry.getValue()) {
+                    //action.
+                }
+            }
+
+            Path individualActionPath = createPathToProfession(generatedDir, "actionables", null, ".json");
         }
 
         return 1;

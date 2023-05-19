@@ -50,6 +50,11 @@ public class BlockBreakUnlock extends AbstractLevelUnlock<Block> {
     }
 
     @Override
+    public void addActionEntry(ActionEntry<Block> entry) {
+        blocks.add(entry);
+    }
+
+    @Override
     public UnlockSerializer<?> getSerializer() {
         return UnlockSerializer.BLOCK_BREAK_UNLOCK;
     }

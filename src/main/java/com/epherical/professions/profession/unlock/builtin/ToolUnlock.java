@@ -54,6 +54,11 @@ public class ToolUnlock extends AbstractLevelUnlock<Item> {
         return UnlockSerializer.TOOL_UNLOCK;
     }
 
+    @Override
+    public void addActionEntry(ActionEntry<Item> entry) {
+        items.add(entry);
+    }
+
     protected Set<Item> convertToReal() {
         if (real == null) {
             real = new HashSet<>();

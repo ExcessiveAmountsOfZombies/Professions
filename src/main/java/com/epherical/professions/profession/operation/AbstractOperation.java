@@ -3,6 +3,7 @@ package com.epherical.professions.profession.operation;
 import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.unlock.Unlock;
+import com.epherical.professions.profession.unlock.builtin.AbstractLevelUnlock;
 import com.epherical.professions.util.ActionEntry;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -26,31 +27,46 @@ import java.util.Map;
 
 public abstract class AbstractOperation<T> {
 
-    List<ProfessionAction<T>> actions;
-    List<Unlock<T>> unlocks;
+    List<Operator<Action<T>, List<ResourceLocation>>> actions;
+    List<Operator<Unlock<T>, List<LevelRequirement>>> unlocks;
 
     private ResourceKey<Registry<T>> registry;
     private ResourceLocation key;
 
-    public AbstractOperation(List<ProfessionAction<T>> actions, List<Unlock<T>> unlocks) {
+    public AbstractOperation(List<Operator<Action<T>, List<ResourceLocation>>> actions, List<Operator<Unlock<T>, List<LevelRequirement>>> unlocks) {
         this.unlocks = unlocks;
         this.actions = actions;
     }
 
     public void applyData(MinecraftServer server, Map<ResourceLocation, ProfessionBuilder> builderMap) {
-        for (ProfessionAction<T> action : actions) {
+        for (Operator<Action<T>, List<ResourceLocation>> action : actions) {
             for (ResourceLocation occupation : action.getOccupations()) {
                 ProfessionBuilder professionBuilder = builderMap.get(occupation);
                 if (professionBuilder != null) {
-                    action.getAction().addActionEntry(getActionEntryType(server, registry, key));
+                    action.getOperator().addActionEntry(getActionEntryType(server, registry, key));
                     // todo; assign this to the action.
-                    professionBuilder.addAction(action.getAction().getType(), action.getAction());
-                    for (Unlock<T> unlock : unlocks) {
-                        professionBuilder.addUnlock(unlock.getType(), unlock);
-                    }
+                    professionBuilder.addAction(action.getOperator().getType(), action.getOperator());
                 } else {
                     // todo; throw error and continue on.
                 }
+            }
+        }
+        for (Operator<Unlock<T>, List<LevelRequirement>> unlock : unlocks) {
+            for (LevelRequirement occupation : unlock.getOccupations()) {
+                ProfessionBuilder professionBuilder = builderMap.get(occupation.getOccupationKey());
+                if (professionBuilder != null) {
+                    unlock.getOperator().addActionEntry(getActionEntryType(server, registry, key));
+                    if (unlock.getOperator() instanceof AbstractLevelUnlock<T> abstractLevelUnlock) {
+                        abstractLevelUnlock.setLevel(occupation.getLevel());
+                    }
+                    professionBuilder.addUnlock(unlock.getOperator().getType(), unlock.getOperator());
+                } else {
+                    // todo; error and continue
+                }
+                /*if (professionBuilder == null) {
+                    throw new NullPointerException("Occupation does not exist in map. " + occupation.getOccupationKey());
+                }*/
+
             }
         }
     }
@@ -67,37 +83,59 @@ public abstract class AbstractOperation<T> {
         @Override
         public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject json = new JsonObject();
-            JsonArray array = new JsonArray();
+            JsonArray actions = new JsonArray();
 
-            for (ProfessionAction<V> action : src.actions) {
+
+
+            for (Operator<Action<V>, List<ResourceLocation>> action : src.actions) {
                 JsonObject object = new JsonObject();
-                object.add("single_action", context.serialize(action.getAction()));
+                object.add("single_action", context.serialize(action.getOperator()));
                 JsonArray occupations = new JsonArray();
                 for (ResourceLocation profession : action.getOccupations()) {
                     occupations.add(profession.toString());
                 }
                 object.add("occupations", occupations);
-                array.add(object);
+                actions.add(object);
             }
-            json.add("actions", array);
+            JsonArray unlocks = new JsonArray();
+            for (Operator<Unlock<V>, List<LevelRequirement>> unlock : src.unlocks) {
+                JsonObject object = context.serialize(unlock.getOperator()).getAsJsonObject();
+                JsonArray occupations = new JsonArray();
+                for (LevelRequirement occupation : unlock.getOccupations()) {
+                    occupations.add(context.serialize(occupation));
+                }
+                object.add("occupations", occupations);
+                unlocks.add(object);
+            }
+            json.add("actions", actions);
+            json.add("unlocks", unlocks);
             return json;
         }
 
         @Override
         public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonArray actions = json.getAsJsonObject().getAsJsonArray("actions");
-            List<ProfessionAction<V>> list = new ArrayList<>();
+            List<Operator<Action<V>, List<ResourceLocation>>> actionList = new ArrayList<>();
             for (JsonElement action : actions) {
                 JsonObject singleAction = (JsonObject) action;
                 Action<V> anAction = context.deserialize(GsonHelper.getAsJsonObject(singleAction, "single_action"), Action.class);
                 String[] strOccupations = GsonHelper.getAsObject(singleAction, "occupations", context, String[].class);
                 List<ResourceLocation> occupations = Arrays.stream(strOccupations).map(ResourceLocation::new).toList();
-                list.add(new ProfessionAction<>(occupations, anAction));
+                actionList.add(new Operator<>(occupations, anAction));
             }
-            return deserialize(list, List.of());
+            JsonArray unlocks = GsonHelper.getAsJsonArray(json.getAsJsonObject(), "unlocks", new JsonArray());
+            List<LevelRequirement> levelRequirements = new ArrayList<>();
+            List<Operator<Unlock<V>, List<LevelRequirement>>> unlockList = new ArrayList<>();
+            for (JsonElement unlock : unlocks) {
+                JsonObject singeUnlock = (JsonObject) unlock;
+                Unlock<V> anUnlock = context.deserialize(singeUnlock, Unlock.class);
+                levelRequirements.addAll(List.of(GsonHelper.getAsObject(singeUnlock, "occupations", context, LevelRequirement[].class)));
+                unlockList.add(new Operator<>(levelRequirements, anUnlock));
+            }
+            return deserialize(actionList, unlockList);
         }
 
-        public abstract T deserialize(List<ProfessionAction<V>> actions, List<Unlock<V>> unlocks);
+        public abstract T deserialize(List<Operator<Action<V>, List<ResourceLocation>>> actions, List<Operator<Unlock<V>, List<LevelRequirement>>> unlocks);
 
         /*@Override
         public ObjectOperation<T> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

@@ -44,8 +44,8 @@
       "level": 2,
       "occupations": [
         {
-          "occupation": "professions:mining",
-          "level": 3
+          "occupation": "rework:mining",
+          "level": 32
         }
       ]
     }

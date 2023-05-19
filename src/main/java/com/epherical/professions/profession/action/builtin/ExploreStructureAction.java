@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Items;
@@ -58,6 +59,16 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
         String key = registry.getKey(struct).toString();
         logAction(professionContext, Component.nullToEmpty(key));
         return getRealFeatures(registry).contains(struct);
+    }
+
+    @Override
+    public List<ActionEntry<Structure>> getEntries() {
+        return entries;
+    }
+
+    @Override
+    public Registry<Structure> getRegistry(MinecraftServer server) {
+        return server.registryAccess().registryOrThrow(Registry.STRUCTURE_REGISTRY);
     }
 
     @Override
@@ -166,7 +177,9 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
                 // only ever leaving us with potential 'keys' so our ActionEntries are unlikely to ever be of the "SingleEntry" type.
                 array.addAll(entry.serialize(BuiltinRegistries.STRUCTURES));
             }
-            json.add("structures", array);
+            if (array.size() > 0) {
+                json.add("structures", array);
+            }
         }
 
         @Override

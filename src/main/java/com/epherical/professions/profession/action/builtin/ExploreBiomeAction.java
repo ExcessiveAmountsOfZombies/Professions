@@ -27,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Items;
@@ -127,6 +128,11 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
         return entries;
     }
 
+    @Override
+    public Registry<Biome> getRegistry(MinecraftServer server) {
+        return server.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY);
+    }
+
     public static Builder explore() {
         return new Builder();
     }
@@ -171,7 +177,9 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
             for (ActionEntry<Biome> entry : value.entries) {
                 array.addAll(entry.serialize(BuiltinRegistries.BIOME));
             }
-            json.add("biomes", array);
+            if (array.size() > 0) {
+                json.add("biomes", array);
+            }
         }
 
         @Override

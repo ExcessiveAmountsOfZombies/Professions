@@ -42,6 +42,9 @@
     "minecraft": ">=1.19",
     "fabric-permissions-api-v0": ">=0.2-SNAPSHOT"
   },
+  "conflicts": {
+    "professionsi": "<=1.0.4"
+  },
   "custom": {
     "waila:plugins": {
       "id": "professions:prof_waila",

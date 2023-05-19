@@ -23,7 +23,7 @@ public class UnlockFormats {
             return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<BlockDropUnlock>()
                     .addEntry(arrayBlockString(embed, y, width, "blocks",
                             (o, entry) -> {
-                                for (ActionEntry<Block> block : o.getBlocks()) {
+                                for (ActionEntry<Block> block : o.getEntries()) {
                                     for (String s : block.serializeString(Registry.BLOCK)) {
                                         StringEntry<String> entry1 = entry.createEntry();
                                         entry1.deserialize(s);
@@ -44,7 +44,7 @@ public class UnlockFormats {
             return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<BlockBreakUnlock>()
                     .addEntry(arrayBlockString(embed, y, width, "blocks",
                             (o, entry) -> {
-                                for (ActionEntry<Block> block : o.getBlocks()) {
+                                for (ActionEntry<Block> block : o.getEntries()) {
                                     for (String s : block.serializeString(Registry.BLOCK)) {
                                         StringEntry<String> entry1 = entry.createEntry();
                                         entry1.deserialize(s);
@@ -65,7 +65,7 @@ public class UnlockFormats {
             return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<ToolUnlock>()
                     .addEntry(arrayItemString(embed, y, width, "items",
                             (o, entry) -> {
-                                for (ActionEntry<Item> block : o.getItems()) {
+                                for (ActionEntry<Item> block : o.getEntries()) {
                                     for (String s : block.serializeString(Registry.ITEM)) {
                                         StringEntry<String> entry1 = entry.createEntry();
                                         entry1.deserialize(s);

@@ -20,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -94,8 +95,13 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
         items.add(entry);
     }
 
-    public List<ActionEntry<Item>> getItems() {
+    public List<ActionEntry<Item>> getEntries() {
         return items;
+    }
+
+    @Override
+    public Registry<Item> getRegistry(MinecraftServer server) {
+        return Registry.ITEM;
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {
@@ -121,7 +127,10 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
             for (ActionEntry<Item> item : value.items) {
                 array.addAll(item.serialize(Registry.ITEM));
             }
-            json.add("items", array);
+            if (array.size() > 0) {
+                json.add("items", array);
+            }
+
         }
 
         public static List<ActionEntry<Item>> deserializeItems(JsonObject object) {

@@ -90,8 +90,13 @@ public class BlockBreakUnlock extends AbstractLevelUnlock<Block> {
         return realBlocks;
     }
 
-    public List<ActionEntry<Block>> getBlocks() {
+    public List<ActionEntry<Block>> getEntries() {
         return blocks;
+    }
+
+    @Override
+    public Registry<Block> getRegistry() {
+        return Registry.BLOCK;
     }
 
     public static Builder builder() {

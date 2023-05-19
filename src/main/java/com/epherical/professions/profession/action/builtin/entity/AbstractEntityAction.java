@@ -19,6 +19,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Entity;
@@ -94,8 +95,13 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
         entities.add(entry);
     }
 
-    public List<ActionEntry<EntityType<?>>> getEntities() {
+    public List<ActionEntry<EntityType<?>>> getEntries() {
         return entities;
+    }
+
+    @Override
+    public Registry<EntityType<?>> getRegistry(MinecraftServer server) {
+        return Registry.ENTITY_TYPE;
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {
@@ -121,7 +127,9 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
             for (ActionEntry<EntityType<?>> entity : value.entities) {
                 array.addAll(entity.serialize(Registry.ENTITY_TYPE));
             }
-            json.add("entities", array);
+            if (array.size() > 0) {
+                json.add("entities", array);
+            }
         }
 
         public List<ActionEntry<EntityType<?>>> deserializeEntities(JsonObject object) {

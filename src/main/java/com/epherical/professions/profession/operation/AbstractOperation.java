@@ -24,14 +24,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class AbstractOperation<T> {
 
     List<Operator<Action<T>, List<ResourceLocation>>> actions;
     List<Operator<Unlock<T>, List<LevelRequirement>>> unlocks;
 
-    private ResourceKey<Registry<T>> registry;
-    private ResourceLocation key;
+    private CompoundKey<T> compoundKey;
 
     public AbstractOperation(List<Operator<Action<T>, List<ResourceLocation>>> actions, List<Operator<Unlock<T>, List<LevelRequirement>>> unlocks) {
         this.unlocks = unlocks;
@@ -43,7 +43,7 @@ public abstract class AbstractOperation<T> {
             for (ResourceLocation occupation : action.getOccupations()) {
                 ProfessionBuilder professionBuilder = builderMap.get(occupation);
                 if (professionBuilder != null) {
-                    action.getOperator().addActionEntry(getActionEntryType(server, registry, key));
+                    action.getOperator().addActionEntry(getActionEntryType(server, compoundKey.getRegistry(), compoundKey.getKey()));
                     // todo; assign this to the action.
                     professionBuilder.addAction(action.getOperator().getType(), action.getOperator());
                 } else {
@@ -55,7 +55,7 @@ public abstract class AbstractOperation<T> {
             for (LevelRequirement occupation : unlock.getOccupations()) {
                 ProfessionBuilder professionBuilder = builderMap.get(occupation.getOccupationKey());
                 if (professionBuilder != null) {
-                    unlock.getOperator().addActionEntry(getActionEntryType(server, registry, key));
+                    unlock.getOperator().addActionEntry(getActionEntryType(server, compoundKey.getRegistry(), compoundKey.getKey()));
                     if (unlock.getOperator() instanceof AbstractLevelUnlock<T> abstractLevelUnlock) {
                         abstractLevelUnlock.setLevel(occupation.getLevel());
                     }
@@ -71,14 +71,55 @@ public abstract class AbstractOperation<T> {
         }
     }
 
+    public void setActions(List<Operator<Action<T>, List<ResourceLocation>>> actions) {
+        this.actions = actions;
+    }
+
+    public void setUnlocks(List<Operator<Unlock<T>, List<LevelRequirement>>> unlocks) {
+        this.unlocks = unlocks;
+    }
+
+    public void addAction(Operator<Action<T>, List<ResourceLocation>> actionOperator) {
+        this.actions.add(actionOperator);
+    }
+
+    public void addUnlock(Operator<Unlock<T>, List<LevelRequirement>> unlockOperator) {
+        this.unlocks.add(unlockOperator);
+    }
+
+    public List<Operator<Action<T>, List<ResourceLocation>>> getActions() {
+        return actions;
+    }
+
+    public List<Operator<Unlock<T>, List<LevelRequirement>>> getUnlocks() {
+        return unlocks;
+    }
+
     public void setKey(ResourceKey<Registry<T>> registry, ResourceLocation resourceLocation) {
-        this.key = resourceLocation;
-        this.registry = registry;
+        this.compoundKey = new CompoundKey<>(registry, resourceLocation);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AbstractOperation<?> that = (AbstractOperation<?>) o;
+
+        return Objects.equals(compoundKey, that.compoundKey);
+    }
+
+    @Override
+    public int hashCode() {
+        return compoundKey != null ? compoundKey.hashCode() : 0;
     }
 
     public abstract ActionEntry<T> getActionEntryType(MinecraftServer server, ResourceKey<Registry<T>> registry, ResourceLocation key);
 
     public abstract static class AbstractOperationSerializer<T extends AbstractOperation<V>, V> implements JsonSerializer<T>, JsonDeserializer<T> {
+
+        public abstract String serializeType();
 
         @Override
         public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
@@ -86,7 +127,9 @@ public abstract class AbstractOperation<T> {
             JsonArray actions = new JsonArray();
 
 
-
+            if (!json.has("type")) {
+                json.addProperty("type", serializeType());
+            }
             for (Operator<Action<V>, List<ResourceLocation>> action : src.actions) {
                 JsonObject object = new JsonObject();
                 object.add("single_action", context.serialize(action.getOperator()));

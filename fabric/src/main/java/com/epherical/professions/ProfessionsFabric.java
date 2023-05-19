@@ -93,10 +93,10 @@ public class ProfessionsFabric extends ProfessionMod implements ModInitializer {
         // TODO: add a page to display future rewards
 
         // TODO; we can abstract this better
-        FabricOperationLoader<AbstractOperation<Item>, Item> ITEM_ACTIONS = new FabricOperationLoader("professions/operations/actionables/items", Registry.ITEM_REGISTRY);
-        FabricOperationLoader<AbstractOperation<Block>, Block> BLOCK_ACTIONS = new FabricOperationLoader("professions/operations/actionables/blocks", Registry.BLOCK_REGISTRY);
-        FabricOperationLoader<AbstractOperation<EntityType<?>>, EntityType<?>> ENTITY_ACTIONS = new FabricOperationLoader("professions/operations/actionables/entities", Registry.ENTITY_TYPE_REGISTRY);
-        FabricOperationLoader<AbstractOperation<Biome>, Biome> BIOME_ACTIONS = new FabricOperationLoader("professions/operations/actionables/biomes", Registry.BIOME_REGISTRY);
+        FabricOperationLoader<AbstractOperation<Item>, Item> ITEM_ACTIONS = new FabricOperationLoader("professions/operations/actionables/item", Registry.ITEM_REGISTRY);
+        FabricOperationLoader<AbstractOperation<Block>, Block> BLOCK_ACTIONS = new FabricOperationLoader("professions/operations/actionables/block", Registry.BLOCK_REGISTRY);
+        FabricOperationLoader<AbstractOperation<EntityType<?>>, EntityType<?>> ENTITY_ACTIONS = new FabricOperationLoader("professions/operations/actionables/entity_type", Registry.ENTITY_TYPE_REGISTRY);
+        FabricOperationLoader<AbstractOperation<Biome>, Biome> BIOME_ACTIONS = new FabricOperationLoader("professions/operations/actionables/worldgen/biome", Registry.BIOME_REGISTRY);
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(ITEM_ACTIONS);
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(BLOCK_ACTIONS);

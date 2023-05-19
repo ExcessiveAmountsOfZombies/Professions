@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -101,8 +102,13 @@ public abstract class BlockAbstractAction extends AbstractAction<Block> {
         blocks.add(entry);
     }
 
-    public List<ActionEntry<Block>> getBlocks() {
+    public List<ActionEntry<Block>> getEntries() {
         return blocks;
+    }
+
+    @Override
+    public Registry<Block> getRegistry(MinecraftServer server) {
+        return Registry.BLOCK;
     }
 
     @Override
@@ -163,7 +169,9 @@ public abstract class BlockAbstractAction extends AbstractAction<Block> {
             for (ActionEntry<Block> block : value.blocks) {
                 array.addAll(block.serialize(Registry.BLOCK));
             }
-            json.add("blocks", array);
+            if (array.size() > 0) {
+                json.add("blocks", array);
+            }
         }
 
         public static List<ActionEntry<Block>> deserializeBlocks(JsonObject object) {

@@ -25,6 +25,11 @@ public class TagOperation<T> extends AbstractOperation<T> {
     public static class TagOperationSerializer<V> extends AbstractOperationSerializer<TagOperation<V>, V> {
 
         @Override
+        public String serializeType() {
+            return "professions:tag";
+        }
+
+        @Override
         public TagOperation<V> deserialize(List<Operator<Action<V>, List<ResourceLocation>>> actions, List<Operator<Unlock<V>, List<LevelRequirement>>> unlocks) {
             return new TagOperation<>(actions, unlocks);
         }

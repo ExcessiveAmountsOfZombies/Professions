@@ -43,6 +43,11 @@ public class ObjectOperation<T> extends AbstractOperation<T> {
 
     public static class OperationSerializer<V> extends AbstractOperationSerializer<ObjectOperation<V>, V> {
         @Override
+        public String serializeType() {
+            return "professions:item";
+        }
+
+        @Override
         public ObjectOperation<V> deserialize(List<Operator<Action<V>, List<ResourceLocation>>> actions, List<Operator<Unlock<V>, List<LevelRequirement>>> unlocks) {
             return new ObjectOperation<>(actions, unlocks);
         }

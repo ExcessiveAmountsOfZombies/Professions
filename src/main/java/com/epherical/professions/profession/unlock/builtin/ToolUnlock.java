@@ -69,8 +69,13 @@ public class ToolUnlock extends AbstractLevelUnlock<Item> {
         return real;
     }
 
-    public List<ActionEntry<Item>> getItems() {
+    public List<ActionEntry<Item>> getEntries() {
         return items;
+    }
+
+    @Override
+    public Registry<Item> getRegistry() {
+        return Registry.ITEM;
     }
 
     public static Builder builder() {

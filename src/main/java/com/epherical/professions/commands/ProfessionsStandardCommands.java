@@ -23,6 +23,8 @@ import com.epherical.professions.profession.modifiers.perks.Perk;
 import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
 import com.epherical.professions.profession.modifiers.perks.builtin.SingleAttributePerk;
+import com.epherical.professions.profession.operation.AbstractOperation;
+import com.epherical.professions.profession.operation.CompoundKey;
 import com.epherical.professions.profession.operation.ObjectOperation;
 import com.epherical.professions.profession.operation.TagOperation;
 import com.epherical.professions.profession.progression.Occupation;
@@ -76,6 +78,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -327,8 +330,9 @@ public abstract class ProfessionsStandardCommands {
                 .registerTypeAdapter(ObjectOperation.class, new ObjectOperation.OperationSerializer<>())
                 .registerTypeAdapter(TagOperation.class, new TagOperation.TagOperationSerializer<>())
                 .setPrettyPrinting().create();
-
-        Path generatedDir = stack.getSource().getServer().getWorldPath(LevelResource.GENERATED_DIR).normalize();
+        MinecraftServer server = stack.getSource().getServer();
+        Path generatedDir = server.getWorldPath(LevelResource.GENERATED_DIR).normalize();
+        Map<CompoundKey<?>, AbstractOperation<?>> map = new HashMap<>();
         for (Profession profession : ProfessionPlatform.platform.getProfessionLoader().getProfessions()) {
             Path professionSavePath = createPathToProfession(generatedDir, "occupations", profession.getKey(), ".json");
             try {
@@ -338,17 +342,27 @@ public abstract class ProfessionsStandardCommands {
             }
             for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : profession.getUnlocks().entrySet()) {
                 for (Unlock<?> unlock : entry.getValue()) {
-                    //unlock.
+                    unlock.handleMigration(map, profession);
+                    unlock.getEntries().clear();
                 }
             }
             for (Map.Entry<ActionType, Collection<Action<?>>> entry : profession.getActions().entrySet()) {
                 for (Action<?> action : entry.getValue()) {
-                    //action.
+                    action.handleMigration(map, profession, server);
+                    action.getEntries().clear();
                 }
             }
-
-            Path individualActionPath = createPathToProfession(generatedDir, "actionables", null, ".json");
         }
+        for (Map.Entry<CompoundKey<?>, AbstractOperation<?>> entry : map.entrySet()) {
+            String registry = entry.getKey().getRegistry().location().getPath();
+            Path individualActionPath = createPathToProfession(generatedDir, "actionables/" + registry, entry.getKey().getKey(), ".json");
+            try {
+                DataProvider.saveStable(CachedOutput.NO_CACHE, gson.toJsonTree(entry.getValue()), individualActionPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
 
         return 1;
     }

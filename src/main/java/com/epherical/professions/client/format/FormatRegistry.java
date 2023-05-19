@@ -102,7 +102,7 @@ public class FormatRegistry {
     public static <T extends BlockAbstractAction> Format<T> createBlockFormat(Class<T> clazz) {
         return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<T>()
                 .addEntry(arrayBlockString(embed, y, width, "blocks", (o, entry) -> {
-                    for (ActionEntry<Block> block : o.getBlocks()) {
+                    for (ActionEntry<Block> block : o.getEntries()) {
                         for (String s : block.serializeString(Registry.BLOCK)) {
                             StringEntry<String> entry1 = entry.createEntry();
                             entry1.deserialize(s);
@@ -116,7 +116,7 @@ public class FormatRegistry {
     public static <T extends AbstractEntityAction> Format<T> createEntityAction(Class<T> clazz) {
         return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<T>()
                 .addEntry(arrayBlockString(embed, y, width, "entities", (o, entry) -> {
-                    for (ActionEntry<EntityType<?>> block : o.getEntities()) {
+                    for (ActionEntry<EntityType<?>> block : o.getEntries()) {
                         for (String s : block.serializeString(Registry.ENTITY_TYPE)) {
                             StringEntry<String> entry1 = entry.createEntry();
                             entry1.deserialize(s);
@@ -130,7 +130,7 @@ public class FormatRegistry {
     public static <T extends AbstractItemAction> Format<T> createItemAction(Class<T> clazz) {
         return new RegularFormat<>((embed, y, width) -> new FormatEntryBuilder<T>()
                 .addEntry(arrayBlockString(embed, y, width, "items", (o, entry) -> {
-                    for (ActionEntry<Item> item : o.getItems()) {
+                    for (ActionEntry<Item> item : o.getEntries()) {
                         for (String s : item.serializeString(Registry.ITEM)) {
                             StringEntry<String> entry1 = entry.createEntry();
                             entry1.deserialize(s);

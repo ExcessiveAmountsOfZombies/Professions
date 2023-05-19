@@ -1,9 +1,13 @@
 package com.epherical.professions.util;
 
+import com.epherical.professions.profession.operation.AbstractOperation;
+import com.epherical.professions.profession.operation.ObjectOperation;
+import com.epherical.professions.profession.operation.TagOperation;
 import com.google.gson.JsonArray;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +32,11 @@ public class ActionEntry<T> {
 
     private ActionEntry(Stream<? extends Value<T>> values) {
         this.actionValues = values.toArray(Value[]::new);
+    }
+
+    @Deprecated
+    public Value<T>[] getActionValues() {
+        return actionValues;
     }
 
     public List<T> getActionValues(Registry<T> registry) {
@@ -108,10 +117,17 @@ public class ActionEntry<T> {
         return entry.actionValues.length == 0 ? (ActionEntry<T>) EMPTY : entry;
     }
 
-    private interface Value<T> {
+    // todo; change back to private 2.0.0 after maybe
+    public interface Value<T> {
         Collection<T> getValues(Registry<T> registry);
 
         String serializable(Registry<T> registry);
+
+        @Deprecated()
+        AbstractOperation<T> createOperation(Registry<T> registry);
+
+        @Deprecated()
+        ResourceLocation getKey(Registry<T> registry);
     }
 
     record ResourceEntry<T>(ResourceKey<T> entry) implements Value<T> {
@@ -130,6 +146,18 @@ public class ActionEntry<T> {
         public String serializable(Registry<T> registry) {
             return entry.location().toString();
         }
+
+        @Override
+        public AbstractOperation<T> createOperation(Registry<T> registry) {
+            ObjectOperation<T> operation = new ObjectOperation<>(new ArrayList<>(), new ArrayList<>());
+            operation.setKey((ResourceKey<Registry<T>>) registry.key(), entry.location());
+            return operation;
+        }
+
+        @Override
+        public ResourceLocation getKey(Registry<T> registry) {
+            return entry.location();
+        }
     }
 
     record TagEntry<T>(TagKey<T> entry) implements Value<T> {
@@ -145,6 +173,18 @@ public class ActionEntry<T> {
         public String serializable(Registry<T> registry) {
             return "#" + entry.location();
         }
+
+        @Override
+        public AbstractOperation<T> createOperation(Registry<T> registry) {
+            TagOperation<T> operation = new TagOperation<>(new ArrayList<>(), new ArrayList<>());
+            operation.setKey((ResourceKey<Registry<T>>) registry.key(), entry.location());
+            return operation;
+        }
+
+        @Override
+        public ResourceLocation getKey(Registry<T> registry) {
+            return entry.location();
+        }
     }
 
     record SingleEntry<T>(T entry) implements Value<T> {
@@ -157,6 +197,18 @@ public class ActionEntry<T> {
         @Override
         public String serializable(Registry<T> registry) {
             return registry.getKey(entry).toString();
+        }
+
+        @Override
+        public AbstractOperation<T> createOperation(Registry<T> registry) {
+            ObjectOperation<T> operation = new ObjectOperation<>(new ArrayList<>(), new ArrayList<>());
+            operation.setKey((ResourceKey<Registry<T>>) registry.key(), registry.getKey(entry));
+            return operation;
+        }
+
+        @Override
+        public ResourceLocation getKey(Registry<T> registry) {
+            return registry.getKey(entry);
         }
     }
 }

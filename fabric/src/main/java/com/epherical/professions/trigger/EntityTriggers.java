@@ -34,7 +34,7 @@ public class EntityTriggers {
         });
 
         TriggerEvents.CATCH_FISH_EVENT.register((player, stack) -> {
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
@@ -44,7 +44,7 @@ public class EntityTriggers {
         });
 
         TriggerEvents.CRAFT_ITEM_EVENT.register((player, stack, recipe) -> {
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
@@ -55,7 +55,7 @@ public class EntityTriggers {
         });
 
         TriggerEvents.TAKE_SMELTED_ITEM_EVENT.register((player, stack) -> {
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
@@ -65,7 +65,7 @@ public class EntityTriggers {
         });
 
         TriggerEvents.BREED_ANIMAL_EVENT.register((player, parent, partner, child) -> {
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
@@ -75,7 +75,7 @@ public class EntityTriggers {
         });
 
         TriggerEvents.TAME_ANIMAL_EVENT.register((player, animal) -> {
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
@@ -85,7 +85,7 @@ public class EntityTriggers {
         });
 
         TriggerEvents.VILLAGER_TRADE_EVENT.register((player, villager, offer) -> {
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))

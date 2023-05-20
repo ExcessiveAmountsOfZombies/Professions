@@ -39,7 +39,7 @@ public class EntityTriggers {
         if (event.isCanceled() || event.getEntity().level.isClientSide) {
             return;
         }
-        ServerLevel level = (ServerLevel) event.getEntity().getLevel();
+        ServerLevel level = (ServerLevel) event.getEntity().serverLevel();
         Entity source = event.getSource().getEntity();
         LivingEntity killedEntity = event.getEntity();
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
@@ -86,7 +86,7 @@ public class EntityTriggers {
         if (event.getInventory() instanceof RecipeHolder holder) {
             recipe = holder.getRecipeUsed();
         }
-        ServerLevel level = (ServerLevel) player.getLevel();
+        ServerLevel level = (ServerLevel) player.serverLevel();
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
@@ -102,7 +102,7 @@ public class EntityTriggers {
         if (event.isCanceled() || player.level.isClientSide) {
             return;
         }
-        ServerLevel level = (ServerLevel) player.getLevel();
+        ServerLevel level = (ServerLevel) player.serverLevel();
 
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
@@ -115,10 +115,10 @@ public class EntityTriggers {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onBreedAnimal(BabyEntitySpawnEvent event) {
         Player player = event.getCausedByPlayer();
-        if (event.isCanceled() || player == null || player.getLevel().isClientSide) {
+        if (event.isCanceled() || player == null || player.serverLevel().isClientSide) {
             return;
         }
-        ServerLevel level = (ServerLevel) player.getLevel();
+        ServerLevel level = (ServerLevel) player.serverLevel();
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
@@ -130,10 +130,10 @@ public class EntityTriggers {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onTameAnimal(AnimalTameEvent event) {
         Player player = event.getTamer();
-        if (event.isCanceled() || player.getLevel().isClientSide) {
+        if (event.isCanceled() || player.serverLevel().isClientSide) {
             return;
         }
-        ServerLevel level = (ServerLevel) player.getLevel();
+        ServerLevel level = (ServerLevel) player.serverLevel();
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                 .addRandom(level.random)
                 .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()))
@@ -145,7 +145,7 @@ public class EntityTriggers {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onVillagerTrade(TradeWithVillagerEvent event) {
         ServerPlayer player = event.getPlayer();
-        ServerLevel level = player.getLevel();
+        ServerLevel level = player.serverLevel();
         AbstractVillager villager = event.getVillager();
         MerchantOffer offer = event.getOffer();
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)

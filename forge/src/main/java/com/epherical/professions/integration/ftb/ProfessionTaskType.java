@@ -115,7 +115,7 @@ public class ProfessionTaskType extends BooleanTask {
         }
         if (action == ProfessionEventAction.JOIN && player.isOccupationActive(profession)) {
             return true;
-        } else if (action == ProfessionEventAction.LEVEL && player.getOccupation(profession).getLevel() >= level) {
+        } else if (action == ProfessionEventAction.LEVEL && player.getOccupation(profession).serverLevel() >= level) {
             return true;
         }
 

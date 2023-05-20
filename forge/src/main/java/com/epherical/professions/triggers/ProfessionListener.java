@@ -37,7 +37,7 @@ public class ProfessionListener {
         if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayer)) {
             return;
         }
-        BlockEntity entity = event.getLevel().getBlockEntity(event.getPos());
+        BlockEntity entity = event.serverLevel().getBlockEntity(event.getPos());
         if (entity != null) {
             entity.getCapability(PlayerOwnableImpl.OWNING_CAPABILITY).ifPresent(ownable -> {
                 ownable.setPlacedBy((ServerPlayer) event.getEntity());
@@ -47,7 +47,7 @@ public class ProfessionListener {
 
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!event.getEntity().getLevel().isClientSide) {
+        if (!event.getEntity().serverLevel().isClientSide) {
             ProfessionsForge.getInstance().getPlayerManager().playerJoined((ServerPlayer) event.getEntity());
         }
 
@@ -55,7 +55,7 @@ public class ProfessionListener {
 
     @SubscribeEvent
     public void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (!event.getEntity().getLevel().isClientSide) {
+        if (!event.getEntity().serverLevel().isClientSide) {
             ProfessionsForge.getInstance().getPlayerManager().playerQuit((ServerPlayer) event.getEntity());
             playerPositions.remove(event.getEntity().getUUID());
         }
@@ -63,7 +63,7 @@ public class ProfessionListener {
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = false)
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        if (event.isCanceled() || event.getLevel().isClientSide()) {
+        if (event.isCanceled() || event.serverLevel().isClientSide()) {
             return;
         }
 
@@ -91,12 +91,12 @@ public class ProfessionListener {
             // shifted chunks
             if (!pos.equals(player.chunkPosition())) {
                 ChunkPos newPos = player.chunkPosition();
-                LevelChunk access = player.getLevel().getChunk(newPos.x, newPos.z);
+                LevelChunk access = player.serverLevel().getChunk(newPos.x, newPos.z);
                 access.getCapability(ChunkVisitedImpl.CHUNK_VISITED_CAPABILITY).ifPresent(chunkVisited -> {
                     if (!chunkVisited.hasPlayerExploredChunk(uuid)) {
-                        Holder<Biome> biomeHolder = player.getLevel().getBiome(player.getOnPos());
+                        Holder<Biome> biomeHolder = player.serverLevel().getBiome(player.getOnPos());
                         ProfessionContext.Builder builder = new ProfessionContext.Builder(player.getLevel())
-                                .addRandom(player.getLevel().random)
+                                .addRandom(player.serverLevel().random)
                                 .addParameter(ProfessionParameter.ACTION_TYPE, Actions.EXPLORE_BIOME)
                                 .addParameter(ProfessionParameter.THIS_PLAYER, ProfessionsForge.getInstance().getPlayerManager().getPlayer(player.getUUID()))
                                 .addParameter(ProfessionParameter.BIOME, biomeHolder);
@@ -106,10 +106,10 @@ public class ProfessionListener {
                             chunkVisited.addPlayerToChunk(uuid);
                             access.setUnsaved(true);
                         }
-                        Set<Structure> configuredStructureFeatures = player.getLevel().structureManager().getAllStructuresAt(player.getOnPos()).keySet();
+                        Set<Structure> configuredStructureFeatures = player.serverLevel().structureManager().getAllStructuresAt(player.getOnPos()).keySet();
                         for (Structure configuredStructureFeature : configuredStructureFeatures) {
                             builder = new ProfessionContext.Builder(player.getLevel())
-                                    .addRandom(player.getLevel().random)
+                                    .addRandom(player.serverLevel().random)
                                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.EXPLORE_STRUCT)
                                     .addParameter(ProfessionParameter.THIS_PLAYER, ProfessionsForge.getInstance().getPlayerManager().getPlayer(player.getUUID()))
                                     .addParameter(ProfessionParameter.CONFIGURED_STRUCTURE, configuredStructureFeature);

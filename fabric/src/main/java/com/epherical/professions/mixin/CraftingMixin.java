@@ -26,9 +26,9 @@ public class CraftingMixin extends Slot {
         super(container, i, j, k);
     }
 
-    @Inject(method = "checkTakeAchievements", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/RecipeHolder;awardUsedRecipes(Lnet/minecraft/world/entity/player/Player;)V"))
+    @Inject(method = "checkTakeAchievements", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/RecipeHolder;awardUsedRecipes(Lnet/minecraft/world/entity/player/Player;Ljava/util/List;)V"))
     public void onRecipeCrafted(ItemStack stack, CallbackInfo ci) {
-        if (!this.player.level.isClientSide) {
+        if (!this.player.level().isClientSide) {
 
             TriggerEvents.CRAFT_ITEM_EVENT.invoker().onCraftItem((ServerPlayer) this.player, stack, ((RecipeHolder) this.container).getRecipeUsed());
         }

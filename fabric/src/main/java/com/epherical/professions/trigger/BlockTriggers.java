@@ -31,7 +31,7 @@ public class BlockTriggers {
         });
 
         TriggerEvents.PLACE_BLOCK_EVENT.register((player, state, pos) -> {
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.PLACE_BLOCK)
@@ -42,7 +42,7 @@ public class BlockTriggers {
         });
 
         TriggerEvents.TNT_DESTROY_EVENT.register((source, state, blockPos) -> {
-            ServerLevel level = source.getLevel();
+            ServerLevel level = source.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.TNT_DESTROY)
@@ -80,7 +80,7 @@ public class BlockTriggers {
         });
 
         TriggerEvents.ENCHANT_ITEM_EVENT.register((player, itemEnchanted, spentLevels) -> {
-            ServerLevel level = player.getLevel();
+            ServerLevel level = player.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(player.getUUID()));

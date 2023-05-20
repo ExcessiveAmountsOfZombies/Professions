@@ -1,7 +1,7 @@
 package com.epherical.professions.mixin;
 
 import com.epherical.professions.events.trigger.TriggerEvents;
-import net.minecraft.advancements.critereon.PlacedBlockTrigger;
+import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PlacedBlockTrigger.class)
+@Mixin(ItemUsedOnLocationTrigger.class)
 public class PlaceBlockTriggerMixin {
 
     /**
@@ -19,7 +19,7 @@ public class PlaceBlockTriggerMixin {
      */
     @Inject(method = "trigger", at = @At("HEAD"))
     public void onTrigger(ServerPlayer player, BlockPos pos, ItemStack item, CallbackInfo ci) {
-        TriggerEvents.PLACE_BLOCK_EVENT.invoker().onBlockPlace(player, player.getLevel().getBlockState(pos), pos);
+        TriggerEvents.PLACE_BLOCK_EVENT.invoker().onBlockPlace(player, player.level().getBlockState(pos), pos);
     }
 
 }

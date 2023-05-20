@@ -37,7 +37,7 @@ public class BlockTriggers {
         if (event.isCanceled()) {
             return;
         }
-        if (event.getLevel() instanceof ServerLevel level) {
+        if (event.serverLevel() instanceof ServerLevel level) {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BREAK_BLOCK)
@@ -54,7 +54,7 @@ public class BlockTriggers {
         if (event.isCanceled()) {
             return;
         }
-        if (event.getLevel() instanceof ServerLevel level && event.getEntity() instanceof ServerPlayer player) {
+        if (event.serverLevel() instanceof ServerLevel level && event.getEntity() instanceof ServerPlayer player) {
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.PLACE_BLOCK)
@@ -67,7 +67,7 @@ public class BlockTriggers {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onExplosion(ExplosionEvent.Detonate event) {
-        if (event.getLevel() instanceof ServerLevel level && event.getExplosion().getSourceMob() instanceof ServerPlayer player) {
+        if (event.serverLevel() instanceof ServerLevel level && event.getExplosion().getSourceMob() instanceof ServerPlayer player) {
             // This could possibly be slow, in fabric we just use a mixin to directly get the blockstate in the final explosion.
             for (BlockPos affectedBlock : event.getAffectedBlocks()) {
                 ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
@@ -87,8 +87,8 @@ public class BlockTriggers {
         ItemStack smeltedItem = event.getSmeltedItem();
         UUID owner = event.getOwner();
         Recipe<?> recipe = event.getRecipe();
-        if (blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide) {
-            ServerLevel level = (ServerLevel) blockEntity.getLevel();
+        if (blockEntity.serverLevel() != null && !blockEntity.serverLevel().isClientSide) {
+            ServerLevel level = (ServerLevel) blockEntity.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(owner))
@@ -105,8 +105,8 @@ public class BlockTriggers {
         BlockEntity blockEntity = event.getBlockEntity();
         UUID owner = event.getPlacedBy();
         ItemStack brewingIngredient = event.getBrewingIngredient();
-        if (blockEntity.getLevel() != null && !blockEntity.getLevel().isClientSide) {
-            ServerLevel level = (ServerLevel) blockEntity.getLevel();
+        if (blockEntity.serverLevel() != null && !blockEntity.serverLevel().isClientSide) {
+            ServerLevel level = (ServerLevel) blockEntity.serverLevel();
             ProfessionContext.Builder builder = new ProfessionContext.Builder(level)
                     .addRandom(level.random)
                     .addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(owner))
@@ -119,7 +119,7 @@ public class BlockTriggers {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEnchant(EnchantedItemEvent event) {
-        ServerLevel level = event.getPlayer().getLevel();
+        ServerLevel level = event.getPlayer().serverLevel();
         ServerPlayer player = event.getPlayer();
         ItemStack itemEnchanted = event.getItemStack();
         ProfessionContext.Builder builder = new ProfessionContext.Builder(level)

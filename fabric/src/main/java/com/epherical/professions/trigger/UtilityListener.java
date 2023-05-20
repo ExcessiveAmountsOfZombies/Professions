@@ -50,7 +50,7 @@ public class UtilityListener {
 
     public static void init(ProfessionsFabric mod) {
         TriggerEvents.PLACE_BLOCK_EVENT.register((player, state, pos) -> {
-            ServerLevel level = player.getLevel().getLevel();
+            ServerLevel level = player.serverLevel().getLevel();
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity != null) {
                 try {

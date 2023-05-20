@@ -7,8 +7,9 @@ public class ProfessionDataGenerator implements DataGeneratorEntrypoint {
 
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-        fabricDataGenerator.addProvider(FabricProfessionProvider::new);
-        fabricDataGenerator.addProvider(ForgeProfessionProvider::new);
+        // TODO; fix
+        //fabricDataGenerator.addProvider(FabricProfessionProvider::new);
+        //fabricDataGenerator.addProvider(ForgeProfessionProvider::new);
     }
 
 }

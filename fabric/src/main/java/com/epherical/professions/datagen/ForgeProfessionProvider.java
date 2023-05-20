@@ -1,25 +1,11 @@
 package com.epherical.professions.datagen;
 
-import com.epherical.professions.Constants;
-import com.epherical.professions.datagen.defaults.AlchemistProvider;
-import com.epherical.professions.datagen.defaults.BuilderProvider;
-import com.epherical.professions.datagen.defaults.CraftingProvider;
-import com.epherical.professions.datagen.defaults.EnchantingProvider;
-import com.epherical.professions.datagen.defaults.FarmingProvider;
-import com.epherical.professions.datagen.defaults.FishingProvider;
-import com.epherical.professions.datagen.defaults.HuntingProvider;
-import com.epherical.professions.datagen.defaults.LoggingProvider;
-import com.epherical.professions.datagen.defaults.MiningProvider;
-import com.epherical.professions.datagen.defaults.SmithingProvider;
-import com.epherical.professions.datagen.defaults.TradingProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.resources.ResourceLocation;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
 public class ForgeProfessionProvider extends CommonProvider implements DataProvider, ProviderHelpers {
 
@@ -30,8 +16,9 @@ public class ForgeProfessionProvider extends CommonProvider implements DataProvi
     }
 
     @Override
-    public void run(CachedOutput cache) throws IOException {
-        Path path = this.dataGenerator.getOutputFolder();
+    public CompletableFuture<?> run(CachedOutput cache) {
+        return null;
+        /*Path path = this.dataGenerator.getOutputFolder();
         AlchemistProvider alchemistProvider = new AlchemistProvider();
         BuilderProvider builderProvider = new BuilderProvider();
         CraftingProvider crafting = new CraftingProvider();
@@ -58,7 +45,7 @@ public class ForgeProfessionProvider extends CommonProvider implements DataProvi
 
 
         generate(cache, mining.createMiningAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/mining"), true));
-        generate(cache, smithing.createSmithingAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/smithing"), true));
+        generate(cache, smithing.createSmithingAppender().build(), createHardcoreAppenders(path, Constants.modID("appenders/smithing"), true));*/
 
     }
 

@@ -52,12 +52,12 @@ public class ProfessionListener {
             // shifted chunks
             if (!pos.equals(player.chunkPosition())) {
                 ChunkPos newPos = player.chunkPosition();
-                LevelChunk access = player.getLevel().getChunk(newPos.x, newPos.z);
+                LevelChunk access = player.serverLevel().getChunk(newPos.x, newPos.z);
                 ChunksExploredComponent component = access.getComponent(ChunkComponent.CHUNKS_EXPLORED);
                 if (!component.hasPlayerExploredChunk(uuid)) {
-                    Holder<Biome> biomeHolder = player.getLevel().getBiome(player.getOnPos());
-                    ProfessionContext.Builder builder = new ProfessionContext.Builder(player.getLevel())
-                            .addRandom(player.getLevel().random)
+                    Holder<Biome> biomeHolder = player.serverLevel().getBiome(player.getOnPos());
+                    ProfessionContext.Builder builder = new ProfessionContext.Builder(player.serverLevel())
+                            .addRandom(player.serverLevel().getRandom())
                             .addParameter(ProfessionParameter.ACTION_TYPE, Actions.EXPLORE_BIOME)
                             .addParameter(ProfessionParameter.THIS_PLAYER, fabric.getPlayerManager().getPlayer(player.getUUID()))
                             .addParameter(ProfessionParameter.BIOME, biomeHolder);
@@ -67,11 +67,11 @@ public class ProfessionListener {
                         component.addPlayerToChunk(uuid);
                         access.setUnsaved(true);
                     }
-                    Set<Structure> configuredStructureFeatures = player.getLevel().structureManager().getAllStructuresAt(player.getOnPos()).keySet();
+                    Set<Structure> configuredStructureFeatures = player.serverLevel().structureManager().getAllStructuresAt(player.getOnPos()).keySet();
                     for (Structure configuredStructureFeature : configuredStructureFeatures) {
-                        if (player.getLevel().structureManager().getStructureAt(player.getOnPos(), configuredStructureFeature).isValid()) {
-                            builder = new ProfessionContext.Builder(player.getLevel())
-                                    .addRandom(player.getLevel().random)
+                        if (player.serverLevel().structureManager().getStructureAt(player.getOnPos(), configuredStructureFeature).isValid()) {
+                            builder = new ProfessionContext.Builder(player.serverLevel())
+                                    .addRandom(player.serverLevel().getRandom())
                                     .addParameter(ProfessionParameter.ACTION_TYPE, Actions.EXPLORE_STRUCT)
                                     .addParameter(ProfessionParameter.THIS_PLAYER, fabric.getPlayerManager().getPlayer(player.getUUID()))
                                     .addParameter(ProfessionParameter.CONFIGURED_STRUCTURE, configuredStructureFeature);

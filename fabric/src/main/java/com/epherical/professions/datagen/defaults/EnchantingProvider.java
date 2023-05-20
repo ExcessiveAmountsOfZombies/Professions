@@ -5,7 +5,7 @@ import com.epherical.professions.profession.ProfessionBuilder;
 import com.epherical.professions.profession.action.builtin.items.EnchantAction;
 import com.epherical.professions.profession.modifiers.perks.Perks;
 import com.epherical.professions.profession.modifiers.perks.builtin.ScalingAttributePerk;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Items;
@@ -69,7 +69,7 @@ public class EnchantingProvider extends NamedProfessionBuilder {
                         .reward(moneyReward(6))
                         .reward(expReward(6))
                         .build());
-        for (Enchantment enchantment : Registry.ENCHANTMENT) {
+        for (Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
             if (enchantment.isCurse() || enchantment.isTreasureOnly() || !enchantment.isDiscoverable()) {
                 continue;
             }

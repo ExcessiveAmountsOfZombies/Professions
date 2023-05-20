@@ -1,16 +1,2 @@
 accessWidener	v1	named
-accessible class net/minecraft/server/players/GameProfileCache$GameProfileInfo
 
-accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher
-accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactPropertyMatcher
-accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedPropertyMatcher
-
-accessible field net/minecraft/client/gui/screens/Screen children Ljava/util/List;
-accessible field net/minecraft/client/gui/screens/Screen narratables Ljava/util/List;
-accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
-
-extendable method net/minecraft/client/gui/components/AbstractSelectionList getEntryAtPosition (DD)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;
-extendable method net/minecraft/client/gui/components/AbstractSelectionList getRowBottom (I)I
-
-accessible field net/minecraft/client/gui/components/CommandSuggestions pendingSuggestions Ljava/util/concurrent/CompletableFuture;
-accessible method net/minecraft/commands/arguments/ResourceOrTagLocationArgument getRegistryType (Lcom/mojang/brigadier/context/CommandContext;Ljava/lang/String;Lnet/minecraft/resources/ResourceKey;Lcom/mojang/brigadier/exceptions/DynamicCommandExceptionType;)Lnet/minecraft/commands/arguments/ResourceOrTagLocationArgument$Result;

@@ -1,9 +1,10 @@
 package com.epherical.professions.client.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -12,19 +13,19 @@ import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LO
 
 public class LevelEntryButton extends AbstractEntryButton {
 
-    public LevelEntryButton(Component component, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
-        super(component, i, j, k, l, onPress, tooltip);
+    public LevelEntryButton(Component component, int i, int j, int k, int l, OnPress onPress) {
+        super(component, i, j, k, l, onPress, Tooltip.create(Component.nullToEmpty("")));
     }
 
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphics poseStack, int mouseX, int mouseY, float partialTick) {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, WINDOW_LOCATION);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-        int i = this.getYImage(this.isHoveredOrFocused());
+        int i = this.getYImage();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();

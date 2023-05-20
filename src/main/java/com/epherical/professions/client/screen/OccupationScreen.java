@@ -13,14 +13,12 @@ import com.epherical.professions.profession.progression.Occupation;
 import com.epherical.professions.util.ActionDisplay;
 import com.epherical.professions.util.LevelDisplay;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -48,7 +46,7 @@ public class OccupationScreen<T> extends Screen {
     private boolean anyOccupationSelected = false;
     private HoldsProfession professionHolder;
 
-    private final List<Widget> renderables = Lists.newArrayList();
+    private final List<Renderable> renderables = Lists.newArrayList();
     private final List<Hidden> buttonsThatHide = Lists.newArrayList();
 
     private final MutableComponent NO_ENTRIES = Component.translatable("professions.gui.no_entries")
@@ -138,31 +136,31 @@ public class OccupationScreen<T> extends Screen {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(poseStack);
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(graphics);
         int ofx = (this.width - imageWidth) / 2;
         int ofy = (this.height - imageHeight) / 2;
-        renderOccupationWindow(poseStack, ofx, ofy);
+        renderOccupationWindow(graphics, ofx, ofy);
 
         if (entries.size() == 0) {
             if (button != null && button == CommandButtons.JOIN) {
-                drawCenteredString(poseStack, font, JOINED_ALL, ((this.width) / 2), ofy + 58, -1);
+                graphics.drawCenteredString(font, JOINED_ALL, ((this.width) / 2), ofy + 58, -1);
             } else {
-                drawCenteredString(poseStack, font, NO_ENTRIES, ((this.width - imageWidth) / 2) + 83, ofy + 50, -1);
+                graphics.drawCenteredString(font, NO_ENTRIES, ((this.width - imageWidth) / 2) + 83, ofy + 50, -1);
             }
 
             if (button == CommandButtons.LEAVE) {
-                drawCenteredString(poseStack, font, NO_ENTRIES_LEAVE, ((this.width - imageWidth) / 2) + 83, ofy + 70, -1);
+                graphics.drawCenteredString(font, NO_ENTRIES_LEAVE, ((this.width - imageWidth) / 2) + 83, ofy + 70, -1);
             }
         }
 
-        list.render(poseStack, mouseX, mouseY, partialTick);
+        list.render(graphics, mouseX, mouseY, partialTick);
         //super.render(poseStack, mouseX, mouseY, partialTick);
-        for (Widget renderable : renderables) {
+        for (Renderable renderable : renderables) {
             if (renderable instanceof Hidden hidden && hidden.isHidden()) {
                 continue;
             }
-            renderable.render(poseStack, mouseX, mouseY, partialTick);
+            renderable.render(graphics, mouseX, mouseY, partialTick);
         }
     }
 
@@ -193,13 +191,13 @@ public class OccupationScreen<T> extends Screen {
         return super.mouseClicked(mouseX, mouseY, $$2);
     }
 
-    public void renderOccupationWindow(PoseStack stack, int offsetX, int offsetY) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, WINDOW_LOCATION);
-        this.blit(stack, offsetX, offsetY, 0, 0, imageWidth, imageHeight);
-        RenderSystem.setShaderColor(1.0F, 0.0F, 1.0F, 1.0F);
+    public void renderOccupationWindow(GuiGraphics stack, int offsetX, int offsetY) {
+        //RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        //RenderSystem.enableBlend();
+        //RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        //RenderSystem.setShaderTexture(0, WINDOW_LOCATION);
+        stack.blit(WINDOW_LOCATION, offsetX, offsetY, 0, 0, imageWidth, imageHeight);
+        //RenderSystem.setShaderColor(1.0F, 0.0F, 1.0F, 1.0F);
     }
 
     /*private int adjustedHeight() {
@@ -215,7 +213,7 @@ public class OccupationScreen<T> extends Screen {
     }*/
 
 
-    public <T extends GuiEventListener & Widget & NarratableEntry> void initWidget(T widget) {
+    public <T extends GuiEventListener & Renderable & NarratableEntry> void initWidget(T widget) {
         addWidget(widget);
         this.renderables.add(widget);
     }
@@ -258,7 +256,8 @@ public class OccupationScreen<T> extends Screen {
         List<ProfessionsListingWidget.AbstractEntry> entries = new ArrayList<>();
         for (Profession profession : professions) {
             switch (command) {
-                case JOIN, LEAVE, INFO -> entries.add(new ProfessionsListingWidget.ProfessionEntry(screen, screen.list, minecraft, profession));
+                case JOIN, LEAVE, INFO ->
+                        entries.add(new ProfessionsListingWidget.ProfessionEntry(screen, screen.list, minecraft, profession));
             }
 
         }

@@ -1,13 +1,12 @@
 package com.epherical.professions.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.sounds.SoundEvents;
 
-public abstract class Box extends GuiComponent implements Widget, WidgetParent {
+public abstract class Box implements Renderable, WidgetParent {
 
     public int x;
     public int y;
@@ -23,12 +22,12 @@ public abstract class Box extends GuiComponent implements Widget, WidgetParent {
 
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTick) {
-        hLine(stack, x, width + x, y, 0xFFFFFFFF); // top
-        hLine(stack, x, width + x, y + height, 0xFFFFFFFF); // bottom
-        vLine(stack, x + width, y, y + height, 0xFFFFFFFF); // right
-        vLine(stack, x, y + height, y, 0xFFFFFFFF); // left
-        fill(stack, x, y, x + width + 1, y + height + 1, 0xAA333333);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        graphics.hLine(x, width + x, y, 0xFFFFFFFF); // top
+        graphics.hLine(x, width + x, y + height, 0xFFFFFFFF); // bottom
+        graphics.vLine(x + width, y, y + height, 0xFFFFFFFF); // right
+        graphics.vLine(x, y + height, y, 0xFFFFFFFF); // left
+        graphics.fill(x, y, x + width + 1, y + height + 1, 0xAA333333);
     }
 
     public void playDownSound(SoundManager handler) {

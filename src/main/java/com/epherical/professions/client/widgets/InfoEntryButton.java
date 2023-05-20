@@ -2,10 +2,10 @@ package com.epherical.professions.client.widgets;
 
 import com.epherical.professions.util.ActionDisplay;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
@@ -19,33 +19,32 @@ public class InfoEntryButton extends AbstractEntryButton {
     private final ItemStack item;
     private final ActionDisplay.Icon icon;
 
-    public InfoEntryButton(ActionDisplay.Icon component, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
+    public InfoEntryButton(ActionDisplay.Icon component, int i, int j, int k, int l, OnPress onPress, Tooltip tooltip) {
         super(component.getName(), i, j, k, l, onPress, tooltip);
         item = component.getRepresentation();
         this.icon = component;
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         Minecraft minecraft = Minecraft.getInstance();
-        Font font = minecraft.font;
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, WINDOW_LOCATION);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-        int i = this.getYImage(this.isHoveredOrFocused());
+        graphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableDepthTest();
+        int i = this.getYImage();
         if (i == 1) {
             i = 0;
         } else {
             i = 1;
         }
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.enableDepthTest();
-        this.blit(poseStack, this.x, this.y, 154 + i * width, 195, this.width, this.height);
-        minecraft.getItemRenderer().renderGuiItem(item, this.x, this.y);
+        graphics.blit(WINDOW_LOCATION, getX(), getYImage(), 154 + i * width, 195, this.width, this.height);
+        RenderSystem.setShaderTexture(0, WINDOW_LOCATION);
+        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.renderItem(item, getX(), getY());
     }
 
-    public void drawText(PoseStack poseStack, int x, int y) {
+    public void drawText(GuiGraphics poseStack, int x, int y) {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         font.drawShadow(poseStack, icon.getActionType(), (float) (x / 2) + 20, (float) (y / 2) - 28, 0);

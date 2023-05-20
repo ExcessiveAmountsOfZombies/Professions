@@ -32,6 +32,8 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.PackType;
@@ -92,11 +94,12 @@ public class ProfessionsFabric extends ProfessionMod implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(fabricProfLoaderV2);
         // TODO: add a page to display future rewards
 
+
         // TODO; we can abstract this better
-        FabricOperationLoader<AbstractOperation<Item>, Item> ITEM_ACTIONS = new FabricOperationLoader("professions/operations/actionables/item", Registry.ITEM_REGISTRY);
-        FabricOperationLoader<AbstractOperation<Block>, Block> BLOCK_ACTIONS = new FabricOperationLoader("professions/operations/actionables/block", Registry.BLOCK_REGISTRY);
-        FabricOperationLoader<AbstractOperation<EntityType<?>>, EntityType<?>> ENTITY_ACTIONS = new FabricOperationLoader("professions/operations/actionables/entity_type", Registry.ENTITY_TYPE_REGISTRY);
-        FabricOperationLoader<AbstractOperation<Biome>, Biome> BIOME_ACTIONS = new FabricOperationLoader("professions/operations/actionables/worldgen/biome", Registry.BIOME_REGISTRY);
+        FabricOperationLoader<AbstractOperation<Item>, Item> ITEM_ACTIONS = new FabricOperationLoader("professions/operations/actionables/item", Registries.ITEM);
+        FabricOperationLoader<AbstractOperation<Block>, Block> BLOCK_ACTIONS = new FabricOperationLoader("professions/operations/actionables/block", Registries.BLOCK);
+        FabricOperationLoader<AbstractOperation<EntityType<?>>, EntityType<?>> ENTITY_ACTIONS = new FabricOperationLoader("professions/operations/actionables/entity_type", Registries.ENTITY_TYPE);
+        FabricOperationLoader<AbstractOperation<Biome>, Biome> BIOME_ACTIONS = new FabricOperationLoader("professions/operations/actionables/worldgen/biome", Registries.BIOME);
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(ITEM_ACTIONS);
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(BLOCK_ACTIONS);
@@ -165,7 +168,7 @@ public class ProfessionsFabric extends ProfessionMod implements ModInitializer {
     }
 
     public static LootItemConditionType registerLootCondition(String id, Serializer<? extends LootItemCondition> serializer) {
-        return Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation(Constants.MOD_ID, id), new LootItemConditionType(serializer));
+        return Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, new ResourceLocation(Constants.MOD_ID, id), new LootItemConditionType(serializer));
     }
 
     public static Economy getEconomy() {

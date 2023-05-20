@@ -3,7 +3,6 @@ package com.epherical.professions.client;
 import com.epherical.professions.Constants;
 import com.epherical.professions.ProfessionPlatform;
 import com.epherical.professions.api.ProfessionalPlayer;
-import com.epherical.professions.client.screen.MenuScreen;
 import com.epherical.professions.client.screen.OccupationScreen;
 import com.epherical.professions.profession.action.Action;
 import com.epherical.professions.profession.unlock.Unlock;

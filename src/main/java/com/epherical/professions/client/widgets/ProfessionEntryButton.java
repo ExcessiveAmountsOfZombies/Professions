@@ -18,8 +18,8 @@ public class ProfessionEntryButton extends Button {
     private final Profession profession;
     private final Component name;
 
-    public ProfessionEntryButton(Profession profession, int i, int j, int k, int l, OnPress onPress, OnTooltip tooltip) {
-        super(i, j, k, l, Component.nullToEmpty(""), onPress, tooltip);
+    public ProfessionEntryButton(Profession profession, int i, int j, int k, int l, OnPress onPress) {
+        super(i, j, k, l, Component.nullToEmpty(""), onPress, Button.DEFAULT_NARRATION);
         this.profession = profession;
         this.name = Component.literal(profession.getDisplayName()).setStyle(Style.EMPTY.withColor(profession.getColor()));
     }

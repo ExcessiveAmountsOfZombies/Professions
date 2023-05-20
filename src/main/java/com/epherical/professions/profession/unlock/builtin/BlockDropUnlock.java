@@ -13,6 +13,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -84,7 +85,7 @@ public class BlockDropUnlock extends AbstractLevelUnlock<Block> {
         if (realBlocks == null) {
             realBlocks = new HashSet<>();
             for (ActionEntry<Block> block : blocks) {
-                realBlocks.addAll(block.getActionValues(Registry.BLOCK));
+                realBlocks.addAll(block.getActionValues(BuiltInRegistries.BLOCK));
             }
         }
         return realBlocks;
@@ -96,7 +97,7 @@ public class BlockDropUnlock extends AbstractLevelUnlock<Block> {
 
     @Override
     public Registry<Block> getRegistry() {
-        return Registry.BLOCK;
+        return BuiltInRegistries.BLOCK;
     }
 
     public static Builder builder() {
@@ -135,7 +136,7 @@ public class BlockDropUnlock extends AbstractLevelUnlock<Block> {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Block> block : value.blocks) {
-                array.addAll(block.serialize(Registry.BLOCK));
+                array.addAll(block.serialize(BuiltInRegistries.BLOCK));
             }
             json.add("blocks", array);
         }
@@ -156,7 +157,7 @@ public class BlockDropUnlock extends AbstractLevelUnlock<Block> {
             int arraySize = buf.readVarInt();
             List<ActionEntry<Block>> entries = new ArrayList<>();
             for (int i = 0; i < arraySize; i++) {
-                entries.addAll(ActionEntry.fromNetwork(buf, Registry.BLOCK));
+                entries.addAll(ActionEntry.fromNetwork(buf, BuiltInRegistries.BLOCK));
             }
             return new BlockDropUnlock(entries, unlockLevel);
         }
@@ -166,7 +167,7 @@ public class BlockDropUnlock extends AbstractLevelUnlock<Block> {
             buf.writeVarInt(unlock.level);
             buf.writeVarInt(unlock.blocks.size());
             for (ActionEntry<Block> block : unlock.blocks) {
-                block.toNetwork(buf, Registry.BLOCK);
+                block.toNetwork(buf, BuiltInRegistries.BLOCK);
             }
         }
 

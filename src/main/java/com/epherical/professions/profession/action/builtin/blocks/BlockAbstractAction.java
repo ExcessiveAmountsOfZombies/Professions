@@ -19,6 +19,8 @@ import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -91,7 +93,7 @@ public abstract class BlockAbstractAction extends AbstractAction<Block> {
         if (realBlocks == null) {
             realBlocks = new LinkedHashSet<>();
             for (ActionEntry<Block> block : blocks) {
-                realBlocks.addAll(block.getActionValues(Registry.BLOCK));
+                realBlocks.addAll(block.getActionValues(BuiltInRegistries.BLOCK));
             }
         }
         return realBlocks;
@@ -108,7 +110,7 @@ public abstract class BlockAbstractAction extends AbstractAction<Block> {
 
     @Override
     public Registry<Block> getRegistry(MinecraftServer server) {
-        return Registry.BLOCK;
+        return BuiltInRegistries.BLOCK;
     }
 
     @Override
@@ -167,7 +169,7 @@ public abstract class BlockAbstractAction extends AbstractAction<Block> {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Block> block : value.blocks) {
-                array.addAll(block.serialize(Registry.BLOCK));
+                array.addAll(block.serialize(BuiltInRegistries.BLOCK));
             }
             if (array.size() > 0) {
                 json.add("blocks", array);
@@ -180,10 +182,10 @@ public abstract class BlockAbstractAction extends AbstractAction<Block> {
             for (JsonElement element : array) {
                 String blockID = element.getAsString();
                 if (blockID.startsWith("#")) {
-                    TagKey<Block> blockTagKey = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(blockID.substring(1)));
+                    TagKey<Block> blockTagKey = TagKey.create(Registries.BLOCK, new ResourceLocation(blockID.substring(1)));
                     blocks.add(ActionEntry.of(blockTagKey));
                 } else {
-                    Registry.BLOCK.getOptional(new ResourceLocation(blockID)).ifPresentOrElse(
+                    BuiltInRegistries.BLOCK.getOptional(new ResourceLocation(blockID)).ifPresentOrElse(
                             block -> blocks.add(ActionEntry.of(block)),
                             () -> LOGGER.warn("Attempted to add unknown block {}. Was not added, but will continue processing the list.", blockID));
                 }

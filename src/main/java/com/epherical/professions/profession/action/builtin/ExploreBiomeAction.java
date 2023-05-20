@@ -22,7 +22,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
@@ -56,7 +56,7 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
     public boolean test(ProfessionContext professionContext) {
         Holder<Biome> biome = professionContext.getPossibleParameter(ProfessionParameter.BIOME);
         logAction(professionContext, biome != null ? Component.nullToEmpty(biome.unwrapKey().get().location().toString()) : Component.nullToEmpty(""));
-        return biome != null && getRealBiomes(professionContext.level().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY)).contains(biome.value());
+        return biome != null && getRealBiomes(professionContext.level().registryAccess().registryOrThrow(Registries.BIOME)).contains(biome.value());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
     public List<Component> displayInformation() {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
-        Registry<Biome> registry = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<Biome> registry = ProfessionPlatform.platform.server().registryAccess().registryOrThrow(Registries.BIOME);
         for (Biome realBiome : getRealBiomes(registry)) {
             ResourceLocation key = registry.getKey(realBiome);
             if (key != null) {
@@ -87,7 +87,7 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
     @Override
     public List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType) {
         List<ActionDisplay.Icon> comps = new ArrayList<>();
-        Registry<Biome> biomes = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<Biome> biomes = ProfessionPlatform.platform.server().registryAccess().registryOrThrow(Registries.BIOME);
         for (Biome realBiome : getRealBiomes(biomes)) {
             ResourceLocation key = biomes.getKey(realBiome);
             if (key != null) {
@@ -102,7 +102,7 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
     @Override
     public List<Action.Singular<Biome>> convertToSingle(Profession profession) {
         List<Action.Singular<Biome>> list = new ArrayList<>();
-        Registry<Biome> biomes = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<Biome> biomes = ProfessionPlatform.platform.server().registryAccess().registryOrThrow(Registries.BIOME);
         for (Biome items : getRealBiomes(biomes)) {
             list.add(new ExploreBiomeAction.Single(items, profession));
         }
@@ -130,7 +130,7 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
 
     @Override
     public Registry<Biome> getRegistry(MinecraftServer server) {
-        return server.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY);
+        return server.registryAccess().registryOrThrow(Registries.BIOME);
     }
 
     public static Builder explore() {
@@ -175,7 +175,8 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Biome> entry : value.entries) {
-                array.addAll(entry.serialize(BuiltinRegistries.BIOME));
+
+                array.addAll(entry.serialize(ProfessionPlatform.platform.server().registryAccess().registryOrThrow(Registries.BIOME)));
             }
             if (array.size() > 0) {
                 json.add("biomes", array);
@@ -189,10 +190,10 @@ public class ExploreBiomeAction extends AbstractAction<Biome> {
             for (JsonElement element : array) {
                 String id = element.getAsString();
                 if (id.startsWith("#")) {
-                    TagKey<Biome> key = TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(id.substring(1)));
+                    TagKey<Biome> key = TagKey.create(Registries.BIOME, new ResourceLocation(id.substring(1)));
                     biomes.add(ActionEntry.of(key));
                 } else {
-                    biomes.add(ActionEntry.of(ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(id))));
+                    biomes.add(ActionEntry.of(ResourceKey.create(Registries.BIOME, new ResourceLocation(id))));
                 }
             }
             return new ExploreBiomeAction(conditions, rewards, biomes);

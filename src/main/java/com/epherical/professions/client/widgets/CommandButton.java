@@ -1,15 +1,8 @@
 package com.epherical.professions.client.widgets;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
-
-import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
 
 public class CommandButton extends Button implements Hidden {
 
@@ -19,7 +12,7 @@ public class CommandButton extends Button implements Hidden {
 
 
     public CommandButton(boolean hiddenByDefault, int i, int j, Component component, OnPress onPress, boolean small, int width, int height, SmallIcon icon) {
-        super(i, j, width, height, component, onPress);
+        super(i, j, width, height, component, onPress, Button.DEFAULT_NARRATION);
         this.hidden = hiddenByDefault;
         this.small = small;
         this.icon = icon;
@@ -30,8 +23,9 @@ public class CommandButton extends Button implements Hidden {
     }
 
     @Override
-    public void renderButton(GuiGraphics poseStack, int mouseX, int mouseY, float partialTick) {
-        Minecraft minecraft = Minecraft.getInstance();
+    public void renderWidget(GuiGraphics poseStack, int mouseX, int mouseY, float partialTick) {
+        // TODO; rewrite
+        /*Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, WINDOW_LOCATION);
@@ -58,7 +52,7 @@ public class CommandButton extends Button implements Hidden {
         this.renderBg(poseStack, minecraft, mouseX, mouseY);
         if (this.isHoveredOrFocused()) {
             this.renderToolTip(poseStack, mouseX, mouseY);
-        }
+        }*/
         //minecraft.getItemRenderer().renderGuiItem(stack, (this.x + this.width / 2) - 8, (this.y + (this.height - 28) / 2));
     }
 

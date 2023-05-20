@@ -21,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -119,7 +119,7 @@ public class EnchantAction extends AbstractItemAction {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (EnchantmentContainer enchantment : value.enchantments) {
-                String key = Registry.ENCHANTMENT.getKey(enchantment.enchantment()).toString() + "#" + enchantment.level();
+                String key = BuiltInRegistries.ENCHANTMENT.getKey(enchantment.enchantment()).toString() + "#" + enchantment.level();
                 array.add(key);
             }
             json.add("enchants", array);
@@ -134,7 +134,7 @@ public class EnchantAction extends AbstractItemAction {
             List<EnchantmentContainer> enchantmentContainers = new ArrayList<>();
             for (JsonElement element : array) {
                 String[] key = element.getAsString().split("#");
-                Enchantment enchantment = Registry.ENCHANTMENT.get(new ResourceLocation(key[0]));
+                Enchantment enchantment = BuiltInRegistries.ENCHANTMENT.get(new ResourceLocation(key[0]));
                 if (enchantment != null) { // TODO; maybe throw a warning or something here if it wasn't added.
                     enchantmentContainers.add(new EnchantmentContainer(enchantment, Integer.parseInt(key[1])));
                 }

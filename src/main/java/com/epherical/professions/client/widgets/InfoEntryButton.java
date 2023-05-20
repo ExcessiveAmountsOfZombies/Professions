@@ -47,17 +47,21 @@ public class InfoEntryButton extends AbstractEntryButton {
     public void drawText(GuiGraphics poseStack, int x, int y) {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        font.drawShadow(poseStack, icon.getActionType(), (float) (x / 2) + 20, (float) (y / 2) - 28, 0);
+        poseStack.drawString(font, icon.getActionType(), (x / 2) + 20,(y / 2) - 28, 0, true);
+        //font.drawShadow(poseStack, icon.getActionType(), (float) (x / 2) + 20, (float) (y / 2) - 28, 0);
         List<FormattedCharSequence> nameSplit = font.split(icon.getName(), 130);
         for (int i = 0; i < nameSplit.size(); i++) {
-            font.drawShadow(poseStack, nameSplit.get(i), (float) (x / 2) - 20, (float) (y / 2) - 8 + (i * 10), 0);
+            poseStack.drawString(font, nameSplit.get(i), (x / 2) - 20, (y / 2) - 8 + (i * 10), 0);
+            //font.drawShadow(poseStack, nameSplit.get(i), (float) (x / 2) - 20, (float) (y / 2) - 8 + (i * 10), 0);
         }
         int i = 0;
         for (Component text : icon.getActionInformation().getSiblings()) {
-            font.drawShadow(poseStack, text, (float) (x / 2) - 20, (float) (y / 2) + 24 + (i * 10), 0);
+            poseStack.drawString(font, text, (x / 2) - 20, (y / 2) + 24 + (i * 10), 0);
+            //font.drawShadow(poseStack, text, (float) (x / 2) - 20, (float) (y / 2) + 24 + (i * 10), 0);
             i++;
         }
-        font.drawShadow(poseStack, "Rewards", (float) (x / 2) - 20, (float) (y / 2) + 13, 0xFFFFFF);
+        poseStack.drawString(font, "Rewards",  (x / 2) - 20,  (y / 2) + 13, 0xFFFFFF, true);
+        //font.drawShadow(poseStack, );
 
     }
 }

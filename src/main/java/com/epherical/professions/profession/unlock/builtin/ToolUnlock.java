@@ -13,6 +13,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -63,7 +64,7 @@ public class ToolUnlock extends AbstractLevelUnlock<Item> {
         if (real == null) {
             real = new HashSet<>();
             for (ActionEntry<Item> block : items) {
-                real.addAll(block.getActionValues(Registry.ITEM));
+                real.addAll(block.getActionValues(BuiltInRegistries.ITEM));
             }
         }
         return real;
@@ -75,7 +76,7 @@ public class ToolUnlock extends AbstractLevelUnlock<Item> {
 
     @Override
     public Registry<Item> getRegistry() {
-        return Registry.ITEM;
+        return BuiltInRegistries.ITEM;
     }
 
     public static Builder builder() {
@@ -135,7 +136,7 @@ public class ToolUnlock extends AbstractLevelUnlock<Item> {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Item> block : value.items) {
-                array.addAll(block.serialize(Registry.ITEM));
+                array.addAll(block.serialize(BuiltInRegistries.ITEM));
             }
             json.add("items", array);
         }
@@ -155,7 +156,7 @@ public class ToolUnlock extends AbstractLevelUnlock<Item> {
             int arraySize = buf.readVarInt();
             List<ActionEntry<Item>> entries = new ArrayList<>();
             for (int i = 0; i < arraySize; i++) {
-                entries.addAll(ActionEntry.fromNetwork(buf, Registry.ITEM));
+                entries.addAll(ActionEntry.fromNetwork(buf, BuiltInRegistries.ITEM));
             }
             return new ToolUnlock(entries, unlockLevel);
         }
@@ -165,7 +166,7 @@ public class ToolUnlock extends AbstractLevelUnlock<Item> {
             buf.writeVarInt(unlock.level);
             buf.writeVarInt(unlock.items.size());
             for (ActionEntry<Item> block : unlock.items) {
-                block.toNetwork(buf, Registry.ITEM);
+                block.toNetwork(buf, BuiltInRegistries.ITEM);
             }
         }
     }

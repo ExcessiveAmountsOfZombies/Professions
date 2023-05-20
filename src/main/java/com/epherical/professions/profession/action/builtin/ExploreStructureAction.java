@@ -22,7 +22,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
@@ -55,7 +55,7 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
     public boolean test(ProfessionContext professionContext) {
         Structure struct = professionContext.getParameter(ProfessionParameter.CONFIGURED_STRUCTURE);
         RegistryAccess access = professionContext.level().registryAccess();
-        Registry<Structure> registry = access.ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
+        Registry<Structure> registry = access.registryOrThrow(Registries.STRUCTURE);
         String key = registry.getKey(struct).toString();
         logAction(professionContext, Component.nullToEmpty(key));
         return getRealFeatures(registry).contains(struct);
@@ -68,7 +68,7 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
 
     @Override
     public Registry<Structure> getRegistry(MinecraftServer server) {
-        return server.registryAccess().registryOrThrow(Registry.STRUCTURE_REGISTRY);
+        return server.registryAccess().registryOrThrow(Registries.STRUCTURE);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
     public List<Component> displayInformation() {
         List<Component> components = new ArrayList<>();
         Map<RewardType, Component> map = getRewardInformation();
-        Registry<Structure> registry = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
+        Registry<Structure> registry = ProfessionPlatform.platform.server().registryAccess().registryOrThrow(Registries.STRUCTURE);
         for (Structure feature : getRealFeatures(registry)) {
             ResourceLocation key = registry.getKey(feature);
             if (key != null) {
@@ -99,7 +99,7 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
     @Override
     public List<ActionDisplay.Icon> clientFriendlyInformation(Component actionType) {
         List<ActionDisplay.Icon> comps = new ArrayList<>();
-        Registry<Structure> registry = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
+        Registry<Structure> registry = ProfessionPlatform.platform.server().registryAccess().registryOrThrow(Registries.STRUCTURE);
         for (Structure feature : getRealFeatures(registry)) {
             ResourceLocation key = registry.getKey(feature);
             if (key != null) {
@@ -114,7 +114,7 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
     @Override
     public List<Singular<Structure>> convertToSingle(Profession profession) {
         List<Action.Singular<Structure>> list = new ArrayList<>();
-        Registry<Structure> registry = ProfessionPlatform.platform.server().registryAccess().ownedRegistryOrThrow(Registry.STRUCTURE_REGISTRY);
+        Registry<Structure> registry = ProfessionPlatform.platform.server().registryAccess().registryOrThrow(Registries.STRUCTURE);
         for (Structure items : getRealFeatures(registry)) {
             list.add(new ExploreStructureAction.Single(items, profession));
         }
@@ -173,9 +173,7 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Structure> entry : value.entries) {
-                // I'm not under the impression that this works, but structures aren't generally loaded until later anyways,
-                // only ever leaving us with potential 'keys' so our ActionEntries are unlikely to ever be of the "SingleEntry" type.
-                array.addAll(entry.serialize(BuiltinRegistries.STRUCTURES));
+                array.addAll(entry.serialize(ProfessionPlatform.platform.server().registryAccess().registryOrThrow(Registries.STRUCTURE)));
             }
             if (array.size() > 0) {
                 json.add("structures", array);
@@ -190,10 +188,10 @@ public class ExploreStructureAction extends AbstractAction<Structure> {
                 String id = element.getAsString();
                 // i'm not actually sure that anyone would tag these, or if they can even be tagged, but might as well.
                 if (id.startsWith("#")) {
-                    TagKey<Structure> key = TagKey.create(Registry.STRUCTURE_REGISTRY, new ResourceLocation(id.substring(1)));
+                    TagKey<Structure> key = TagKey.create(Registries.STRUCTURE, new ResourceLocation(id.substring(1)));
                     structs.add(ActionEntry.of(key));
                 } else {
-                    structs.add(ActionEntry.of(ResourceKey.create(Registry.STRUCTURE_REGISTRY, new ResourceLocation(id))));
+                    structs.add(ActionEntry.of(ResourceKey.create(Registries.STRUCTURE, new ResourceLocation(id))));
                 }
             }
             return new ExploreStructureAction(conditions, rewards, structs);

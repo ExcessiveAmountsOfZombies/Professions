@@ -1,15 +1,8 @@
 package com.epherical.professions.client.widgets;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
-
-import static com.epherical.professions.client.screen.OccupationScreen.WINDOW_LOCATION;
 
 public class LevelEntryButton extends AbstractEntryButton {
 
@@ -20,7 +13,7 @@ public class LevelEntryButton extends AbstractEntryButton {
 
     @Override
     public void renderWidget(GuiGraphics poseStack, int mouseX, int mouseY, float partialTick) {
-        Minecraft minecraft = Minecraft.getInstance();
+        /*Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, WINDOW_LOCATION);
@@ -36,6 +29,6 @@ public class LevelEntryButton extends AbstractEntryButton {
         drawString(poseStack, font, name, this.x + 24, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
         if (this.isHoveredOrFocused()) {
             this.renderToolTip(poseStack, mouseX, mouseY);
-        }
+        }*/
     }
 }

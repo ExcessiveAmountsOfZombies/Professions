@@ -16,6 +16,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -84,7 +86,7 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
         if (realEntities == null) {
             realEntities = new LinkedHashSet<>();
             for (ActionEntry<EntityType<?>> entity : entities) {
-                realEntities.addAll(entity.getActionValues(Registry.ENTITY_TYPE));
+                realEntities.addAll(entity.getActionValues(BuiltInRegistries.ENTITY_TYPE));
             }
         }
         return realEntities;
@@ -101,7 +103,7 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
 
     @Override
     public Registry<EntityType<?>> getRegistry(MinecraftServer server) {
-        return Registry.ENTITY_TYPE;
+        return BuiltInRegistries.ENTITY_TYPE;
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {
@@ -125,7 +127,7 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<EntityType<?>> entity : value.entities) {
-                array.addAll(entity.serialize(Registry.ENTITY_TYPE));
+                array.addAll(entity.serialize(BuiltInRegistries.ENTITY_TYPE));
             }
             if (array.size() > 0) {
                 json.add("entities", array);
@@ -138,10 +140,10 @@ public abstract class AbstractEntityAction extends AbstractAction<EntityType<?>>
             for (JsonElement element : array) {
                 String entityID = element.getAsString();
                 if (entityID.startsWith("#")) {
-                    TagKey<EntityType<?>> key = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(entityID.substring(1)));
+                    TagKey<EntityType<?>> key = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(entityID.substring(1)));
                     entities.add(ActionEntry.of(key));
                 } else {
-                    Registry.ENTITY_TYPE.getOptional(new ResourceLocation(entityID)).ifPresentOrElse(
+                    BuiltInRegistries.ENTITY_TYPE.getOptional(new ResourceLocation(entityID)).ifPresentOrElse(
                             entity -> entities.add(ActionEntry.of(entity)),
                             () -> LOGGER.warn("Attempted to add unknown entity {}. Was not added, but will continue processing the list.", entityID));
                 }

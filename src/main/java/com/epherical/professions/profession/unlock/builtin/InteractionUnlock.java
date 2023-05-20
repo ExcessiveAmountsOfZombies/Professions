@@ -13,6 +13,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -66,7 +67,7 @@ public class InteractionUnlock extends AbstractLevelUnlock<Item> {
         if (real == null) {
             real = new HashSet<>();
             for (ActionEntry<Item> block : items) {
-                real.addAll(block.getActionValues(Registry.ITEM));
+                real.addAll(block.getActionValues(BuiltInRegistries.ITEM));
             }
         }
         return real;
@@ -78,7 +79,7 @@ public class InteractionUnlock extends AbstractLevelUnlock<Item> {
 
     @Override
     public Registry<Item> getRegistry() {
-        return Registry.ITEM;
+        return BuiltInRegistries.ITEM;
     }
 
     public static InteractionUnlock.Builder builder() {
@@ -138,7 +139,7 @@ public class InteractionUnlock extends AbstractLevelUnlock<Item> {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Item> block : value.items) {
-                array.addAll(block.serialize(Registry.ITEM));
+                array.addAll(block.serialize(BuiltInRegistries.ITEM));
             }
             json.add("items", array);
         }
@@ -159,7 +160,7 @@ public class InteractionUnlock extends AbstractLevelUnlock<Item> {
             int arraySize = buf.readVarInt();
             List<ActionEntry<Item>> entries = new ArrayList<>();
             for (int i = 0; i < arraySize; i++) {
-                entries.addAll(ActionEntry.fromNetwork(buf, Registry.ITEM));
+                entries.addAll(ActionEntry.fromNetwork(buf, BuiltInRegistries.ITEM));
             }
             return new InteractionUnlock(entries, unlockLevel);
         }
@@ -169,7 +170,7 @@ public class InteractionUnlock extends AbstractLevelUnlock<Item> {
             buf.writeVarInt(unlock.level);
             buf.writeVarInt(unlock.items.size());
             for (ActionEntry<Item> item : unlock.items) {
-                item.toNetwork(buf, Registry.ITEM);
+                item.toNetwork(buf, BuiltInRegistries.ITEM);
             }
         }
     }

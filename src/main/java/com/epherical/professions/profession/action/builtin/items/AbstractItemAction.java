@@ -16,6 +16,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -84,7 +86,7 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
         if (realItems == null) {
             realItems = new LinkedHashSet<>();
             for (ActionEntry<Item> item : items) {
-                realItems.addAll(item.getActionValues(Registry.ITEM));
+                realItems.addAll(item.getActionValues(BuiltInRegistries.ITEM));
             }
         }
         return realItems;
@@ -101,7 +103,7 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
 
     @Override
     public Registry<Item> getRegistry(MinecraftServer server) {
-        return Registry.ITEM;
+        return BuiltInRegistries.ITEM;
     }
 
     public abstract static class Builder<T extends Builder<T>> extends AbstractAction.Builder<T> {
@@ -125,7 +127,7 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
             super.serialize(json, value, serializationContext);
             JsonArray array = new JsonArray();
             for (ActionEntry<Item> item : value.items) {
-                array.addAll(item.serialize(Registry.ITEM));
+                array.addAll(item.serialize(BuiltInRegistries.ITEM));
             }
             if (array.size() > 0) {
                 json.add("items", array);
@@ -139,10 +141,10 @@ public abstract class AbstractItemAction extends AbstractAction<Item> {
             for (JsonElement element : array) {
                 String id = element.getAsString();
                 if (id.startsWith("#")) {
-                    TagKey<Item> key = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(id.substring(1)));
+                    TagKey<Item> key = TagKey.create(Registries.ITEM, new ResourceLocation(id.substring(1)));
                     items.add(ActionEntry.of(key));
                 } else {
-                    Registry.ITEM.getOptional(new ResourceLocation(id)).ifPresentOrElse(
+                    BuiltInRegistries.ITEM.getOptional(new ResourceLocation(id)).ifPresentOrElse(
                             item -> items.add(ActionEntry.of(item)),
                             () -> LOGGER.warn("Attempted to add unknown item {}. Was not added, but will continue processing the list.", id));
                 }

@@ -8,7 +8,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.mojang.logging.LogUtils;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
@@ -116,7 +116,7 @@ public abstract class AbstractAttributePerk implements Perk {
         @Override
         public void serialize(@NotNull JsonObject jsonObject, @NotNull T t, @NotNull JsonSerializationContext jsonSerializationContext) {
             try {
-                jsonObject.addProperty("attribute", Registry.ATTRIBUTE.getKey(t.attribute).toString());
+                jsonObject.addProperty("attribute", BuiltInRegistries.ATTRIBUTE.getKey(t.attribute).toString());
             } catch (NullPointerException e) {
                 LOGGER.warn("Tried serializing an attribute that does not exist on the server.");
                 e.printStackTrace();
@@ -132,7 +132,7 @@ public abstract class AbstractAttributePerk implements Perk {
             double increaseBy = GsonHelper.getAsDouble(jsonObject, "increaseBy");
             int level = GsonHelper.getAsInt(jsonObject, "level");
             String key = GsonHelper.getAsString(jsonObject, "attribute");
-            Attribute attribute = Registry.ATTRIBUTE.get(new ResourceLocation(key));
+            Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(new ResourceLocation(key));
             if (attribute == null) {
                 throw new RuntimeException("Tried to deserialize an attribute that is not registered " + key);
             }

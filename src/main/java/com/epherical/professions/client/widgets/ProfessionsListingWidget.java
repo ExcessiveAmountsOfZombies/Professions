@@ -19,7 +19,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
@@ -218,7 +217,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
         public InfoEntry(OccupationScreen<?> parent, ProfessionsListingWidget listingWidget, Minecraft client, List<ActionDisplay.Icon> component) {
             this.screen = parent;
 
-            for (ActionDisplay.Icon icon : component) {
+            /*for (ActionDisplay.Icon icon : component) {
                 buttons.add(new InfoEntryButton(icon, 0, 0, 16, 16, button -> {
                 }, (button, poseStack, i, j) -> {
                     InfoEntryButton infoEntryButton = (InfoEntryButton) button;
@@ -229,7 +228,7 @@ public class ProfessionsListingWidget extends ContainerObjectSelectionList<Profe
                     infoEntryButton.drawText();
                     infoEntryButton.drawText(poseStack, parent.width, parent.height);
                 }));
-            }
+            }*/
         }
 
         @Override

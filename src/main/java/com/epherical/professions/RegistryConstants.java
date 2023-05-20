@@ -88,8 +88,8 @@ public class RegistryConstants {
 
     }
 
-    private static <T> MappedRegistry<T> createRegistry(ResourceKey<Registry<T>> key, Lifecycle lifecycle, ClassInitializer<T> initializer) {
-        MappedRegistry<T> registry = new MappedRegistry<>(key, lifecycle, null);
+    private static <T> MappedRegistry<T> createRegistry(ResourceKey<? extends Registry<T>> key, Lifecycle lifecycle, ClassInitializer<T> initializer) {
+        MappedRegistry<T> registry = new MappedRegistry<>(key, lifecycle);
         LOADERS.put(key.location(), () -> initializer.run(registry));
         return registry;
     }

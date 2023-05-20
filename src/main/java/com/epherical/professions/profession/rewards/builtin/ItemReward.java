@@ -10,7 +10,7 @@ import com.epherical.professions.profession.rewards.Rewards;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
@@ -37,7 +37,7 @@ public record ItemReward(Item item, int count) implements Reward {
         }
         ItemStack toDrop = new ItemStack(this.item);
         toDrop.setCount(this.count);
-        Block.popResource(player.getLevel(), player.getOnPos().above(), toDrop);
+        Block.popResource(player.level(), player.getOnPos().above(), toDrop);
     }
 
     @Override
@@ -49,8 +49,8 @@ public record ItemReward(Item item, int count) implements Reward {
 
         @Override
         public void serialize(JsonObject json, ItemReward value, JsonSerializationContext serializationContext) {
-            json.addProperty("item", Registry.ITEM.getKey(value.item).toString());
-            json.addProperty("count", Registry.ITEM.getKey(value.item).toString());
+            json.addProperty("item", BuiltInRegistries.ITEM.getKey(value.item).toString());
+            json.addProperty("count", BuiltInRegistries.ITEM.getKey(value.item).toString());
         }
 
         @Override

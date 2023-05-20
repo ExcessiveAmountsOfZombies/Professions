@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -70,7 +71,7 @@ public class AdvancementUnlock implements Unlock<Item> {
         if (real == null) {
             real = new HashSet<>();
             for (ActionEntry<Item> block : items) {
-                real.addAll(block.getActionValues(Registry.ITEM));
+                real.addAll(block.getActionValues(BuiltInRegistries.ITEM));
             }
         }
         return real;
@@ -82,7 +83,7 @@ public class AdvancementUnlock implements Unlock<Item> {
 
     @Override
     public Registry<Item> getRegistry() {
-        return Registry.ITEM;
+        return BuiltInRegistries.ITEM;
     }
 
     public static Builder builder() {
@@ -176,7 +177,7 @@ public class AdvancementUnlock implements Unlock<Item> {
         public void serialize(JsonObject json, AdvancementUnlock value, JsonSerializationContext serializationContext) {
             JsonArray array = new JsonArray();
             for (ActionEntry<Item> block : value.items) {
-                array.addAll(block.serialize(Registry.ITEM));
+                array.addAll(block.serialize(BuiltInRegistries.ITEM));
             }
             json.add("items", array);
             json.addProperty("advancement_id", value.location.toString());
@@ -199,7 +200,7 @@ public class AdvancementUnlock implements Unlock<Item> {
             int arraySize = buf.readVarInt();
             List<ActionEntry<Item>> entries = new ArrayList<>();
             for (int i = 0; i < arraySize; i++) {
-                entries.addAll(ActionEntry.fromNetwork(buf, Registry.ITEM));
+                entries.addAll(ActionEntry.fromNetwork(buf, BuiltInRegistries.ITEM));
             }
             return new AdvancementUnlock(entries, advancementID);
         }
@@ -209,7 +210,7 @@ public class AdvancementUnlock implements Unlock<Item> {
             buf.writeResourceLocation(unlock.location);
             buf.writeVarInt(unlock.items.size());
             for (ActionEntry<Item> block : unlock.items) {
-                block.toNetwork(buf, Registry.ITEM);
+                block.toNetwork(buf, BuiltInRegistries.ITEM);
             }
         }
     }

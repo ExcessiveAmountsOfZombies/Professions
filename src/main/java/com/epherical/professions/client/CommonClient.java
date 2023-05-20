@@ -47,10 +47,6 @@ public class CommonClient {
     }
 
     public void openMenus(Minecraft client) {
-        if (getOpenDatapackMenu().consumeClick()) {
-            client.setScreen(new MenuScreen());
-        }
-
         if (occupationMenu.consumeClick()) {
             if (client.isLocalServer()) {
                 ProfessionalPlayer player = ProfessionPlatform.platform.getPlayerManager().getPlayer(client.player.getUUID());

@@ -71,7 +71,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.level.storage.LevelResource;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -335,11 +334,7 @@ public abstract class ProfessionsStandardCommands {
         Map<CompoundKey<?>, AbstractOperation<?>> map = new HashMap<>();
         for (Profession profession : ProfessionPlatform.platform.getProfessionLoader().getProfessions()) {
             Path professionSavePath = createPathToProfession(generatedDir, "occupations", profession.getKey(), ".json");
-            try {
-                DataProvider.saveStable(CachedOutput.NO_CACHE, gson.toJsonTree(profession), professionSavePath);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            DataProvider.saveStable(CachedOutput.NO_CACHE, gson.toJsonTree(profession), professionSavePath);
             for (Map.Entry<UnlockType<?>, Collection<Unlock<?>>> entry : profession.getUnlocks().entrySet()) {
                 for (Unlock<?> unlock : entry.getValue()) {
                     unlock.handleMigration(map, profession);
@@ -356,11 +351,7 @@ public abstract class ProfessionsStandardCommands {
         for (Map.Entry<CompoundKey<?>, AbstractOperation<?>> entry : map.entrySet()) {
             String registry = entry.getKey().getRegistry().location().getPath();
             Path individualActionPath = createPathToProfession(generatedDir, "actionables/" + registry, entry.getKey().getKey(), ".json");
-            try {
-                DataProvider.saveStable(CachedOutput.NO_CACHE, gson.toJsonTree(entry.getValue()), individualActionPath);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            DataProvider.saveStable(CachedOutput.NO_CACHE, gson.toJsonTree(entry.getValue()), individualActionPath);
         }
 
 
@@ -380,7 +371,7 @@ public abstract class ProfessionsStandardCommands {
     private int help(CommandContext<CommandSourceStack> stack) {
         var map = CommandUsage.getSmartUsage(stack.getNodes().get(0).getNode(), stack.getSource());
         for (Map.Entry<CommandNode<CommandSourceStack>, MutableComponent> commandNodeStringEntry : map.entrySet()) {
-            stack.getSource().sendSuccess(Component.literal("/professions ").append(commandNodeStringEntry.getValue()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), false);
+            stack.getSource().sendSuccess(() -> Component.literal("/professions ").append(commandNodeStringEntry.getValue()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)), false);
         }
         return 1;
     }
@@ -407,21 +398,21 @@ public abstract class ProfessionsStandardCommands {
 
             Style borders = Style.EMPTY.withColor(ProfessionConfig.headerBorders);
 
-            stack.getSource().sendSuccess(Component.literal("╔══╦════╦══╗")
+            stack.getSource().sendSuccess(() -> Component.literal("╔══╦════╦══╗")
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(Component.translatable("╠══╩%s╿╩══╣", Component.literal("Profile").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
+            stack.getSource().sendSuccess(() -> Component.translatable("╠══╩%s╿╩══╣", Component.literal("Profile").setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(Component.translatable("║ Name: %s", Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+            stack.getSource().sendSuccess(() -> Component.translatable("║ Name: %s", Component.literal(profile.getName()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(Component.translatable("║ %s", Component.literal("/stats command")
+            stack.getSource().sendSuccess(() -> Component.translatable("║ %s", Component.literal("/stats command")
                             .setStyle(Style.EMPTY
                                     .withColor(ProfessionConfig.variables)
                                     .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to run command")))
                                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions stats " + profile.getName()))))
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(Component.literal("╠══════════╣")
+            stack.getSource().sendSuccess(() -> Component.literal("╠══════════╣")
                     .setStyle(borders), false);
-            stack.getSource().sendSuccess(Component.literal("║ Perks Unlocked")
+            stack.getSource().sendSuccess(() -> Component.literal("║ Perks Unlocked")
                     .setStyle(borders), false);
 
 
@@ -439,11 +430,11 @@ public abstract class ProfessionsStandardCommands {
             }
             Map<Attribute, MutableComponent> values = display.getValues();
             if (values.size() == 0) {
-                stack.getSource().sendSuccess(Component.literal("║      No Perks")
+                stack.getSource().sendSuccess(() -> Component.literal("║      No Perks")
                         .setStyle(borders), false);
-                stack.getSource().sendSuccess(Component.literal("║")
+                stack.getSource().sendSuccess(() -> Component.literal("║")
                         .setStyle(borders), false);
-                stack.getSource().sendSuccess(Component.literal("║      Unlocked")
+                stack.getSource().sendSuccess(() -> Component.literal("║      Unlocked")
                         .setStyle(borders), false);
             } else {
                 int inc = 0;
@@ -452,17 +443,19 @@ public abstract class ProfessionsStandardCommands {
                     inc++;
                     comp.append(" ").append(value);
                     if (inc % 3 == 0) {
-                        stack.getSource().sendSuccess(comp, false);
+                        MutableComponent finalComp = comp;
+                        stack.getSource().sendSuccess(() -> finalComp, false);
                         // todo; this is bugged
                         comp = Component.literal("║").setStyle(borders);
                     }
                 }
                 if (comp != null) {
-                    stack.getSource().sendSuccess(comp, false);
+                    MutableComponent finalComp = comp;
+                    stack.getSource().sendSuccess(() -> finalComp, false);
                 }
             }
 
-            stack.getSource().sendSuccess(Component.literal("╠══╩════╩══╣").setStyle(borders), false);
+            stack.getSource().sendSuccess(() -> Component.literal("╠══╩════╩══╣").setStyle(borders), false);
         } catch (Exception e) {
             e.printStackTrace();
             // don't display errors to clients
@@ -591,7 +584,7 @@ public abstract class ProfessionsStandardCommands {
             }
 
             for (Component component : components.subList(begin, end)) {
-                stack.getSource().sendSuccess(component, false);
+                stack.getSource().sendSuccess(() -> component, false);
             }
 
             MutableComponent previous = Component.translatable("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
@@ -602,7 +595,7 @@ public abstract class ProfessionsStandardCommands {
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (page + 1))));
 
             MutableComponent pageComp = Component.translatable("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-            stack.getSource().sendSuccess(pageComp, false);
+            stack.getSource().sendSuccess(() -> pageComp, false);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -700,7 +693,7 @@ public abstract class ProfessionsStandardCommands {
             components.add(profession.createBrowseMessage());
         }
         for (Component component : components) {
-            stack.getSource().sendSuccess(component, false);
+            stack.getSource().sendSuccess(() -> component, false);
         }
 
         return 1;
@@ -751,7 +744,7 @@ public abstract class ProfessionsStandardCommands {
                 return 0;
             }
 
-            stack.getSource().sendSuccess(Component.translatable("professions.command.top.header",
+            stack.getSource().sendSuccess(() -> Component.translatable("professions.command.top.header",
                             Component.literal("" + messages).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), profession.getDisplayComponent())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)), false);
             int position = 1;
@@ -770,7 +763,7 @@ public abstract class ProfessionsStandardCommands {
                                 Component.literal("" + player.getOccupation(profession).getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
                                 Component.literal("" + player.getOccupation(profession).getExp()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                         .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
-                stack.getSource().sendSuccess(msg, false);
+                stack.getSource().sendSuccess(() ->  msg, false);
             }
 
             MutableComponent previous = Component.translatable("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
@@ -781,7 +774,7 @@ public abstract class ProfessionsStandardCommands {
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions top \"" + potentialProfession + "\" " + (page + 1))));
 
             MutableComponent pageComp = Component.translatable("=-=-=| %s %s/%s %s |=-=-=", previous, page, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-            stack.getSource().sendSuccess(pageComp, false);
+            stack.getSource().sendSuccess(() ->  pageComp, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -794,7 +787,7 @@ public abstract class ProfessionsStandardCommands {
         try {
             ProfessionConfig.reload();
             ActionLogger.reloadStyles();
-            stack.getSource().sendSuccess(Component.translatable("professions.command.reload.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), false);
+            stack.getSource().sendSuccess(() -> Component.translatable("professions.command.reload.success").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), false);
         } catch (Exception e) {
             e.printStackTrace();
         }

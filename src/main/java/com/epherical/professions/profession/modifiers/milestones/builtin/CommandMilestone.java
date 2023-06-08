@@ -29,7 +29,7 @@ public class CommandMilestone extends AbstractLevelMilestone {
     public boolean giveMilestoneReward(ProfessionalPlayer context, Occupation occupation) {
         if (context.getPlayer() != null) {
             ServerPlayer player = context.getPlayer();
-            String replacement = command.formatted(player.getDisplayName().getContents());
+            String replacement = command.formatted(player.getDisplayName().getString());
             player.getServer().getCommands().performCommand(player.getServer().createCommandSourceStack(), replacement);
             return true;
         }

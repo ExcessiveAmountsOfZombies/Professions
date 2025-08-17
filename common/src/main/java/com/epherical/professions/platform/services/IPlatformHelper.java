@@ -1,5 +1,11 @@
 package com.epherical.professions.platform.services;
 
+import com.epherical.professions.core.Profession;
+import com.epherical.professions.core.actions.ActionType;
+import com.epherical.professions.core.conditions.ConditionType;
+import com.epherical.professions.core.rewards.RewardType;
+import net.minecraft.core.Registry;
+
 public interface IPlatformHelper {
 
     /**
@@ -32,4 +38,13 @@ public interface IPlatformHelper {
     default String getEnvironmentName() {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+
+    Registry<Profession> getProfessionRegistry();
+
+    Registry<ActionType> getActionTypeRegistry();
+
+    Registry<ConditionType> getConditionTypeRegistry();
+
+    Registry<RewardType> getRewardTypeRegistry();
 }

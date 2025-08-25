@@ -2,7 +2,7 @@ package com.epherical.professions.core.actions.block;
 
 import com.epherical.professions.core.actions.AbstractAction;
 import com.epherical.professions.core.actions.ActionType;
-import com.epherical.professions.core.actions.ActionsRegistered;
+import com.epherical.professions.core.register.Actions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -29,6 +29,6 @@ public class BlockBreakAction extends AbstractAction {
 
     @Override
     public ActionType getType() {
-        return ActionsRegistered.BLOCK_BREAK;
+        return Actions.BLOCK_BREAK;
     }
 }

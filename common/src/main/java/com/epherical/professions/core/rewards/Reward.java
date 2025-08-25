@@ -1,5 +1,6 @@
 package com.epherical.professions.core.rewards;
 
+import com.epherical.professions.core.actions.Action;
 import com.epherical.professions.platform.Services;
 import com.mojang.serialization.Codec;
 
@@ -9,6 +10,8 @@ public interface Reward {
             "reward", Reward::getType, RewardType::codec);
 
     RewardType getType();
+
+    void giveReward(Action actionType); // todo; finish
 
     @FunctionalInterface
     interface Builder {

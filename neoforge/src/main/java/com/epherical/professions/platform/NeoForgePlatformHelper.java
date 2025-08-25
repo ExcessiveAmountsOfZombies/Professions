@@ -1,5 +1,6 @@
 package com.epherical.professions.platform;
 
+import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.conditions.ConditionType;
@@ -33,7 +34,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public Registry<ActionType> getActionTypeRegistry() {
-        return null;
+        return ProfessionsMod.ACTIONS;
     }
 
     @Override

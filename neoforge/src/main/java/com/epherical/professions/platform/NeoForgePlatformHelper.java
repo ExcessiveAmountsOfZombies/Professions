@@ -29,7 +29,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public Registry<Profession> getProfessionRegistry() {
-        return null;
+        return ProfessionsMod.PROFESSION_REGISTER.getRegistry().get();
     }
 
     @Override
@@ -39,11 +39,11 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public Registry<ConditionType> getConditionTypeRegistry() {
-        return null;
+        return ProfessionsMod.CONDITIONS;
     }
 
     @Override
     public Registry<RewardType> getRewardTypeRegistry() {
-        return null;
+        return ProfessionsMod.REWARDS;
     }
 }

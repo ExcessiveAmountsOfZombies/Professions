@@ -25,29 +25,6 @@ public record Profession(
     ).apply(instance, Profession::new));
 
 
-    // Item
-    //  Action
-    //  Rewards
-    //   Occupation,
-    //   Reward
-    //     Conditions
-
-    // Can have many per file
-    // Item
-    //  Occupation
-    //    Action
-    //    Conditions - to activate
-    //    Rewards - for completion
-
-
-    // One Per File
-    // Action
-    //  Conditions - to activate
-    //  Target - blocks/items/etc
-    //  Rewards
-    //    Occupation
-
-
     @Override
     public String displayNameRaw() {
         return displayName.getString();

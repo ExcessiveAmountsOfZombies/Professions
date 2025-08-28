@@ -1,5 +1,6 @@
 package com.epherical.professions.core.actions;
 
+import com.epherical.professions.CommonClass;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.conditions.Condition;
 import com.epherical.professions.core.rewards.Reward;
@@ -8,6 +9,8 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.resources.RegistryFixedCodec;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -34,9 +37,7 @@ public abstract class AbstractAction implements Action {
 
     public static final MapCodec<Common> COMMON = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    Services.PLATFORM.getProfessionRegistry()
-                            .holderByNameCodec().fieldOf("profession")
-                            .forGetter(Common::profession),
+                    RegistryFixedCodec.create(CommonClass.PROFESSION_REGISTRY_KEY).fieldOf("occupation").forGetter(Common::profession),
                     Condition.CODEC.listOf().fieldOf("conditions").forGetter(Common::conditions),
                     Reward.CODEC.listOf().fieldOf("rewards").forGetter(Common::rewards)
             ).apply(i, Common::new)

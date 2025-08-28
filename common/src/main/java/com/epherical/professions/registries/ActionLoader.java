@@ -1,6 +1,8 @@
 package com.epherical.professions.registries;
 
 import com.epherical.professions.core.actions.Action;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -9,6 +11,7 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
@@ -21,12 +24,13 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +44,7 @@ public class ActionLoader implements PreparableReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 
-    private static final String PATH = "actions";
+    private static final String PATH = "professions/actions";
 
     private final RegistryAccess registry;
     private Map<?, ?> actions;
@@ -69,7 +73,7 @@ public class ActionLoader implements PreparableReloadListener {
     private static Map<?, ?> load(RegistryAccess registryAccess, ResourceManager manager) {
         RegistryOps<JsonElement> op = RegistryOps.create(JsonOps.INSTANCE, registryAccess);
 
-        final Map<ResourceKey<? extends Registry<?>>, ?> loaded = new HashMap<>();
+        Multimap<ResourceKey<? extends Registry<?>>, ActionOf<?>> loaded = MultimapBuilder.hashKeys().arrayListValues().build();
         registryAccess.registries().forEach(registry -> {
             ResourceKey<? extends Registry<?>> resourceKey = registry.key();
             // actions/minecraft/item
@@ -84,11 +88,30 @@ public class ActionLoader implements PreparableReloadListener {
                 // turns into professions:shiddd.json
                 ResourceLocation realFile = converter.fileToId(aFacsimileOfTheRealDeal);
 
-                List<ActionOf<?>> list = parseFile(op, (ResourceKey) resourceKey, entry.getValue());
+
+                parseFile(op, (ResourceKey) resourceKey, entry.getValue(), loaded);
 
 
+                ResourceKey<Registry<Block>> blockResourceKey = (ResourceKey<Registry<Block>>) resourceKey;
+
+                Collection<ActionOf<?>> actionOfs = loaded.get(blockResourceKey);
+
+                Holder<Block> blockHolder = null;
+                actionOfs.forEach(action -> {
+
+                            action.values().forEach((tagKeyResourceKeyEither, singleAction) -> {
+                                tagKeyResourceKeyEither.ifLeft(tagKey -> {
+                                    boolean aFor = tagKey.isFor(blockResourceKey);
+                                    if (aFor) {
+                                        singleAction.actions().forEach(action1 -> {
+                                        });
+                                    }
+                                }).ifRight(resourceKey1 -> {
+                                    boolean aFor = resourceKey1.isFor(blockResourceKey);
+                                });
+                            });
+                        });
                 // ExtraCodecs
-
             }
 
         });
@@ -101,7 +124,8 @@ public class ActionLoader implements PreparableReloadListener {
     }
 
 
-    private static <T> List<ActionOf<T>> parseFile(RegistryOps<JsonElement> op, ResourceKey<Registry<T>> registry, List<Resource> resources) {
+    private static <T> void parseFile(RegistryOps<JsonElement> op, ResourceKey<Registry<T>> registry,
+                                                   List<Resource> resources, Multimap<ResourceKey<? extends Registry<?>>, ActionOf<?>> loaded) {
         // this is very much heavily inspired by the datamaps in neoforge
         Codec<Either<TagKey<T>, ResourceKey<T>>> eitherTagElement = ExtraCodecs.TAG_OR_ELEMENT_ID.xmap(
                 rl -> rl.tag() ? Either.left(TagKey.create(registry, rl.id()))
@@ -129,17 +153,14 @@ public class ActionLoader implements PreparableReloadListener {
         ).apply(inst, ActionOf::new));
 
 
-        List<ActionOf<T>> actions = new ArrayList<>();
         for (Resource resource : resources) {
             try (Reader reader = resource.openAsReader()) {
                 JsonElement element = GSON.fromJson(reader, JsonElement.class);
-                actions.add(codec.decode(op, element).getOrThrow().getFirst());
+                loaded.put(registry, codec.decode(op, element).getOrThrow().getFirst());
             } catch (Exception e) {
                 LOGGER.warn("Couldn't finish reading resource file! {}", registry, e);
             }
         }
-
-        return actions;
     }
 
 

@@ -2,43 +2,43 @@ package com.epherical.professions;
 
 
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.Action;
 import com.epherical.professions.core.actions.ActionType;
+import com.epherical.professions.core.conditions.ConditionType;
 import com.epherical.professions.core.progression.ProfessionalPlayer;
+import com.epherical.professions.core.register.PlatformBootstrap;
+import com.epherical.professions.core.rewards.RewardType;
+import com.epherical.professions.registries.ActionLoad2;
 import com.epherical.professions.registries.ActionLoader;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
+import static com.epherical.professions.CommonClass.*;
+
 @Mod(Constants.MOD_ID)
 public class ProfessionsMod {
 
-    public static final ResourceKey<Registry<Profession>> PROFESSION_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "professions/occupations"));
+    private static final NeoForgeRegistrarBackend NEO_FORGE_REGISTRAR_BACKEND = new NeoForgeRegistrarBackend();
 
-
-    public static final ResourceKey<Registry<ActionType>> ACTION_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "actions"));
-
-
-    public static Registry<ActionType> ACTIONS = new RegistryBuilder<>(ACTION_REGISTRY_KEY)
-            .sync(true).create();
-
-
-
+    public static Registry<ActionType> ACTIONS;
+    public static Registry<ConditionType> CONDITIONS;
+    public static Registry<RewardType> REWARDS;
 
     public static final DeferredRegister<Profession> PROFESSION_REGISTER = DeferredRegister.create(PROFESSION_REGISTRY_KEY, Constants.MOD_ID);
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS_REGISTER = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Constants.MOD_ID);
@@ -53,11 +53,10 @@ public class ProfessionsMod {
 
 
     public ProfessionsMod(IEventBus eventBus) {
-
+        CommonClass.init();
+        PlatformBootstrap.init(NEO_FORGE_REGISTRAR_BACKEND);
         PROFESSION_REGISTER.register(eventBus);
         ATTACHMENTS_REGISTER.register(eventBus);
-
-        CommonClass.init();
 
     }
 
@@ -65,15 +64,43 @@ public class ProfessionsMod {
 
     @EventBusSubscriber
     public static class EventHandler {
+
+        @SubscribeEvent
+        public static void registerDatapackRegistry(DataPackRegistryEvent.NewRegistry event) {
+            event.dataPackRegistry(
+                    PROFESSION_REGISTRY_KEY,
+                    Profession.CODEC,
+                    Profession.CODEC // todo; we may network serialize less data
+            );
+        }
+
+
         @SubscribeEvent
         public static void onRegistryCreate(NewRegistryEvent event) {
-            event.register(ACTIONS);
-            //ACTIONS = event.create(new RegistryBuilder<>( ACTION_REGISTRY_KEY).sync(true));
+            event.register(ACTIONS = new RegistryBuilder<>(ACTION_REGISTRY_KEY).sync(true).create());
+            event.register(CONDITIONS = new RegistryBuilder<>(CONDITION_REGISTRY_KEY).sync(true).create());
+            event.register(REWARDS = new RegistryBuilder<>(REWARD_REGISTRY_KEY).sync(true).create());
+            CommonClass.register();
+        }
+
+        @SubscribeEvent
+        public static void onRegisterEvent(RegisterEvent event) {
+            ProfessionsMod.NEO_FORGE_REGISTRAR_BACKEND.onRegister(event);
         }
 
         @SubscribeEvent
         public static void onDataReload(AddReloadListenerEvent event) {
-            event.addListener(new ActionLoader(event.getRegistryAccess()));
+            //event.addListener(new ActionLoader(event.getRegistryAccess()));
+            event.addListener(new ActionLoad2(event.getRegistryAccess()));
+        }
+
+
+        @SubscribeEvent
+        public static void onBlockBreak(BlockEvent.BreakEvent event) {
+            Holder<Block> blockHolder = event.getState().getBlockHolder();
+
+
+
         }
     }
 }

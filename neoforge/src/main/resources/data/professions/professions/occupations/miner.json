@@ -1,0 +1,13 @@
+{
+  "id": "professions:miner",
+  "display": {
+    "text": "Miner",
+    "color": "yellow"
+  },
+  "description": {
+    "text": "Digs through stone and ore for valuable resources."
+  },
+  "nameColor": "#FFD700",
+  "descriptionColor": "#AAAAAA",
+  "maxLevel": 30
+}

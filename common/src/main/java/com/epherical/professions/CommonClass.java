@@ -1,27 +1,45 @@
 package com.epherical.professions;
 
+import com.epherical.professions.core.Profession;
+import com.epherical.professions.core.actions.ActionType;
+import com.epherical.professions.core.conditions.ConditionType;
+import com.epherical.professions.core.register.Actions;
+import com.epherical.professions.core.register.Conditions;
+import com.epherical.professions.core.register.Rewards;
+import com.epherical.professions.core.rewards.RewardType;
 import com.epherical.professions.platform.Services;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 
-// This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
-// import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
-// common compatible binaries. This means common code can not directly use loader specific concepts such as Forge events
-// however it will be compatible with all supported mod loaders.
 public class CommonClass {
 
-    // The loader specific projects are able to import and use any code from the common project. This allows you to
-    // write the majority of your code here and load it from your loader specific projects. This example has some
-    // code that gets invoked by the entry point of the loader specific projects.
+    public static final ResourceKey<Registry<ActionType>> ACTION_REGISTRY_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "professions/actions"));
+    public static final ResourceKey<Registry<ConditionType>> CONDITION_REGISTRY_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "professions/conditions"));
+    public static final ResourceKey<Registry<RewardType>> REWARD_REGISTRY_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "professions/rewards"));
+
+
+    public static final ResourceKey<Registry<Profession>> PROFESSION_REGISTRY_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "occupations"));
+
+
     public static void init() {
 
-        // It is common for all supported loaders to provide a similar feature that can not be used directly in the
-        // common code. A popular way to get around this is using Java's built-in service loader feature to create
-        // your own abstraction layer. You can learn more about this in our provided services class. In this example
-        // we have an interface in the common code and use a loader specific implementation to delegate our call to
-        // the platform specific approach.
         if (Services.PLATFORM.isModLoaded("professions")) {
-            Constants.LOG.info("Hello to professions");
+
         }
+    }
+
+    public static void register() {
+        Actions.register();
+        Conditions.register();
+        Rewards.register();
+
+
     }
 }

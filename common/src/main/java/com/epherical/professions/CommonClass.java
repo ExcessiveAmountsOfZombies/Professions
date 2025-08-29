@@ -8,11 +8,10 @@ import com.epherical.professions.core.register.Conditions;
 import com.epherical.professions.core.register.Rewards;
 import com.epherical.professions.core.rewards.RewardType;
 import com.epherical.professions.platform.Services;
+import com.epherical.professions.registries.ActionLoad2;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
 
 public class CommonClass {
 
@@ -26,6 +25,9 @@ public class CommonClass {
 
     public static final ResourceKey<Registry<Profession>> PROFESSION_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "occupations"));
+
+
+    public static ActionLoad2 ACTION_LOAD2;
 
 
     public static void init() {

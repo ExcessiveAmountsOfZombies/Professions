@@ -1,0 +1,26 @@
+{
+  "values": [
+    {
+      "entry": "minecraft:stone",
+      "actions": [
+        {
+          "action": "professions:block_break",
+          "occupation": "professions:miner",
+          "conditions": [],
+          "rewards": []
+        }
+      ]
+    },
+    {
+      "entry": "#minecraft:gold_ores",
+      "actions": [
+        {
+          "action": "professions:block_break",
+          "occupation": "professions:miner",
+          "conditions": [],
+          "rewards": []
+        }
+      ]
+    }
+  ]
+}

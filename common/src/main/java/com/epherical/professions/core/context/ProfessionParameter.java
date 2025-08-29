@@ -1,0 +1,32 @@
+package com.epherical.professions.core.context;
+
+import com.epherical.professions.Constants;
+import com.epherical.professions.api.IProfessionalPlayer;
+import com.epherical.professions.core.actions.ActionType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.Structure;
+
+public record ProfessionParameter<T>(ResourceLocation name) {
+    public static final ProfessionParameter<IProfessionalPlayer> THIS_PLAYER = of("player");
+    public static final ProfessionParameter<BlockState> THIS_BLOCK = of("block");
+    public static final ProfessionParameter<BlockPos> BLOCKPOS = of("blockpos");
+    public static final ProfessionParameter<ItemStack> TOOL = of("tool_used");
+    public static final ProfessionParameter<ActionType> ACTION_TYPE = of("action");
+    public static final ProfessionParameter<Entity> ENTITY = of("entity");
+    public static final ProfessionParameter<ItemStack> ITEM_INVOLVED = of("item_involved");
+    public static final ProfessionParameter<Recipe<?>> RECIPE_CRAFTED = of("recipe");
+    public static final ProfessionParameter<Holder<Biome>> BIOME = of("biome");
+    public static final ProfessionParameter<Structure> CONFIGURED_STRUCTURE = of("configured_structure");
+
+
+    public static <T> ProfessionParameter<T> of(String name) {
+        return new ProfessionParameter<T>(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name));
+    }
+}

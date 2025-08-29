@@ -1,15 +1,17 @@
 package com.epherical.professions.core.actions;
 
 import com.epherical.professions.CommonClass;
+import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.conditions.Condition;
+import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.core.progression.Occupation;
 import com.epherical.professions.core.rewards.Reward;
-import com.epherical.professions.platform.Services;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryCodecs;
 import net.minecraft.resources.RegistryFixedCodec;
 import org.slf4j.Logger;
 
@@ -23,6 +25,8 @@ public abstract class AbstractAction implements Action {
     private final List<Condition> conditions;
     private final List<Reward> rewards;
 
+    //private final Predicate<ProfessionContext> predicate;
+
 
     public AbstractAction(Common common) {
         this(common.profession, common.conditions, common.rewards);
@@ -33,6 +37,7 @@ public abstract class AbstractAction implements Action {
         this.profession = profession;
         this.conditions = conditions;
         this.rewards = rewards;
+       // this.predicate = Actions.andAllConditions(conditions);
     }
 
     public static final MapCodec<Common> COMMON = RecordCodecBuilder.mapCodec(
@@ -43,6 +48,16 @@ public abstract class AbstractAction implements Action {
             ).apply(i, Common::new)
     );
 
+    @Override
+    public void handleAction(ProfessionContext context) {
+        IProfessionalPlayer parameter = context.getParameter(ProfessionParameter.THIS_PLAYER);
+        Occupation occupation = parameter.getOccupation(profession);
+        if (occupation != null) {
+            handleAction(context, occupation);
+        }
+    }
+
+    public abstract void handleAction(ProfessionContext context, Occupation occupation);
 
     public abstract Common buildCommon();
 

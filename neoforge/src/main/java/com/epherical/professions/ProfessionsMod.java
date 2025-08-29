@@ -1,16 +1,26 @@
 package com.epherical.professions;
 
 
+import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.conditions.ConditionType;
+import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.core.progression.OccupationSlot;
 import com.epherical.professions.core.progression.ProfessionalPlayer;
 import com.epherical.professions.core.register.PlatformBootstrap;
 import com.epherical.professions.core.rewards.RewardType;
 import com.epherical.professions.registries.ActionLoad2;
-import com.epherical.professions.registries.ActionLoader;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.CriterionProgress;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,6 +37,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static com.epherical.professions.CommonClass.*;
@@ -43,11 +54,21 @@ public class ProfessionsMod {
     public static final DeferredRegister<Profession> PROFESSION_REGISTER = DeferredRegister.create(PROFESSION_REGISTRY_KEY, Constants.MOD_ID);
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS_REGISTER = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Constants.MOD_ID);
 
+    public static RegistryAccess REGISTRY_ACCESS = null;
+
     public static final Supplier<AttachmentType<ProfessionalPlayer>> PROFESSIONAL_PLAYER = ATTACHMENTS_REGISTER.register(
-            "professional_player", () -> AttachmentType.builder(() -> new ProfessionalPlayer(new ArrayList<>()))
+            "professional_player", () -> AttachmentType.builder(() -> {
+                        ProfessionalPlayer professionalPlayer = new ProfessionalPlayer(new ArrayList<>());
+                        REGISTRY_ACCESS.registry(PROFESSION_REGISTRY_KEY).ifPresent(professions -> {
+                            professions.holders().forEach(profession -> {
+                                professionalPlayer.joinOccupation(profession, OccupationSlot.ACTIVE);
+                            });
+                        });
+                        return professionalPlayer;
+                    })
                     //.sync()
-                    //.serialize()
-                    //.copyOnDeath()
+                    .serialize(ProfessionalPlayer.CODEC)
+                    .copyOnDeath()
                     .build()
     );
 
@@ -61,7 +82,6 @@ public class ProfessionsMod {
     }
 
 
-
     @EventBusSubscriber
     public static class EventHandler {
 
@@ -70,7 +90,8 @@ public class ProfessionsMod {
             event.dataPackRegistry(
                     PROFESSION_REGISTRY_KEY,
                     Profession.CODEC,
-                    Profession.CODEC // todo; we may network serialize less data
+                    Profession.CODEC
+                    //professionRegistryBuilder -> professionRegistryBuilder.sync(true).create()
             );
         }
 
@@ -91,15 +112,30 @@ public class ProfessionsMod {
         @SubscribeEvent
         public static void onDataReload(AddReloadListenerEvent event) {
             //event.addListener(new ActionLoader(event.getRegistryAccess()));
-            event.addListener(new ActionLoad2(event.getRegistryAccess()));
+            ActionLoad2 loader = new ActionLoad2(event.getRegistryAccess());
+            event.addListener(loader);
+            ACTION_LOAD2 = loader;
+            REGISTRY_ACCESS = event.getRegistryAccess();
         }
 
 
         @SubscribeEvent
         public static void onBlockBreak(BlockEvent.BreakEvent event) {
             Holder<Block> blockHolder = event.getState().getBlockHolder();
+            Player player = event.getPlayer();
+            IProfessionalPlayer iProfessionalPlayer = player.getData(PROFESSIONAL_PLAYER);
 
 
+            if (!player.isCreative()) {
+                ProfessionContext context = new ProfessionContext.Builder(null)
+                        .addParameter(ProfessionParameter.THIS_PLAYER, iProfessionalPlayer)
+                        .addParameter(ProfessionParameter.THIS_BLOCK, event.getState())
+                        .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
+                        .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getPlayer().getWeaponItem())
+                        .build();
+
+                iProfessionalPlayer.handleAction(context, blockHolder);
+            }
 
         }
     }

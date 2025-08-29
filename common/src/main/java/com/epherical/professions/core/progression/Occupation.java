@@ -1,51 +1,55 @@
 package com.epherical.professions.core.progression;
 
+import com.epherical.professions.CommonClass;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.GsonHelper;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.RegistryFixedCodec;
 import org.slf4j.Logger;
 
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 public class Occupation {
-    /*private static final Logger LOGGER = LogUtils.getLogger();
-    private final Profession profession;
-    private final CachedData data;
+
+    public static final Codec<OccupationSlot> SLOT_CODEC =
+            Codec.STRING.xmap(s -> OccupationSlot.valueOf(s.toUpperCase(Locale.ROOT)),
+                    OccupationSlot::name);
+
+    public static final Codec<Occupation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            RegistryFixedCodec.create(CommonClass.PROFESSION_REGISTRY_KEY).fieldOf("occupation").forGetter(o -> o.profession),
+            Codec.DOUBLE.fieldOf("exp").forGetter(o -> o.exp),
+            Codec.INT.fieldOf("level").forGetter(o -> o.level),
+            SLOT_CODEC.fieldOf("slot").forGetter(o -> o.slot)
+    ).apply(instance, Occupation::new));
+
+
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private final Holder<Profession> profession;
+    //private final CachedData data;
     private double exp;
     private int level;
     private int receivedBenefitsUpToLevel;
     private OccupationSlot slot;
-    private transient int maxExp = -1;*/
+    private transient int maxExp = -1;
 
-    public Occupation(Profession profession, double exp, int level, OccupationSlot slot) {
-        /*this.profession = profession;
+    public Occupation(Holder<Profession> profession, double exp, int level, OccupationSlot slot) {
+        this.profession = profession;
         this.exp = exp;
         this.level = level;
         this.receivedBenefitsUpToLevel = level;
         this.slot = slot;
-        this.data = new CachedDataImpl(this);*/
+        //this.data = new CachedDataImpl(this);
 
     }
 
     /**
      * CLIENT CONSTRUCTOR ONLY
      */
-   /* public Occupation(Profession profession, double exp, int maxExp, int level) {
+    /*public Occupation(Profession profession, double exp, int maxExp, int level) {
         this.profession = profession;
         this.exp = exp;
         this.maxExp = maxExp;
@@ -53,7 +57,7 @@ public class Occupation {
         this.receivedBenefitsUpToLevel = level;
         this.slot = OccupationSlot.ACTIVE;
         this.data = new CachedDataImpl(this);
-    }
+    }*/
 
     public boolean isActive() {
         return slot != OccupationSlot.INACTIVE;
@@ -67,28 +71,24 @@ public class Occupation {
         this.slot = slot;
     }
 
-    public Profession getProfession() {
-        return profession;
-    }
-
     public boolean addExp(double exp, IProfessionalPlayer player) {
-        player.needsToBeSaved();
+        //player.needsToBeSaved();
         this.exp += exp;
         return checkIfLevelUp(player);
     }
 
     public void setLevel(int level, IProfessionalPlayer player) {
-        player.needsToBeSaved();
+        //player.needsToBeSaved();
         this.level = level;
         // todo; add a giveMilestones parameter
-        profession.getBenefits().handleLevelUp(player, this);
+       // profession.getBenefits().handleLevelUp(player, this);
         this.exp = 0;
         resetMaxExperience();
         checkIfLevelUp(player);
     }
 
     public boolean checkIfLevelUp(IProfessionalPlayer player) {
-        boolean willLevel = false;
+        /*boolean willLevel = false;
 
         while (exp >= maxExp) {
             if (profession.getMaxLevel() > 0 && level >= profession.getMaxLevel()) {
@@ -105,39 +105,22 @@ public class Occupation {
             exp = maxExp;
         }
 
-        return willLevel;
+        return willLevel;*/
+        return false;
     }
 
-    public double getExp() {
-        return exp;
-    }
-
-    public int getMaxExp() {
-        return maxExp;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public int getReceivedBenefitsUpToLevel() {
-        return receivedBenefitsUpToLevel;
-    }
 
     public void setReceivedBenefitsUpToLevel(int receivedBenefitsUpToLevel) {
         this.receivedBenefitsUpToLevel = receivedBenefitsUpToLevel;
     }
 
-    public CachedData getData() {
-        return data;
-    }
-
     public void resetMaxExperience() {
-        this.maxExp = (int) profession.getExperienceForLevel(level);
+       // this.maxExp = (int) profession.getExperienceForLevel(level);
     }
 
     public boolean isProfession(Profession profession) {
-        return this.profession.isSameProfession(profession);
+        return false;
+       // return this.profession.isSameProfession(profession);
     }
 
     @Override
@@ -152,43 +135,27 @@ public class Occupation {
     public int hashCode() {
         return Objects.hash(profession, exp, level);
     }
-
-    public static void toNetwork(FriendlyByteBuf buf, List<Occupation> occupations, boolean sendUnlocks) {
-        buf.writeVarInt(occupations.size());
-        for (Occupation occupation : occupations) {
-            Profession.toNetwork(buf, occupation.getProfession(), sendUnlocks);
-            buf.writeVarInt(occupation.getLevel());
-            buf.writeDouble(occupation.getExp());
-            buf.writeVarInt(occupation.getMaxExp());
-        }
+    public Holder<Profession> getProfession() {
+        return profession;
     }
 
-    public static class Serializer implements JsonDeserializer<Occupation>, JsonSerializer<Occupation> {
+    public double getExp() {
+        return exp;
+    }
 
+    public int getLevel() {
+        return level;
+    }
 
-        @Override
-        public Occupation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject object = json.getAsJsonObject();
-            String id = GsonHelper.getAsString(object, "prof");
-            Profession profession = ProfessionPlatform.platform.getProfessionLoader().getProfession(new ResourceLocation(id));
-            double exp = GsonHelper.getAsInt(object, "exp");
-            int level = GsonHelper.getAsInt(object, "lvl");
-            OccupationSlot active = OccupationSlot.valueOf(GsonHelper.getAsString(object, "slot").toUpperCase(Locale.ROOT));
-            if (profession == null) {
-                LOGGER.warn("Could not find profession {}. Will load the profession but it can't be interacted with.", id);
-                return new NullOccupation(GsonHelper.getAsString(object, "prof"), exp, level, active);
-            }
-            return new Occupation(profession, exp, level, active);
-        }
+    public int getReceivedBenefitsUpToLevel() {
+        return receivedBenefitsUpToLevel;
+    }
 
-        @Override
-        public JsonElement serialize(Occupation src, Type typeOfSrc, JsonSerializationContext context) {
-            JsonObject object = new JsonObject();
-            object.addProperty("exp", src.exp);
-            object.addProperty("lvl", src.level);
-            object.addProperty("slot", src.slot.name());
-            object.addProperty("prof", ProfessionPlatform.platform.getProfessionLoader().getIDFromProfession(src.profession).toString());
-            return object;
-        }
-    }*/
+    public OccupationSlot getSlot() {
+        return slot;
+    }
+
+    public int getMaxExp() {
+        return maxExp;
+    }
 }

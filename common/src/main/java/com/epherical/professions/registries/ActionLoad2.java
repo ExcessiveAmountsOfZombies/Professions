@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +49,11 @@ public class ActionLoad2 implements PreparableReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String PATH = "professions/actions";
 
-    /**
-     * one multimap that directly answers: “what actions apply to this holder”
-     */
+
     private final Multimap<Holder<?>, Action> byHolder = MultimapBuilder.hashKeys().arrayListValues().build();
     private final RegistryAccess registryAccess;
+    private static final List<Resolver> deferred = new ArrayList<>();
+    private volatile boolean resolved = false;
 
     public ActionLoad2(RegistryAccess registryAccess) {
         this.registryAccess = registryAccess;
@@ -79,6 +80,7 @@ public class ActionLoad2 implements PreparableReloadListener {
         RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registryAccess);
 
         Multimap<Holder<?>, Action> result = MultimapBuilder.hashKeys().arrayListValues().build();
+
 
 
         Map<ResourceKey<?>, Codec<ActionOf<T>>> codecs = new HashMap<>();
@@ -108,14 +110,18 @@ public class ActionLoad2 implements PreparableReloadListener {
             try (Reader rd = res.openAsReader()) {
                 JsonElement elem = GSON.fromJson(rd, JsonElement.class);
                 ActionOf<T> actionOf = codec.decode(ops, elem).getOrThrow().getFirst();
+                // --- inside decodeFile: replace the immediate registry lookup --------------
                 actionOf.values().forEach((entry, single) ->
                         single.actions().forEach(action ->
-                                entry.ifLeft(tag -> registryAccess.registry(regKey)
-                                                .flatMap(r -> r.getTag(tag))
-                                                .ifPresent(stream -> stream.forEach(h -> sink.put(h, action))))
-                                        .ifRight(key -> registryAccess.registry(regKey)
-                                                .flatMap(r -> r.getHolder(key))
-                                                .ifPresent(h -> sink.put(h, action)))));
+                                deferred.add((regAccess, sink2) ->
+                                        entry.ifLeft(tag ->
+                                                        regAccess.registry(regKey)
+                                                                .flatMap(r -> r.getTag(tag))
+                                                                .ifPresent(set -> set.forEach(h -> sink2.put(h, action))))
+                                             .ifRight(key ->
+                                                             regAccess.registry(regKey)
+                                                                     .flatMap(r -> r.getHolder(key))
+                                                                     .ifPresent(h -> sink2.put(h, action))))));
             } catch (Exception ex) {
                 LOGGER.warn("Failed to read {}", res.sourcePackId(), ex);
             }
@@ -150,5 +156,30 @@ public class ActionLoad2 implements PreparableReloadListener {
 
     private static String folderOf(ResourceLocation rl) {
         return rl.getNamespace() + "/" + rl.getPath();
+    }
+
+    public Multimap<Holder<?>, Action> getByHolder() {
+        ensureResolved();
+        return byHolder;
+    }
+
+    public Collection<Action> getActionsByHolder(Holder<?> holder) {
+        ensureResolved();
+        return byHolder.get(holder);
+    }
+
+    // --- resolver ---------------------------------------------------------------
+    private void ensureResolved() {
+        if (resolved) return;
+        synchronized (this) {
+            if (resolved) return;
+            deferred.forEach(r -> r.resolve(registryAccess, byHolder));
+            deferred.clear();
+            resolved = true;
+        }
+    }
+
+    private interface Resolver {
+        void resolve(RegistryAccess regAccess, Multimap<Holder<?>, Action> sink);
     }
 }

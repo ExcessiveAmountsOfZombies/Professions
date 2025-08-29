@@ -8,6 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,6 @@ public interface IProfessionalPlayer {
     void save();
 
 
-    // todo;
     <T> void handleAction(ProfessionContext context, Holder<T> holder);
 
     boolean alreadyHasOccupation(Holder<Profession> profession);
@@ -45,6 +45,8 @@ public interface IProfessionalPlayer {
     List<Occupation> getActiveOccupations();
 
     List<Occupation> getInactiveOccupations();
+
+    List<Occupation> getAllOccupations();
 
 
 }

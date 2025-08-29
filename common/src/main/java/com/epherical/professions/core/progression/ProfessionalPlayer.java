@@ -4,12 +4,11 @@ import com.epherical.professions.CommonClass;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.Action;
+import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.critereon.KilledTrigger;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
@@ -27,10 +26,8 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     private volatile boolean dirty = false;
 
 
-    public static final Codec<ProfessionalPlayer> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Occupation.CODEC.listOf()
-                    .fieldOf("occupations")
-                    .forGetter(p -> List.copyOf(p.occupationMap.values()))
+    public static final Codec<IProfessionalPlayer> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Occupation.CODEC.listOf().fieldOf("occupations").forGetter(IProfessionalPlayer::getAllOccupations)
     ).apply(i, ProfessionalPlayer::new));
 
 
@@ -70,8 +67,14 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     @Override
     public <T> void handleAction(ProfessionContext context, Holder<T> holder) {
         Collection<Action> actions = CommonClass.ACTION_LOAD2.getActionsByHolder(holder);
-        for (Action action1 : actions) {
-            action1.handleAction(context);
+        ActionType actionType = context.getPossibleParameter(ProfessionParameter.ACTION_TYPE);
+        // todo; check if the player is in any occupations
+        if (actionType != null) {
+            for (Action action : actions) {
+                if (actionType.equals(action.getType())) {
+                    action.handleAction(context);
+                }
+            }
         }
     }
 
@@ -92,12 +95,12 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
             resetMaxExperience();
             return true;
         } else {
-            /*for (Occupation occupation : occupations) {
+            for (Occupation occupation : occupationMap.values()) {
                 if (occupation.isProfession(profession)) {
                     occupation.setSlot(slot);
                     return true;
                 }
-            }*/
+            }
         }
         return false;
     }
@@ -130,6 +133,16 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     @Override
     public List<Occupation> getInactiveOccupations() {
         return List.of();
+    }
+
+    @Override
+    public List<Occupation> getAllOccupations() {
+        return List.copyOf(occupationMap.values());
+    }
+
+
+    public Map<Holder<Profession>, Occupation> getOccupationMap() {
+        return occupationMap;
     }
 
     public void resetMaxExperience() {

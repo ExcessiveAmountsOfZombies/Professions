@@ -1,29 +1,25 @@
-package com.epherical.professions.core.actions.block;
+package com.epherical.professions.core.actions.item;
 
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.AbstractAction;
 import com.epherical.professions.core.actions.Action;
 import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.context.ProfessionContext;
-import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.core.progression.Occupation;
 import com.epherical.professions.core.register.Actions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 
-public class BlockBreakAction extends AbstractAction {
+public class FishingAction extends AbstractAction {
 
-    public static final MapCodec<BlockBreakAction> CODEC = RecordCodecBuilder.mapCodec(
+    public static final MapCodec<FishingAction> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    COMMON.forGetter(BlockBreakAction::buildCommon)
-                    // We can add fields with this,
-                    /*BlockState.CODEC.fieldOf("target_block")
-                            .forGetter(BlockBreakAction::getTargetBlock)*/
-            ).apply(i, BlockBreakAction::new));
+                    COMMON.forGetter(FishingAction::buildCommon)
+            ).apply(i, FishingAction::new));
 
 
-    public BlockBreakAction(Common common) {
+    public FishingAction(Common common) {
         super(common);
     }
 
@@ -38,12 +34,12 @@ public class BlockBreakAction extends AbstractAction {
 
     @Override
     public ActionType getType() {
-        return Actions.BLOCK_BREAK;
+        return Actions.FISHING_ACTION;
     }
 
     @Override
     public boolean test(ProfessionContext context) {
-        return context.getPossibleParameter(ProfessionParameter.THIS_BLOCK) != null;
+        return true;
     }
 
     public static class Builder extends AbstractAction.Builder<Builder> {
@@ -59,7 +55,7 @@ public class BlockBreakAction extends AbstractAction {
 
         @Override
         public Action build() {
-            return new BlockBreakAction(new Common(getProfession(), getConditions(), getRewards()));
+            return new FishingAction(new Common(getProfession(), getConditions(), getRewards()));
         }
     }
 }

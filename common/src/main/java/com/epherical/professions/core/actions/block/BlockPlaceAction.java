@@ -12,18 +12,18 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 
-public class BlockBreakAction extends AbstractAction {
+public class BlockPlaceAction extends AbstractAction {
 
-    public static final MapCodec<BlockBreakAction> CODEC = RecordCodecBuilder.mapCodec(
+    public static final MapCodec<BlockPlaceAction> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    COMMON.forGetter(BlockBreakAction::buildCommon)
+                    COMMON.forGetter(BlockPlaceAction::buildCommon)
                     // We can add fields with this,
                     /*BlockState.CODEC.fieldOf("target_block")
                             .forGetter(BlockBreakAction::getTargetBlock)*/
-            ).apply(i, BlockBreakAction::new));
+            ).apply(i, BlockPlaceAction::new));
 
 
-    public BlockBreakAction(Common common) {
+    public BlockPlaceAction(Common common) {
         super(common);
     }
 
@@ -38,7 +38,7 @@ public class BlockBreakAction extends AbstractAction {
 
     @Override
     public ActionType getType() {
-        return Actions.BLOCK_BREAK;
+        return Actions.BLOCK_PLACE;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class BlockBreakAction extends AbstractAction {
 
         @Override
         public Action build() {
-            return new BlockBreakAction(new Common(getProfession(), getConditions(), getRewards()));
+            return new BlockPlaceAction(new Common(getProfession(), getConditions(), getRewards()));
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.epherical.professions.core.rewards;
 
 import com.epherical.professions.core.actions.Action;
+import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.core.progression.Occupation;
 import com.epherical.professions.platform.Services;
 import com.mojang.serialization.Codec;
 
@@ -11,7 +13,7 @@ public interface Reward {
 
     RewardType getType();
 
-    void giveReward(Action actionType); // todo; finish
+    void giveReward(ProfessionContext context, Occupation occupation, Action actionType);
 
     @FunctionalInterface
     interface Builder {

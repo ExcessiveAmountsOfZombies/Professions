@@ -9,6 +9,7 @@ import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.core.progression.OccupationSlot;
 import com.epherical.professions.core.progression.ProfessionalPlayer;
+import com.epherical.professions.core.register.Actions;
 import com.epherical.professions.core.register.PlatformBootstrap;
 import com.epherical.professions.core.rewards.RewardType;
 import com.epherical.professions.registries.ActionLoad2;
@@ -27,6 +28,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
@@ -56,9 +58,10 @@ public class ProfessionsMod {
 
     public static RegistryAccess REGISTRY_ACCESS = null;
 
-    public static final Supplier<AttachmentType<ProfessionalPlayer>> PROFESSIONAL_PLAYER = ATTACHMENTS_REGISTER.register(
+    @SuppressWarnings("unchecked")
+    public static final Supplier<AttachmentType<IProfessionalPlayer>> PROFESSIONAL_PLAYER = ATTACHMENTS_REGISTER.register(
             "professional_player", () -> AttachmentType.builder(() -> {
-                        ProfessionalPlayer professionalPlayer = new ProfessionalPlayer(new ArrayList<>());
+                        IProfessionalPlayer professionalPlayer = new ProfessionalPlayer(new ArrayList<>());
                         REGISTRY_ACCESS.registry(PROFESSION_REGISTRY_KEY).ifPresent(professions -> {
                             professions.holders().forEach(profession -> {
                                 professionalPlayer.joinOccupation(profession, OccupationSlot.ACTIVE);
@@ -125,17 +128,19 @@ public class ProfessionsMod {
             Player player = event.getPlayer();
             IProfessionalPlayer iProfessionalPlayer = player.getData(PROFESSIONAL_PLAYER);
 
-
             if (!player.isCreative()) {
                 ProfessionContext context = new ProfessionContext.Builder(null)
+                        .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BLOCK_BREAK)
                         .addParameter(ProfessionParameter.THIS_PLAYER, iProfessionalPlayer)
                         .addParameter(ProfessionParameter.THIS_BLOCK, event.getState())
                         .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
                         .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getPlayer().getWeaponItem())
+                        .addParameter(ProfessionParameter.THIS_HOLDER, blockHolder)
                         .build();
 
                 iProfessionalPlayer.handleAction(context, blockHolder);
             }
+            player.setData(PROFESSIONAL_PLAYER, iProfessionalPlayer);
 
         }
     }

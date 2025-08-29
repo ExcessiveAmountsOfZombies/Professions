@@ -7,7 +7,12 @@
           "action": "professions:block_break",
           "occupation": "professions:miner",
           "conditions": [],
-          "rewards": []
+          "rewards": [
+            {
+              "reward": "professions:occupation_exp",
+              "expAmount": 5.0
+            }
+          ]
         }
       ]
     },
@@ -18,7 +23,12 @@
           "action": "professions:block_break",
           "occupation": "professions:miner",
           "conditions": [],
-          "rewards": []
+          "rewards": [
+            {
+              "reward": "professions:occupation_exp",
+              "expAmount": 15.0
+            }
+          ]
         }
       ]
     }

@@ -15,6 +15,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 
 public record ProfessionParameter<T>(ResourceLocation name) {
     public static final ProfessionParameter<IProfessionalPlayer> THIS_PLAYER = of("player");
+    public static final ProfessionParameter<Holder<?>> THIS_HOLDER = of("holder");
     public static final ProfessionParameter<BlockState> THIS_BLOCK = of("block");
     public static final ProfessionParameter<BlockPos> BLOCKPOS = of("blockpos");
     public static final ProfessionParameter<ItemStack> TOOL = of("tool_used");
@@ -27,6 +28,6 @@ public record ProfessionParameter<T>(ResourceLocation name) {
 
 
     public static <T> ProfessionParameter<T> of(String name) {
-        return new ProfessionParameter<T>(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name));
+        return new ProfessionParameter<>(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name));
     }
 }

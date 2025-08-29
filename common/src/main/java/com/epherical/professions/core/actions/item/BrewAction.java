@@ -1,4 +1,4 @@
-package com.epherical.professions.core.actions.block;
+package com.epherical.professions.core.actions.item;
 
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.AbstractAction;
@@ -12,18 +12,15 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 
-public class BlockBreakAction extends AbstractAction {
+public class BrewAction extends AbstractAction {
 
-    public static final MapCodec<BlockBreakAction> CODEC = RecordCodecBuilder.mapCodec(
+    public static final MapCodec<BrewAction> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    COMMON.forGetter(BlockBreakAction::buildCommon)
-                    // We can add fields with this,
-                    /*BlockState.CODEC.fieldOf("target_block")
-                            .forGetter(BlockBreakAction::getTargetBlock)*/
-            ).apply(i, BlockBreakAction::new));
+                    COMMON.forGetter(BrewAction::buildCommon)
+            ).apply(i, BrewAction::new));
 
 
-    public BlockBreakAction(Common common) {
+    public BrewAction(Common common) {
         super(common);
     }
 
@@ -38,12 +35,12 @@ public class BlockBreakAction extends AbstractAction {
 
     @Override
     public ActionType getType() {
-        return Actions.BLOCK_BREAK;
+        return Actions.BREW_ACTION;
     }
 
     @Override
     public boolean test(ProfessionContext context) {
-        return context.getPossibleParameter(ProfessionParameter.THIS_BLOCK) != null;
+        return true;
     }
 
     public static class Builder extends AbstractAction.Builder<Builder> {
@@ -59,7 +56,7 @@ public class BlockBreakAction extends AbstractAction {
 
         @Override
         public Action build() {
-            return new BlockBreakAction(new Common(getProfession(), getConditions(), getRewards()));
+            return new BrewAction(new Common(getProfession(), getConditions(), getRewards()));
         }
     }
 }

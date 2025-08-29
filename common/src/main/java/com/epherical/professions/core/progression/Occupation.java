@@ -118,7 +118,7 @@ public class Occupation {
        // this.maxExp = (int) profession.getExperienceForLevel(level);
     }
 
-    public boolean isProfession(Profession profession) {
+    public boolean isProfession(Holder<Profession> profession) {
         return false;
        // return this.profession.isSameProfession(profession);
     }

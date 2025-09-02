@@ -25,6 +25,8 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
     private volatile boolean dirty = false;
 
+    private volatile ServerPlayer player;
+
 
     public static final Codec<IProfessionalPlayer> CODEC = RecordCodecBuilder.create(i -> i.group(
             Occupation.CODEC.listOf().fieldOf("occupations").forGetter(IProfessionalPlayer::getAllOccupations)
@@ -41,12 +43,17 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
     @Override
     public UUID getUUID() {
-        return null;
+        return player.getUUID();
     }
 
     @Override
     public @Nullable ServerPlayer getPlayer() {
         return null;
+    }
+
+    @Override
+    public void setPlayer(@Nullable ServerPlayer player) {
+
     }
 
     @Override

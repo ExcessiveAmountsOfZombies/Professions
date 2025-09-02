@@ -1,5 +1,6 @@
 package com.epherical.professions;
 
+import com.epherical.professions.config.CommonConfig;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.conditions.ConditionType;
@@ -13,7 +14,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
-public class CommonClass {
+import java.io.File;
+
+public abstract class CommonClass {
 
     public static final ResourceKey<Registry<ActionType>> ACTION_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "professions/actions"));
@@ -29,19 +32,23 @@ public class CommonClass {
 
     public static ActionLoad2 ACTION_LOAD2;
 
+    public static CommonConfig config;
 
-    public static void init() {
 
-        if (Services.PLATFORM.isModLoaded("professions")) {
-
-        }
-    }
+    public static void init() {}
 
     public static void register() {
         Actions.register();
         Conditions.register();
         Rewards.register();
-
-
     }
+
+    public void buildConfig() {
+        config = new CommonConfig(false, "professions.conf", getModDir());
+        config.loadConfig();
+    }
+
+    //public abstract PlayerManager getPlayerManager();
+    public abstract ActionLoad2 getActionLoader();
+    public abstract File getModDir();
 }

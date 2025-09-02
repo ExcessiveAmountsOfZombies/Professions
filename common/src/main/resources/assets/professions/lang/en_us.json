@@ -1,0 +1,91 @@
+{
+  "professions.action.type.break_block": "Break Block",
+  "professions.action.type.place_block": "Place Block",
+  "professions.action.type.tnt_destroy": "TNT Destroy",
+  "professions.action.type.kill_entity": "Kill",
+  "professions.action.type.catch_fish": "Fishing",
+  "professions.action.type.craft_item": "Craft",
+  "professions.action.type.take_smelted_item": "Take Smelted item",
+  "professions.action.type.on_item_smelted": "Smelt Item",
+  "professions.action.type.brew": "Brew Potion",
+  "professions.action.type.enchant": "Enchant",
+  "professions.action.type.breed": "Breed",
+  "professions.action.type.tame": "Tame",
+  "professions.action.type.villager_trade": "Villager Trade",
+  "professions.action.type.explore_biome": "Explore",
+  "professions.action.type.explore_structure": "Explore Structure",
+
+  "professions.command.join.error.does_not_exist": "Profession does not exist.",
+  "professions.command.join.error.no_permission": "You do not have permission to join this profession.",
+  "professions.command.join.error.already_joined": "You have already joined this profession.",
+  "professions.command.join.error.max_occupations": "You have already joined the max amount of professions.",
+  "professions.command.join.success": "You have joined %s.",
+
+  "professions.command.leave.error.does_not_exist": "Profession does not exist.",
+  "professions.command.leave.error.disabled_in_config": "Could not leave profession as leaving is disabled in the config.",
+  "professions.command.leave.success": "You have left %s.",
+
+  "professions.command.fire.error.does_not_exist": "Profession does not exist.",
+  "professions.command.fire.error.cant_find_player": "Can't find the player to fire.",
+  "professions.command.fire.success": "Successfully fired %s from their occupation.",
+  "professions.command.fire.fail": "Could not fire %s from their occupation.",
+
+  "professions.command.fireall.success": "Fired %s from all their occupations.",
+
+  "professions.level_up.announcement": "%s has leveled up %s to %s.",
+  "professions.level_up.local": "You have leveled up %s to %s.",
+  "professions.level_up.rewards": "=-=Rewards=-=",
+  "professions.level_up.unlock": "You have unlocked %s new abilities. Hover this message to see them!",
+
+  "professions.command.error.profession_does_not_exist": "Could not find that profession.",
+  "professions.command.error.missing_page": "That pages doesn't exist.",
+  "professions.command.error.missing_player": "That player does not exist.",
+  "professions.command.error.missing_players": "Could not find any players.",
+  "professions.command.error.profile_missing": "Could not find that player! Perhaps they haven't played in a long time?",
+  "professions.command.next": "Next",
+  "professions.command.prev": "Prev",
+
+  "professions.command.stats.header": "Stats",
+  "professions.command.stats.error.not_in_any_professions": "Join a profession before you can check your stats.",
+  "professions.command.stats.error.other_not_in_any_professions": "%s is not in any professions.",
+  "professions.command.stats.percent": "%s Percent",
+  "professions.command.stats.level": " Level: %s",
+
+  "professions.command.browse.header": "Browse Professions",
+  "professions.command.top.header": "Top online %s players with %s enabled",
+  "professions.command.top.unknown_player": "Unknown",
+  "professions.command.top.position": "%s. %s level %s with %s experience",
+
+  "professions.command.reload.success": "Reloaded config.",
+
+  "professions.command.setlevel.success": "Set the level on %s to %s for %s",
+
+  "professions.block.cooldown": "This position is on cooldown, wait %s more second(s) before trying again.",
+
+  "professions.gui.join": "Join",
+  "professions.gui.leave": "Leave",
+  "professions.gui.info": "Info",
+  "professions.gui.top": "Top",
+  "professions.gui.close": "Close",
+  "professions.gui.no_entries": "You aren't in any professions.",
+  "professions.gui.joined_everything": "There are either no professions to join, or you have joined them all.",
+  "professions.gui.no_entries.leave": "Go back. (click join)",
+
+  "professions.tooltip.unlock.drop_req": "%s drops at lvl %s.",
+  "professions.tooltip.unlock.break_req": "%s can be broken at lvl %s.",
+  "professions.tooltip.unlock.tool_use_req": "%s unlocks at lvl %s.",
+  "professions.tooltip.unlock.advancement_req": "Requires achieving %s",
+  "professions.tooltip.unlock.equipment_req": "Equip at lvl %s",
+
+  "ftbquests.task.professions.profession": "Profession",
+  "ftbquests.task.professions.profession.profession": "Profession Key",
+  "ftbquests.task.professions.profession.action": "Profession Action (Join/Level)",
+  "ftbquests.task.professions.profession.level": "Level",
+  "ftbquests.task.professions.profession.join_req": "Join the profession \"%s\"",
+  "ftbquests.task.professions.profession.level_req": "Level the profession \"%s\" to %s",
+
+  "key.professions.open_occupation_menu": "Open Profession Menu",
+  "key.professions.show_info": "Show Unlock Information",
+  "key.professions.datapack_menu": "Open Datapack Creator",
+  "category.professions.occupation": "Professions"
+}

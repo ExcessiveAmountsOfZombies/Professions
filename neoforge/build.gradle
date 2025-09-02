@@ -3,6 +3,10 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+repositories {
+    mavenLocal()
+}
+
 neoForge {
     version = neoforge_version
     // Automatically enable neoforge AccessTransformers if the file exists
@@ -34,6 +38,10 @@ neoForge {
             sourceSet sourceSets.main
         }
     }
+}
+
+dependencies {
+    implementation ('com.epherical.epherolib:EpheroLib-neoforge:1.2.0-1.21.1')
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }

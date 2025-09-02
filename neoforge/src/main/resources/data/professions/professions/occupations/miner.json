@@ -9,5 +9,6 @@
   },
   "nameColor": "#FFD700",
   "descriptionColor": "#AAAAAA",
-  "maxLevel": 30
+  "maxLevel": 30,
+  "expScalingEquation": "1000*1.03706264^(lvl-1)"
 }

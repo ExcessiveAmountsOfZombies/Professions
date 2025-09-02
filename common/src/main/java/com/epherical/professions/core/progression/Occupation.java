@@ -15,6 +15,8 @@ import java.util.Objects;
 
 public class Occupation {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     public static final Codec<OccupationSlot> SLOT_CODEC =
             Codec.STRING.xmap(s -> OccupationSlot.valueOf(s.toUpperCase(Locale.ROOT)),
                     OccupationSlot::name);
@@ -27,7 +29,6 @@ public class Occupation {
     ).apply(instance, Occupation::new));
 
 
-    private static final Logger LOGGER = LogUtils.getLogger();
     private final Holder<Profession> profession;
     //private final CachedData data;
     private double exp;
@@ -78,7 +79,7 @@ public class Occupation {
     }
 
     public void setLevel(int level, IProfessionalPlayer player) {
-        //player.needsToBeSaved();
+        player.setNeedsToBeSaved();
         this.level = level;
         // todo; add a giveMilestones parameter
        // profession.getBenefits().handleLevelUp(player, this);
@@ -88,14 +89,14 @@ public class Occupation {
     }
 
     public boolean checkIfLevelUp(IProfessionalPlayer player) {
-        /*boolean willLevel = false;
+        boolean willLevel = false;
 
         while (exp >= maxExp) {
-            if (profession.getMaxLevel() > 0 && level >= profession.getMaxLevel()) {
+            if (profession.value().maxLevel() > 0 && level >= profession.value().maxLevel()) {
                 break;
             }
             level++;
-            profession.getBenefits().handleLevelUp(player, this);
+            //profession.getBenefits().handleLevelUp(player, this);
             exp -= maxExp;
             willLevel = true;
             resetMaxExperience();
@@ -105,8 +106,7 @@ public class Occupation {
             exp = maxExp;
         }
 
-        return willLevel;*/
-        return false;
+        return willLevel;
     }
 
 
@@ -115,12 +115,11 @@ public class Occupation {
     }
 
     public void resetMaxExperience() {
-       // this.maxExp = (int) profession.getExperienceForLevel(level);
+        this.maxExp = (int) profession.value().getExperienceForLevel(level);
     }
 
     public boolean isProfession(Holder<Profession> profession) {
-        return false;
-       // return this.profession.isSameProfession(profession);
+        return this.profession.is(profession.value().key());
     }
 
     @Override

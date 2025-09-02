@@ -8,18 +8,16 @@ import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 public interface IProfessionalPlayer {
 
-    UUID getUUID();
-
+    @Nullable UUID getUUID();
 
     @Nullable ServerPlayer getPlayer();
 
-
+    void setPlayer(@Nullable ServerPlayer player);
 
     void setNeedsToBeSaved();
 

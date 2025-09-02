@@ -1,5 +1,6 @@
 package com.epherical.professions.registries;
 
+import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.Action;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
@@ -49,7 +51,7 @@ public class ActionLoad2 implements PreparableReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String PATH = "professions/actions";
 
-
+    private final Multimap<Holder<Profession>, Holder<?>> holdersByProfession = MultimapBuilder.hashKeys().hashSetValues().build();
     private final Multimap<Holder<?>, Action> byHolder = MultimapBuilder.hashKeys().arrayListValues().build();
     private final RegistryAccess registryAccess;
     private static final List<Resolver> deferred = new ArrayList<>();
@@ -110,18 +112,23 @@ public class ActionLoad2 implements PreparableReloadListener {
             try (Reader rd = res.openAsReader()) {
                 JsonElement elem = GSON.fromJson(rd, JsonElement.class);
                 ActionOf<T> actionOf = codec.decode(ops, elem).getOrThrow().getFirst();
-                // --- inside decodeFile: replace the immediate registry lookup --------------
                 actionOf.values().forEach((entry, single) ->
                         single.actions().forEach(action ->
-                                deferred.add((regAccess, sink2) ->
-                                        entry.ifLeft(tag ->
-                                                        regAccess.registry(regKey)
-                                                                .flatMap(r -> r.getTag(tag))
-                                                                .ifPresent(set -> set.forEach(h -> sink2.put(h, action))))
-                                             .ifRight(key ->
-                                                             regAccess.registry(regKey)
-                                                                     .flatMap(r -> r.getHolder(key))
-                                                                     .ifPresent(h -> sink2.put(h, action))))));
+                                deferred.add((regAccess, byHolderSink, byProfessionSink) -> {
+                                    BiConsumer<Holder<?>, Action> add =
+                                            (h, a) -> {
+                                                byHolderSink.put(h, a);
+                                                byProfessionSink.put(a.getProfession(), h);
+                                            };
+                                    entry.ifLeft(tag ->
+                                                    regAccess.registry(regKey)
+                                                             .flatMap(r -> r.getTag(tag))
+                                                             .ifPresent(set -> set.forEach(h -> add.accept(h, action))))
+                                         .ifRight(key ->
+                                                         regAccess.registry(regKey)
+                                                                  .flatMap(r -> r.getHolder(key))
+                                                                  .ifPresent(h -> add.accept(h, action)));
+                                })));
             } catch (Exception ex) {
                 LOGGER.warn("Failed to read {}", res.sourcePackId(), ex);
             }
@@ -168,18 +175,29 @@ public class ActionLoad2 implements PreparableReloadListener {
         return byHolder.get(holder);
     }
 
-    // --- resolver ---------------------------------------------------------------
+    private interface Resolver {
+        void resolve(RegistryAccess regAccess,
+                     Multimap<Holder<?>, Action> byHolderSink,
+                     Multimap<Holder<Profession>, Holder<?>> byProfessionSink);
+    }
+
     private void ensureResolved() {
         if (resolved) return;
         synchronized (this) {
             if (resolved) return;
-            deferred.forEach(r -> r.resolve(registryAccess, byHolder));
+            deferred.forEach(r -> r.resolve(registryAccess, byHolder, holdersByProfession));
             deferred.clear();
             resolved = true;
         }
     }
 
-    private interface Resolver {
-        void resolve(RegistryAccess regAccess, Multimap<Holder<?>, Action> sink);
+    public Multimap<Holder<Profession>, Holder<?>> getHoldersByProfession() {
+        ensureResolved();
+        return holdersByProfession;
+    }
+
+    public Collection<Holder<?>> getHoldersForProfession(Holder<Profession> profession) {
+        ensureResolved();
+        return holdersByProfession.get(profession);
     }
 }

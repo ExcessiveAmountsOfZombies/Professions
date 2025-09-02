@@ -2,6 +2,7 @@ package com.epherical.professions;
 
 
 import com.epherical.professions.api.IProfessionalPlayer;
+import com.epherical.professions.commands.ProfessionsStandardCommands;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.conditions.ConditionType;
@@ -13,23 +14,19 @@ import com.epherical.professions.core.register.Actions;
 import com.epherical.professions.core.register.PlatformBootstrap;
 import com.epherical.professions.core.rewards.RewardType;
 import com.epherical.professions.registries.ActionLoad2;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.CriterionProgress;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -38,14 +35,13 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.function.Supplier;
 
-import static com.epherical.professions.CommonClass.*;
 
 @Mod(Constants.MOD_ID)
-public class ProfessionsMod {
+public class ProfessionsMod extends CommonClass {
 
     private static final NeoForgeRegistrarBackend NEO_FORGE_REGISTRAR_BACKEND = new NeoForgeRegistrarBackend();
 
@@ -58,15 +54,15 @@ public class ProfessionsMod {
 
     public static RegistryAccess REGISTRY_ACCESS = null;
 
-    @SuppressWarnings("unchecked")
+
+    public static ProfessionsMod mod;
+
     public static final Supplier<AttachmentType<IProfessionalPlayer>> PROFESSIONAL_PLAYER = ATTACHMENTS_REGISTER.register(
             "professional_player", () -> AttachmentType.builder(() -> {
                         IProfessionalPlayer professionalPlayer = new ProfessionalPlayer(new ArrayList<>());
-                        REGISTRY_ACCESS.registry(PROFESSION_REGISTRY_KEY).ifPresent(professions -> {
-                            professions.holders().forEach(profession -> {
-                                professionalPlayer.joinOccupation(profession, OccupationSlot.ACTIVE);
-                            });
-                        });
+                        REGISTRY_ACCESS.registry(PROFESSION_REGISTRY_KEY).ifPresent(professions ->
+                                professions.holders().forEach(profession ->
+                                        professionalPlayer.joinOccupation(profession, OccupationSlot.ACTIVE)));
                         return professionalPlayer;
                     })
                     //.sync()
@@ -78,10 +74,28 @@ public class ProfessionsMod {
 
     public ProfessionsMod(IEventBus eventBus) {
         CommonClass.init();
+        this.buildConfig();
+
+        mod = this;
         PlatformBootstrap.init(NEO_FORGE_REGISTRAR_BACKEND);
         PROFESSION_REGISTER.register(eventBus);
         ATTACHMENTS_REGISTER.register(eventBus);
 
+    }
+
+    /*@Override
+    public PlayerManager getPlayerManager() {
+        return null;
+    }*/
+
+    @Override
+    public ActionLoad2 getActionLoader() {
+        return ACTION_LOAD2;
+    }
+
+    @Override
+    public File getModDir() {
+        return FMLPaths.CONFIGDIR.get().toFile();
     }
 
 
@@ -119,6 +133,11 @@ public class ProfessionsMod {
             event.addListener(loader);
             ACTION_LOAD2 = loader;
             REGISTRY_ACCESS = event.getRegistryAccess();
+        }
+
+        @SubscribeEvent
+        public static void onCommandRegister(RegisterCommandsEvent event) {
+            new ProfessionsStandardCommands(ProfessionsMod.mod, event.getDispatcher(), event.getBuildContext());
         }
 
 

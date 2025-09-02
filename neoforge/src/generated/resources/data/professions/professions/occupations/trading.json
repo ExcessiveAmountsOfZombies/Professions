@@ -1,0 +1,12 @@
+{
+  "description": [
+    "Earn money and experience",
+    "by trading items to villagers."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "display": "Trading",
+  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "id": "professions:trading",
+  "maxLevel": 100,
+  "nameColor": "#2DCF08"
+}

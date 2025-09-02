@@ -1,0 +1,12 @@
+{
+  "description": [
+    "Earn money and experience",
+    "by enchanting."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "display": "Enchanting",
+  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "id": "professions:enchanting",
+  "maxLevel": 100,
+  "nameColor": "#C9008D"
+}

@@ -1,0 +1,12 @@
+{
+  "description": [
+    "Earn money and experience",
+    "by hunting animals, killing monsters, and exploring"
+  ],
+  "descriptionColor": "#FFFFFF",
+  "display": "Hunting",
+  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "id": "professions:hunting",
+  "maxLevel": 100,
+  "nameColor": "#A6542E"
+}

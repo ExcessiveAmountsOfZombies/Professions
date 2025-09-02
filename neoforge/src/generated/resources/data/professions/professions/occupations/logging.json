@@ -1,0 +1,12 @@
+{
+  "description": [
+    "Earn money and experience",
+    "by farming trees."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "display": "Logging",
+  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "id": "professions:logging",
+  "maxLevel": 100,
+  "nameColor": "#9E3011"
+}

@@ -1,9 +1,12 @@
 package com.epherical.professions.core.conditions;
 
 import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.core.register.Conditions;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 
 public record BlockStateCondition(LootItemBlockStatePropertyCondition block) implements Condition {
@@ -24,11 +27,12 @@ public record BlockStateCondition(LootItemBlockStatePropertyCondition block) imp
 
     @Override
     public ConditionType getType() {
-        return null;
+        return Conditions.BLOCK_STATE_MATCHES;
     }
 
     @Override
     public boolean test(ProfessionContext context) {
-        return false;
+        BlockState state = context.getPossibleParameter(ProfessionParameter.THIS_BLOCK);
+        return state != null && state.is(this.block.block()) && (this.block.properties().isEmpty() || this.block.properties().get().matches(state));
     }
 }

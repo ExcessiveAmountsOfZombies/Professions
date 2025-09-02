@@ -157,7 +157,7 @@ public class PlayerManager {
         if (((ProfessionConfig.announceEveryXLevel % occupation.getLevel() == 0)) && ProfessionConfig.announceLevelUps) {
             message = Component.translatable("professions.level_up.announcement",
                             sPlayer.getDisplayName(),
-                            occupation.getProfession().value().description(),
+                            occupation.getProfession().value().displayName(),
                             Component.literal("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
             server.getPlayerList().broadcastSystemMessage(message, false);

@@ -9,16 +9,18 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import org.mbertoli.jfep.Parser;
 
+import java.util.List;
+
 
 public record Profession(
-        ResourceLocation key, Component displayName, Component description,
+        ResourceLocation key, Component displayName, List<String> description,
         TextColor professionColor, TextColor descriptionColor, int maxLevel,
         Parser experienceScalingEquation) implements IProfession {
 
     public static final Codec<Profession> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("id").forGetter(Profession::key), // todo; might be able to remove this.
             ComponentSerialization.CODEC.fieldOf("display").forGetter(Profession::displayName),
-            ComponentSerialization.CODEC.fieldOf("description").forGetter(Profession::description),
+            Codec.STRING.listOf().fieldOf("description").forGetter(Profession::description),
             TextColor.CODEC.fieldOf("nameColor").forGetter(Profession::professionColor),
             TextColor.CODEC.fieldOf("descriptionColor").forGetter(Profession::descriptionColor),
             Codec.INT.fieldOf("maxLevel").forGetter(Profession::maxLevel),

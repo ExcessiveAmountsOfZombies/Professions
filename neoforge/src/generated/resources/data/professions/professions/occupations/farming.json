@@ -1,0 +1,12 @@
+{
+  "description": [
+    "Earn money and experience",
+    "by farming."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "display": "Farming",
+  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "id": "professions:farming",
+  "maxLevel": 100,
+  "nameColor": "#107D0E"
+}

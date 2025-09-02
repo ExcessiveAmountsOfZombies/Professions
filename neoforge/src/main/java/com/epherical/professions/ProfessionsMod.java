@@ -105,7 +105,7 @@ public class ProfessionsMod extends CommonClass {
     }
 
 
-    @EventBusSubscriber
+    @EventBusSubscriber(modid =  Constants.MOD_ID)
     public static class EventHandler {
 
         @SubscribeEvent

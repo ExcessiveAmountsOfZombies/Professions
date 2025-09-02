@@ -1,0 +1,12 @@
+{
+  "description": [
+    "Earn money and experience",
+    "by brewing potions."
+  ],
+  "descriptionColor": "#AAAAAA",
+  "display": "Alchemy",
+  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "id": "professions:alchemy",
+  "maxLevel": 100,
+  "nameColor": "#A100E0"
+}

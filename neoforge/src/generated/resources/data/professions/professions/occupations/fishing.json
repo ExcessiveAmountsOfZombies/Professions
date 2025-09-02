@@ -1,0 +1,12 @@
+{
+  "description": [
+    "Earn money and experience",
+    "by fishing."
+  ],
+  "descriptionColor": "#FFFFFF",
+  "display": "Fishing",
+  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "id": "professions:fishing",
+  "maxLevel": 100,
+  "nameColor": "#0A91C7"
+}

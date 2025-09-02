@@ -23,6 +23,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
@@ -73,7 +74,7 @@ public class ProfessionsMod extends CommonClass {
 
 
     public ProfessionsMod(IEventBus eventBus) {
-        CommonClass.init();
+        this.init();
         this.buildConfig();
 
         mod = this;
@@ -96,6 +97,11 @@ public class ProfessionsMod extends CommonClass {
     @Override
     public File getModDir() {
         return FMLPaths.CONFIGDIR.get().toFile();
+    }
+
+    @Override
+    public boolean isClientEnvironment() {
+        return FMLEnvironment.dist.isClient();
     }
 
 

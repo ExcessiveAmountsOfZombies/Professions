@@ -47,7 +47,8 @@ public class PlayerManager {
             }
             players.put(player.getUUID(), pPlayer);
         }
-        ProfessionPlatform.platform.sendSyncRequest(player);
+        // todo
+        //ProfessionPlatform.platform.sendSyncRequest(player);
     }
 
     public void playerQuit(ServerPlayer player) {
@@ -162,7 +163,7 @@ public class PlayerManager {
             server.getPlayerList().broadcastSystemMessage(message, false);
         } else {
             message = Component.translatable("professions.level_up.local",
-                            occupation.getProfession().getDisplayComponent(),
+                            occupation.getProfession().value().displayName(),
                             Component.literal("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
             sPlayer.sendSystemMessage(message);
@@ -188,10 +189,10 @@ public class PlayerManager {
     }
 
     @Nullable
-    public IProfessionalPlayer getPlayer(@NotNull UUID uuid) {
-        IProfessionalPlayer player = players.get(uuid);
+    public IProfessionalPlayer getPlayer(@NotNull ServerPlayer serverPlayer) {
+        IProfessionalPlayer player = players.get(serverPlayer.getUUID());
         if (player == null) {
-            player = storage.getUser(uuid);
+            player = playerFactory.apply(serverPlayer);
         }
         return player;
     }
@@ -223,6 +224,6 @@ public class PlayerManager {
     }
 
     public boolean isSynchronized(UUID uuid) {
-        return synchronizedPlayers.contains(uuid) || ProfessionPlatform.platform.isClientEnvironment();
+        return synchronizedPlayers.contains(uuid) || CommonClass.INSTANCE.isClientEnvironment();
     }
 }

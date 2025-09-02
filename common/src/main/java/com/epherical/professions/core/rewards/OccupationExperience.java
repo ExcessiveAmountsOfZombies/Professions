@@ -34,6 +34,19 @@ public record OccupationExperience(double expAmount) implements Reward {
            // PlayerManager manager = ProfessionPlatform.platform.getPlayerManager();
            // manager.levelUp(player, occupation, currentLevel);
         }
+    }
 
+    public static class Builder implements Reward.Builder {
+        private double exp;
+
+        public Builder exp(double exp) {
+            this.exp = exp;
+            return this;
+        }
+
+        @Override
+        public Reward build() {
+            return new OccupationExperience(exp);
+        }
     }
 }

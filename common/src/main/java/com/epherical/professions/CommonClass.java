@@ -35,7 +35,12 @@ public abstract class CommonClass {
     public static CommonConfig config;
 
 
-    public static void init() {}
+    public static CommonClass INSTANCE;
+
+
+    public void init() {
+        INSTANCE = this;
+    }
 
     public static void register() {
         Actions.register();
@@ -51,4 +56,5 @@ public abstract class CommonClass {
     //public abstract PlayerManager getPlayerManager();
     public abstract ActionLoad2 getActionLoader();
     public abstract File getModDir();
+    public abstract boolean isClientEnvironment();
 }

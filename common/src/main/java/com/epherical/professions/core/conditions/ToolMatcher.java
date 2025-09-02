@@ -2,6 +2,7 @@ package com.epherical.professions.core.conditions;
 
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.core.register.Conditions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,7 @@ public record ToolMatcher(MatchTool tool) implements Condition {
 
     @Override
     public ConditionType getType() {
-        return null;
+        return Conditions.TOOL_MATCHES;
     }
 
     @Override

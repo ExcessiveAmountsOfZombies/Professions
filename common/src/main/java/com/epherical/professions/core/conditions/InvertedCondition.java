@@ -1,6 +1,7 @@
 package com.epherical.professions.core.conditions;
 
 import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.core.register.Conditions;
 import com.epherical.professions.platform.Services;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,7 +17,7 @@ public record InvertedCondition(Condition condition) implements Condition {
 
     @Override
     public ConditionType getType() {
-        return null;
+        return Conditions.INVERTED_CONDITION;
     }
 
     @Override

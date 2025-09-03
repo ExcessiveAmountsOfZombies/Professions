@@ -9,9 +9,16 @@ import com.epherical.professions.core.register.Rewards;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public record OccupationExperience(double expAmount) implements Reward {
 
+    private static final ItemStack REWARD_ICON = new ItemStack(Items.EXPERIENCE_BOTTLE);
 
     public static final MapCodec<OccupationExperience> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
@@ -21,6 +28,16 @@ public record OccupationExperience(double expAmount) implements Reward {
     @Override
     public RewardType getType() {
         return Rewards.OCCUPATION_EXPERIENCE;
+    }
+
+    @Override
+    public ItemStack getRewardIcon() {
+        return REWARD_ICON;
+    }
+
+    @Override
+    public Component getRewardName() {
+        return Component.literal(String.format("%.2f", expAmount) + "oxp").setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
     }
 
     @Override

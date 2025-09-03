@@ -1,11 +1,27 @@
 {
   "values": [
     {
+      "entry": "minecraft:waxed_oxidized_cut_copper_stairs",
+      "actions": [
+        {
+          "action": "professions:block_break",
+          "occupation": "professions:mining",
+          "conditions": [],
+          "rewards": [
+            {
+              "reward": "professions:occupation_exp",
+              "expAmount": 5.0
+            }
+          ]
+        }
+      ]
+    },
+    {
       "entry": "minecraft:stone",
       "actions": [
         {
           "action": "professions:block_break",
-          "occupation": "professions:miner",
+          "occupation": "professions:mining",
           "conditions": [],
           "rewards": [
             {
@@ -21,7 +37,7 @@
       "actions": [
         {
           "action": "professions:block_break",
-          "occupation": "professions:miner",
+          "occupation": "professions:mining",
           "conditions": [],
           "rewards": [
             {

@@ -11,6 +11,8 @@ import com.epherical.professions.core.register.Actions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public class BlockBreakAction extends AbstractAction {
 
@@ -39,6 +41,11 @@ public class BlockBreakAction extends AbstractAction {
     @Override
     public ActionType getType() {
         return Actions.BLOCK_BREAK;
+    }
+
+    @Override
+    public Item getIcon() {
+        return Items.DIAMOND_PICKAXE;
     }
 
     @Override

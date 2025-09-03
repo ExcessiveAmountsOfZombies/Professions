@@ -1,12 +1,9 @@
 package com.epherical.professions.datagen;
 
 import com.epherical.professions.Constants;
-import com.epherical.professions.NeoForgeRegistrarBackend;
 import com.epherical.professions.ProfessionsMod;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.register.PlatformBootstrap;
 import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
@@ -27,11 +24,9 @@ public final class ProfessionDataGeneration {
 
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {
-        System.out.println("[TRACE] GatherDataEvent fired");   // ①
 
         RegistrySetBuilder builder = new RegistrySetBuilder()
                 .add(ProfessionsMod.PROFESSION_REGISTRY_KEY, ctx -> {
-                    System.out.println("[TRACE] inside bootstrap");    // ③
                     ctx.register(id("alchemy"), new Builder(rl("alchemy"))
                             .nameColor(TextColor.parseColor("#a100e0").getOrThrow())
                             .description(new String[]{
@@ -156,7 +151,6 @@ public final class ProfessionDataGeneration {
 
         PackOutput out = event.getGenerator().getPackOutput();
 
-        System.out.println("[TRACE] includeServer="+event.includeServer());
         event.getGenerator().addProvider(
                 true,
                 new DatapackBuiltinEntriesProvider(
@@ -164,10 +158,8 @@ public final class ProfessionDataGeneration {
                         event.getLookupProvider(),
                         builder,
                         Set.of(Constants.MOD_ID)));
-        System.out.println("[TRACE] provider added");                  // ②
 
     }
-
 
 
     public static ResourceKey<Profession> id(String path) {
@@ -179,24 +171,48 @@ public final class ProfessionDataGeneration {
     }
 
 
-
     public static final class Builder {
         private final ResourceLocation id;
-        private Component display     = Component.empty();
+        private Component display = Component.empty();
         private String[] description = new String[0];
-        private TextColor nameColor   = TextColor.parseColor("#FFFFFF").getOrThrow();
-        private TextColor descColor   = TextColor.parseColor("#AAAAAA").getOrThrow();
-        private int maxLevel          = 30;
-        private String expEquation    = "1000*1.05^(lvl-1)";
+        private TextColor nameColor = TextColor.parseColor("#FFFFFF").getOrThrow();
+        private TextColor descColor = TextColor.parseColor("#AAAAAA").getOrThrow();
+        private int maxLevel = 30;
+        private String expEquation = "1000*1.03706264^(lvl-1)";
 
-        public Builder(ResourceLocation id) { this.id = id; }
+        public Builder(ResourceLocation id) {
+            this.id = id;
+        }
 
-        public Builder display(Component txt)          { this.display = txt; return this; }
-        public Builder description(String[] txt)      { this.description = txt; return this; }
-        public Builder nameColor(TextColor color)      { this.nameColor = color; return this; }
-        public Builder descColor(TextColor color)      { this.descColor = color; return this; }
-        public Builder maxLevel(int lvl)               { this.maxLevel = lvl; return this; }
-        public Builder expEquation(String eq)          { this.expEquation = eq; return this; }
+        public Builder display(Component txt) {
+            this.display = txt;
+            return this;
+        }
+
+        public Builder description(String[] txt) {
+            this.description = txt;
+            return this;
+        }
+
+        public Builder nameColor(TextColor color) {
+            this.nameColor = color;
+            return this;
+        }
+
+        public Builder descColor(TextColor color) {
+            this.descColor = color;
+            return this;
+        }
+
+        public Builder maxLevel(int lvl) {
+            this.maxLevel = lvl;
+            return this;
+        }
+
+        public Builder expEquation(String eq) {
+            this.expEquation = eq;
+            return this;
+        }
 
         public Profession build() {
             return new Profession(

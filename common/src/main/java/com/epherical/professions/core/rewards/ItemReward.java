@@ -7,10 +7,10 @@ import com.epherical.professions.core.progression.Occupation;
 import com.epherical.professions.core.register.Rewards;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 public record ItemReward(ItemStack item) implements Reward {
 
@@ -22,6 +22,16 @@ public record ItemReward(ItemStack item) implements Reward {
     @Override
     public RewardType getType() {
         return Rewards.ITEM_REWARD;
+    }
+
+    @Override
+    public ItemStack getRewardIcon() {
+        return item;
+    }
+
+    @Override
+    public Component getRewardName() {
+        return item.getHoverName();
     }
 
     @Override

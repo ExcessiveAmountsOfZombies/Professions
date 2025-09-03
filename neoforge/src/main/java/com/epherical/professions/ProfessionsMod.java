@@ -108,6 +108,7 @@ public class ProfessionsMod extends CommonClass {
     @EventBusSubscriber(modid =  Constants.MOD_ID)
     public static class EventHandler {
 
+
         @SubscribeEvent
         public static void registerDatapackRegistry(DataPackRegistryEvent.NewRegistry event) {
             event.dataPackRegistry(

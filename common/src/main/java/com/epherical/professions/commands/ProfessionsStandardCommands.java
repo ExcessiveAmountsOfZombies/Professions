@@ -88,7 +88,7 @@ public class ProfessionsStandardCommands {
         final int finalOldPage = oldPage;
         left.ifPresent(p -> {
             try {
-                Profession profession = p.value();
+                /*Profession profession = p.value();
 
 
                 Collection<Holder<?>> holdersForProfession = mod.getActionLoader().getHoldersForProfession(p);
@@ -109,7 +109,7 @@ public class ProfessionsStandardCommands {
                 if (profession == null) {
                     stack.getSource().sendFailure(Component.translatable("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
                     return;
-                }
+                }*/
 
 
                /* for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
@@ -124,7 +124,7 @@ public class ProfessionsStandardCommands {
                     }
                 }*/
 
-                int messages = components.size();
+                /*int messages = components.size();
                 int messagesPerPage = 12;
                 int maxPage = Math.max(messages / messagesPerPage, 1);
                 maxPage = (messages % messagesPerPage != 0) && messages > messagesPerPage ? maxPage + 1 : maxPage;
@@ -150,7 +150,7 @@ public class ProfessionsStandardCommands {
                         .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (finalOldPage + 1))));
 
                 MutableComponent pageComp = Component.translatable("=-=-=| %s %s/%s %s |=-=-=", previous, finalOldPage, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-                stack.getSource().sendSuccess(() -> pageComp, false);
+                stack.getSource().sendSuccess(() -> pageComp, false);*/
 
             } catch (Exception e) {
                 e.printStackTrace();

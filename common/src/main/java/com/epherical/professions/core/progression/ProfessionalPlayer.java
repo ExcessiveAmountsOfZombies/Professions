@@ -73,7 +73,7 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
     @Override
     public <T> void handleAction(ProfessionContext context, Holder<T> holder) {
-        Collection<Action> actions = CommonClass.ACTION_LOAD2.getActionsByHolder(holder);
+       /* Collection<Action> actions = CommonClass.ACTION_LOAD2.getActionsByHolder(holder);
         ActionType actionType = context.getPossibleParameter(ProfessionParameter.ACTION_TYPE);
         // todo; check if the player is in any occupations
         if (actionType != null) {
@@ -82,7 +82,7 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
                     action.handleAction(context);
                 }
             }
-        }
+        }*/
     }
 
     @Override

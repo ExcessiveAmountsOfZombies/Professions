@@ -28,13 +28,13 @@ public class OccupationInfoList extends ContainerObjectSelectionList<OccupationI
         this.listWidth = width;
 
 
-        CommonClass.ACTION_LOAD2.getByHolder().forEach((key, value) -> {
+        /*CommonClass.ACTION_LOAD2.getByHolder().forEach((key, value) -> {
             addEntry(new Entry(key, value));
             addEntry(new Entry(key, value));
             addEntry(new Entry(key, value));
             addEntry(new Entry(key, value));
             addEntry(new Entry(key, value));
-        });
+        });*/
     }
 
     @Override

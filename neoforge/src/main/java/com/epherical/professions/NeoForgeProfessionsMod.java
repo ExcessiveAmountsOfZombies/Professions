@@ -13,10 +13,11 @@ import com.epherical.professions.core.progression.ProfessionalPlayer;
 import com.epherical.professions.core.register.Actions;
 import com.epherical.professions.core.register.PlatformBootstrap;
 import com.epherical.professions.core.rewards.RewardType;
-import com.epherical.professions.registries.ActionLoad2;
+import com.epherical.professions.registries.ActionLoad3;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.protocol.configuration.ClientboundRegistryDataPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
@@ -42,7 +43,7 @@ import java.util.function.Supplier;
 
 
 @Mod(Constants.MOD_ID)
-public class ProfessionsMod extends CommonClass {
+public class NeoForgeProfessionsMod extends CommonClass {
 
     private static final NeoForgeRegistrarBackend NEO_FORGE_REGISTRAR_BACKEND = new NeoForgeRegistrarBackend();
 
@@ -56,7 +57,7 @@ public class ProfessionsMod extends CommonClass {
     public static RegistryAccess REGISTRY_ACCESS = null;
 
 
-    public static ProfessionsMod mod;
+    public static NeoForgeProfessionsMod mod;
 
     public static final Supplier<AttachmentType<IProfessionalPlayer>> PROFESSIONAL_PLAYER = ATTACHMENTS_REGISTER.register(
             "professional_player", () -> AttachmentType.builder(() -> {
@@ -73,7 +74,7 @@ public class ProfessionsMod extends CommonClass {
     );
 
 
-    public ProfessionsMod(IEventBus eventBus) {
+    public NeoForgeProfessionsMod(IEventBus eventBus) {
         this.init();
         this.buildConfig();
 
@@ -89,7 +90,7 @@ public class ProfessionsMod extends CommonClass {
     }
 
     @Override
-    public ActionLoad2 getActionLoader() {
+    public ActionLoad3 getActionLoader() {
         return ACTION_LOAD2;
     }
 
@@ -129,13 +130,13 @@ public class ProfessionsMod extends CommonClass {
 
         @SubscribeEvent
         public static void onRegisterEvent(RegisterEvent event) {
-            ProfessionsMod.NEO_FORGE_REGISTRAR_BACKEND.onRegister(event);
+            NeoForgeProfessionsMod.NEO_FORGE_REGISTRAR_BACKEND.onRegister(event);
         }
 
         @SubscribeEvent
         public static void onDataReload(AddReloadListenerEvent event) {
             //event.addListener(new ActionLoader(event.getRegistryAccess()));
-            ActionLoad2 loader = new ActionLoad2(event.getRegistryAccess());
+            ActionLoad3 loader = new ActionLoad3(event.getRegistryAccess(), new ActionManager(event.getRegistryAccess()));
             event.addListener(loader);
             ACTION_LOAD2 = loader;
             REGISTRY_ACCESS = event.getRegistryAccess();
@@ -143,7 +144,7 @@ public class ProfessionsMod extends CommonClass {
 
         @SubscribeEvent
         public static void onCommandRegister(RegisterCommandsEvent event) {
-            new ProfessionsStandardCommands(ProfessionsMod.mod, event.getDispatcher(), event.getBuildContext());
+            new ProfessionsStandardCommands(NeoForgeProfessionsMod.mod, event.getDispatcher(), event.getBuildContext());
         }
 
 
@@ -163,7 +164,6 @@ public class ProfessionsMod extends CommonClass {
                         .addParameter(ProfessionParameter.THIS_HOLDER, blockHolder)
                         .build();
 
-                mod.
                 iProfessionalPlayer.handleAction(context, blockHolder);
             }
             player.setData(PROFESSIONAL_PLAYER, iProfessionalPlayer);

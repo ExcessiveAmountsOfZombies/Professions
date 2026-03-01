@@ -1,0 +1,15 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "minecraft:stone",
+    "minecraft:deepslate"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 3.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

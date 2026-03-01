@@ -1,12 +1,21 @@
 {
-  "description": [
-    "Earn money and experience",
-    "by mining ores and minerals."
-  ],
-  "descriptionColor": "#FFFFFF",
-  "display": "Mining",
-  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "expScaling": {
+    "defaultExpScale": "1000*1.05^(lvl-1)",
+    "expScalers": {}
+  },
+  "formatting": {
+    "description": [
+      "Earn money and experience",
+      "by mining ores and minerals."
+    ],
+    "descriptionColor": "#FFFFFF",
+    "display": "Mining",
+    "icon": "minecraft:stone_pickaxe",
+    "nameColor": "#666E63"
+  },
   "id": "professions:mining",
-  "maxLevel": 100,
-  "nameColor": "#666E63"
+  "settings": {
+    "levelUpSound": "minecraft:entity.player.levelup",
+    "maxLevel": 100
+  }
 }

@@ -8,11 +8,12 @@ import com.epherical.professions.core.register.Actions;
 import com.epherical.professions.core.register.Conditions;
 import com.epherical.professions.core.register.Rewards;
 import com.epherical.professions.core.rewards.RewardType;
-import com.epherical.professions.platform.Services;
-import com.epherical.professions.registries.ActionLoad2;
+import com.epherical.professions.registries.ActionLoad3;
 import net.minecraft.core.Registry;
+import net.minecraft.data.registries.RegistriesDatapackGenerator;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.io.File;
 
@@ -30,7 +31,7 @@ public abstract class CommonClass {
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "occupations"));
 
 
-    public static ActionLoad2 ACTION_LOAD2;
+    public static ActionLoad3 ACTION_LOAD2;
 
     public static CommonConfig config;
 
@@ -54,7 +55,7 @@ public abstract class CommonClass {
     }
 
     //public abstract PlayerManager getPlayerManager();
-    public abstract ActionLoad2 getActionLoader();
+    public abstract ActionLoad3 getActionLoader();
     public abstract File getModDir();
     public abstract boolean isClientEnvironment();
 }

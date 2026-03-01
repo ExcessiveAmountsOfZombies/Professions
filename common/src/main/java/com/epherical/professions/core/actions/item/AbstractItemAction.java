@@ -4,6 +4,8 @@ import com.epherical.professions.core.actions.Action;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.mojang.datafixers.util.Either;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -15,6 +17,11 @@ public abstract class AbstractItemAction extends Action<Item> {
 
     protected AbstractItemAction(Common common, List<Either<TagKey<Item>, ResourceKey<Item>>> targets) {
         super(common, targets);
+    }
+
+    @Override
+    public ResourceKey<? extends Registry<Item>> getRegistryKey() {
+        return Registries.ITEM;
     }
 
     @Override

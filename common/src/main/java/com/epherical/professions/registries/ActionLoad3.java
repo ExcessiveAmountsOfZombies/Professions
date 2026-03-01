@@ -8,6 +8,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
@@ -61,6 +62,7 @@ public class ActionLoad3 implements PreparableReloadListener {
     private List<Action<?>> decodeAll(ResourceManager manager) {
         List<Action<?>> actions = new ArrayList<>();
 
+
         FileToIdConverter fileToIdConverter = FileToIdConverter.json(PATH);
         Map<ResourceLocation, Resource> resourceLocationResourceMap = fileToIdConverter.listMatchingResources(manager);
 
@@ -70,12 +72,12 @@ public class ActionLoad3 implements PreparableReloadListener {
 
             try (Reader reader = entry.getValue().openAsReader()) {
                 JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
-                Action.TYPED_CODEC.decode(JsonOps.INSTANCE, element)
+                Action.TYPED_CODEC.decode(RegistryOps.create(JsonOps.INSTANCE, access), element)
                         .ifError(pairError -> {
-                            LOGGER.error("Failed to decode action for file: " + fileId);
+                            LOGGER.error("Failed to decode action for file: {}", fileId);
                         })
                         .ifSuccess(actionJsonElementPair -> {
-                            LOGGER.info("Successfully decoded action for file: " + fileId);
+                            LOGGER.info("Successfully decoded action for file: {}", fileId);
                             Action<?> action = actionJsonElementPair.getFirst();
                             actions.add(action);
                         });

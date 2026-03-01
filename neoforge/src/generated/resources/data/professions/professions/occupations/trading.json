@@ -1,12 +1,21 @@
 {
-  "description": [
-    "Earn money and experience",
-    "by trading items to villagers."
-  ],
-  "descriptionColor": "#FFFFFF",
-  "display": "Trading",
-  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "expScaling": {
+    "defaultExpScale": "1000*1.05^(lvl-1)",
+    "expScalers": {}
+  },
+  "formatting": {
+    "description": [
+      "Earn money and experience",
+      "by trading items to villagers."
+    ],
+    "descriptionColor": "#FFFFFF",
+    "display": "Trading",
+    "icon": "minecraft:stone_pickaxe",
+    "nameColor": "#2DCF08"
+  },
   "id": "professions:trading",
-  "maxLevel": 100,
-  "nameColor": "#2DCF08"
+  "settings": {
+    "levelUpSound": "minecraft:entity.player.levelup",
+    "maxLevel": 100
+  }
 }

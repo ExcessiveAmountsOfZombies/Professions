@@ -119,11 +119,11 @@ public class OccupationInfoScreen extends Screen {
             paintX = leftPos + 112;
             paintY += 16;
 
-            for (Reward reward : focused.getAction().getRewards()) {
+            /*for (Reward reward : focused.getAction().getRewards()) {
                 pGuiGraphics.renderFakeItem(reward.getRewardIcon(), paintX, paintY, 1000);
                 pGuiGraphics.drawString(minecraft.font, reward.getRewardName(), paintX + 18, paintY + 6, 0xFFFFFFFF, true);
                 paintY+= 16;
-            }
+            }*/
 
         }
     }

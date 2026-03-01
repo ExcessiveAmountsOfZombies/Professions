@@ -1,12 +1,21 @@
 {
-  "description": [
-    "Earn money and experience",
-    "by farming."
-  ],
-  "descriptionColor": "#FFFFFF",
-  "display": "Farming",
-  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "expScaling": {
+    "defaultExpScale": "1000*1.05^(lvl-1)",
+    "expScalers": {}
+  },
+  "formatting": {
+    "description": [
+      "Earn money and experience",
+      "by farming."
+    ],
+    "descriptionColor": "#FFFFFF",
+    "display": "Farming",
+    "icon": "minecraft:stone_pickaxe",
+    "nameColor": "#107D0E"
+  },
   "id": "professions:farming",
-  "maxLevel": 100,
-  "nameColor": "#107D0E"
+  "settings": {
+    "levelUpSound": "minecraft:entity.player.levelup",
+    "maxLevel": 100
+  }
 }

@@ -1,6 +1,6 @@
 package com.epherical.professions.platform;
 
-import com.epherical.professions.ProfessionsMod;
+import com.epherical.professions.NeoForgeProfessionsMod;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.conditions.ConditionType;
@@ -29,21 +29,21 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public Registry<Profession> getProfessionRegistry() {
-        return ProfessionsMod.PROFESSION_REGISTER.getRegistry().get();
+        return NeoForgeProfessionsMod.PROFESSION_REGISTER.getRegistry().get();
     }
 
     @Override
     public Registry<ActionType> getActionTypeRegistry() {
-        return ProfessionsMod.ACTIONS;
+        return NeoForgeProfessionsMod.ACTIONS;
     }
 
     @Override
     public Registry<ConditionType> getConditionTypeRegistry() {
-        return ProfessionsMod.CONDITIONS;
+        return NeoForgeProfessionsMod.CONDITIONS;
     }
 
     @Override
     public Registry<RewardType> getRewardTypeRegistry() {
-        return ProfessionsMod.REWARDS;
+        return NeoForgeProfessionsMod.REWARDS;
     }
 }

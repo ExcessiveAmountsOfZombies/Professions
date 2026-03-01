@@ -1,6 +1,6 @@
 package com.epherical.professions;
 
-import com.epherical.professions.registries.ActionLoad2;
+import com.epherical.professions.registries.ActionLoad3;
 import net.fabricmc.api.ModInitializer;
 
 import java.io.File;
@@ -22,7 +22,7 @@ public class ProfessionsMod extends CommonClass implements ModInitializer {
     }
 
     @Override
-    public ActionLoad2 getActionLoader() {
+    public ActionLoad3 getActionLoader() {
         return null;
     }
 

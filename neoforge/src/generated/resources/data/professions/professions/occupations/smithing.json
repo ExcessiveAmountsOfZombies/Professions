@@ -1,12 +1,21 @@
 {
-  "description": [
-    "Earn money and experience",
-    "by smithing items."
-  ],
-  "descriptionColor": "#FFFFFF",
-  "display": "Smithing",
-  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "expScaling": {
+    "defaultExpScale": "1000*1.05^(lvl-1)",
+    "expScalers": {}
+  },
+  "formatting": {
+    "description": [
+      "Earn money and experience",
+      "by smithing items."
+    ],
+    "descriptionColor": "#FFFFFF",
+    "display": "Smithing",
+    "icon": "minecraft:stone_pickaxe",
+    "nameColor": "#84ABAD"
+  },
   "id": "professions:smithing",
-  "maxLevel": 100,
-  "nameColor": "#84ABAD"
+  "settings": {
+    "levelUpSound": "minecraft:entity.player.levelup",
+    "maxLevel": 100
+  }
 }

@@ -1,12 +1,21 @@
 {
-  "description": [
-    "Earn money and experience",
-    "by crafting."
-  ],
-  "descriptionColor": "#FFFFFF",
-  "display": "Crafting",
-  "expScalingEquation": "1000*1.05^(lvl-1)",
+  "expScaling": {
+    "defaultExpScale": "1000*1.05^(lvl-1)",
+    "expScalers": {}
+  },
+  "formatting": {
+    "description": [
+      "Earn money and experience",
+      "by crafting."
+    ],
+    "descriptionColor": "#FFFFFF",
+    "display": "Crafting",
+    "icon": "minecraft:stone_pickaxe",
+    "nameColor": "#F2A100"
+  },
   "id": "professions:crafting",
-  "maxLevel": 100,
-  "nameColor": "#F2A100"
+  "settings": {
+    "levelUpSound": "minecraft:entity.player.levelup",
+    "maxLevel": 100
+  }
 }

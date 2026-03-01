@@ -81,6 +81,8 @@ public abstract class Action<T> implements Predicate<ProfessionContext> {
 
     public abstract ActionType getType();
 
+    public abstract ResourceKey<? extends Registry<T>> getRegistryKey();
+
     public Item getIcon() {
         return Items.STONE;
     }

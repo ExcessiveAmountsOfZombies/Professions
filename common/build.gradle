@@ -27,6 +27,7 @@ dependencies {
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     compileOnly('com.epherical.epherolib:EpheroLib:1.2.0-1.21.1')
+    api('org.jetbrains:annotations:23.0.0')
 }
 
 configurations {

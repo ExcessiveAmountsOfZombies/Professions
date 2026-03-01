@@ -1,34 +1,32 @@
 package com.epherical.professions.core.actions.block;
 
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.AbstractAction;
 import com.epherical.professions.core.actions.Action;
 import com.epherical.professions.core.actions.ActionType;
-import com.epherical.professions.core.context.ProfessionContext;
-import com.epherical.professions.core.context.ProfessionParameter;
-import com.epherical.professions.core.progression.Occupation;
 import com.epherical.professions.core.register.Actions;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 
-public class TNTDestroyAction extends AbstractAction {
+import java.util.List;
+
+public class TNTDestroyAction extends AbstractBlockAction {
 
     public static final MapCodec<TNTDestroyAction> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    COMMON.forGetter(TNTDestroyAction::buildCommon)
-                    // We can add fields with this,
-                    /*BlockState.CODEC.fieldOf("target_block")
-                            .forGetter(BlockBreakAction::getTargetBlock)*/
+                    COMMON.forGetter(TNTDestroyAction::buildCommon),
+                    Action.tagOrElementListCodec(Registries.BLOCK).fieldOf("blocks").forGetter(TNTDestroyAction::getValues)
             ).apply(i, TNTDestroyAction::new));
 
 
-    public TNTDestroyAction(Common common) {
-        super(common);
+    public TNTDestroyAction(Common common, List<Either<TagKey<Block>, ResourceKey<Block>>> targets) {
+        super(common, targets);
     }
-
-    @Override
-    public void handleAction(ProfessionContext context, Occupation occupation) {}
 
     @Override
     public Common buildCommon() {
@@ -41,12 +39,7 @@ public class TNTDestroyAction extends AbstractAction {
         return Actions.BLOCK_EXPLODE;
     }
 
-    @Override
-    public boolean test(ProfessionContext context) {
-        return context.getPossibleParameter(ProfessionParameter.THIS_BLOCK) != null;
-    }
-
-    public static class Builder extends AbstractAction.Builder<Builder> {
+    public static class Builder extends Action.Builder<Builder, Block> {
 
         public Builder(Holder<Profession> profession) {
             super(profession);
@@ -58,8 +51,8 @@ public class TNTDestroyAction extends AbstractAction {
         }
 
         @Override
-        public Action build() {
-            return new TNTDestroyAction(new Common(getProfession(), getConditions(), getRewards()));
+        public Action<Block> build() {
+            return new TNTDestroyAction(new Common(getProfession(), getConditions(), getRewards()), getTargets());
         }
     }
 }

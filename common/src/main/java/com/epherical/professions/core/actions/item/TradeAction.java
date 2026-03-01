@@ -1,30 +1,32 @@
 package com.epherical.professions.core.actions.item;
 
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.AbstractAction;
 import com.epherical.professions.core.actions.Action;
 import com.epherical.professions.core.actions.ActionType;
-import com.epherical.professions.core.context.ProfessionContext;
-import com.epherical.professions.core.progression.Occupation;
 import com.epherical.professions.core.register.Actions;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 
-public class TradeAction extends AbstractAction {
+import java.util.List;
+
+public class TradeAction extends AbstractItemAction {
 
     public static final MapCodec<TradeAction> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    COMMON.forGetter(TradeAction::buildCommon)
+                    COMMON.forGetter(TradeAction::buildCommon),
+                    Action.tagOrElementListCodec(Registries.ITEM).fieldOf("items").forGetter(TradeAction::getValues)
             ).apply(i, TradeAction::new));
 
 
-    public TradeAction(Common common) {
-        super(common);
+    public TradeAction(Common common, List<Either<TagKey<Item>, ResourceKey<Item>>> targets) {
+        super(common, targets);
     }
-
-    @Override
-    public void handleAction(ProfessionContext context, Occupation occupation) {}
 
     @Override
     public Common buildCommon() {
@@ -37,12 +39,7 @@ public class TradeAction extends AbstractAction {
         return Actions.TRADE_ACTION;
     }
 
-    @Override
-    public boolean test(ProfessionContext context) {
-        return true;
-    }
-
-    public static class Builder extends AbstractAction.Builder<Builder> {
+    public static class Builder extends Action.Builder<Builder, Item> {
 
         public Builder(Holder<Profession> profession) {
             super(profession);
@@ -54,8 +51,8 @@ public class TradeAction extends AbstractAction {
         }
 
         @Override
-        public Action build() {
-            return new TradeAction(new Common(getProfession(), getConditions(), getRewards()));
+        public Action<Item> build() {
+            return new TradeAction(new Common(getProfession(), getConditions(), getRewards()), getTargets());
         }
     }
 }

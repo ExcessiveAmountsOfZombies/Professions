@@ -1,39 +1,181 @@
 package com.epherical.professions.core.actions;
 
+import com.epherical.professions.CommonClass;
+import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.core.conditions.Condition;
 import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.core.progression.Occupation;
+import com.epherical.professions.core.register.Actions;
 import com.epherical.professions.core.rewards.Reward;
 import com.epherical.professions.platform.Services;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public interface Action extends Predicate<ProfessionContext> {
+public abstract class Action<T> implements Predicate<ProfessionContext> {
 
-    Codec<Action> TYPED_CODEC = Services.PLATFORM.getActionTypeRegistry().byNameCodec().dispatch(
+    public static final Codec<Action<?>> TYPED_CODEC = Services.PLATFORM.getActionTypeRegistry().byNameCodec().dispatch(
             "action", Action::getType, ActionType::codec);
 
-    ActionType getType();
+    public static final MapCodec<Common> COMMON = RecordCodecBuilder.mapCodec(
+            i -> i.group(
+                    RegistryFixedCodec.create(CommonClass.PROFESSION_REGISTRY_KEY).fieldOf("profession").forGetter(Common::profession),
+                    Condition.CODEC.listOf().fieldOf("conditions").forGetter(Common::conditions),
+                    Reward.CODEC.listOf().fieldOf("rewards").forGetter(Common::rewards)
+            ).apply(i, Common::new)
+    );
 
-    default Item getIcon() {
+    protected List<Either<TagKey<T>, ResourceKey<T>>> values;
+
+    private final Holder<Profession> profession;
+    private final List<Condition> conditions;
+    private final List<Reward> rewards;
+    private final Predicate<ProfessionContext> predicate;
+
+    protected Action(Common common, List<Either<TagKey<T>, ResourceKey<T>>> targets) {
+        this(common.profession, common.conditions, common.rewards, targets);
+    }
+
+    protected Action(Holder<Profession> profession, List<Condition> conditions, List<Reward> rewards, List<Either<TagKey<T>, ResourceKey<T>>> targets) {
+        this.profession = profession;
+        this.conditions = conditions;
+        this.rewards = rewards;
+        this.values = targets;
+        this.predicate = Actions.andAllConditions(new ArrayList<>(conditions));
+    }
+
+    public boolean isValidAction(ProfessionContext context) {
+        IProfessionalPlayer player = context.getParameter(ProfessionParameter.THIS_PLAYER);
+        Occupation occupation = player.getOccupation(profession);
+        // Occupation is a big filter, then filter on conditions, since there are so few,
+        // then we filter on the values since it's potentially the biggest.
+        return occupation != null && predicate.test(context) && test(context);
+    }
+
+    public void handleAction(ProfessionContext context, Occupation occupation) {
+        giveRewards(context, occupation);
+    }
+
+    private void giveRewards(ProfessionContext context, Occupation occupation) {
+        for (Reward reward : rewards) {
+            reward.giveReward(context, occupation, this);
+        }
+    }
+
+    public abstract Common buildCommon();
+
+    public abstract ActionType getType();
+
+    public Item getIcon() {
         return Items.STONE;
     }
 
-    List<Reward> getRewards();
+    public Holder<Profession> getProfession() {
+        return profession;
+    }
 
-    Holder<Profession> getProfession();
+    public List<Condition> getConditions() {
+        return conditions;
+    }
 
-    void handleAction(ProfessionContext context);
+    public List<Reward> getRewards() {
+        return rewards;
+    }
+
+    public List<Either<TagKey<T>, ResourceKey<T>>> getValues() {
+        return values;
+    }
+
+    public record Common(Holder<Profession> profession, List<Condition> conditions, List<Reward> rewards) {
+        public static <A extends Action<?>> Common build(A t) {
+            return new Common(t.getProfession(), t.getConditions(), t.getRewards());
+        }
+    }
+
+    public abstract static class Builder<B extends Builder<B, E>, E> {
+        private final List<Condition> conditions = new ArrayList<>();
+        private final List<Reward> rewards = new ArrayList<>();
+        private final List<Either<TagKey<E>, ResourceKey<E>>> targets = new ArrayList<>();
+        private final Holder<Profession> profession;
+
+        public Builder(Holder<Profession> profession) {
+            this.profession = profession;
+        }
+
+        public B condition(Condition.Builder condition) {
+            this.conditions.add(condition.build());
+            return instance();
+        }
+
+        public B reward(Reward.Builder reward) {
+            this.rewards.add(reward.build());
+            return instance();
+        }
+
+        public B target(Either<TagKey<E>, ResourceKey<E>> target) {
+            this.targets.add(target);
+            return instance();
+        }
+
+        public B target(TagKey<E> target) {
+            this.targets.add(Either.left(target));
+            return instance();
+        }
+
+        public B target(ResourceKey<E> target) {
+            this.targets.add(Either.right(target));
+            return instance();
+        }
+
+        protected abstract B instance();
+
+        public List<Condition> getConditions() {
+            return conditions;
+        }
+
+        public List<Reward> getRewards() {
+            return rewards;
+        }
+
+        public Holder<Profession> getProfession() {
+            return profession;
+        }
 
 
-    @FunctionalInterface
-    interface Builder {
+        public List<Either<TagKey<E>, ResourceKey<E>>> getTargets() {
+            return targets;
+        }
 
-        Action build();
+        public abstract Action<E> build();
+    }
+
+    public static <T> Codec<List<Either<TagKey<T>, ResourceKey<T>>>> tagOrElementListCodec(ResourceKey<Registry<T>> registryKey) {
+        Codec<Either<TagKey<T>, ResourceKey<T>>> single =
+                ExtraCodecs.TAG_OR_ELEMENT_ID.xmap(
+                        rl -> rl.tag()
+                                ? Either.left(TagKey.create(registryKey, rl.id()))
+                                : Either.right(ResourceKey.create(registryKey, rl.id())),
+                        e -> e.map(
+                                tk -> new ExtraCodecs.TagOrElementLocation(tk.location(), true),
+                                rk -> new ExtraCodecs.TagOrElementLocation(rk.location(), false)
+                        )
+                );
+        return single.listOf();
     }
 
 }

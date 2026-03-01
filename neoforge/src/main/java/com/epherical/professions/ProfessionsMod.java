@@ -84,10 +84,9 @@ public class ProfessionsMod extends CommonClass {
 
     }
 
-    /*@Override
     public PlayerManager getPlayerManager() {
         return null;
-    }*/
+    }
 
     @Override
     public ActionLoad2 getActionLoader() {
@@ -105,7 +104,7 @@ public class ProfessionsMod extends CommonClass {
     }
 
 
-    @EventBusSubscriber(modid =  Constants.MOD_ID)
+    @EventBusSubscriber(modid = Constants.MOD_ID)
     public static class EventHandler {
 
 
@@ -164,6 +163,7 @@ public class ProfessionsMod extends CommonClass {
                         .addParameter(ProfessionParameter.THIS_HOLDER, blockHolder)
                         .build();
 
+                mod.
                 iProfessionalPlayer.handleAction(context, blockHolder);
             }
             player.setData(PROFESSIONAL_PLAYER, iProfessionalPlayer);

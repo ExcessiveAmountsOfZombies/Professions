@@ -16,6 +16,7 @@ public class ProfessionsMod extends CommonClass implements ModInitializer {
 
         // Use Fabric to bootstrap the Common mod.
         Constants.LOG.info("Hello Fabric world!");
+
         this.init();
         //CommonClass.init();
     }

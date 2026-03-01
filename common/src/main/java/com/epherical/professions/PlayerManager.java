@@ -2,6 +2,10 @@ package com.epherical.professions;
 
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.core.actions.Action;
+import com.epherical.professions.core.actions.ActionType;
+import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.core.progression.Occupation;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -10,6 +14,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,9 +36,12 @@ public class PlayerManager {
 
     private final MinecraftServer server;
 
-    public PlayerManager(MinecraftServer server, Function<ServerPlayer, IProfessionalPlayer> playerFactory) {
+    private final ActionManager actionManager;
+
+    public PlayerManager(MinecraftServer server, Function<ServerPlayer, IProfessionalPlayer> playerFactory, ActionManager actionManager) {
         this.server = server;
         this.playerFactory = playerFactory;
+        this.actionManager = actionManager;
     }
 
     public void playerJoined(ServerPlayer player) {
@@ -57,6 +65,24 @@ public class PlayerManager {
         if (pPlayer != null) {
             pPlayer.setPlayer(null);
             pPlayer.save();
+        }
+    }
+
+    public void processAction(Player player, ActionType actionType, ProfessionContext.Builder context) {
+        IProfessionalPlayer iProfessionalPlayer = players.get(player.getUUID());
+
+        context.addParameter(ProfessionParameter.THIS_PLAYER, iProfessionalPlayer);
+
+        ProfessionContext professionContext = context.build();
+
+
+        Collection<Action<?>> actions = actionManager.getActionsByType(actionType);
+
+        for (Action<?> action : actions) {
+            Occupation occupation = iProfessionalPlayer.getOccupation(action.getProfession());
+            if (occupation.isActive() && action.isValidAction(professionContext)) {
+                action.handleAction(professionContext, occupation);
+            }
         }
     }
 

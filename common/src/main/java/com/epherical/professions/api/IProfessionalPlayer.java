@@ -6,14 +6,15 @@ import com.epherical.professions.core.progression.Occupation;
 import com.epherical.professions.core.progression.OccupationSlot;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
 public interface IProfessionalPlayer {
 
-    @Nullable UUID getUUID();
+    @Nullable
+    UUID getUUID();
 
     @Nullable ServerPlayer getPlayer();
 

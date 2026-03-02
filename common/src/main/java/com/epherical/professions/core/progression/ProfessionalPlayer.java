@@ -1,88 +1,89 @@
 package com.epherical.professions.core.progression;
 
-import com.epherical.professions.CommonClass;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.Action;
-import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.context.ProfessionContext;
-import com.epherical.professions.core.context.ProfessionParameter;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.epherical.professions.CommonClass.PROFESSION_REGISTRY_KEY;
+
 public class ProfessionalPlayer implements IProfessionalPlayer {
 
-    private final Map<Holder<Profession>, Occupation> occupationMap = new HashMap<>();
+    private final Map<ResourceLocation, Occupation> occupationMap = new HashMap<>();
 
     private volatile boolean dirty = false;
 
     private volatile ServerPlayer player;
+    private UUID uuid;
 
 
-    public static final Codec<IProfessionalPlayer> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Occupation.CODEC.listOf().fieldOf("occupations").forGetter(IProfessionalPlayer::getAllOccupations)
-    ).apply(i, ProfessionalPlayer::new));
-
-
-
-    public ProfessionalPlayer(List<Occupation> occupations) {
+    public ProfessionalPlayer(UUID uuid, List<Occupation> occupations) {
+        this.uuid = uuid;
         for (Occupation occupation : occupations) {
-            occupationMap.put(occupation.getProfession(), occupation);
+            occupationMap.put(occupation.getProfessionKey(), occupation);
         }
     }
+
+    public ProfessionalPlayer(List<Occupation> occupations, ServerPlayer player, RegistryAccess access) {
+        this.player = player;
+        this.uuid = player.getUUID();
+
+
+        for (Occupation occupation : occupations) {
+            occupationMap.put(occupation.getProfessionKey(), occupation);
+        }
+
+        access.lookupOrThrow(PROFESSION_REGISTRY_KEY).listElements().forEach(element -> {
+            Occupation occupation = new Occupation(element, 0,0, OccupationSlot.ACTIVE);
+            occupation.resetMaxExperience();
+            occupationMap.putIfAbsent(occupation.getProfessionKey(), occupation);
+        });
+
+    }
+
+
 
 
     @Override
     public UUID getUUID() {
-        return player.getUUID();
+        return uuid;
     }
 
     @Override
     public @Nullable ServerPlayer getPlayer() {
-        return null;
+        return player;
     }
 
     @Override
     public void setPlayer(@Nullable ServerPlayer player) {
-
+        this.player = player;
     }
 
     @Override
-    public void setNeedsToBeSaved() {
-
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
     }
 
     @Override
-    public void save() {
-        if (dirty) {
-
-            // todo; save Player
-            dirty = false;
-        }
-
+    public boolean isDirty() {
+        return dirty;
     }
 
     @Override
     public <T> void handleAction(ProfessionContext context, Holder<T> holder) {
-       /* Collection<Action> actions = CommonClass.ACTION_LOAD2.getActionsByHolder(holder);
-        ActionType actionType = context.getPossibleParameter(ProfessionParameter.ACTION_TYPE);
-        // todo; check if the player is in any occupations
-        if (actionType != null) {
-            for (Action action : actions) {
-                if (actionType.equals(action.getType())) {
-                    action.handleAction(context);
-                }
-            }
-        }*/
+
     }
 
     @Override
@@ -97,18 +98,18 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
     @Override
     public boolean joinOccupation(Holder<Profession> profession, OccupationSlot slot) {
-        if (!alreadyHasOccupation(profession)) {
-            occupationMap.put(profession, new Occupation(profession, 0, 1, slot));
+        /*if (!alreadyHasOccupation(profession)) {
+            addOccupationInternal(new Occupation(profession, 0, 1, slot));
             resetMaxExperience();
             return true;
         } else {
-            for (Occupation occupation : occupationMap.values()) {
+            for (Occupation occupation : allOccupations) {
                 if (occupation.isProfession(profession)) {
                     occupation.setSlot(slot);
                     return true;
                 }
             }
-        }
+        }*/
         return false;
     }
 
@@ -124,7 +125,7 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
     @Override
     public Occupation getOccupation(Holder<Profession> profession) {
-        return occupationMap.get(profession);
+        return occupationMap.get(profession.unwrapKey().get().location());
     }
 
     @Override
@@ -145,16 +146,5 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     @Override
     public List<Occupation> getAllOccupations() {
         return List.copyOf(occupationMap.values());
-    }
-
-
-    public Map<Holder<Profession>, Occupation> getOccupationMap() {
-        return occupationMap;
-    }
-
-    public void resetMaxExperience() {
-        for (Occupation occupation : occupationMap.values()) {
-            occupation.resetMaxExperience();
-        }
     }
 }

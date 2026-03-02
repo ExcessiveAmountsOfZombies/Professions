@@ -1,4 +1,4 @@
-package com.epherical.professions.config;
+package com.epherical.professions.data.config;
 
 import net.minecraft.network.chat.TextColor;
 

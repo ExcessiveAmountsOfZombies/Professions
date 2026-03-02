@@ -1,4 +1,4 @@
-package com.epherical.professions.config;
+package com.epherical.professions.data.config;
 
 import com.epherical.epherolib.libs.org.spongepowered.configurate.CommentedConfigurationNode;
 import com.epherical.epherolib.libs.org.spongepowered.configurate.ConfigurateException;
@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.epherical.professions.config.ProfessionConfig.*;
+import static com.epherical.professions.data.config.ProfessionConfig.*;
 
 public class CommonConfig {
 

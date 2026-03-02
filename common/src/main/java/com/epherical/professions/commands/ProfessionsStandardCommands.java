@@ -1,9 +1,9 @@
 package com.epherical.professions.commands;
 
+import com.epherical.professions.ActionManager;
 import com.epherical.professions.CommonClass;
-import com.epherical.professions.config.ProfessionConfig;
+import com.epherical.professions.data.config.ProfessionConfig;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.Action;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -16,16 +16,11 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public class ProfessionsStandardCommands {
@@ -34,9 +29,13 @@ public class ProfessionsStandardCommands {
 
     private final CommonClass mod;
 
-    public ProfessionsStandardCommands(CommonClass mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher, CommandBuildContext commandBuildContext) {
+    private final ActionManager actionManager;
+
+    public ProfessionsStandardCommands(CommonClass mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher,
+                                       CommandBuildContext commandBuildContext, ActionManager actionManager) {
         this.mod = mod;
         this.registerCommands(stackCommandDispatcher, commandBuildContext);
+        this.actionManager = actionManager;
     }
     // Commands to add
     // help - shows commands they have access to
@@ -88,13 +87,24 @@ public class ProfessionsStandardCommands {
         final int finalOldPage = oldPage;
         left.ifPresent(p -> {
             try {
-                /*Profession profession = p.value();
+                Profession profession = p.value();
 
+                if (profession == null) {
+                    stack.getSource().sendFailure(Component.translatable("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+                    return;
+                }
+
+
+
+
+                /*Collection<Action<?>> actionsByProfession = actionManager.getActionsByProfession(p);
 
                 Collection<Holder<?>> holdersForProfession = mod.getActionLoader().getHoldersForProfession(p);
 
+                for (Action<?> action : actionsByProfession) {
 
-                List<Component> components = new ArrayList<>();
+                }
+
 
                 for (Holder<?> holder : holdersForProfession) {
                     Collection<Action> actionsByHolder = mod.getActionLoader().getActionsByHolder(holder);
@@ -103,13 +113,9 @@ public class ProfessionsStandardCommands {
                             components.add(Component.literal(holder.getRegisteredName()));
                         }
                     }
-                }
-
-                // todo; probably move this
-                if (profession == null) {
-                    stack.getSource().sendFailure(Component.translatable("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-                    return;
                 }*/
+
+
 
 
                /* for (ActionType actionType : RegistryConstants.ACTION_TYPE) {

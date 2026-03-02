@@ -72,20 +72,19 @@ public class ActionLoad3 implements PreparableReloadListener {
 
             try (Reader reader = entry.getValue().openAsReader()) {
                 JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
-                Action.TYPED_CODEC.decode(RegistryOps.create(JsonOps.INSTANCE, access), element)
-                        .ifError(pairError -> {
-                            LOGGER.error("Failed to decode action for file: {}", fileId);
-                        })
-                        .ifSuccess(actionJsonElementPair -> {
-                            LOGGER.info("Successfully decoded action for file: {}", fileId);
-                            Action<?> action = actionJsonElementPair.getFirst();
-                            actions.add(action);
-                        });
+                Action<?> action = Action.TYPED_CODEC.parse(RegistryOps.create(JsonOps.INSTANCE, access), element)
+                        .resultOrPartial(message -> LOGGER.error("Failed to decode action from {}: {}", fileId, message))
+                        .orElse(null);
+
+                if (action != null) {
+                    LOGGER.debug("Successfully decoded action for file: {}", fileId);
+                    actions.add(action);
+                }
 
 
             } catch (IllegalArgumentException | IOException e) {
                 // todo; better error.
-                LOGGER.error("Couldn't load resource " + idFile, e);
+                LOGGER.error("Couldn't load resource {}", idFile, e);
             }
         }
         return actions;

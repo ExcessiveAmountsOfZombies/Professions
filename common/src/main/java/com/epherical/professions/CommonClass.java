@@ -1,6 +1,6 @@
 package com.epherical.professions;
 
-import com.epherical.professions.config.CommonConfig;
+import com.epherical.professions.data.config.CommonConfig;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.conditions.ConditionType;
@@ -10,10 +10,8 @@ import com.epherical.professions.core.register.Rewards;
 import com.epherical.professions.core.rewards.RewardType;
 import com.epherical.professions.registries.ActionLoad3;
 import net.minecraft.core.Registry;
-import net.minecraft.data.registries.RegistriesDatapackGenerator;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.io.File;
 

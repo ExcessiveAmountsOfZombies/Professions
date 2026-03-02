@@ -20,9 +20,9 @@ public interface IProfessionalPlayer {
 
     void setPlayer(@Nullable ServerPlayer player);
 
-    void setNeedsToBeSaved();
+    void setDirty(boolean dirty);
 
-    void save();
+    boolean isDirty();
 
 
     <T> void handleAction(ProfessionContext context, Holder<T> holder);

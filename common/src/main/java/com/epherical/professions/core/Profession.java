@@ -17,13 +17,12 @@ import java.util.NavigableMap;
 
 
 public record Profession(
-        ResourceLocation key,
         Formatting formatting,
         Settings settings,
         ExpScaling expScaling) {
 
     public static final Codec<Profession> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("id").forGetter(Profession::key),
+            //ResourceLocation.CODEC.fieldOf("id").forGetter(Profession::key),
             Formatting.CODEC.fieldOf("formatting").forGetter(Profession::formatting),
             Settings.CODEC.fieldOf("settings").forGetter(Profession::settings),
             ExpScaling.CODEC.fieldOf("expScaling").forGetter(Profession::expScaling)

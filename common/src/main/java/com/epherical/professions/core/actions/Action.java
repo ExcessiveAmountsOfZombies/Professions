@@ -11,7 +11,10 @@ import com.epherical.professions.core.register.Actions;
 import com.epherical.professions.core.rewards.Reward;
 import com.epherical.professions.platform.Services;
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -29,12 +32,25 @@ import java.util.function.Predicate;
 
 public abstract class Action<T> implements Predicate<ProfessionContext> {
 
+    private static final Codec<Holder<Profession>> PROFESSION_CODEC = RegistryFixedCodec.create(CommonClass.PROFESSION_REGISTRY_KEY)
+            .mapResult(new Codec.ResultFunction<>() {
+                @Override
+                public <E> DataResult<Pair<Holder<Profession>, E>> apply(DynamicOps<E> ops, E input, DataResult<Pair<Holder<Profession>, E>> result) {
+                    return result.mapError(Action::explainProfessionDecodeError);
+                }
+
+                @Override
+                public <E> DataResult<E> coApply(DynamicOps<E> ops, Holder<Profession> input, DataResult<E> result) {
+                    return result.mapError(Action::explainProfessionDecodeError);
+                }
+            });
+
     public static final Codec<Action<?>> TYPED_CODEC = Services.PLATFORM.getActionTypeRegistry().byNameCodec().dispatch(
             "action", Action::getType, ActionType::codec);
 
     public static final MapCodec<Common> COMMON = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    RegistryFixedCodec.create(CommonClass.PROFESSION_REGISTRY_KEY).fieldOf("profession").forGetter(Common::profession),
+                    PROFESSION_CODEC.fieldOf("profession").forGetter(Common::profession),
                     Condition.CODEC.listOf().fieldOf("conditions").forGetter(Common::conditions),
                     Reward.CODEC.listOf().fieldOf("rewards").forGetter(Common::rewards)
             ).apply(i, Common::new)
@@ -178,6 +194,10 @@ public abstract class Action<T> implements Predicate<ProfessionContext> {
                         )
                 );
         return single.listOf();
+    }
+
+    private static String explainProfessionDecodeError(String error) {
+        return error + ". Failed to decode action field 'profession'; the referenced profession is probably missing, disabled, or not loaded yet.";
     }
 
 }

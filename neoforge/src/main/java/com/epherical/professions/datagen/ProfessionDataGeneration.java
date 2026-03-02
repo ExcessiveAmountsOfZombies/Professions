@@ -249,7 +249,6 @@ public final class ProfessionDataGeneration {
 
         public Profession build() {
             return new Profession(
-                    id,
                     new Profession.Formatting(display, List.of(description), nameColor, descColor, icon),
                     new Profession.Settings(maxLevel, levelUpSound),
                     new Profession.ExpScaling(new Parser(expEquation), new TreeMap<>(expScalers))

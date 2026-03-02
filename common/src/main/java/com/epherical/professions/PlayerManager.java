@@ -1,71 +1,127 @@
 package com.epherical.professions;
 
 import com.epherical.professions.api.IProfessionalPlayer;
-import com.epherical.professions.config.ProfessionConfig;
 import com.epherical.professions.core.actions.Action;
 import com.epherical.professions.core.actions.ActionType;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.core.progression.Occupation;
+import com.epherical.professions.core.progression.ProfessionalPlayer;
+import com.epherical.professions.data.config.ProfessionConfig;
+import com.epherical.professions.data.player.OccupationDataLoader;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.mojang.authlib.GameProfile;
+import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerManager {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     private final Map<UUID, IProfessionalPlayer> players = Maps.newHashMap();
-    private final Set<UUID> synchronizedPlayers = Sets.newHashSet();
+    private final Map<UUID, String> uuidToUsername = Maps.newHashMap();
 
-    private final Function<ServerPlayer, IProfessionalPlayer> playerFactory;
 
-    private final MinecraftServer server;
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+
+    private MinecraftServer server;
 
     private final ActionManager actionManager;
+    private OccupationDataLoader occupationDataLoader;
 
-    public PlayerManager(MinecraftServer server, Function<ServerPlayer, IProfessionalPlayer> playerFactory, ActionManager actionManager) {
+    public PlayerManager(MinecraftServer server, ActionManager actionManager, OccupationDataLoader loader) {
         this.server = server;
-        this.playerFactory = playerFactory;
         this.actionManager = actionManager;
+        this.occupationDataLoader = loader;
+        executor.scheduleAtFixedRate(this::saveAll, 5, 5, TimeUnit.MINUTES);
+    }
+
+    public void loadAll() {
+        occupationDataLoader.loadAll().thenCompose(all -> {
+            players.clear();
+            uuidToUsername.clear();
+
+
+            for (Map.Entry<UUID, List<Occupation>> entry : all.entrySet()) {
+                UUID uuid = entry.getKey();
+                players.put(uuid, new ProfessionalPlayer(uuid, entry.getValue()));
+
+                Optional<GameProfile> gameProfile = server.getProfileCache().get(uuid);
+                if (gameProfile.isPresent()) {
+                    uuidToUsername.put(uuid, gameProfile.get().getName());
+                } else {
+                    uuidToUsername.put(uuid, uuid.toString());
+                }
+            }
+
+            return CompletableFuture.completedFuture(null);
+        });
+    }
+
+    public CompletableFuture<Void> saveAll() {
+        List<CompletableFuture<Void>> saves = new ArrayList<>();
+
+        for (Map.Entry<UUID, IProfessionalPlayer> entry : players.entrySet()) {
+            UUID uuid = entry.getKey();
+            IProfessionalPlayer player = entry.getValue();
+            if (player.isDirty()) {
+                saves.add(occupationDataLoader.save(uuid, player.getAllOccupations()));
+                player.setDirty(false);
+            }
+
+        }
+
+        return CompletableFuture.allOf(saves.toArray(new CompletableFuture[0]));
+    }
+
+    public void shutdown() {
+        try {
+            boolean b = executor.awaitTermination(10, TimeUnit.SECONDS);
+            LOGGER.info("All players were saved before shutdown completed.");
+        } catch (InterruptedException e) {
+            LOGGER.warn("The shutdown finished before all save tasks for Profession players could be completed. {}", e.getMessage(), e);
+        }
     }
 
     public void playerJoined(ServerPlayer player) {
+
         IProfessionalPlayer pPlayer = players.get(player.getUUID());
-        if (pPlayer == null) {
-            pPlayer = playerFactory.apply(player);
-            if (pPlayer != null) {
-                pPlayer.setPlayer(player);
-                pPlayer.updateOccupationPerks();
-                player.setHealth(player.getHealth());
-            }
+        if (pPlayer != null) {
+            pPlayer.setPlayer(player);
+        } else {
+            // probably new player
+            CompletableFuture<List<Occupation>> load = occupationDataLoader.load(player.getUUID());
+            List<Occupation> join = load.join();
+            pPlayer = new ProfessionalPlayer(join, player, server.registryAccess());
             players.put(player.getUUID(), pPlayer);
+            LOGGER.debug("New player joined! Assigned professions data {}", player.getUUID());
         }
-        // todo
-        //ProfessionPlatform.platform.sendSyncRequest(player);
     }
 
     public void playerQuit(ServerPlayer player) {
-        IProfessionalPlayer pPlayer = players.remove(player.getUUID());
-        synchronizedPlayers.remove(player.getUUID());
-        if (pPlayer != null) {
-            pPlayer.setPlayer(null);
-            pPlayer.save();
-        }
+        UUID uuid = player.getUUID();
+        IProfessionalPlayer pPlayer = players.get(uuid);
+        CompletableFuture<Void> save = occupationDataLoader.save(uuid, pPlayer.getAllOccupations());
+        save.thenAccept(a -> LOGGER.debug("Player {} saved their professions data", uuid));
+        pPlayer.setPlayer(null);
     }
 
     public void processAction(Player player, ActionType actionType, ProfessionContext.Builder context) {
@@ -214,42 +270,24 @@ public class PlayerManager {
         }*/
     }
 
-    @Nullable
-    public IProfessionalPlayer getPlayer(@NotNull ServerPlayer serverPlayer) {
-        IProfessionalPlayer player = players.get(serverPlayer.getUUID());
-        if (player == null) {
-            player = playerFactory.apply(serverPlayer);
-        }
-        return player;
-    }
-
     public Collection<IProfessionalPlayer> getPlayers() {
         return players.values();
     }
 
-    public void reload() {
-        if (server != null) {
-            synchronizedPlayers.clear();
-            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                playerQuit(player);
-                playerJoined(player);
-            }
-        }
+    public IProfessionalPlayer getPlayer(UUID uuid) {
+        return players.get(uuid);
     }
 
-    public List<Occupation> synchronizePlayer(ServerPlayer player) {
-        if (synchronizedPlayers.contains(player.getUUID())) {
-            return Collections.emptyList(); // don't need to send the data if it's already been sent and nothing has changed.
-        }
-        synchronizedPlayers.add(player.getUUID());
-        return players.get(player.getUUID()).getActiveOccupations();
+    public String getPlayerNameFromUUID(UUID uuid) {
+        return uuidToUsername.get(uuid);
     }
 
-    public boolean isSynchronized(ServerPlayer player) {
-        return synchronizedPlayers.contains(player.getUUID());
+    public void setServer(MinecraftServer server) {
+        this.server = server;
     }
 
-    public boolean isSynchronized(UUID uuid) {
-        return synchronizedPlayers.contains(uuid) || CommonClass.INSTANCE.isClientEnvironment();
+    public void setOccupationDataLoader(OccupationDataLoader occupationDataLoader) {
+        this.occupationDataLoader = occupationDataLoader;
     }
+
 }

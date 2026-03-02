@@ -30,9 +30,13 @@ public class ActionManager {
 
     private boolean finished = false;
 
-    private final RegistryAccess registryAccess;
+    private RegistryAccess registryAccess;
 
     public ActionManager(RegistryAccess registryAccess) {
+        this.registryAccess = registryAccess;
+    }
+
+    public void setRegistryAccess(RegistryAccess registryAccess) {
         this.registryAccess = registryAccess;
     }
 

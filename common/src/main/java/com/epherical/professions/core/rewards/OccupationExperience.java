@@ -6,6 +6,7 @@ import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.core.progression.Occupation;
 import com.epherical.professions.core.register.Rewards;
+import com.epherical.professions.exception.ProfessionNotActiveException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -42,14 +43,16 @@ public record OccupationExperience(double expAmount) implements Reward {
 
     @Override
     public void giveReward(ProfessionContext context, Occupation occupation, Action actionType) {
-        // if true, player levels up.
         IProfessionalPlayer player = context.getParameter(ProfessionParameter.THIS_PLAYER);
-        //context.getParameter(ProfessionParameter.ACTION_LOGGER).addExpReward(rewardChatInfo(), expAmount, occupation);
         int currentLevel = occupation.getLevel();
-        if (occupation.addExp(expAmount, player)) {
-            System.out.println("oh yea buddy we did a thing");
-           // PlayerManager manager = ProfessionPlatform.platform.getPlayerManager();
-           // manager.levelUp(player, occupation, currentLevel);
+        try {
+            if (occupation.addExp(expAmount, player)) {
+                System.out.println("oh yea buddy we did a thing");
+               // PlayerManager manager = ProfessionPlatform.platform.getPlayerManager();
+               // manager.levelUp(player, occupation, currentLevel);
+            }
+        } catch (ProfessionNotActiveException ignored) {
+
         }
     }
 

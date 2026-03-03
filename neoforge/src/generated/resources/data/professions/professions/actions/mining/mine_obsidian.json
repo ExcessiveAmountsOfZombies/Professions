@@ -1,14 +1,13 @@
 {
   "action": "professions:block_break",
   "blocks": [
-    "#minecraft:coal_ores",
-    "#minecraft:iron_ores"
+    "minecraft:obsidian"
   ],
   "conditions": [],
   "profession": "professions:mining",
   "rewards": [
     {
-      "expAmount": 8.0,
+      "expAmount": 1.0,
       "reward": "professions:occupation_exp"
     }
   ]

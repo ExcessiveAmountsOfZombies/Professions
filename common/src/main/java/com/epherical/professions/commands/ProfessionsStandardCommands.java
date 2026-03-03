@@ -2,68 +2,52 @@ package com.epherical.professions.commands;
 
 import com.epherical.professions.ActionManager;
 import com.epherical.professions.CommonClass;
-import com.epherical.professions.data.config.ProfessionConfig;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.core.actions.Action;
+import com.epherical.professions.core.actions.ActionType;
+import com.epherical.professions.core.rewards.Reward;
+import com.epherical.professions.data.config.ProfessionConfig;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.mojang.logging.LogUtils;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.server.level.ServerPlayer;
-import org.slf4j.Logger;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class ProfessionsStandardCommands {
 
-    private final Logger LOGGER = LogUtils.getLogger();
-
-    private final CommonClass mod;
+    private static final int MESSAGES_PER_PAGE = 12;
 
     private final ActionManager actionManager;
 
     public ProfessionsStandardCommands(CommonClass mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher,
                                        CommandBuildContext commandBuildContext, ActionManager actionManager) {
-        this.mod = mod;
-        this.registerCommands(stackCommandDispatcher, commandBuildContext);
         this.actionManager = actionManager;
+        this.registerCommands(stackCommandDispatcher, commandBuildContext);
     }
-    // Commands to add
-    // help - shows commands they have access to
-    // join - attempts to join an occupation
-    // leave - unslots an occupation
-    // leaveall - unslots all occupations
-    // info - displays in chat what an occupation gives.
-    // stats - display in chat current occupation stats
-    // browse - displays in chat a list of professions
-    // top - command to display the top leveled people on the server
-
-    // reload - reload the CONFIG, not the datapack - admin command
-    // fire - fires the player from an occupation, removing it from their saved data. - admin command
-    // fireall - fires the player from all occupations, removing it from their saved data. - admin command
-    // employ - forcefully adds a player to an occupation - admin command
-    // setlevel - sets the level of the player in an occupation - admin command
-    // givexp - adds experience to the player in an occupation - admin command
-    // removexp - removes experience from the player in an occupation - admin command
-
 
     private void registerCommands(CommandDispatcher<CommandSourceStack> stack, CommandBuildContext buildContext) {
-        SuggestionProvider<CommandSourceStack> playerProvider = (context, builder) -> {
-            for (ServerPlayer player : context.getSource().getServer().getPlayerList().getPlayers()) {
-                builder.suggest(player.getGameProfile().getName());
-            }
-            return builder.buildFuture();
-        };
-
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("professions")
                 .then(Commands.literal("info")
                         .then(Commands.argument("occupation", ResourceOrTagArgument.resourceOrTag(buildContext, CommonClass.PROFESSION_REGISTRY_KEY))
@@ -71,99 +55,167 @@ public class ProfessionsStandardCommands {
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                         .executes(this::info))));
         stack.register(command);
-
     }
 
-
     private int info(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
-        int oldPage = 1;
+        int page = 1;
         ResourceOrTagArgument.Result<Profession> potentialProfession = ResourceOrTagArgument.getResourceOrTag(stack, "occupation", CommonClass.PROFESSION_REGISTRY_KEY);
         try {
-            oldPage = IntegerArgumentType.getInteger(stack, "page");
+            page = IntegerArgumentType.getInteger(stack, "page");
         } catch (IllegalArgumentException ignored) {
         }
 
-        Optional<Holder.Reference<Profession>> left = potentialProfession.unwrap().left();
-        final int finalOldPage = oldPage;
-        left.ifPresent(p -> {
-            try {
-                Profession profession = p.value();
+        Optional<Holder.Reference<Profession>> professionResult = potentialProfession.unwrap().left();
+        if (professionResult.isEmpty()) {
+            stack.getSource().sendFailure(Component.translatable("professions.command.error.profession_does_not_exist")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
 
-                if (profession == null) {
-                    stack.getSource().sendFailure(Component.translatable("professions.command.error.profession_does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-                    return;
-                }
+        Holder.Reference<Profession> professionHolder = professionResult.get();
+        Profession profession = professionHolder.value();
 
+        Collection<Action<?>> actionsByProfession = actionManager.getActionsByProfession(professionHolder);
+        Multimap<ActionType, Component> componentsByType = MultimapBuilder.linkedHashKeys().arrayListValues().build();
+        buildActionComponents(actionsByProfession, componentsByType);
 
-
-
-                /*Collection<Action<?>> actionsByProfession = actionManager.getActionsByProfession(p);
-
-                Collection<Holder<?>> holdersForProfession = mod.getActionLoader().getHoldersForProfession(p);
-
-                for (Action<?> action : actionsByProfession) {
-
-                }
-
-
-                for (Holder<?> holder : holdersForProfession) {
-                    Collection<Action> actionsByHolder = mod.getActionLoader().getActionsByHolder(holder);
-                    for (Action action : actionsByHolder) {
-                        if (p.equals(action.getProfession())) {
-                            components.add(Component.literal(holder.getRegisteredName()));
-                        }
-                    }
-                }*/
-
-
-
-
-               /* for (ActionType actionType : RegistryConstants.ACTION_TYPE) {
-                    Collection<Action<?>> actionsFor = profession.getActions(actionType);
-                    if (actionsFor != null && !actionsFor.isEmpty()) {
-                        components.add(Component.translatable("=-=-=| %s |=-=-=",
-                                        Component.translatable(actionType.getTranslationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)))
-                                .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
-                        for (Action<?> action : actionsFor) {
-                            components.addAll(action.displayInformation());
-                        }
-                    }
-                }*/
-
-                /*int messages = components.size();
-                int messagesPerPage = 12;
-                int maxPage = Math.max(messages / messagesPerPage, 1);
-                maxPage = (messages % messagesPerPage != 0) && messages > messagesPerPage ? maxPage + 1 : maxPage;
-                // =-=-=| Break Block |=-=-=
-                // =-=-=| Prev curPage/maxPage Next |=-=-=
-                int begin = finalOldPage == 1 ? 0 : Math.min(messages, ((finalOldPage - 1) * messagesPerPage));
-                int end = finalOldPage == 1 ? Math.min(messages, messagesPerPage) : Math.min(messages, (finalOldPage * messagesPerPage));
-
-                if (finalOldPage > maxPage) {
-                    stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_page").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-                    //return 0;
-                }
-
-                for (Component component : components.subList(begin, end)) {
-                    stack.getSource().sendSuccess(() -> component, false);
-                }
-
-                MutableComponent previous = Component.translatable("professions.command.prev").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)
-                        .withUnderlined(true)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (finalOldPage - 1))));
-                MutableComponent next = Component.translatable("professions.command.next").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)
-                        .withUnderlined(true)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/professions info \"" + potentialProfession + "\" " + (finalOldPage + 1))));
-
-                MutableComponent pageComp = Component.translatable("=-=-=| %s %s/%s %s |=-=-=", previous, finalOldPage, maxPage, next).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-                stack.getSource().sendSuccess(() -> pageComp, false);*/
-
-            } catch (Exception e) {
-                e.printStackTrace();
+        List<Component> components = new ArrayList<>();
+        List<ActionType> sortedTypes = new ArrayList<>(componentsByType.keySet());
+        sortedTypes.sort(Comparator.comparing(type -> Component.translatable(type.translationKey()).getString()));
+        for (ActionType actionType : sortedTypes) {
+            Collection<Component> typeComponents = componentsByType.get(actionType);
+            if (!typeComponents.isEmpty()) {
+                components.add(actionTypeBorder(actionType));
+                components.addAll(typeComponents);
             }
-        });
+        }
 
+        if (components.isEmpty()) {
+            stack.getSource().sendSuccess(() -> professionHeader(profession), false);
+            stack.getSource().sendFailure(Component.literal("No actions are configured for this profession.")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
 
+        int maxPage = Math.max((components.size() + MESSAGES_PER_PAGE - 1) / MESSAGES_PER_PAGE, 1);
+        if (page > maxPage) {
+            stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_page")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+
+        int currentPage = page;
+        int begin = Math.min(components.size(), (currentPage - 1) * MESSAGES_PER_PAGE);
+        int end = Math.min(components.size(), currentPage * MESSAGES_PER_PAGE);
+
+        stack.getSource().sendSuccess(() -> professionHeader(profession), false);
+        for (Component component : components.subList(begin, end)) {
+            stack.getSource().sendSuccess(() -> component, false);
+        }
+        stack.getSource().sendSuccess(() -> pageFooter(professionHolder, currentPage, maxPage), false);
         return 1;
+    }
+
+    private void buildActionComponents(Collection<Action<?>> actions, Multimap<ActionType, Component> componentsByType) {
+        List<Action<?>> sortedActions = new ArrayList<>(actions);
+        sortedActions.sort(Comparator
+                .comparing((Action<?> action) -> action.getType().translationKey())
+                .thenComparing(action -> actionManager.getValuesForAction(action).stream()
+                        .map(this::holderSortKey)
+                        .sorted()
+                        .findFirst()
+                        .orElse("")));
+
+        for (Action<?> action : sortedActions) {
+            Set<Holder<?>> resolvedValues = new LinkedHashSet<>(actionManager.getValuesForAction(action));
+            List<Holder<?>> sortedValues = new ArrayList<>(resolvedValues);
+            sortedValues.sort(Comparator.comparing(this::holderSortKey));
+
+            for (Holder<?> value : sortedValues) {
+                componentsByType.put(action.getType(), actionLine(value, action.getRewards()));
+            }
+        }
+    }
+
+    private Component professionHeader(Profession profession) {
+        return border(profession.displayName().copy().setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
+    }
+
+    private Component actionTypeBorder(ActionType actionType) {
+        return border(Component.translatable(actionType.translationKey()).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)));
+    }
+
+    private Component border(Component middle) {
+        return Component.literal("=-=-=| ")
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
+                .append(middle)
+                .append(Component.literal(" |=-=-=").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
+    }
+
+    private Component actionLine(Holder<?> value, List<Reward> rewards) {
+        MutableComponent component = Component.literal("")
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
+                .append(readableValue(value).copy().setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)));
+
+        if (!rewards.isEmpty()) {
+            component.append(Component.literal(" | ").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
+            component.append(rewardSummary(rewards));
+        }
+
+        return component;
+    }
+
+    private MutableComponent rewardSummary(List<Reward> rewards) {
+        MutableComponent summary = Component.empty();
+        for (int i = 0; i < rewards.size(); i++) {
+            if (i > 0) {
+                summary.append(Component.literal(", ").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
+            }
+            summary.append(rewards.get(i).getRewardName().copy());
+        }
+        return summary;
+    }
+
+    private Component readableValue(Holder<?> value) {
+        Object rawValue = value.value();
+        return switch (rawValue) {
+            case Block block -> block.getName();
+            case Item item -> item.getDescription();
+            case ItemLike itemLike -> itemLike.asItem().getDescription();
+            default -> Component.literal(value.getRegisteredName());
+        };
+    }
+
+    private String holderSortKey(Holder<?> holder) {
+        return readableValue(holder).getString();
+    }
+
+    private Component pageFooter(Holder.Reference<Profession> profession, int page, int maxPage) {
+        int previousPage = Math.max(1, page - 1);
+        int nextPage = Math.min(maxPage, page + 1);
+        String commandBase = "/professions info " + profession.key().location();
+
+        MutableComponent previous = Component.translatable("professions.command.prev")
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors));
+        if (page > 1) {
+            previous = previous.copy().setStyle(previous.getStyle()
+                    .withUnderlined(true)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandBase + " " + previousPage)));
+        }
+
+        MutableComponent next = Component.translatable("professions.command.next")
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
+        if (page < maxPage) {
+            next = next.copy().setStyle(next.getStyle()
+                    .withUnderlined(true)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandBase + " " + nextPage)));
+        }
+
+        return Component.literal("=-=-=| ")
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
+                .append(previous)
+                .append(Component.literal(" " + page + "/" + maxPage + " ").setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                .append(next)
+                .append(Component.literal(" |=-=-=").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
     }
 }

@@ -13,7 +13,6 @@
     "icon": "minecraft:stone_pickaxe",
     "nameColor": "#107D0E"
   },
-  "id": "professions:farming",
   "settings": {
     "levelUpSound": "minecraft:entity.player.levelup",
     "maxLevel": 100

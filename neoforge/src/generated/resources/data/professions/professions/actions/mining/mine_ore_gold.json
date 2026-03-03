@@ -1,0 +1,36 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "#minecraft:gold_ores"
+  ],
+  "conditions": [
+    {
+      "condition": "professions:inverted",
+      "term": {
+        "condition": "professions:tool_matches",
+        "matches": {
+          "predicate": {
+            "items": "#minecraft:pickaxes",
+            "predicates": {
+              "minecraft:enchantments": [
+                {
+                  "enchantments": "minecraft:silk_touch",
+                  "levels": {
+                    "min": 1
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 16.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

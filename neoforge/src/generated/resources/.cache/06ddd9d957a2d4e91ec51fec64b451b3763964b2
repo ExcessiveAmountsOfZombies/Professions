@@ -1,3 +1,13 @@
-// 1.21.1	2026-02-28T22:56:42.6170031	Professions Miner Action Provider
-862b344badf5259580c523c2e9cb8403f41f4840 data/professions/professions/actions/mining/ore_break.json
-70c2fc09d7f4ca7e3a8f927af6cfe5385d6a0b6e data/professions/professions/actions/mining/stone_break.json
+// 1.21.1	2026-03-01T22:48:08.287771	Professions Miner Action Provider
+10243face8e8239a341e886e0ff581e8a7aec743 data/professions/professions/actions/mining/mine_obsidian.json
+bbeb955672adbafefa8b244139af6f71d1347b12 data/professions/professions/actions/mining/mine_ore_coal.json
+527f840592bef37c394ea4dd40a62754d699a52c data/professions/professions/actions/mining/mine_ore_copper.json
+a41b37d3f25ce79e11de58b3a4149038c6b66e24 data/professions/professions/actions/mining/mine_ore_diamond.json
+048dbc7fd418badcf291d879be066b797c02dbf4 data/professions/professions/actions/mining/mine_ore_emerald.json
+08a4d235550dfd51a7394602180574d1b0484b0e data/professions/professions/actions/mining/mine_ore_gold.json
+9594697d42c6e004fa8b6a845eef171f97ac3af5 data/professions/professions/actions/mining/mine_ore_iron.json
+f71ec6d3a7ec9111fb065a14756b7d34ee3629fc data/professions/professions/actions/mining/mine_ore_lapis.json
+561900346b275dd08774dc42a767e8524f32da58 data/professions/professions/actions/mining/mine_ore_redstone.json
+f751f56939695d7f7e23adf2c4b5c0b623665bda data/professions/professions/actions/mining/mine_sandstone.json
+e4ba03f0a1f26f17987e8c58b65a5e1950e524cc data/professions/professions/actions/mining/mine_stone.json
+91d018c9af0cfc41a3fa02f153087814145f5dc0 data/professions/professions/actions/mining/prismarine.json

@@ -1,38 +1,45 @@
 package com.epherical.professions;
 
 import com.epherical.professions.registries.ActionLoad3;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.server.packs.PackType;
 
 import java.io.File;
 
 public class ProfessionsMod extends CommonClass implements ModInitializer {
 
+    private final ActionManager actionManager = new ActionManager(null);
+    private ActionLoad3 actionLoader;
+
     @Override
     public void onInitialize() {
-
-        // This method is invoked by the Fabric mod loader when it is ready
-        // to load your mod. You can access Fabric and Common code in this
-        // project.
-
-        // Use Fabric to bootstrap the Common mod.
         Constants.LOG.info("Hello Fabric world!");
-
         this.init();
-        //CommonClass.init();
+        this.buildConfig();
+
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(FabricActionReloadListener.ID, provider -> {
+            ActionLoad3 loader = new ActionLoad3(actionManager);
+            this.actionLoader = loader;
+            ACTION_LOAD2 = loader;
+            return new FabricActionReloadListener(loader, provider);
+        });
     }
 
     @Override
     public ActionLoad3 getActionLoader() {
-        return null;
+        return actionLoader;
     }
 
     @Override
     public File getModDir() {
-        return null;
+        return FabricLoader.getInstance().getConfigDir().toFile();
     }
 
     @Override
     public boolean isClientEnvironment() {
-        return false;
+        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
 }

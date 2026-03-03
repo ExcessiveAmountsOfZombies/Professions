@@ -6,9 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
@@ -27,52 +26,45 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public class ActionLoad3 implements PreparableReloadListener {
+public class ActionLoad3 {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String PATH = "professions/actions";
 
-    private int loadedActionFiles;
-
-    private final RegistryAccess access;
     private final ActionManager actionManager;
 
-    public ActionLoad3(RegistryAccess registryAccess, ActionManager actionManager) {
-        this.access = registryAccess;
+    public ActionLoad3(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
-
-    @Override
-    public CompletableFuture<Void> reload(@NotNull PreparationBarrier barrier,
+    public CompletableFuture<Void> reload(HolderLookup.Provider registryLookup,
+                                          @NotNull PreparableReloadListener.PreparationBarrier barrier,
                                           @NotNull ResourceManager resourceManager,
                                           @NotNull ProfilerFiller prepProfiler,
                                           @NotNull ProfilerFiller applyProfiler,
                                           @NotNull Executor background,
                                           @NotNull Executor gameThread) {
-
-
+        actionManager.setRegistryLookup(registryLookup);
         return CompletableFuture
-                .supplyAsync(() -> decodeAll(resourceManager), background)
+                .supplyAsync(() -> decodeAll(resourceManager, registryLookup), background)
                 .thenCompose(barrier::wait)
                 .thenAcceptAsync(actionManager::reloadActions, gameThread);
     }
 
-    private List<Action<?>> decodeAll(ResourceManager manager) {
+    private List<Action<?>> decodeAll(ResourceManager manager, HolderLookup.Provider registryLookup) {
         List<Action<?>> actions = new ArrayList<>();
-
-
         FileToIdConverter fileToIdConverter = FileToIdConverter.json(PATH);
-        Map<ResourceLocation, Resource> resourceLocationResourceMap = fileToIdConverter.listMatchingResources(manager);
+        Map<ResourceLocation, Resource> resources = fileToIdConverter.listMatchingResources(manager);
+        var ops = registryLookup.createSerializationContext(JsonOps.INSTANCE);
 
-        for (Map.Entry<ResourceLocation, Resource> entry : resourceLocationResourceMap.entrySet()) {
+        for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
             ResourceLocation fileId = entry.getKey();
             ResourceLocation idFile = fileToIdConverter.fileToId(fileId);
 
             try (Reader reader = entry.getValue().openAsReader()) {
                 JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
-                Action<?> action = Action.TYPED_CODEC.parse(RegistryOps.create(JsonOps.INSTANCE, access), element)
+                Action<?> action = Action.TYPED_CODEC.parse(ops, element)
                         .resultOrPartial(message -> LOGGER.error("Failed to decode action from {}: {}", fileId, message))
                         .orElse(null);
 
@@ -80,14 +72,10 @@ public class ActionLoad3 implements PreparableReloadListener {
                     LOGGER.debug("Successfully decoded action for file: {}", fileId);
                     actions.add(action);
                 }
-
-
             } catch (IllegalArgumentException | IOException e) {
-                // todo; better error.
                 LOGGER.error("Couldn't load resource {}", idFile, e);
             }
         }
         return actions;
     }
-
 }

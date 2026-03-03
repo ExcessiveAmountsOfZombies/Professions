@@ -13,7 +13,6 @@
     "icon": "minecraft:stone_pickaxe",
     "nameColor": "#A6542E"
   },
-  "id": "professions:hunting",
   "settings": {
     "levelUpSound": "minecraft:entity.player.levelup",
     "maxLevel": 100

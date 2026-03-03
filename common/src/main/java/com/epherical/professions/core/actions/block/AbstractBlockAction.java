@@ -32,12 +32,10 @@ public abstract class AbstractBlockAction extends Action<Block> {
         }
 
         for (Either<TagKey<Block>, ResourceKey<Block>> value : getValues()) {
-            boolean result = value.mapBoth(
-                    blockTagKey -> blockState.getBlockHolder().is(blockTagKey),
-                    blockResourceKey -> blockState.getBlockHolder().is(blockResourceKey)
-            ).orThrow();
-
-            if (result) {
+            if (value.left().isPresent() && blockState.getBlockHolder().is(value.left().get())) {
+                return true;
+            }
+            if (value.right().isPresent() && blockState.getBlockHolder().is(value.right().get())) {
                 return true;
             }
         }

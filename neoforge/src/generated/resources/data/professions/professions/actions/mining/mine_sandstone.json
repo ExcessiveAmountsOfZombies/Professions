@@ -1,14 +1,14 @@
 {
   "action": "professions:block_break",
   "blocks": [
-    "minecraft:stone",
-    "minecraft:deepslate"
+    "minecraft:sandstone",
+    "minecraft:red_sandstone"
   ],
   "conditions": [],
-  "profession": "professions:bingus",
+  "profession": "professions:mining",
   "rewards": [
     {
-      "expAmount": 3.0,
+      "expAmount": 0.5,
       "reward": "professions:occupation_exp"
     }
   ]

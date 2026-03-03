@@ -158,10 +158,8 @@ public class NeoForgeProfessionsMod extends CommonClass {
 
         @SubscribeEvent
         public static void onDataReload(AddReloadListenerEvent event) {
-            //event.addListener(new ActionLoader(event.getRegistryAccess()));
-            mod.actionManager.setRegistryAccess(event.getRegistryAccess());
-            ActionLoad3 loader = new ActionLoad3(event.getRegistryAccess(), mod.actionManager);
-            event.addListener(loader);
+            ActionLoad3 loader = new ActionLoad3(mod.actionManager);
+            event.addListener(new NeoForgeActionReloadListener(loader));
             ACTION_LOAD2 = loader;
             REGISTRY_ACCESS = event.getRegistryAccess();
         }
@@ -178,13 +176,13 @@ public class NeoForgeProfessionsMod extends CommonClass {
             Player player = event.getPlayer();
 
 
-
             if (!player.isCreative() && player instanceof ServerPlayer) {
                 ProfessionContext.Builder context = new ProfessionContext.Builder((ServerLevel) event.getLevel())
                         .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BLOCK_BREAK)
                        // .addParameter(ProfessionParameter.THIS_PLAYER, iProfessionalPlayer)
                         .addParameter(ProfessionParameter.THIS_BLOCK, event.getState())
                         .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
+                        .addParameter(ProfessionParameter.TOOL, player.getMainHandItem())
                         .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getPlayer().getWeaponItem())
                         .addParameter(ProfessionParameter.THIS_HOLDER, blockHolder);
 

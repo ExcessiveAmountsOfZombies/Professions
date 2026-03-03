@@ -93,12 +93,9 @@ public class PlayerManager {
     }
 
     public void shutdown() {
-        try {
-            boolean b = executor.awaitTermination(10, TimeUnit.SECONDS);
-            LOGGER.info("All players were saved before shutdown completed.");
-        } catch (InterruptedException e) {
-            LOGGER.warn("The shutdown finished before all save tasks for Profession players could be completed. {}", e.getMessage(), e);
-        }
+        List<Runnable> runnables = executor.shutdownNow();
+        runnables.forEach(Runnable::run);
+        LOGGER.info("All players were saved before shutdown completed.");
     }
 
     public void playerJoined(ServerPlayer player) {

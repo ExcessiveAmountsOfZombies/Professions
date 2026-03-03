@@ -9,7 +9,6 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import org.apache.logging.log4j.LogManager;
@@ -27,23 +26,25 @@ public class ActionManager {
     private Multimap<ActionType, Action<?>> actionMap = MultimapBuilder.hashKeys().hashSetValues().build();
     private Multimap<Holder<Profession>, Action<?>> professionToActionsMap = MultimapBuilder.hashKeys().hashSetValues().build();
     private Multimap<Holder<?>, Action<?>> valueToActionsMap = MultimapBuilder.hashKeys().hashSetValues().build();
+    private Multimap<Action<?>, Holder<?>> actionToValueMap = MultimapBuilder.hashKeys().linkedHashSetValues().build();
 
     private boolean finished = false;
 
-    private RegistryAccess registryAccess;
+    private HolderLookup.Provider registryLookup;
 
-    public ActionManager(RegistryAccess registryAccess) {
-        this.registryAccess = registryAccess;
+    public ActionManager(HolderLookup.Provider registryLookup) {
+        this.registryLookup = registryLookup;
     }
 
-    public void setRegistryAccess(RegistryAccess registryAccess) {
-        this.registryAccess = registryAccess;
+    public void setRegistryLookup(HolderLookup.Provider registryLookup) {
+        this.registryLookup = registryLookup;
     }
 
     public void reloadActions(List<Action<?>> actions) {
         actionMap.clear();
         professionToActionsMap.clear();
         valueToActionsMap.clear();
+        actionToValueMap.clear();
         finished = false;
 
         synchronized (this) {
@@ -79,12 +80,20 @@ public class ActionManager {
         return valueToActionsMap.get(value);
     }
 
+    public Collection<Holder<?>> getValuesForAction(Action<?> action) {
+        if (!finished) {
+            finish();
+        }
+
+        return actionToValueMap.get(action);
+    }
+
     @SuppressWarnings("unchecked")
     private <T> void finish() {
         for (Map.Entry<ActionType, Action<?>> entry : actionMap.entries()) {
             Action<T> action = (Action<T>) entry.getValue();
             ResourceKey<? extends Registry<T>> registryKey = action.getRegistryKey();
-            HolderLookup.RegistryLookup<T> lookup = registryAccess.lookup(registryKey)
+            HolderLookup.RegistryLookup<T> lookup = registryLookup.lookup(registryKey)
                     .orElseThrow(() -> new IllegalStateException("Could not find registry lookup for " + registryKey.location()));
 
             for (Either<TagKey<T>, ResourceKey<T>> value : action.getValues()) {
@@ -92,11 +101,13 @@ public class ActionManager {
                     TagKey<T> tagKey = value.left().get();
                     for (Holder<T> holder : lookup.getOrThrow(tagKey)) {
                         valueToActionsMap.put(holder, action);
+                        actionToValueMap.put(action, holder);
                     }
                 } else {
                     ResourceKey<T> resourceKey = value.right().orElseThrow();
                     Holder.Reference<T> holder = lookup.getOrThrow(resourceKey);
                     valueToActionsMap.put(holder, action);
+                    actionToValueMap.put(action, holder);
                 }
             }
         }

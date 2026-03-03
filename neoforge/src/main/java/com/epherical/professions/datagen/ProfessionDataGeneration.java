@@ -1,24 +1,14 @@
 package com.epherical.professions.datagen;
 
 import com.epherical.professions.Constants;
-import com.epherical.professions.CommonClass;
 import com.epherical.professions.NeoForgeProfessionsMod;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.Action;
-import com.epherical.professions.core.actions.block.BlockBreakAction;
-import com.epherical.professions.core.rewards.OccupationExperience;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataProvider;
 import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,11 +17,9 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.mbertoli.jfep.Parser;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(modid = Constants.MOD_ID)
 public final class ProfessionDataGeneration {
@@ -172,7 +160,7 @@ public final class ProfessionDataGeneration {
                 java.util.Set.of(Constants.MOD_ID)
         );
         event.getGenerator().addProvider(true, professionsProvider);
-        event.getGenerator().addProvider(event.includeServer(), new MinerBlockBreakActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new MinerActionProvider(out, professionsProvider.getRegistryProvider()));
 
     }
 
@@ -255,58 +243,4 @@ public final class ProfessionDataGeneration {
             );
         }
     }
-
-    private static final class MinerBlockBreakActionProvider implements DataProvider {
-        private final PackOutput.PathProvider pathProvider;
-        private final CompletableFuture<HolderLookup.Provider> lookupProvider;
-
-        private MinerBlockBreakActionProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-            this.pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, "professions/actions/mining");
-            this.lookupProvider = lookupProvider;
-        }
-
-        @Override
-        public CompletableFuture<?> run(CachedOutput output) {
-            return lookupProvider.thenCompose(registries -> {
-                HolderLookup.RegistryLookup<Profession> professionRegistry = registries.lookupOrThrow(CommonClass.PROFESSION_REGISTRY_KEY);
-                Holder.Reference<Profession> miningProfession = professionRegistry.get(id("mining"))
-                        .orElseGet(() -> Holder.Reference.createStandAlone(professionRegistry, id("mining")));
-
-                List<CompletableFuture<?>> writes = new ArrayList<>();
-                writes.add(writeBlockBreakAction(output, registries, miningProfession, "stone_break", 3.0,
-                        List.of("minecraft:stone", "minecraft:deepslate")));
-                writes.add(writeBlockBreakAction(output, registries, miningProfession, "ore_break", 8.0,
-                        List.of("#minecraft:coal_ores", "#minecraft:iron_ores")));
-                return CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new));
-            });
-        }
-
-        private CompletableFuture<?> writeBlockBreakAction(CachedOutput output,
-                                                           HolderLookup.Provider registries,
-                                                           Holder<Profession> profession,
-                                                           String path,
-                                                           double exp,
-                                                           List<String> blocks) {
-            BlockBreakAction.Builder builder = new BlockBreakAction.Builder(profession)
-                    .reward(new OccupationExperience.Builder().exp(exp));
-
-            for (String blockId : blocks) {
-                if (blockId.startsWith("#")) {
-                    builder.target(TagKey.create(Registries.BLOCK, ResourceLocation.parse(blockId.substring(1))));
-                } else {
-                    builder.target(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse(blockId)));
-                }
-            }
-
-            Action<?> action = builder.build();
-            return DataProvider.saveStable(output, registries, Action.TYPED_CODEC, action, pathProvider.json(rl(path)));
-        }
-
-        @Override
-        public String getName() {
-            return "Professions Miner Action Provider";
-        }
-    }
-
-
 }

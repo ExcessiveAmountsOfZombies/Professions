@@ -1,38 +1,49 @@
 package com.epherical.professions;
 
 import com.epherical.professions.registries.ActionLoad3;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
 
 @Mod(Constants.MOD_ID)
 public class ProfessionsMod extends CommonClass {
 
+    private final ActionManager actionManager;
+    private ActionLoad3 actionLoader;
+
     public ProfessionsMod() {
-        // This method is invoked by the Forge mod loader when it is ready
-        // to load your mod. You can access Forge and Common code in this
-        // project.
-
-        // Use Forge to bootstrap the Common mod.
         Constants.LOG.info("Hello Forge world!");
-
-        //CommonClass.init();
         this.init();
+        this.buildConfig();
+        this.actionManager = new ActionManager(null);
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
+    @SubscribeEvent
+    public void onDataReload(AddReloadListenerEvent event) {
+        ActionLoad3 loader = new ActionLoad3(actionManager);
+        event.addListener(new ForgeActionReloadListener(loader, event.getRegistries()));
+        this.actionLoader = loader;
+        ACTION_LOAD2 = loader;
     }
 
     @Override
     public ActionLoad3 getActionLoader() {
-        return null;
+        return actionLoader;
     }
 
     @Override
     public File getModDir() {
-        return null;
+        return FMLPaths.CONFIGDIR.get().toFile();
     }
 
     @Override
     public boolean isClientEnvironment() {
-        return false;
+        return FMLEnvironment.dist.isClient();
     }
 }

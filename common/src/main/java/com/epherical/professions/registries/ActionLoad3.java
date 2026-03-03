@@ -78,4 +78,8 @@ public class ActionLoad3 {
         }
         return actions;
     }
+
+    public ActionManager getActionManager() {
+        return actionManager;
+    }
 }

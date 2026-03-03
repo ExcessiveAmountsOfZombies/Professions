@@ -52,7 +52,10 @@ public abstract class CommonClass {
         config.loadConfig();
     }
 
-    //public abstract PlayerManager getPlayerManager();
+    public PlayerManager getPlayerManager() {
+        return null;
+    }
+
     public abstract ActionLoad3 getActionLoader();
     public abstract File getModDir();
     public abstract boolean isClientEnvironment();

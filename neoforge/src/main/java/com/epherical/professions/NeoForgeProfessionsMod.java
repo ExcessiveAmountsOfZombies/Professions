@@ -85,6 +85,11 @@ public class NeoForgeProfessionsMod extends CommonClass {
     }
 
     @Override
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
+    @Override
     public File getModDir() {
         return FMLPaths.CONFIGDIR.get().toFile();
     }

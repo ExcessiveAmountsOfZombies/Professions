@@ -1,8 +1,15 @@
 package com.epherical.professions.client.gui.screen;
 
 import com.epherical.professions.Constants;
+import com.epherical.professions.PlayerManager;
+import com.epherical.professions.CommonClass;
+import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.client.gui.components.OccupationInfoList;
+import com.epherical.professions.client.gui.components.OccupationXpBar;
+import com.epherical.professions.core.Profession;
+import com.epherical.professions.core.progression.Occupation;
 import com.epherical.professions.core.rewards.Reward;
+import net.minecraft.core.Holder;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,6 +21,8 @@ import java.util.List;
 
 public class OccupationInfoScreen extends Screen {
 
+    private static final int XP_BAR_X = 120;
+    private static final int XP_BAR_Y = 216;
 
     private int imageWidth = 214;
     private int imageHeight = 238;
@@ -41,11 +50,15 @@ public class OccupationInfoScreen extends Screen {
         occupationInfoList = new OccupationInfoList(this.minecraft, 93, topPos + 43, 229 + topPos, 18);
         occupationInfoList.setX(leftPos + 9);
         addRenderableWidget(occupationInfoList);
+        addRenderableOnly(createXpBar());
     }
+    //24 height
+    // 98 widt
 
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+
         OccupationInfoList.Entry focused = occupationInfoList.getHovered();
         if (focused != null) {
             float s = 0.75f;
@@ -119,11 +132,11 @@ public class OccupationInfoScreen extends Screen {
             paintX = leftPos + 112;
             paintY += 16;
 
-            /*for (Reward reward : focused.getAction().getRewards()) {
+            for (Reward reward : focused.getAction().getRewards()) {
                 pGuiGraphics.renderFakeItem(reward.getRewardIcon(), paintX, paintY, 1000);
                 pGuiGraphics.drawString(minecraft.font, reward.getRewardName(), paintX + 18, paintY + 6, 0xFFFFFFFF, true);
                 paintY+= 16;
-            }*/
+            }
 
         }
     }
@@ -132,6 +145,28 @@ public class OccupationInfoScreen extends Screen {
     public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         pGuiGraphics.blitSprite(TEXTURE, leftPos, topPos, imageWidth, imageHeight);
+    }
+
+
+    @Deprecated(forRemoval = true )
+    private OccupationXpBar createXpBar() {
+        Holder<Profession> profession = occupationInfoList.getProfession();
+        double currentXp = 0;
+        double maxXp = profession.value().getExperienceForLevel(0);
+
+        PlayerManager playerManager = CommonClass.INSTANCE != null ? CommonClass.INSTANCE.getPlayerManager() : null;
+        if (playerManager != null && minecraft != null && minecraft.player != null) {
+            IProfessionalPlayer professionalPlayer = playerManager.getPlayer(minecraft.player.getUUID());
+            if (professionalPlayer != null) {
+                Occupation occupation = professionalPlayer.getOccupation(profession);
+                if (occupation != null) {
+                    currentXp = occupation.getExpProgress();
+                    maxXp = profession.value().getExperienceForLevel(occupation.getLevel());
+                }
+            }
+        }
+
+        return new OccupationXpBar(currentXp, maxXp, leftPos + XP_BAR_X, topPos + XP_BAR_Y);
     }
 
 

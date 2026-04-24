@@ -3,6 +3,8 @@ package com.epherical.professions;
 import com.epherical.professions.registries.ActionLoad3;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.packs.PackType;
@@ -19,6 +21,10 @@ public class ProfessionsMod extends CommonClass implements ModInitializer {
         Constants.LOG.info("Hello Fabric world!");
         this.init();
         this.buildConfig();
+
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamageTaken, damageTaken, blocked) -> {
+
+        });
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(FabricActionReloadListener.ID, provider -> {
             ActionLoad3 loader = new ActionLoad3(actionManager);

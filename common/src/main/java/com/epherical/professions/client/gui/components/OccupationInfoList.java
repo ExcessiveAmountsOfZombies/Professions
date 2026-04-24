@@ -21,16 +21,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class OccupationInfoList extends ContainerObjectSelectionList<OccupationInfoList.Entry> {
+public class OccupationInfoList extends AbstractOccupationSelector<OccupationInfoList.Entry> {
 
     private static final int ITEMS_PER_ROW = 5;
 
-    private final int listWidth;
     private final Holder<Profession> profession;
 
     public OccupationInfoList(Minecraft mc, int width, int top, int bottom, int height) {
         super(mc, width, bottom - top, top, height);
-        this.listWidth = width;
 
         this.profession = mc.getSingleplayerServer().registryAccess().lookupOrThrow(CommonClass.PROFESSION_REGISTRY_KEY)
                 .getOrThrow(ResourceKey.create(CommonClass.PROFESSION_REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath("professions", "mining")));
@@ -50,35 +48,6 @@ public class OccupationInfoList extends ContainerObjectSelectionList<OccupationI
         for (int i = 0; i < items.size(); i += ITEMS_PER_ROW) {
             addEntry(new Entry(items.subList(i, Math.min(i + ITEMS_PER_ROW, items.size()))));
         }
-    }
-
-    @Override
-    protected void renderListBackground(GuiGraphics pGuiGraphics) {
-    }
-
-    @Override
-    protected void setRenderHeader(boolean pRenderHeader, int pHeaderHeight) {
-        super.setRenderHeader(false, pHeaderHeight);
-    }
-
-    @Override
-    public @Nullable Entry getHovered() {
-        return super.getHovered();
-    }
-
-    @Override
-    protected int getScrollbarPosition() {
-        return listWidth;
-    }
-
-    @Override
-    public int getRowWidth() {
-        return listWidth;
-    }
-
-    @Override
-    protected boolean scrollbarVisible() {
-        return false;
     }
 
     public Holder<Profession> getProfession() {

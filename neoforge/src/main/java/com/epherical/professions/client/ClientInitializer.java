@@ -3,6 +3,7 @@ package com.epherical.professions.client;
 
 import com.epherical.professions.Constants;
 import com.epherical.professions.client.gui.screen.OccupationInfoScreen;
+import com.epherical.professions.client.gui.screen.OccupationMenuScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -34,7 +35,7 @@ public class ClientInitializer {
     public static void handleInput(InputEvent.Key event) {
         if (occupationMenu.consumeClick()) {
             Minecraft mc = Minecraft.getInstance();
-            mc.setScreen(new OccupationInfoScreen());
+            mc.setScreen(new OccupationMenuScreen());
         }
     }
 

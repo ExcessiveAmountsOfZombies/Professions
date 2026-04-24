@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
+import javax.swing.*;
 import java.util.List;
 
 public class OccupationInfoScreen extends Screen {
@@ -52,8 +53,6 @@ public class OccupationInfoScreen extends Screen {
         addRenderableWidget(occupationInfoList);
         addRenderableOnly(createXpBar());
     }
-    //24 height
-    // 98 widt
 
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -75,6 +74,7 @@ public class OccupationInfoScreen extends Screen {
                     paintX, paintY,
                     0xFF025E66, false);
             pGuiGraphics.pose().popPose();
+
 
 
             s = 2.5f;

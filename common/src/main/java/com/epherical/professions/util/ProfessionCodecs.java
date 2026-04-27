@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 
 public class ProfessionCodecs {
+    
     public static final Codec<NavigableMap<Integer, Parser>> EXP_SCALERS_CODEC =
             Codec.unboundedMap(Codec.STRING, Codec.STRING)
                     .comapFlatMap(map -> {

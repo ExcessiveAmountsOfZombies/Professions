@@ -1,8 +1,8 @@
 package com.epherical.professions;
 
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.Action;
-import com.epherical.professions.core.actions.ActionType;
+import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.model.actions.ActionType;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.mojang.datafixers.util.Either;

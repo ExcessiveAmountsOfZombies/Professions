@@ -1,13 +1,13 @@
 package com.epherical.professions.datagen;
 
-import com.epherical.professions.CommonClass;
+import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.Action;
-import com.epherical.professions.core.actions.block.BlockBreakAction;
-import com.epherical.professions.core.conditions.Condition;
-import com.epherical.professions.core.conditions.InvertedCondition;
-import com.epherical.professions.core.conditions.ToolMatcher;
-import com.epherical.professions.core.rewards.OccupationExperience;
+import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.model.actions.block.BlockBreakAction;
+import com.epherical.professions.model.actions.conditions.Condition;
+import com.epherical.professions.model.actions.conditions.InvertedCondition;
+import com.epherical.professions.model.actions.conditions.ToolMatcher;
+import com.epherical.professions.model.actions.rewards.OccupationExperience;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -52,7 +52,7 @@ final class MinerActionProvider implements DataProvider {
     @Override
     public CompletableFuture<?> run(CachedOutput output) {
         return lookupProvider.thenCompose(registries -> {
-            Holder<Profession> miningProfession = registries.lookupOrThrow(CommonClass.PROFESSION_REGISTRY_KEY)
+            Holder<Profession> miningProfession = registries.lookupOrThrow(ProfessionsCommon.PROFESSION_REGISTRY_KEY)
                     .get(id("mining"))
                     .orElseThrow(() -> new IllegalStateException("Missing mining profession for miner action datagen"));
 

@@ -1,6 +1,6 @@
 package com.epherical.professions.data.player;
 
-import com.epherical.professions.core.progression.Occupation;
+import com.epherical.professions.model.Occupation;
 
 import java.nio.file.Path;
 import java.util.Collection;

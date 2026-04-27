@@ -1,7 +1,7 @@
 package com.epherical.professions.registries;
 
 import com.epherical.professions.ActionManager;
-import com.epherical.professions.core.actions.Action;
+import com.epherical.professions.model.actions.Action;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -61,6 +61,8 @@ public class ActionLoad3 {
         for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
             ResourceLocation fileId = entry.getKey();
             ResourceLocation idFile = fileToIdConverter.fileToId(fileId);
+            // todo; we could very well map an action to a file here, and make that usable elsewhere.
+            //  we should probably do that.
 
             try (Reader reader = entry.getValue().openAsReader()) {
                 JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);

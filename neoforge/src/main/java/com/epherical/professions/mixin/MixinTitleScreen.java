@@ -1,6 +1,6 @@
 package com.epherical.professions.mixin;
 
-import com.epherical.professions.Constants;
+import com.epherical.professions.ProfessionsCommon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,7 @@ public class MixinTitleScreen {
 
     @Inject(at = @At("HEAD"), method = "init()V")
     private void init(CallbackInfo info) {
-        Constants.LOG.info("This line is printed by the Professions mixin from NeoForge!");
-        Constants.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
+        ProfessionsCommon.LOG.info("This line is printed by the Professions mixin from NeoForge!");
+        ProfessionsCommon.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
     }
 }

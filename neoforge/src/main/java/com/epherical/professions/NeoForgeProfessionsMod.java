@@ -1,17 +1,18 @@
 package com.epherical.professions;
 
 
-import com.epherical.professions.commands.ProfessionsStandardCommands;
+import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.ActionType;
-import com.epherical.professions.core.conditions.ConditionType;
+import com.epherical.professions.model.actions.ActionType;
+import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
-import com.epherical.professions.core.register.Actions;
+import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.register.PlatformBootstrap;
-import com.epherical.professions.core.rewards.RewardType;
+import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.data.player.UuidOccupationDataLoader;
 import com.epherical.professions.registries.ActionLoad3;
+import com.google.common.eventbus.EventBus;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -24,14 +25,10 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -48,8 +45,8 @@ import java.io.File;
 import java.nio.file.Path;
 
 
-@Mod(Constants.MOD_ID)
-public class NeoForgeProfessionsMod extends CommonClass {
+@Mod(ProfessionsCommon.MOD_ID)
+public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
     private static final NeoForgeRegistrarBackend NEO_FORGE_REGISTRAR_BACKEND = new NeoForgeRegistrarBackend();
 
@@ -57,8 +54,8 @@ public class NeoForgeProfessionsMod extends CommonClass {
     public static Registry<ConditionType> CONDITIONS;
     public static Registry<RewardType> REWARDS;
 
-    public static final DeferredRegister<Profession> PROFESSION_REGISTER = DeferredRegister.create(PROFESSION_REGISTRY_KEY, Constants.MOD_ID);
-    public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS_REGISTER = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Constants.MOD_ID);
+    public static final DeferredRegister<Profession> PROFESSION_REGISTER = DeferredRegister.create(PROFESSION_REGISTRY_KEY, ProfessionsCommon.MOD_ID);
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS_REGISTER = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, ProfessionsCommon.MOD_ID);
 
     public static RegistryAccess REGISTRY_ACCESS = null;
 
@@ -69,22 +66,16 @@ public class NeoForgeProfessionsMod extends CommonClass {
 
 
     public NeoForgeProfessionsMod(IEventBus eventBus) {
-        this.init();
-        this.buildConfig();
+        super();
 
         actionManager = new ActionManager(null);
-        playerManager = new PlayerManager(null, actionManager, null);
+        playerManager = new PlayerManager(null, actionManager, null, getEventBus());
 
         mod = this;
         PlatformBootstrap.init(NEO_FORGE_REGISTRAR_BACKEND);
         PROFESSION_REGISTER.register(eventBus);
         ATTACHMENTS_REGISTER.register(eventBus);
 
-    }
-
-    @Override
-    public ActionLoad3 getActionLoader() {
-        return ACTION_LOAD2;
     }
 
     @Override
@@ -97,13 +88,8 @@ public class NeoForgeProfessionsMod extends CommonClass {
         return FMLPaths.CONFIGDIR.get().toFile();
     }
 
-    @Override
-    public boolean isClientEnvironment() {
-        return FMLEnvironment.dist.isClient();
-    }
 
-
-    @EventBusSubscriber(modid = Constants.MOD_ID)
+    @EventBusSubscriber(modid = ProfessionsCommon.MOD_ID)
     public static class EventHandler {
 
         @SubscribeEvent
@@ -144,7 +130,7 @@ public class NeoForgeProfessionsMod extends CommonClass {
             event.dataPackRegistry(
                     PROFESSION_REGISTRY_KEY,
                     Profession.CODEC,
-                    Profession.CODEC
+                    Profession.CODEC // todo; set to null. nmaybe
                     //professionRegistryBuilder -> professionRegistryBuilder.sync(true).create()
             );
         }
@@ -156,7 +142,7 @@ public class NeoForgeProfessionsMod extends CommonClass {
             event.register(ACTIONS = new RegistryBuilder<>(ACTION_REGISTRY_KEY).sync(true).create());
             event.register(CONDITIONS = new RegistryBuilder<>(CONDITION_REGISTRY_KEY).sync(true).create());
             event.register(REWARDS = new RegistryBuilder<>(REWARD_REGISTRY_KEY).sync(true).create());
-            CommonClass.register();
+            ProfessionsCommon.register();
         }
 
         @SubscribeEvent
@@ -168,7 +154,12 @@ public class NeoForgeProfessionsMod extends CommonClass {
         public static void onDataReload(AddReloadListenerEvent event) {
             ActionLoad3 loader = new ActionLoad3(mod.actionManager);
             event.addListener(new NeoForgeActionReloadListener(loader));
-            ACTION_LOAD2 = loader;
+            // todo; next thing we're doing is getting the mod able to compile again. then we can decide where to go from there.
+
+            // todo; we should improve the config next
+            // todo; build a better notification system (chat, pop up, toast, announcements)
+            // todo; re-add the rest of the events back in.
+            ACTION_LOAD = loader;
             REGISTRY_ACCESS = event.getRegistryAccess();
         }
 
@@ -183,18 +174,18 @@ public class NeoForgeProfessionsMod extends CommonClass {
             Holder<Block> blockHolder = event.getState().getBlockHolder();
             Player player = event.getPlayer();
 
+            // todo; check if canceled.
 
             if (!player.isCreative() && player instanceof ServerPlayer) {
-                ProfessionContext.Builder context = new ProfessionContext.Builder((ServerLevel) event.getLevel())
-                        .addParameter(ProfessionParameter.ACTION_TYPE, Actions.BLOCK_BREAK)
-                       // .addParameter(ProfessionParameter.THIS_PLAYER, iProfessionalPlayer)
+                ProfessionContext.Builder builder = ProfessionContext.builder((ServerLevel) event.getLevel(),
+                        Actions.BLOCK_BREAK, mod.playerManager.getPlayer(player.getUUID()))
                         .addParameter(ProfessionParameter.THIS_BLOCK, event.getState())
                         .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
                         .addParameter(ProfessionParameter.TOOL, player.getMainHandItem())
                         .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getPlayer().getWeaponItem())
                         .addParameter(ProfessionParameter.THIS_HOLDER, blockHolder);
 
-                mod.playerManager.processAction(player, Actions.BLOCK_BREAK, context);
+                mod.playerManager.processAction(player, builder.build());
 
                 //iProfessionalPlayer.handleAction(context, blockHolder);
             }

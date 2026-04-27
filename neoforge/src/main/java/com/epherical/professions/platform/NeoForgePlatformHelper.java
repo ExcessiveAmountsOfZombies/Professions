@@ -2,10 +2,10 @@ package com.epherical.professions.platform;
 
 import com.epherical.professions.NeoForgeProfessionsMod;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.ActionType;
-import com.epherical.professions.core.conditions.ConditionType;
-import com.epherical.professions.core.rewards.RewardType;
-import com.epherical.professions.platform.services.IPlatformHelper;
+import com.epherical.professions.model.actions.ActionType;
+import com.epherical.professions.model.actions.conditions.ConditionType;
+import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.bootstrap.platform.IPlatformHelper;
 import net.minecraft.core.Registry;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;

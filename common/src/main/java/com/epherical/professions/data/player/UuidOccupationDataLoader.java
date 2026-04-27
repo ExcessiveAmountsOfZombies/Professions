@@ -1,6 +1,6 @@
 package com.epherical.professions.data.player;
 
-import com.epherical.professions.core.progression.Occupation;
+import com.epherical.professions.model.Occupation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

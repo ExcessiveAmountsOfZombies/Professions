@@ -1,14 +1,18 @@
 package com.epherical.professions;
 
 import com.epherical.professions.api.IProfessionalPlayer;
-import com.epherical.professions.core.actions.Action;
-import com.epherical.professions.core.actions.ActionType;
+import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
-import com.epherical.professions.core.progression.Occupation;
-import com.epherical.professions.core.progression.ProfessionalPlayer;
+import com.epherical.professions.model.Occupation;
+import com.epherical.professions.model.ProfessionalPlayer;
 import com.epherical.professions.data.config.ProfessionConfig;
 import com.epherical.professions.data.player.OccupationDataLoader;
+import com.epherical.professions.model.actions.rewards.Reward;
+import com.epherical.professions.runtime.event.ActionProcessingEvent;
+import com.epherical.professions.runtime.event.ActionValidEvent;
+import com.epherical.professions.runtime.event.ProfessionEventBus;
+import com.epherical.professions.runtime.event.rewards.RewardEvent;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.logging.LogUtils;
@@ -47,10 +51,13 @@ public class PlayerManager {
     private final ActionManager actionManager;
     private OccupationDataLoader occupationDataLoader;
 
-    public PlayerManager(MinecraftServer server, ActionManager actionManager, OccupationDataLoader loader) {
+    private final ProfessionEventBus eventBus;
+
+    public PlayerManager(MinecraftServer server, ActionManager actionManager, OccupationDataLoader loader, ProfessionEventBus eventBus) {
         this.server = server;
         this.actionManager = actionManager;
         this.occupationDataLoader = loader;
+        this.eventBus = eventBus;
         executor.scheduleAtFixedRate(this::saveAll, 5, 5, TimeUnit.MINUTES);
     }
 
@@ -99,6 +106,7 @@ public class PlayerManager {
     }
 
     public void playerJoined(ServerPlayer player) {
+        // todo; fire event for new players that joined.
 
         IProfessionalPlayer pPlayer = players.get(player.getUUID());
         if (pPlayer != null) {
@@ -114,6 +122,7 @@ public class PlayerManager {
     }
 
     public void playerQuit(ServerPlayer player) {
+        // todo; fire an event
         UUID uuid = player.getUUID();
         IProfessionalPlayer pPlayer = players.get(uuid);
         CompletableFuture<Void> save = occupationDataLoader.save(uuid, pPlayer.getAllOccupations());
@@ -121,20 +130,34 @@ public class PlayerManager {
         pPlayer.setPlayer(null);
     }
 
-    public void processAction(Player player, ActionType actionType, ProfessionContext.Builder context) {
-        IProfessionalPlayer iProfessionalPlayer = players.get(player.getUUID());
+    public void processAction(Player player, ProfessionContext professionContext) {
+        IProfessionalPlayer iProfessionalPlayer = professionContext.getParameter(ProfessionParameter.THIS_PLAYER);
+        Collection<Action<?>> actions = actionManager.getActionsByType(professionContext.getParameter(ProfessionParameter.ACTION_TYPE));
 
-        context.addParameter(ProfessionParameter.THIS_PLAYER, iProfessionalPlayer);
-
-        ProfessionContext professionContext = context.build();
-
-
-        Collection<Action<?>> actions = actionManager.getActionsByType(actionType);
+        ActionProcessingEvent processingEvent = new ActionProcessingEvent(actions, iProfessionalPlayer, professionContext);
+        eventBus.post(processingEvent);
+        if (processingEvent.isCanceled()) {
+            return; // do nothing.
+        }
 
         for (Action<?> action : actions) {
             Occupation occupation = iProfessionalPlayer.getOccupation(action.getProfession());
-            if (occupation.isActive() && action.isValidAction(professionContext)) {
-                action.handleAction(professionContext, occupation);
+            if (occupation == null || !occupation.isActive()) continue;
+
+            // todo; we need a way to tie things together for modification, like the event is listening for an action to happen
+            //  so what do we do? how would a consumer know this is the action they want to manipulate or potentially cancel?
+            //  would they even want to cancel it? not sure, but we need to evaluate it.
+            //  the same would apply for rewards too, if it's not directly built into the action, how do we know anything?
+            ActionValidEvent actionValidEvent = new ActionValidEvent(action, occupation, iProfessionalPlayer, professionContext);
+
+            if (action.isValidAction(professionContext)) {
+                eventBus.post(actionValidEvent);
+                if (!actionValidEvent.isCanceled()) {
+                    for (Reward<?> reward : action.getRewards()) {
+                        // todo; consider that actions should also be able to modify the reward
+                        testReward(reward, occupation, professionContext);
+                    }
+                }
             }
         }
     }
@@ -229,6 +252,8 @@ public class PlayerManager {
     public void levelUp(IProfessionalPlayer player, Occupation occupation, int oldLevel) {
         MutableComponent message;
         // todo; fix this message
+
+        // todo; this will go into an event now.
         ServerPlayer sPlayer = server.getPlayerList().getPlayer(player.getUUID());
         if (sPlayer == null) {
             return; // this probably won't happen, but if it does, no NPEs.
@@ -269,6 +294,18 @@ public class PlayerManager {
 
     public Collection<IProfessionalPlayer> getPlayers() {
         return players.values();
+    }
+
+    private void testReward(Reward<?> reward, Occupation occupation, ProfessionContext professionContext) {
+        applyRewardTyped(reward, occupation, professionContext);
+    }
+
+    private <T extends RewardEvent> void applyRewardTyped(Reward<T> reward, Occupation occupation, ProfessionContext professionContext) {
+        T rewardEvent = reward.buildEvent(occupation, professionContext);
+        eventBus.post(rewardEvent);
+        if (!rewardEvent.isCanceled()) {
+            reward.giveReward(rewardEvent);
+        }
     }
 
     public IProfessionalPlayer getPlayer(UUID uuid) {

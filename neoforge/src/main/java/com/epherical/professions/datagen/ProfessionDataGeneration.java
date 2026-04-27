@@ -1,6 +1,6 @@
 package com.epherical.professions.datagen;
 
-import com.epherical.professions.Constants;
+import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.NeoForgeProfessionsMod;
 import com.epherical.professions.core.Profession;
 import net.minecraft.core.RegistrySetBuilder;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-@EventBusSubscriber(modid = Constants.MOD_ID)
+@EventBusSubscriber(modid = ProfessionsCommon.MOD_ID)
 public final class ProfessionDataGeneration {
 
 
@@ -157,7 +157,7 @@ public final class ProfessionDataGeneration {
                 out,
                 event.getLookupProvider(),
                 builder,
-                java.util.Set.of(Constants.MOD_ID)
+                java.util.Set.of(ProfessionsCommon.MOD_ID)
         );
         event.getGenerator().addProvider(true, professionsProvider);
         event.getGenerator().addProvider(event.includeServer(), new MinerActionProvider(out, professionsProvider.getRegistryProvider()));
@@ -170,7 +170,7 @@ public final class ProfessionDataGeneration {
     }
 
     public static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, path);
     }
 
 

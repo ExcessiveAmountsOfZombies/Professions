@@ -2,7 +2,7 @@ package com.epherical.professions.api;
 
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.context.ProfessionContext;
-import com.epherical.professions.core.progression.Occupation;
+import com.epherical.professions.model.Occupation;
 import com.epherical.professions.core.progression.OccupationSlot;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;

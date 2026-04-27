@@ -1,7 +1,11 @@
 package com.epherical.professions.core.context;
 
+import com.epherical.professions.api.IProfessionalPlayer;
+import com.epherical.professions.bootstrap.Actions;
+import com.epherical.professions.model.actions.ActionType;
 import com.google.common.collect.Maps;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +21,7 @@ public record ProfessionContext(ServerLevel level, RandomSource randomSource,
         return parameters.containsKey(parameter);
     }
 
-    public <T> T getParameter(ProfessionParameter<T> parameter) {
+    public <T> T getParameter(ProfessionParameter<T> parameter) throws NoSuchElementException {
         T value = (T) this.parameters.get(parameter);
         if (value == null) {
             throw new NoSuchElementException(parameter.name().toString());
@@ -52,6 +56,13 @@ public record ProfessionContext(ServerLevel level, RandomSource randomSource,
                 '}';
     }
 
+    public static Builder builder(ServerLevel level, ActionType actionType, IProfessionalPlayer player) {
+        return new Builder(level)
+                .addRandom(level.getRandom())
+                .addParameter(ProfessionParameter.ACTION_TYPE, actionType)
+                .addParameter(ProfessionParameter.THIS_PLAYER, player);
+    }
+
     public static class Builder {
         private final ServerLevel level;
         private final Map<ProfessionParameter<?>, Object> parameters = Maps.newIdentityHashMap();
@@ -59,6 +70,7 @@ public record ProfessionContext(ServerLevel level, RandomSource randomSource,
 
         public Builder(ServerLevel level) {
             this.level = level;
+            this.random = level.getRandom();
         }
 
         public Builder addRandom(RandomSource random) {

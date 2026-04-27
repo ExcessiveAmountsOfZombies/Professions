@@ -1,8 +1,8 @@
 package com.epherical.professions.core.context;
 
-import com.epherical.professions.Constants;
+import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
-import com.epherical.professions.core.actions.ActionType;
+import com.epherical.professions.model.actions.ActionType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +28,6 @@ public record ProfessionParameter<T>(ResourceLocation name) {
 
 
     public static <T> ProfessionParameter<T> of(String name) {
-        return new ProfessionParameter<>(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name));
+        return new ProfessionParameter<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, name));
     }
 }

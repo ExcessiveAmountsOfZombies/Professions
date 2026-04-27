@@ -7,7 +7,7 @@ import com.epherical.epherolib.libs.org.spongepowered.configurate.hocon.HoconCon
 import com.epherical.epherolib.libs.org.spongepowered.configurate.serialize.SerializationException;
 import com.epherical.epherolib.libs.org.spongepowered.configurate.serialize.TypeSerializer;
 import com.epherical.epherolib.libs.org.spongepowered.configurate.serialize.TypeSerializerCollection;
-import com.epherical.professions.Constants;
+import com.epherical.professions.ProfessionsCommon;
 import net.minecraft.network.chat.TextColor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,7 +53,7 @@ public class CommonConfig {
 
 
     public boolean loadConfig() {
-        File configDirectory = new File(configDir, Constants.MOD_ID);
+        File configDirectory = new File(configDir, ProfessionsCommon.MOD_ID);
         File file = new File(configDirectory, configName);
 
         boolean createdFile = false;

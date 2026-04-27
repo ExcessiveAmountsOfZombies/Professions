@@ -1,9 +1,8 @@
 package com.epherical.professions.client;
 
 
-import com.epherical.professions.Constants;
-import com.epherical.professions.client.gui.screen.OccupationInfoScreen;
-import com.epherical.professions.client.gui.screen.OccupationMenuScreen;
+import com.epherical.professions.ProfessionsCommon;
+import com.epherical.professions.presentation.client.gui.screen.OccupationMenuScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -14,7 +13,7 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = ProfessionsCommon.MOD_ID)
 public class ClientInitializer {
 
     private static KeyMapping occupationMenu;

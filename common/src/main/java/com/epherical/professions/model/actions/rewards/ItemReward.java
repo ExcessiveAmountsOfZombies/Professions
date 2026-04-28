@@ -4,6 +4,7 @@ import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.bootstrap.Rewards;
+import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.runtime.event.rewards.ItemRewardEvent;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -42,8 +43,8 @@ public record ItemReward(ItemStack item) implements Reward<ItemRewardEvent> {
     }
 
     @Override
-    public ItemRewardEvent buildEvent(Occupation occupation, ProfessionContext professionContext) {
-        return new ItemRewardEvent(occupation, professionContext, item.copy());
+    public ItemRewardEvent buildEvent(Occupation occupation, Action<?> action, ProfessionContext professionContext) {
+        return new ItemRewardEvent(occupation, action, professionContext, item.copy());
     }
 
     public static class Builder implements Reward.Builder {

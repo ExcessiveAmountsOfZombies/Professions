@@ -152,7 +152,7 @@ public class ProfessionsStandardCommands {
                 .append(Component.literal(" |=-=-=").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
     }
 
-    private Component actionLine(Holder<?> value, List<Reward> rewards) {
+    private Component actionLine(Holder<?> value, List<Reward<?>> rewards) {
         MutableComponent component = Component.literal("")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
                 .append(readableValue(value).copy().setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)));
@@ -165,7 +165,7 @@ public class ProfessionsStandardCommands {
         return component;
     }
 
-    private MutableComponent rewardSummary(List<Reward> rewards) {
+    private MutableComponent rewardSummary(List<Reward<?>> rewards) {
         MutableComponent summary = Component.empty();
         for (int i = 0; i < rewards.size(); i++) {
             if (i > 0) {

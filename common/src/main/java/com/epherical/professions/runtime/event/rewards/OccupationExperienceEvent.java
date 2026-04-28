@@ -4,6 +4,7 @@ import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.Occupation;
+import com.epherical.professions.model.actions.Action;
 import net.minecraft.resources.ResourceLocation;
 
 public class OccupationExperienceEvent extends RewardEvent {
@@ -15,8 +16,8 @@ public class OccupationExperienceEvent extends RewardEvent {
 
     private double newAmount;
 
-    public OccupationExperienceEvent(ProfessionContext context, Occupation occupation, double baseAmount) {
-        super(KEY, occupation, context);
+    public OccupationExperienceEvent(ProfessionContext context, Action<?> action, Occupation occupation, double baseAmount) {
+        super(KEY, occupation, action, context);
         this.baseAmount = baseAmount;
         this.newAmount = baseAmount;
     }

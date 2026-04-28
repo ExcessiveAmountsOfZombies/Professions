@@ -18,10 +18,12 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,7 @@ public abstract class Action<T> implements Predicate<ProfessionContext> {
     private final List<Condition> conditions;
     private final List<Reward<?>> rewards;
     private final Predicate<ProfessionContext> predicate;
+    private @Nullable ResourceLocation fileId;
 
     protected Action(Common common, List<Either<TagKey<T>, ResourceKey<T>>> targets) {
         this(common.profession, common.conditions, common.rewards, targets);
@@ -100,6 +103,17 @@ public abstract class Action<T> implements Predicate<ProfessionContext> {
 
     public List<Either<TagKey<T>, ResourceKey<T>>> getValues() {
         return values;
+    }
+
+    public @Nullable ResourceLocation getId() {
+        return fileId;
+    }
+
+    public void setId(ResourceLocation fileId) {
+        if (this.fileId != null && !this.fileId.equals(fileId)) {
+            throw new IllegalStateException("Action file id already set to " + this.fileId + ", cannot reset to " + fileId);
+        }
+        this.fileId = fileId;
     }
 
     public record Common(Holder<Profession> profession, List<Condition> conditions, List<Reward<?>> rewards) {

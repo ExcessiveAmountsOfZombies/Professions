@@ -3,6 +3,7 @@ package com.epherical.professions.model.actions.rewards;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.bootstrap.platform.Services;
+import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.runtime.event.rewards.RewardEvent;
 import com.mojang.serialization.Codec;
 import net.minecraft.network.chat.Component;
@@ -21,7 +22,7 @@ public interface Reward<T extends RewardEvent> {
 
     void giveReward(T reward);
 
-    T buildEvent(Occupation occupation, ProfessionContext professionContext);
+    T buildEvent(Occupation occupation, Action<?> action, ProfessionContext professionContext);
 
     @FunctionalInterface
     interface Builder {

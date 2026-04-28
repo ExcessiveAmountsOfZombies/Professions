@@ -55,27 +55,31 @@ public class ActionLoad3 {
     private List<Action<?>> decodeAll(ResourceManager manager, HolderLookup.Provider registryLookup) {
         List<Action<?>> actions = new ArrayList<>();
         FileToIdConverter fileToIdConverter = FileToIdConverter.json(PATH);
-        Map<ResourceLocation, Resource> resources = fileToIdConverter.listMatchingResources(manager);
+        Map<ResourceLocation, List<Resource>> resources = fileToIdConverter.listMatchingResourceStacks(manager);
         var ops = registryLookup.createSerializationContext(JsonOps.INSTANCE);
 
-        for (Map.Entry<ResourceLocation, Resource> entry : resources.entrySet()) {
-            ResourceLocation fileId = entry.getKey();
-            ResourceLocation idFile = fileToIdConverter.fileToId(fileId);
-            // todo; we could very well map an action to a file here, and make that usable elsewhere.
-            //  we should probably do that.
+        for (Map.Entry<ResourceLocation, List<Resource>> stackEntry : resources.entrySet()) {
+            for (Resource entry : stackEntry.getValue()) {
+                ResourceLocation fileId = stackEntry.getKey();
+                ResourceLocation idFile = fileToIdConverter.fileToId(fileId);
+                // todo; this would be a map with all the actions that are tied to that particular file
+                //  that means we can build a way to merge content together. not right now cause im not sure how i want to do it.
+                //  at least now i think content can be overridden.
 
-            try (Reader reader = entry.getValue().openAsReader()) {
-                JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
-                Action<?> action = Action.TYPED_CODEC.parse(ops, element)
-                        .resultOrPartial(message -> LOGGER.error("Failed to decode action from {}: {}", fileId, message))
-                        .orElse(null);
+                try (Reader reader = entry.openAsReader()) {
+                    JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);
+                    Action<?> action = Action.TYPED_CODEC.parse(ops, element)
+                            .resultOrPartial(message -> LOGGER.error("Failed to decode action from {}: {}", fileId, message))
+                            .orElse(null);
 
-                if (action != null) {
-                    LOGGER.debug("Successfully decoded action for file: {}", fileId);
-                    actions.add(action);
+                    if (action != null) {
+                        action.setId(idFile);
+                        LOGGER.debug("Successfully decoded action for file: {}", fileId);
+                        actions.add(action);
+                    }
+                } catch (IllegalArgumentException | IOException e) {
+                    LOGGER.error("Couldn't load resource {}", idFile, e);
                 }
-            } catch (IllegalArgumentException | IOException e) {
-                LOGGER.error("Couldn't load resource {}", idFile, e);
             }
         }
         return actions;

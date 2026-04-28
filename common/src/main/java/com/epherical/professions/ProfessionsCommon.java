@@ -34,10 +34,10 @@ public abstract class ProfessionsCommon {
     public static ProfessionsCommon INSTANCE;
 
 
-    public ActionLoad3 ACTION_LOAD;
-    public CommonConfig config;
+    protected ActionLoad3 actionLoader;
+    protected CommonConfig config;
 
-    private ProfessionEventBus eventBus;
+    protected final ProfessionEventBus eventBus;
 
 
     public ProfessionsCommon() {
@@ -54,12 +54,16 @@ public abstract class ProfessionsCommon {
     }
 
 
+    public void setActionLoader(ActionLoad3 actionLoader) {
+        this.actionLoader = actionLoader;
+    }
+
     public ProfessionEventBus getEventBus() {
         return eventBus;
     }
 
     public ActionLoad3 getActionLoader() {
-        return ACTION_LOAD;
+        return actionLoader;
     }
 
     public abstract PlayerManager getPlayerManager();

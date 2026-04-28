@@ -144,18 +144,13 @@ public class PlayerManager {
             Occupation occupation = iProfessionalPlayer.getOccupation(action.getProfession());
             if (occupation == null || !occupation.isActive()) continue;
 
-            // todo; we need a way to tie things together for modification, like the event is listening for an action to happen
-            //  so what do we do? how would a consumer know this is the action they want to manipulate or potentially cancel?
-            //  would they even want to cancel it? not sure, but we need to evaluate it.
-            //  the same would apply for rewards too, if it's not directly built into the action, how do we know anything?
             ActionValidEvent actionValidEvent = new ActionValidEvent(action, occupation, iProfessionalPlayer, professionContext);
 
             if (action.isValidAction(professionContext)) {
                 eventBus.post(actionValidEvent);
                 if (!actionValidEvent.isCanceled()) {
                     for (Reward<?> reward : action.getRewards()) {
-                        // todo; consider that actions should also be able to modify the reward
-                        testReward(reward, occupation, professionContext);
+                        testReward(reward, action, occupation, professionContext);
                     }
                 }
             }
@@ -296,12 +291,12 @@ public class PlayerManager {
         return players.values();
     }
 
-    private void testReward(Reward<?> reward, Occupation occupation, ProfessionContext professionContext) {
-        applyRewardTyped(reward, occupation, professionContext);
+    private void testReward(Reward<?> reward, Action<?> action, Occupation occupation, ProfessionContext professionContext) {
+        applyRewardTyped(reward, action, occupation, professionContext);
     }
 
-    private <T extends RewardEvent> void applyRewardTyped(Reward<T> reward, Occupation occupation, ProfessionContext professionContext) {
-        T rewardEvent = reward.buildEvent(occupation, professionContext);
+    private <T extends RewardEvent> void applyRewardTyped(Reward<T> reward, Action<?> action, Occupation occupation, ProfessionContext professionContext) {
+        T rewardEvent = reward.buildEvent(occupation, action, professionContext);
         eventBus.post(rewardEvent);
         if (!rewardEvent.isCanceled()) {
             reward.giveReward(rewardEvent);

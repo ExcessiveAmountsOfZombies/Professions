@@ -4,6 +4,7 @@ import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.api.event.ProfessionEvent;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.Occupation;
+import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.runtime.event.AbstractCancellableProfessionEvent;
 
 public abstract class RewardEvent extends AbstractCancellableProfessionEvent {
@@ -11,11 +12,12 @@ public abstract class RewardEvent extends AbstractCancellableProfessionEvent {
 
     private final Occupation occupation;
     private final ProfessionContext context;
+    private final Action<?> action;
 
-    protected RewardEvent(EventKey<? extends ProfessionEvent> key, Occupation occupation,
-                          ProfessionContext context) {
+    protected RewardEvent(EventKey<? extends ProfessionEvent> key, Occupation occupation, Action<?> action, ProfessionContext context) {
         super(key);
         this.occupation = occupation;
+        this.action = action;
         this.context = context;
     }
 
@@ -27,4 +29,7 @@ public abstract class RewardEvent extends AbstractCancellableProfessionEvent {
         return context;
     }
 
+    public Action<?> getAction() {
+        return action;
+    }
 }

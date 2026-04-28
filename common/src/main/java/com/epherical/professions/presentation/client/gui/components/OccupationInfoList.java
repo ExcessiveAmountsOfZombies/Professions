@@ -33,10 +33,12 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
         this.profession = mc.getSingleplayerServer().registryAccess().lookupOrThrow(ProfessionsCommon.PROFESSION_REGISTRY_KEY)
                 .getOrThrow(ResourceKey.create(ProfessionsCommon.PROFESSION_REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath("professions", "mining")));
 
-        Collection<Action<?>> actionsByProfession = ProfessionsCommon.ACTION_LOAD.getActionManager().getActionsByProfession(this.profession);
+
+
+        Collection<Action<?>> actionsByProfession = ProfessionsCommon.INSTANCE.getActionLoader().getActionManager().getActionsByProfession(this.profession);
         List<EntryItem> items = new ArrayList<>();
         for (Action<?> action : actionsByProfession) {
-            Collection<Holder<?>> actionsByValue = ProfessionsCommon.ACTION_LOAD.getActionManager().getValuesForAction(action);
+            Collection<Holder<?>> actionsByValue = ProfessionsCommon.INSTANCE.getActionLoader().getActionManager().getValuesForAction(action);
             for (Holder<?> holder : actionsByValue) {
                 EntryItem item = EntryItem.create(holder, action);
                 if (item != null) {

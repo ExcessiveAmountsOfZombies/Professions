@@ -1,26 +1,29 @@
 package com.epherical.professions;
 
 
-import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
+import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.model.actions.ActionType;
-import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
-import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.register.PlatformBootstrap;
-import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.data.player.UuidOccupationDataLoader;
+import com.epherical.professions.model.actions.ActionType;
+import com.epherical.professions.model.actions.conditions.ConditionType;
+import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
-import com.google.common.eventbus.EventBus;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.LevelResource;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -29,8 +32,15 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.living.AnimalTameEvent;
+import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEnchantItemEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.TradeWithVillagerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -154,12 +164,11 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         public static void onDataReload(AddReloadListenerEvent event) {
             ActionLoad3 loader = new ActionLoad3(mod.actionManager);
             event.addListener(new NeoForgeActionReloadListener(loader));
-            // todo; next thing we're doing is getting the mod able to compile again. then we can decide where to go from there.
 
             // todo; we should improve the config next
             // todo; build a better notification system (chat, pop up, toast, announcements)
             // todo; re-add the rest of the events back in.
-            ACTION_LOAD = loader;
+            mod.setActionLoader(loader);
             REGISTRY_ACCESS = event.getRegistryAccess();
         }
 
@@ -169,12 +178,14 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         }
 
 
-        @SubscribeEvent
+        @SubscribeEvent(priority = EventPriority.LOW)
         public static void onBlockBreak(BlockEvent.BreakEvent event) {
             Holder<Block> blockHolder = event.getState().getBlockHolder();
             Player player = event.getPlayer();
 
-            // todo; check if canceled.
+            if (event.isCanceled()) {
+                return;
+            }
 
             if (!player.isCreative() && player instanceof ServerPlayer) {
                 ProfessionContext.Builder builder = ProfessionContext.builder((ServerLevel) event.getLevel(),
@@ -186,10 +197,86 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                         .addParameter(ProfessionParameter.THIS_HOLDER, blockHolder);
 
                 mod.playerManager.processAction(player, builder.build());
+            }
+        }
 
-                //iProfessionalPlayer.handleAction(context, blockHolder);
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
+            Holder<Block> blockHolder = event.getState().getBlockHolder();
+            Entity entity = event.getEntity();
+
+            if (event.isCanceled()) {
+                return;
             }
 
+            // todo; re-add the cache for preventing gaming the system with xp gains.
+
+            if (entity instanceof ServerPlayer serverPlayer && !serverPlayer.isCreative()) {
+                ProfessionContext.Builder builder = ProfessionContext.builder((ServerLevel) event.getLevel(),
+                                Actions.BLOCK_PLACE, mod.playerManager.getPlayer(serverPlayer.getUUID()))
+                        .addParameter(ProfessionParameter.THIS_BLOCK, event.getState())
+                        .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
+                        .addParameter(ProfessionParameter.THIS_HOLDER, blockHolder);
+
+                mod.playerManager.processAction(serverPlayer, builder.build());
+            }
         }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onBlockExplode(ExplosionEvent.Detonate event) {
+            if (event.getLevel() instanceof ServerLevel level && event.getExplosion().getIndirectSourceEntity() instanceof ServerPlayer player) {
+                // This could possibly be slow, in fabric we just use a mixin to directly get the blockstate in the final explosion.
+                for (BlockPos affectedBlock : event.getAffectedBlocks()) {
+                    BlockState blockState = level.getBlockState(affectedBlock);
+                    ProfessionContext.Builder builder = ProfessionContext.builder(level,
+                                    Actions.BLOCK_EXPLODE, mod.playerManager.getPlayer(player.getUUID()))
+                            .addParameter(ProfessionParameter.BLOCKPOS, affectedBlock)
+                            .addParameter(ProfessionParameter.THIS_BLOCK, blockState)
+                            .addParameter(ProfessionParameter.THIS_HOLDER, blockState.getBlockHolder());
+                    mod.playerManager.processAction(player, builder.build());
+                }
+            }
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onEntityDeath(LivingDeathEvent event) {
+            // todo; implement killing action
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onFishedItem(ItemFishedEvent event) {
+            // todo; implement fishing action
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
+            // todo; implement craft action
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onItemSmelted(PlayerEvent.ItemSmeltedEvent event) {
+            // todo; implement smelt action
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onBreedAnimal(BabyEntitySpawnEvent event) {
+            // todo; implement breed action
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onTameAnimal(AnimalTameEvent event) {
+            // todo; implement taming action
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onTradeWithVillager(TradeWithVillagerEvent event) {
+            // todo; implement trading action
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onPlayerEnchant(PlayerEnchantItemEvent event) {
+            // todo; implement enchanting action
+        }
+
     }
 }

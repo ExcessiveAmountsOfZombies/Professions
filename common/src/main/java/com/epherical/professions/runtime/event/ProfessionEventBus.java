@@ -51,9 +51,6 @@ public class ProfessionEventBus {
     public <E extends ProfessionEvent> void post(E event) {
         Objects.requireNonNull(event, "event");
 
-        // todo; remove this
-        ProfessionsCommon.LOG.info("EventFire: {}", event.getClass().getSimpleName());
-
         ListenerRegistry registrations = this.listeners.get(event.key());
         if (registrations == null) {
             return;

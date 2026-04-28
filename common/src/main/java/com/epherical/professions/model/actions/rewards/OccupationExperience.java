@@ -58,8 +58,8 @@ public record OccupationExperience(double expAmount) implements Reward<Occupatio
     }
 
     @Override
-    public OccupationExperienceEvent buildEvent(Occupation occupation, ProfessionContext professionContext) {
-        return new OccupationExperienceEvent(professionContext, occupation, expAmount);
+    public OccupationExperienceEvent buildEvent(Occupation occupation, Action<?> action, ProfessionContext professionContext) {
+        return new OccupationExperienceEvent(professionContext, action, occupation, expAmount);
     }
 
     public static class Builder implements Reward.Builder {
@@ -71,7 +71,7 @@ public record OccupationExperience(double expAmount) implements Reward<Occupatio
         }
 
         @Override
-        public Reward build() {
+        public Reward<?> build() {
             return new OccupationExperience(exp);
         }
     }

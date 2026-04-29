@@ -46,11 +46,16 @@ public class OccupationInfoScreen extends Screen {
         this.leftPos = (this.width - this.imageWidth) / 2;
         this.topPos = (this.height - this.imageHeight) / 2;
 
-        occupationInfoList = new OccupationInfoList(this.minecraft, 93, topPos + 43, 229 + topPos, 18);
+        occupationInfoList = new OccupationInfoList(this.minecraft, 93, topPos + 43, 228 + topPos, 18);
         occupationInfoList.setX(leftPos + 9);
+       // occupationInfoList.setY(topPos + 42);
+        //occupationInfoList.setRectangle(94, 186, leftPos + 9, topPos + 42);
+
         addRenderableWidget(occupationInfoList);
         addRenderableOnly(createXpBar());
     }
+
+
 
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -130,7 +135,7 @@ public class OccupationInfoScreen extends Screen {
             paintX = leftPos + 112;
             paintY += 16;
 
-            for (Reward reward : focused.getAction().getRewards()) {
+            for (Reward<?> reward : focused.getAction().getRewards()) {
                 pGuiGraphics.renderFakeItem(reward.getRewardIcon(), paintX, paintY, 1000);
                 pGuiGraphics.drawString(minecraft.font, reward.getRewardName(), paintX + 18, paintY + 6, 0xFFFFFFFF, true);
                 paintY+= 16;

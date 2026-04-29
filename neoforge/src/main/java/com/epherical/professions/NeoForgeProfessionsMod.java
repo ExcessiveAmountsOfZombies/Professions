@@ -12,6 +12,8 @@ import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
+import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -234,6 +236,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                             .addParameter(ProfessionParameter.THIS_BLOCK, blockState)
                             .addParameter(ProfessionParameter.THIS_HOLDER, blockState.getBlockHolder());
                     mod.playerManager.processAction(player, builder.build());
+
                 }
             }
         }
@@ -246,6 +249,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onFishedItem(ItemFishedEvent event) {
             // todo; implement fishing action
+
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)

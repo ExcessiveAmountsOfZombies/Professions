@@ -28,7 +28,7 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
     private final Holder<Profession> profession;
 
     public OccupationInfoList(Minecraft mc, int width, int top, int bottom, int height) {
-        super(mc, width, bottom - top, top, height);
+        super(mc, width, top, bottom, height);
 
         this.profession = mc.getSingleplayerServer().registryAccess().lookupOrThrow(ProfessionsCommon.PROFESSION_REGISTRY_KEY)
                 .getOrThrow(ResourceKey.create(ProfessionsCommon.PROFESSION_REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath("professions", "mining")));
@@ -50,6 +50,20 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
         for (int i = 0; i < items.size(); i += ITEMS_PER_ROW) {
             addEntry(new Entry(items.subList(i, Math.min(i + ITEMS_PER_ROW, items.size()))));
         }
+    }
+
+    @Override
+    protected int getRowTop(int pIndex) {
+        return super.getRowTop(pIndex);
+    }
+
+    @Override
+    public int getBottom() {
+        return super.getBottom();
+    }
+
+    protected int getRowBottom(int pIndex) {
+        return super.getRowBottom(pIndex);
     }
 
     public Holder<Profession> getProfession() {
@@ -97,6 +111,7 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
 
         @Override
         public boolean isMouseOver(double pMouseX, double pMouseY) {
+            // todo; doesn't seem to be used at all
             boolean rowHovered = super.isMouseOver(pMouseX, pMouseY);
             if (rowHovered) {
                 int index = getHoveredIndex(pMouseX, pMouseY, OccupationInfoList.this.getRowLeft());
@@ -112,6 +127,8 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
                            int index, int y, int x, int rowWidth, int rowHeight,
                            int mouseX, int mouseY, boolean hovering, float partialTick) {
             int baseY = y + (rowHeight - ICON_SIZE) / 2;
+
+            //gfx.fill(x, y, rowWidth + x, rowHeight + y, 0xFFFFFFFF);
 
             for (int i = 0; i < items.size(); i++) {
                 int iconX = x + i * ICON_SPACING;
@@ -148,7 +165,7 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
         }
 
         private int getHoveredIndex(double mouseX, double mouseY, int rowLeft, int baseY) {
-            if (mouseY < baseY || mouseY >= baseY + ICON_SIZE) {
+            if (mouseY < baseY - ICON_SIZE || mouseY >= baseY + ICON_SIZE) {
                 return -1;
             }
 

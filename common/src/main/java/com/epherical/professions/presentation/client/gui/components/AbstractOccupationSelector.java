@@ -24,10 +24,6 @@ public abstract class AbstractOccupationSelector<E extends ContainerObjectSelect
         super.setRenderHeader(false, pHeaderHeight);
     }
 
-    protected int getRowTop(int pIndex) {
-        return this.getY() - (int)this.getScrollAmount() + pIndex * this.itemHeight;
-    }
-
     @Override
     public int getMaxScroll() {
         return Math.max(0, this.getMaxPosition() - (this.height - 8));

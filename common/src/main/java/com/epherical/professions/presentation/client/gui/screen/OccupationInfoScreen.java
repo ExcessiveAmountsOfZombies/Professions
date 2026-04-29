@@ -1,14 +1,10 @@
 package com.epherical.professions.presentation.client.gui.screen;
 
-import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsCommon;
-import com.epherical.professions.api.IProfessionalPlayer;
-import com.epherical.professions.presentation.client.gui.components.OccupationInfoList;
-import com.epherical.professions.presentation.client.gui.components.OccupationXpBar;
-import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.actions.rewards.Reward;
-import net.minecraft.core.Holder;
+import com.epherical.professions.presentation.client.gui.components.OccupationInfoList;
+import com.epherical.professions.presentation.client.gui.components.OccupationXpBar;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -32,11 +28,14 @@ public class OccupationInfoScreen extends Screen {
 
     private OccupationInfoList occupationInfoList;
 
+    private final Occupation occupation;
+
 
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_info");
 
-    public OccupationInfoScreen() {
+    public OccupationInfoScreen(Occupation occupation) {
         super(Component.literal("Occupation Info"));
+        this.occupation = occupation;
     }
 
 
@@ -46,7 +45,7 @@ public class OccupationInfoScreen extends Screen {
         this.leftPos = (this.width - this.imageWidth) / 2;
         this.topPos = (this.height - this.imageHeight) / 2;
 
-        occupationInfoList = new OccupationInfoList(this.minecraft, 93, topPos + 43, 228 + topPos, 18);
+        occupationInfoList = new OccupationInfoList(this.minecraft, 93, topPos + 43, 228 + topPos, 18, occupation);
         occupationInfoList.setX(leftPos + 9);
        // occupationInfoList.setY(topPos + 42);
         //occupationInfoList.setRectangle(94, 186, leftPos + 9, topPos + 42);
@@ -153,22 +152,9 @@ public class OccupationInfoScreen extends Screen {
 
     @Deprecated(forRemoval = true )
     private OccupationXpBar createXpBar() {
-        Holder<Profession> profession = occupationInfoList.getProfession();
-        double currentXp = 0;
-        double maxXp = profession.value().getExperienceForLevel(0);
-
-        PlayerManager playerManager = ProfessionsCommon.INSTANCE != null ? ProfessionsCommon.INSTANCE.getPlayerManager() : null;
-        if (playerManager != null && minecraft != null && minecraft.player != null) {
-            IProfessionalPlayer professionalPlayer = playerManager.getPlayer(minecraft.player.getUUID());
-            if (professionalPlayer != null) {
-                Occupation occupation = professionalPlayer.getOccupation(profession);
-                if (occupation != null) {
-                    currentXp = occupation.getExpProgress();
-                    maxXp = profession.value().getExperienceForLevel(occupation.getLevel());
-                }
-            }
-        }
-
+        Occupation profession = occupationInfoList.getProfession();
+        double currentXp = profession.getExpProgress();
+        double maxXp = profession.getMaxExperience();
         return new OccupationXpBar(currentXp, maxXp, leftPos + XP_BAR_X, topPos + XP_BAR_Y);
     }
 

@@ -2,6 +2,7 @@ package com.epherical.professions.presentation.client.gui.components;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.model.Occupation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -25,11 +26,13 @@ import java.util.List;
 public class OccupationList extends AbstractOccupationSelector<OccupationList.Entry> {
 
 
-    public OccupationList(Minecraft mc, int width, int top, int bottom, int height) {
+    public OccupationList(Minecraft mc, int width, int top, int bottom, int height, List<Occupation> occupations) {
         super(mc, width, top, bottom, height);
 
-        mc.getSingleplayerServer().registryAccess().lookupOrThrow(ProfessionsCommon.PROFESSION_REGISTRY_KEY)
-                .listElements().forEach(professionReference -> addEntry(new Entry(professionReference.value())));
+
+        for (Occupation occupation : occupations) {
+            addEntry(new Entry(occupation));
+        }
     }
 
     private ItemStack professionIcon;
@@ -91,13 +94,19 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
         private static final int PROGRESS_BAR_HEIGHT = 7;
 
         Profession profession;
+        Occupation occupation;
 
-        public Entry(Profession profession) {
-            this.profession = profession;
+        public Entry(Occupation occupation) {
+            this.occupation = occupation;
+            this.profession = occupation.getProfession().value();
         }
 
         public Profession getProfession() {
             return profession;
+        }
+
+        public Occupation getOccupation() {
+            return occupation;
         }
 
         @Override
@@ -105,7 +114,10 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
                            int index, int y, int x, int rowWidth, int rowHeight,
                            int mouseX, int mouseY, boolean hovering, float partialTick) {
 
-            double placeholderPercentage = 0.99f;
+
+
+
+            double placeholderPercentage = occupation.getExpProgress() / occupation.getMaxExperience();
             float clampedPercentage = Mth.clamp((float) placeholderPercentage, 0.0f, 1.0f);
             int percentageText = Mth.floor(clampedPercentage * 100.0f);
 
@@ -126,7 +138,7 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
             gfx.pose().translate(translationX, translationY, 0);
             gfx.pose().scale(scale, scale, 1);
             gfx.pose().translate(-translationX, -translationY, 0);
-            gfx.drawString(minecraft.font, "LvL 25", translationX, translationY, 0xFFFFFF);
+            gfx.drawString(minecraft.font, String.format("LvL %s", occupation.getLevel()), translationX, translationY, 0xFFFFFF);
             gfx.pose().popPose();
 
             int barX = x + 42;

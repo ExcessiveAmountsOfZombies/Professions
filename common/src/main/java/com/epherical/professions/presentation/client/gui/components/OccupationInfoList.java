@@ -2,6 +2,7 @@ package com.epherical.professions.presentation.client.gui.components;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.actions.Action;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,17 +26,16 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
 
     private static final int ITEMS_PER_ROW = 5;
 
-    private final Holder<Profession> profession;
+    private final Occupation occupation;
 
-    public OccupationInfoList(Minecraft mc, int width, int top, int bottom, int height) {
+    public OccupationInfoList(Minecraft mc, int width, int top, int bottom, int height, Occupation occupation) {
         super(mc, width, top, bottom, height);
-
-        this.profession = mc.getSingleplayerServer().registryAccess().lookupOrThrow(ProfessionsCommon.PROFESSION_REGISTRY_KEY)
-                .getOrThrow(ResourceKey.create(ProfessionsCommon.PROFESSION_REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath("professions", "mining")));
+        this.occupation = occupation;
 
 
 
-        Collection<Action<?>> actionsByProfession = ProfessionsCommon.INSTANCE.getActionLoader().getActionManager().getActionsByProfession(this.profession);
+        // todo; this will need a specific place. things will get serialized to the player in some way so we probably wont be able to call it like this.
+        Collection<Action<?>> actionsByProfession = ProfessionsCommon.INSTANCE.getActionLoader().getActionManager().getActionsByProfession(occupation.getProfession());
         List<EntryItem> items = new ArrayList<>();
         for (Action<?> action : actionsByProfession) {
             Collection<Holder<?>> actionsByValue = ProfessionsCommon.INSTANCE.getActionLoader().getActionManager().getValuesForAction(action);
@@ -66,8 +66,8 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
         return super.getRowBottom(pIndex);
     }
 
-    public Holder<Profession> getProfession() {
-        return profession;
+    public Occupation getProfession() {
+        return occupation;
     }
 
     protected record EntryItem(ItemStack holder, Action<?> action) {
@@ -139,6 +139,7 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
             if (hovering) {
                 int hoveredItem = getHoveredIndex(mouseX, mouseY, x, baseY);
                 if (hoveredItem >= 0) {
+                    // todo; add the ability to click it, then you could find out more information about the rewards
                     hoveredIndex = hoveredItem;
                     int iconX = x + hoveredIndex * ICON_SPACING;
                     drawBorder(gfx, iconX, baseY, true);

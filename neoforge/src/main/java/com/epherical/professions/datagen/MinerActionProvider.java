@@ -31,14 +31,14 @@ import static com.epherical.professions.datagen.ProfessionDataGeneration.rl;
 final class MinerActionProvider implements DataProvider {
 
     private static final List<OreAction> ORE_ACTIONS = List.of(
-            new OreAction("coal", BlockTags.COAL_ORES, 6.0),
-            new OreAction("copper", BlockTags.COPPER_ORES, 8.0),
-            new OreAction("iron", BlockTags.IRON_ORES, 10.0),
-            new OreAction("redstone", BlockTags.REDSTONE_ORES, 12.0),
-            new OreAction("lapis", BlockTags.LAPIS_ORES, 14.0),
-            new OreAction("gold", BlockTags.GOLD_ORES, 16.0),
-            new OreAction("emerald", BlockTags.EMERALD_ORES, 18.0),
-            new OreAction("diamond", BlockTags.DIAMOND_ORES, 20.0)
+            new OreAction("coal", BlockTags.COAL_ORES, 200),
+            new OreAction("copper", BlockTags.COPPER_ORES, 400),
+            new OreAction("iron", BlockTags.IRON_ORES, 650),
+            new OreAction("redstone", BlockTags.REDSTONE_ORES, 600),
+            new OreAction("lapis", BlockTags.LAPIS_ORES, 700),
+            new OreAction("gold", BlockTags.GOLD_ORES, 900),
+            new OreAction("emerald", BlockTags.EMERALD_ORES, 1000),
+            new OreAction("diamond", BlockTags.DIAMOND_ORES, 1500)
     );
 
     private final PackOutput.PathProvider pathProvider;
@@ -58,22 +58,22 @@ final class MinerActionProvider implements DataProvider {
 
             List<CompletableFuture<?>> writes = new ArrayList<>();
             writes.add(action("mine_stone", miningProfession)
-                    .rewardExp(1.0)
+                    .rewardExp(50.0)
                     .blocks(List.of(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER))
                     .save(output, registries));
 
             writes.add(action("mine_sandstone", miningProfession)
-                    .rewardExp(0.5)
+                    .rewardExp(50)
                     .block(List.of(Blocks.SANDSTONE, Blocks.RED_SANDSTONE))
                     .save(output, registries));
 
             writes.add(action("mine_obsidian", miningProfession)
-                    .rewardExp(1.0)
+                    .rewardExp(200)
                     .block(List.of(Blocks.OBSIDIAN))
                     .save(output, registries));
 
             writes.add(action("prismarine", miningProfession)
-                    .rewardExp(0.5)
+                    .rewardExp(60)
                     .block(List.of(Blocks.PRISMARINE, Blocks.DARK_PRISMARINE, Blocks.PRISMARINE_BRICKS))
                     .save(output, registries));
 

@@ -12,16 +12,19 @@ import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
-import net.minecraft.client.gui.components.AbstractSelectionList;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.LevelResource;
@@ -34,6 +37,7 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.brewing.PlayerBrewedPotionEvent;
 import net.neoforged.neoforge.event.entity.living.AnimalTameEvent;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -55,6 +59,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
 
 @Mod(ProfessionsCommon.MOD_ID)
@@ -170,6 +175,11 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             // todo; we should improve the config next
             // todo; build a better notification system (chat, pop up, toast, announcements)
             // todo; re-add the rest of the events back in.
+
+
+            // todo; wednesday:
+            //  Implement the other events
+            //  Write data providers
             mod.setActionLoader(loader);
             REGISTRY_ACCESS = event.getRegistryAccess();
         }
@@ -237,39 +247,107 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                             .addParameter(ProfessionParameter.THIS_HOLDER, blockState.getBlockHolder());
                     mod.playerManager.processAction(player, builder.build());
 
+                    // todo; use OnDatapackSyncEvent
                 }
             }
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onEntityDeath(LivingDeathEvent event) {
-            // todo; implement killing action
+            if (event.isCanceled() || event.getEntity().level().isClientSide) {
+                return;
+            }
+
+            ServerLevel level = (ServerLevel) event.getEntity().level();
+            Entity source = event.getSource().getEntity();
+            LivingEntity killedEntity = event.getEntity();
+
+            ProfessionContext.Builder builder = ProfessionContext.builder(level,
+                    Actions.SLAY_ACTION, mod.playerManager.getPlayer(killedEntity.getUUID()));
+
+            if (source instanceof ServerPlayer serverPlayer) {
+                if (killedEntity instanceof AgeableMob mob) {
+                    if (!mob.isBaby()) {
+                        builder.addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(source.getUUID()))
+                                .addParameter(ProfessionParameter.ENTITY, killedEntity);
+                    }
+                } else {
+                    builder.addParameter(ProfessionParameter.THIS_PLAYER, mod.getPlayerManager().getPlayer(source.getUUID()))
+                            .addParameter(ProfessionParameter.ENTITY, killedEntity);
+                }
+                mod.playerManager.processAction(serverPlayer, builder.build());
+            }
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onFishedItem(ItemFishedEvent event) {
-            // todo; implement fishing action
+            Player player = event.getEntity();
+            if (event.isCanceled() || player.level().isClientSide) {
+                return;
+            }
+            ServerLevel level = (ServerLevel) event.getEntity().level();
 
+            ProfessionContext.Builder builder = ProfessionContext.builder(level,
+                    Actions.FISHING_ACTION, mod.playerManager.getPlayer(player.getUUID()));
+            for (ItemStack drop : event.getDrops()) {
+                builder.addParameter(ProfessionParameter.ITEM_INVOLVED, drop);
+                mod.playerManager.processAction(player, builder.build());
+            }
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
-            // todo; implement craft action
+            Player player = event.getEntity();
+            if (player.level().isClientSide) {
+                return;
+            }
+
+            ServerLevel level = (ServerLevel) player.level();
+
+            ProfessionContext.Builder builder = ProfessionContext.builder(level,
+                            Actions.CRAFTING_ACTION, mod.playerManager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getCrafting());
+            mod.playerManager.processAction(player, builder.build());
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onItemSmelted(PlayerEvent.ItemSmeltedEvent event) {
-            // todo; implement smelt action
+            Player player = event.getEntity();
+            if (player.level().isClientSide) {
+                return;
+            }
+            ServerLevel level = (ServerLevel) player.level();
+
+            ProfessionContext.Builder builder = ProfessionContext.builder(level,
+                            Actions.SMELT_TAKE_ACTION, mod.playerManager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getSmelting());
+            mod.playerManager.processAction(player, builder.build());
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onBreedAnimal(BabyEntitySpawnEvent event) {
-            // todo; implement breed action
+            Player player = event.getCausedByPlayer();
+            if (event.isCanceled() || player == null || player.level().isClientSide) {
+                return;
+            }
+            ServerLevel level = (ServerLevel) player.level();
+            ProfessionContext.Builder builder = ProfessionContext.builder(level,
+                            Actions.BREED_ACTION, mod.playerManager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.ENTITY, event.getChild());
+            mod.playerManager.processAction(player, builder.build());
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onTameAnimal(AnimalTameEvent event) {
-            // todo; implement taming action
+            Player player = event.getTamer();
+            if (event.isCanceled() || player.level().isClientSide) {
+                return;
+            }
+            ServerLevel level = (ServerLevel) player.level();
+            ProfessionContext.Builder builder = ProfessionContext.builder(level,
+                            Actions.TAME_ACTION, mod.playerManager.getPlayer(player.getUUID()))
+                    .addParameter(ProfessionParameter.ENTITY, event.getAnimal());
+            mod.playerManager.processAction(player, builder.build());
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
@@ -279,7 +357,31 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onPlayerEnchant(PlayerEnchantItemEvent event) {
-            // todo; implement enchanting action
+            Level level = event.getEntity().level();
+
+            if (level instanceof ServerLevel serverLevel) {
+                ServerPlayer player = (ServerPlayer) event.getEntity();
+                ItemStack itemEnchanted = event.getEnchantedItem();
+                List<EnchantmentInstance> enchantments = event.getEnchantments();
+
+                for (EnchantmentInstance enchantment : enchantments) {
+                    ProfessionContext.Builder builder = ProfessionContext.builder(serverLevel,
+                                    Actions.ENCHANT_ACTION, mod.playerManager.getPlayer(player.getUUID()))
+                            .addParameter(ProfessionParameter.ENCHANTMENT_INSTANCE, enchantment);
+                    mod.playerManager.processAction(player, builder.build());
+                }
+
+                ProfessionContext.Builder builder = ProfessionContext.builder(serverLevel,
+                                Actions.ENCHANT_ACTION, mod.playerManager.getPlayer(player.getUUID()))
+                        .addParameter(ProfessionParameter.ITEM_INVOLVED, itemEnchanted);
+
+                mod.playerManager.processAction(player, builder.build());
+            }
+        }
+
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onPlayerBrew(PlayerBrewedPotionEvent event) {
+            // todo; can't do this one cause we have to know what ingredient was used.
         }
 
     }

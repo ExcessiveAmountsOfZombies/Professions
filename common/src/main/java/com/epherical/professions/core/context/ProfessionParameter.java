@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -25,6 +26,8 @@ public record ProfessionParameter<T>(ResourceLocation name) {
     public static final ProfessionParameter<Recipe<?>> RECIPE_CRAFTED = of("recipe");
     public static final ProfessionParameter<Holder<Biome>> BIOME = of("biome");
     public static final ProfessionParameter<Structure> CONFIGURED_STRUCTURE = of("configured_structure");
+    public static final ProfessionParameter<EnchantmentInstance> ENCHANTMENT_INSTANCE = of("enchantment_instance");
+
 
 
     public static <T> ProfessionParameter<T> of(String name) {

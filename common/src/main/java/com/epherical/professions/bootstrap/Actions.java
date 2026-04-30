@@ -5,8 +5,12 @@ import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.block.BlockBreakAction;
 import com.epherical.professions.model.actions.block.BlockPlaceAction;
 import com.epherical.professions.model.actions.block.TNTDestroyAction;
+import com.epherical.professions.model.actions.entity.BreedAction;
+import com.epherical.professions.model.actions.entity.SlayAction;
+import com.epherical.professions.model.actions.entity.TameAction;
 import com.epherical.professions.model.actions.item.BrewAction;
 import com.epherical.professions.model.actions.item.CraftingAction;
+import com.epherical.professions.model.actions.item.EnchantAction;
 import com.epherical.professions.model.actions.item.FishingAction;
 import com.epherical.professions.model.actions.item.SmeltItemAction;
 import com.epherical.professions.model.actions.item.TakeSmeltAction;
@@ -38,6 +42,14 @@ public class Actions {
             ACTION_REGISTRY_KEY, "take_smelted", new ActionType(TakeSmeltAction.CODEC, "professions.action.type.take_smelted_item"));
     public static final ActionType TRADE_ACTION = PlatformBootstrap.register(
             ACTION_REGISTRY_KEY, "trade", new ActionType(TradeAction.CODEC, "professions.action.type.villager_trade"));
+    public static final ActionType ENCHANT_ACTION = PlatformBootstrap.register(
+            ACTION_REGISTRY_KEY, "enchant", new ActionType(EnchantAction.CODEC, "professions.action.type.enchant"));
+    public static final ActionType SLAY_ACTION = PlatformBootstrap.register(
+            ACTION_REGISTRY_KEY, "slay", new ActionType(SlayAction.CODEC, "professions.action.type.slay"));
+    public static final ActionType BREED_ACTION = PlatformBootstrap.register(
+            ACTION_REGISTRY_KEY, "breed", new ActionType(BreedAction.CODEC, "professions.action.type.breed"));
+    public static final ActionType TAME_ACTION = PlatformBootstrap.register(
+            ACTION_REGISTRY_KEY, "tame", new ActionType(TameAction.CODEC, "professions.action.type.tame"));
 
 
 

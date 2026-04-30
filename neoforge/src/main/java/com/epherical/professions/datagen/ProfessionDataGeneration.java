@@ -37,7 +37,6 @@ public final class ProfessionDataGeneration {
                                     "by brewing potions."
                             })
                             .display(Component.literal("Alchemy"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("building"), new Builder(rl("building"))
@@ -48,7 +47,6 @@ public final class ProfessionDataGeneration {
                                     "by placing blocks."
                             })
                             .display(Component.literal("Building"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("crafting"), new Builder(rl("crafting"))
@@ -59,7 +57,6 @@ public final class ProfessionDataGeneration {
                                     "by crafting."
                             })
                             .display(Component.literal("Crafting"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("enchanting"), new Builder(rl("enchanting"))
@@ -70,7 +67,6 @@ public final class ProfessionDataGeneration {
                                     "by enchanting."
                             })
                             .display(Component.literal("Enchanting"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("farming"), new Builder(rl("farming"))
@@ -81,7 +77,6 @@ public final class ProfessionDataGeneration {
                                     "by farming."
                             })
                             .display(Component.literal("Farming"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("fishing"), new Builder(rl("fishing"))
@@ -92,7 +87,6 @@ public final class ProfessionDataGeneration {
                                     "by fishing."
                             })
                             .display(Component.literal("Fishing"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("hunting"), new Builder(rl("hunting"))
@@ -103,7 +97,6 @@ public final class ProfessionDataGeneration {
                                     "by hunting animals, killing monsters, and exploring"
                             })
                             .display(Component.literal("Hunting"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("logging"), new Builder(rl("logging"))
@@ -114,7 +107,6 @@ public final class ProfessionDataGeneration {
                                     "by farming trees."
                             })
                             .display(Component.literal("Logging"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("mining"), new Builder(rl("mining"))
@@ -125,7 +117,6 @@ public final class ProfessionDataGeneration {
                                     "by mining ores and minerals."
                             })
                             .display(Component.literal("Mining"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("smithing"), new Builder(rl("smithing"))
@@ -136,7 +127,6 @@ public final class ProfessionDataGeneration {
                                     "by smithing items."
                             })
                             .display(Component.literal("Smithing"))
-                            .maxLevel(100)
                             .build());
 
                     ctx.register(id("trading"), new Builder(rl("trading"))
@@ -147,7 +137,6 @@ public final class ProfessionDataGeneration {
                                     "by trading items to villagers."
                             })
                             .display(Component.literal("Trading"))
-                            .maxLevel(100)
                             .build());
                 });
 
@@ -181,7 +170,7 @@ public final class ProfessionDataGeneration {
         private TextColor nameColor = TextColor.parseColor("#FFFFFF").getOrThrow();
         private TextColor descColor = TextColor.parseColor("#AAAAAA").getOrThrow();
         private Item icon = Items.STONE_PICKAXE;
-        private int maxLevel = 30;
+        private int maxLevel = 0;
         private ResourceLocation levelUpSound = ResourceLocation.parse("minecraft:entity.player.levelup");
         private String expEquation = "1000*1.05^(lvl-1)";
         private final NavigableMap<Integer, Parser> expScalers = new TreeMap<>();

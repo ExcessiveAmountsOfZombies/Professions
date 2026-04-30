@@ -2,7 +2,7 @@
   "professions.action.type.break_block": "Break Block",
   "professions.action.type.place_block": "Place Block",
   "professions.action.type.tnt_destroy": "TNT Destroy",
-  "professions.action.type.kill_entity": "Kill",
+  "professions.action.type.slay": "Slay",
   "professions.action.type.catch_fish": "Fishing",
   "professions.action.type.craft_item": "Craft",
   "professions.action.type.take_smelted_item": "Take Smelted item",

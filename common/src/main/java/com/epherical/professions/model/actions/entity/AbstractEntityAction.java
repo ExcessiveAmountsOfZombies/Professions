@@ -13,6 +13,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,16 @@ public abstract class AbstractEntityAction extends Action<EntityType<?>> {
     @Override
     public ResourceKey<? extends Registry<EntityType<?>>> getRegistryKey() {
         return Registries.ENTITY_TYPE;
+    }
+
+
+    @Override
+    public ItemStack getIconStack(Holder<?> holder) {
+        if (holder.value() instanceof EntityType<?> et) {
+            SpawnEggItem spawnEggItem = SpawnEggItem.byId(et);
+            return new ItemStack(spawnEggItem != null ? spawnEggItem : getIcon());
+        }
+        return super.getIconStack(holder);
     }
 
     @Override

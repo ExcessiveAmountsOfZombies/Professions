@@ -1,0 +1,20 @@
+{
+  "action": "professions:slay",
+  "conditions": [],
+  "entities": [
+    "minecraft:pig",
+    "minecraft:chicken",
+    "minecraft:sheep",
+    "minecraft:cow",
+    "minecraft:mooshroom",
+    "minecraft:rabbit",
+    "minecraft:goat"
+  ],
+  "profession": "professions:hunting",
+  "rewards": [
+    {
+      "expAmount": 100.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

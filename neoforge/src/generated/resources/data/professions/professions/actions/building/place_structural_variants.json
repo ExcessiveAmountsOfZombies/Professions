@@ -1,0 +1,27 @@
+{
+  "action": "professions:block_place",
+  "blocks": [
+    "#minecraft:slabs",
+    "#minecraft:stairs",
+    "#minecraft:walls",
+    "#minecraft:fence_gates",
+    "#minecraft:fences",
+    "#minecraft:banners",
+    "#minecraft:corals",
+    "#minecraft:coral_blocks",
+    "#minecraft:coral_plants",
+    "#minecraft:doors",
+    "#minecraft:trapdoors",
+    "#minecraft:terracotta",
+    "#minecraft:wool_carpets",
+    "#minecraft:candles"
+  ],
+  "conditions": [],
+  "profession": "professions:building",
+  "rewards": [
+    {
+      "expAmount": 22.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

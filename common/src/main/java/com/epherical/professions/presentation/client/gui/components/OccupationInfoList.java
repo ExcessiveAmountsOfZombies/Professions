@@ -11,9 +11,12 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,8 +81,9 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
             if (resourceKey.isPresent() && (resourceKey.get().isFor(Registries.ITEM) || resourceKey.get().isFor(Registries.BLOCK))) {
                 ItemLike like = (ItemLike) holder.value();
                 return new EntryItem(new ItemStack(like), action);
+            } else {
+                return new EntryItem(action.getIconStack(holder), action);
             }
-            return null;
         }
     }
 

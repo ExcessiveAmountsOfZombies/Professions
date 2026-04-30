@@ -1,0 +1,28 @@
+{
+  "action": "professions:block_place",
+  "blocks": [
+    "minecraft:bricks",
+    "minecraft:bookshelf",
+    "minecraft:mossy_cobblestone",
+    "minecraft:obsidian",
+    "minecraft:crying_obsidian",
+    "minecraft:prismarine",
+    "minecraft:dark_prismarine",
+    "minecraft:prismarine_bricks",
+    "minecraft:sea_lantern",
+    "minecraft:purpur_block",
+    "minecraft:purpur_pillar",
+    "minecraft:chiseled_quartz_block",
+    "minecraft:quartz_block",
+    "minecraft:quartz_bricks",
+    "minecraft:quartz_pillar"
+  ],
+  "conditions": [],
+  "profession": "professions:building",
+  "rewards": [
+    {
+      "expAmount": 96.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

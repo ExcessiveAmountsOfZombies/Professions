@@ -1,0 +1,16 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "#minecraft:beds",
+    "minecraft:armor_stand",
+    "minecraft:lead"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 55.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

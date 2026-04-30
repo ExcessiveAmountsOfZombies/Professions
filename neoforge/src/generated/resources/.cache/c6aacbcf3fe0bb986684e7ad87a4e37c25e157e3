@@ -1,0 +1,8 @@
+// 1.21.1	2026-04-30T00:20:54.5124576	Professions Hunting Action Provider
+088b34dec5b781fad32bfc35128acc661fa5e841 data/professions/professions/actions/hunting/kill_common_hostiles.json
+37267ffcaff3bb8613ac4570f2f1ed17e68ebc4e data/professions/professions/actions/hunting/kill_dangerous_hostiles.json
+c45b525439ca8455fc40b1d92c8fc6df04cdbe10 data/professions/professions/actions/hunting/kill_elite_hostiles.json
+9cc26de52005e116854396bbd40494ff7a741d58 data/professions/professions/actions/hunting/kill_ender_dragon.json
+9f3f66986af27e238ba86f546142ed7ddaaea22f data/professions/professions/actions/hunting/kill_passive_animals.json
+7dffc810fed498c5f14188544c9c73da9e906550 data/professions/professions/actions/hunting/kill_wither.json
+e2ddb7a627f1d95374f951a092220e7c498e405e data/professions/professions/actions/hunting/tame_wolf.json

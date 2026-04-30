@@ -1,0 +1,15 @@
+{
+  "action": "professions:block_place",
+  "blocks": [
+    "#minecraft:planks",
+    "#minecraft:wool"
+  ],
+  "conditions": [],
+  "profession": "professions:building",
+  "rewards": [
+    {
+      "expAmount": 30.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

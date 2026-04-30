@@ -1,0 +1,24 @@
+{
+  "action": "professions:fish",
+  "conditions": [],
+  "items": [
+    "minecraft:lily_pad",
+    "minecraft:bowl",
+    "minecraft:leather",
+    "minecraft:leather_boots",
+    "minecraft:rotten_flesh",
+    "minecraft:stick",
+    "minecraft:string",
+    "minecraft:potion",
+    "minecraft:bone",
+    "minecraft:ink_sac",
+    "minecraft:tripwire_hook"
+  ],
+  "profession": "professions:fishing",
+  "rewards": [
+    {
+      "expAmount": 28.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

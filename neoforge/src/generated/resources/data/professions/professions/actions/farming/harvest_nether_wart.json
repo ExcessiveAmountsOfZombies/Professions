@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "minecraft:nether_wart"
+  ],
+  "conditions": [],
+  "profession": "professions:farming",
+  "rewards": [
+    {
+      "expAmount": 70.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

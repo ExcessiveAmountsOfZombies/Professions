@@ -1,0 +1,23 @@
+{
+  "action": "professions:enchant",
+  "conditions": [],
+  "enchantments": [
+    "minecraft:fortune",
+    "minecraft:looting",
+    "minecraft:silk_touch",
+    "minecraft:riptide",
+    "minecraft:channeling",
+    "minecraft:aqua_affinity",
+    "minecraft:impaling",
+    "minecraft:luck_of_the_sea",
+    "minecraft:multishot"
+  ],
+  "items": [],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 120.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

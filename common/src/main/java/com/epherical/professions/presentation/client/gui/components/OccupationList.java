@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,7 +32,9 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
 
 
         for (Occupation occupation : occupations) {
-            addEntry(new Entry(occupation));
+            try {
+                addEntry(new Entry(occupation));
+            } catch (IllegalStateException ignored) {} // we could do something maybe idk
         }
     }
 

@@ -1,0 +1,23 @@
+{
+  "action": "professions:enchant",
+  "conditions": [],
+  "enchantments": [],
+  "items": [
+    "minecraft:wooden_sword",
+    "minecraft:wooden_axe",
+    "minecraft:wooden_pickaxe",
+    "minecraft:wooden_shovel",
+    "minecraft:wooden_hoe",
+    "minecraft:leather_helmet",
+    "minecraft:leather_chestplate",
+    "minecraft:leather_leggings",
+    "minecraft:leather_boots"
+  ],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 45.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

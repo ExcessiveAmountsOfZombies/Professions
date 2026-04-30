@@ -1,0 +1,25 @@
+{
+  "action": "professions:block_place",
+  "blocks": [
+    "minecraft:chest",
+    "minecraft:ender_chest",
+    "minecraft:anvil",
+    "minecraft:furnace",
+    "minecraft:blast_furnace",
+    "minecraft:smoker",
+    "minecraft:campfire",
+    "minecraft:soul_campfire",
+    "minecraft:crafting_table",
+    "minecraft:enchanting_table",
+    "minecraft:jukebox",
+    "minecraft:hopper"
+  ],
+  "conditions": [],
+  "profession": "professions:building",
+  "rewards": [
+    {
+      "expAmount": 112.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

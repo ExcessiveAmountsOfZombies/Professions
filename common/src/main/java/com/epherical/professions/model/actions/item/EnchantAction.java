@@ -6,21 +6,29 @@ import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.model.actions.ActionType;
+import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EnchantAction extends AbstractItemAction {
 
@@ -67,12 +75,54 @@ public class EnchantAction extends AbstractItemAction {
         return enchantments;
     }
 
+    @Override
+    public void getExtraValues(Multimap<Holder<?>, Action<?>> valueToActionsMap, Multimap<Action<?>, Holder<?>> actionToValueMap, HolderLookup.Provider provider) {
+        HolderLookup.RegistryLookup<Enchantment> lookup = provider.lookupOrThrow(Registries.ENCHANTMENT);
+        for (Either<TagKey<Enchantment>, ResourceKey<Enchantment>> value : enchantments) {
+            if (value.left().isPresent()) {
+                TagKey<Enchantment> tagKey = value.left().get();
+                for (Holder<Enchantment> holder : lookup.getOrThrow(tagKey)) {
+                    valueToActionsMap.put(holder, this);
+                    actionToValueMap.put(this, holder);
+                }
+            } else {
+                ResourceKey<Enchantment> resourceKey = value.right().orElseThrow();
+                Holder.Reference<Enchantment> holder = lookup.getOrThrow(resourceKey);
+                valueToActionsMap.put(holder, this);
+                actionToValueMap.put(this, holder);
+            }
+        }
+    }
+
+    private void indexHolder(Holder<?> holder, Multimap<Holder<?>, Action<?>> valueToActionsMap, Multimap<Action<?>, Holder<?>> actionToValueMap) {
+        valueToActionsMap.put(holder, this);
+        actionToValueMap.put(this, holder);
+    }
+
 
     @Override
     public Common buildCommon() {
         return Common.build(this);
     }
 
+    @Override
+    public Item getIcon() {
+        return Items.ENCHANTED_BOOK;
+    }
+
+    @Override
+    public ItemStack getIconStack(Holder<?> holder) {
+        if (holder.value() instanceof Enchantment) {
+            ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
+            MutableComponent comp = (MutableComponent) Enchantment.getFullname((Holder<Enchantment>) holder, 10);
+            comp.setStyle(Style.EMPTY);
+            stack.set(DataComponents.CUSTOM_NAME, comp);
+            return stack;
+        } else {
+            return super.getIconStack(holder);
+        }
+
+    }
 
     @Override
     public ActionType getType() {

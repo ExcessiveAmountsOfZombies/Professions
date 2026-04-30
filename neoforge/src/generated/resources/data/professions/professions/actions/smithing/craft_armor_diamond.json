@@ -1,0 +1,17 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:diamond_helmet",
+    "minecraft:diamond_chestplate",
+    "minecraft:diamond_leggings",
+    "minecraft:diamond_boots"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 300.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

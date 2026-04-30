@@ -1,0 +1,26 @@
+{
+  "action": "professions:slay",
+  "conditions": [],
+  "entities": [
+    "minecraft:zombie",
+    "minecraft:zombie_villager",
+    "minecraft:husk",
+    "minecraft:drowned",
+    "minecraft:skeleton",
+    "minecraft:stray",
+    "minecraft:bogged",
+    "minecraft:spider",
+    "minecraft:cave_spider",
+    "minecraft:creeper",
+    "minecraft:slime",
+    "minecraft:silverfish",
+    "minecraft:endermite"
+  ],
+  "profession": "professions:hunting",
+  "rewards": [
+    {
+      "expAmount": 250.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

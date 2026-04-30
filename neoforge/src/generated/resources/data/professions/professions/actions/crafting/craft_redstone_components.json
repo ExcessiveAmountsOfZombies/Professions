@@ -1,0 +1,25 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:dispenser",
+    "minecraft:piston",
+    "minecraft:sticky_piston",
+    "minecraft:observer",
+    "minecraft:dropper",
+    "minecraft:tripwire_hook",
+    "minecraft:trapped_chest",
+    "minecraft:redstone_torch",
+    "minecraft:redstone_lamp",
+    "minecraft:comparator",
+    "minecraft:repeater",
+    "minecraft:daylight_detector"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 72.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

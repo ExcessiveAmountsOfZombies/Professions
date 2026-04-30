@@ -1,0 +1,20 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "#minecraft:wooden_pressure_plates",
+    "#minecraft:banners",
+    "#minecraft:candles",
+    "#minecraft:signs",
+    "#minecraft:wool_carpets",
+    "minecraft:painting",
+    "minecraft:flower_pot"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 28.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

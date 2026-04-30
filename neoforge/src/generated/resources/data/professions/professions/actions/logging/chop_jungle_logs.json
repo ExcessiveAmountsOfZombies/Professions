@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "#minecraft:jungle_logs"
+  ],
+  "conditions": [],
+  "profession": "professions:logging",
+  "rewards": [
+    {
+      "expAmount": 40.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

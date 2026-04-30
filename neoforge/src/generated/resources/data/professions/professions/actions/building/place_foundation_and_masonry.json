@@ -1,0 +1,35 @@
+{
+  "action": "professions:block_place",
+  "blocks": [
+    "#minecraft:base_stone_overworld",
+    "#minecraft:base_stone_nether",
+    "#minecraft:stone_bricks",
+    "minecraft:deepslate_bricks",
+    "minecraft:cracked_deepslate_bricks",
+    "minecraft:deepslate_tiles",
+    "minecraft:cracked_deepslate_tiles",
+    "minecraft:chiseled_deepslate",
+    "minecraft:cobbled_deepslate",
+    "minecraft:polished_deepslate",
+    "minecraft:cobblestone",
+    "minecraft:polished_basalt",
+    "minecraft:blackstone",
+    "minecraft:gilded_blackstone",
+    "minecraft:chiseled_polished_blackstone",
+    "minecraft:polished_granite",
+    "minecraft:polished_diorite",
+    "minecraft:polished_andesite",
+    "minecraft:calcite",
+    "minecraft:end_stone_bricks",
+    "minecraft:packed_ice",
+    "minecraft:blue_ice"
+  ],
+  "conditions": [],
+  "profession": "professions:building",
+  "rewards": [
+    {
+      "expAmount": 24.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

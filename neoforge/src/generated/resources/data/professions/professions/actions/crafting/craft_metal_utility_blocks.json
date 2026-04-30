@@ -1,0 +1,23 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:iron_door",
+    "minecraft:iron_bars",
+    "minecraft:hopper",
+    "minecraft:cauldron",
+    "minecraft:chain",
+    "minecraft:stone_pressure_plate",
+    "minecraft:polished_blackstone_pressure_plate",
+    "minecraft:light_weighted_pressure_plate",
+    "minecraft:heavy_weighted_pressure_plate",
+    "minecraft:lightning_rod"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 96.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:compass",
+    "minecraft:clock",
+    "minecraft:spyglass",
+    "minecraft:fishing_rod",
+    "minecraft:brewing_stand",
+    "minecraft:lectern"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 88.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:chainmail_helmet",
+    "minecraft:chainmail_chestplate",
+    "minecraft:chainmail_leggings",
+    "minecraft:chainmail_boots"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 120.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

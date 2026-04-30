@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "minecraft:cactus"
+  ],
+  "conditions": [],
+  "profession": "professions:farming",
+  "rewards": [
+    {
+      "expAmount": 45.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

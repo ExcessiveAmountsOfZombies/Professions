@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "#minecraft:flowers"
+  ],
+  "conditions": [],
+  "profession": "professions:farming",
+  "rewards": [
+    {
+      "expAmount": 25.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

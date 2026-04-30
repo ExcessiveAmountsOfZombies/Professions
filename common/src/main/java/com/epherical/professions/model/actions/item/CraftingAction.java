@@ -12,6 +12,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.util.List;
 
@@ -34,6 +35,11 @@ public class CraftingAction extends AbstractItemAction {
         return Common.build(this);
     }
 
+
+    @Override
+    public Item getIcon() {
+        return Items.CRAFTING_TABLE;
+    }
 
     @Override
     public ActionType getType() {

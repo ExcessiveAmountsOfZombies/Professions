@@ -1,0 +1,21 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "#minecraft:walls",
+    "#minecraft:stairs",
+    "#minecraft:fences",
+    "#minecraft:wooden_doors",
+    "#minecraft:wooden_trapdoors",
+    "#minecraft:wooden_buttons",
+    "#minecraft:boats",
+    "minecraft:ladder"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 34.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

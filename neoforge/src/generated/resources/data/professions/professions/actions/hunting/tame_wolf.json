@@ -1,0 +1,14 @@
+{
+  "action": "professions:tame",
+  "conditions": [],
+  "entities": [
+    "minecraft:wolf"
+  ],
+  "profession": "professions:hunting",
+  "rewards": [
+    {
+      "expAmount": 140.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

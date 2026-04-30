@@ -1,0 +1,15 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "#minecraft:rails",
+    "minecraft:minecart"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 78.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

@@ -9,10 +9,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.mbertoli.jfep.Parser;
@@ -30,24 +34,25 @@ public final class ProfessionDataGeneration {
 
         RegistrySetBuilder builder = new RegistrySetBuilder()
                 .add(NeoForgeProfessionsMod.PROFESSION_REGISTRY_KEY, ctx -> {
-                    ctx.register(id("alchemy"), new Builder(rl("alchemy"))
+                    /*ctx.register(id("alchemy"), new Builder(rl("alchemy"))
                             .nameColor(TextColor.parseColor("#a100e0").getOrThrow())
                             .description(new String[]{
                                     "Earn money and experience",
                                     "by brewing potions."
                             })
                             .display(Component.literal("Alchemy"))
-                            .build());
+                            .build());*/
 
                     ctx.register(id("building"), new Builder(rl("building"))
                             .nameColor(TextColor.parseColor("#f2de00").getOrThrow())
                             .descColor(TextColor.parseColor("#FFFFFF").getOrThrow())
                             .description(new String[]{
-                                    "Earn money and experience",
-                                    "by placing blocks."
+                                    "Progress through building projects",
+                                    "by placing structural blocks."
                             })
                             .display(Component.literal("Building"))
                             .build());
+
 
                     ctx.register(id("crafting"), new Builder(rl("crafting"))
                             .nameColor(TextColor.parseColor("#f2a100").getOrThrow())
@@ -129,7 +134,7 @@ public final class ProfessionDataGeneration {
                             .display(Component.literal("Smithing"))
                             .build());
 
-                    ctx.register(id("trading"), new Builder(rl("trading"))
+                    /*ctx.register(id("trading"), new Builder(rl("trading"))
                             .nameColor(TextColor.parseColor("#2dcf08").getOrThrow())
                             .descColor(TextColor.parseColor("#FFFFFF").getOrThrow())
                             .description(new String[]{
@@ -137,8 +142,9 @@ public final class ProfessionDataGeneration {
                                     "by trading items to villagers."
                             })
                             .display(Component.literal("Trading"))
-                            .build());
+                            .build());*/
                 });
+
 
 
         PackOutput out = event.getGenerator().getPackOutput();
@@ -150,6 +156,14 @@ public final class ProfessionDataGeneration {
         );
         event.getGenerator().addProvider(true, professionsProvider);
         event.getGenerator().addProvider(event.includeServer(), new MinerActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new LoggingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new FarmingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new FishingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new HuntingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new EnchantingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new CraftingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new SmithingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new BuildingActionProvider(out, professionsProvider.getRegistryProvider()));
 
     }
 

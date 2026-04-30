@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "#minecraft:bamboo_blocks"
+  ],
+  "conditions": [],
+  "profession": "professions:logging",
+  "rewards": [
+    {
+      "expAmount": 30.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

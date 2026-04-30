@@ -1,0 +1,27 @@
+{
+  "action": "professions:enchant",
+  "conditions": [],
+  "enchantments": [
+    "minecraft:feather_falling",
+    "minecraft:fire_aspect",
+    "minecraft:punch",
+    "minecraft:loyalty",
+    "minecraft:respiration",
+    "minecraft:bane_of_arthropods",
+    "minecraft:breach",
+    "minecraft:density",
+    "minecraft:flame",
+    "minecraft:lure",
+    "minecraft:piercing",
+    "minecraft:quick_charge",
+    "minecraft:sweeping_edge"
+  ],
+  "items": [],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 65.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

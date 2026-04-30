@@ -1,0 +1,20 @@
+{
+  "action": "professions:tame",
+  "conditions": [],
+  "entities": [
+    "minecraft:wolf",
+    "minecraft:cat",
+    "minecraft:horse",
+    "minecraft:donkey",
+    "minecraft:mule",
+    "minecraft:llama",
+    "minecraft:parrot"
+  ],
+  "profession": "professions:farming",
+  "rewards": [
+    {
+      "expAmount": 140.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

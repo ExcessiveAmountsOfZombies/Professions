@@ -13,6 +13,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SpawnEggItem;
 
 import java.util.List;
 
@@ -41,7 +44,7 @@ public class BreedAction extends AbstractEntityAction {
 
     @Override
     public Item getIcon() {
-        return super.getIcon();
+        return Items.WHEAT;
     }
 
     public static class Builder extends Action.Builder<Builder, EntityType<?>> {

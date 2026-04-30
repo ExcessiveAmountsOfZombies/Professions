@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "#minecraft:crimson_stems"
+  ],
+  "conditions": [],
+  "profession": "professions:logging",
+  "rewards": [
+    {
+      "expAmount": 75.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

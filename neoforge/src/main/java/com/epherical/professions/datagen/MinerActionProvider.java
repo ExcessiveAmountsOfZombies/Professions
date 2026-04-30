@@ -62,6 +62,11 @@ final class MinerActionProvider implements DataProvider {
                     .blocks(List.of(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER))
                     .save(output, registries));
 
+            writes.add(action("mine_terracotta", miningProfession)
+                    .rewardExp(50.0)
+                    .block(BlockTags.TERRACOTTA)
+                    .save(output, registries));
+
             writes.add(action("mine_sandstone", miningProfession)
                     .rewardExp(50)
                     .block(List.of(Blocks.SANDSTONE, Blocks.RED_SANDSTONE))

@@ -1,0 +1,30 @@
+{
+  "action": "professions:slay",
+  "conditions": [],
+  "entities": [
+    "minecraft:blaze",
+    "minecraft:wither_skeleton",
+    "minecraft:piglin_brute",
+    "minecraft:hoglin",
+    "minecraft:phantom",
+    "minecraft:shulker",
+    "minecraft:enderman",
+    "minecraft:magma_cube",
+    "minecraft:piglin",
+    "minecraft:zombified_piglin",
+    "minecraft:guardian",
+    "minecraft:witch",
+    "minecraft:breeze",
+    "minecraft:zoglin",
+    "minecraft:pillager",
+    "minecraft:vindicator",
+    "minecraft:vex"
+  ],
+  "profession": "professions:hunting",
+  "rewards": [
+    {
+      "expAmount": 320.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

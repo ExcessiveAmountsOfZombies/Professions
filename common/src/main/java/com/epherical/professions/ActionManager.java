@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ActionManager {
 
@@ -110,6 +111,8 @@ public class ActionManager {
                     actionToValueMap.put(action, holder);
                 }
             }
+
+            action.getExtraValues(valueToActionsMap, actionToValueMap, registryLookup);
         }
 
 

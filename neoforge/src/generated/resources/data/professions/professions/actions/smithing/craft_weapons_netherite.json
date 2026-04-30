@@ -1,0 +1,14 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:netherite_sword"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 360.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

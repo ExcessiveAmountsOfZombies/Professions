@@ -1,0 +1,17 @@
+{
+  "action": "professions:fish",
+  "conditions": [],
+  "items": [
+    "minecraft:cod",
+    "minecraft:salmon",
+    "minecraft:pufferfish",
+    "minecraft:tropical_fish"
+  ],
+  "profession": "professions:fishing",
+  "rewards": [
+    {
+      "expAmount": 55.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

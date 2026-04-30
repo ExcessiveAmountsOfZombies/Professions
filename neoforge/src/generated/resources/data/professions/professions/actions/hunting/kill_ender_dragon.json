@@ -1,0 +1,14 @@
+{
+  "action": "professions:slay",
+  "conditions": [],
+  "entities": [
+    "minecraft:ender_dragon"
+  ],
+  "profession": "professions:hunting",
+  "rewards": [
+    {
+      "expAmount": 1600.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

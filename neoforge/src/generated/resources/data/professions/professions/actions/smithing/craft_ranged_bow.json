@@ -1,0 +1,14 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:bow"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 90.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

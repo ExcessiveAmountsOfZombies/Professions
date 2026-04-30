@@ -1,0 +1,16 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:chest",
+    "minecraft:barrel",
+    "minecraft:furnace"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 62.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

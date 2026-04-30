@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "#minecraft:terracotta"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 50.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

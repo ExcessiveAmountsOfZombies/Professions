@@ -1,0 +1,18 @@
+{
+  "action": "professions:slay",
+  "conditions": [],
+  "entities": [
+    "minecraft:elder_guardian",
+    "minecraft:ghast",
+    "minecraft:evoker",
+    "minecraft:ravager",
+    "minecraft:warden"
+  ],
+  "profession": "professions:hunting",
+  "rewards": [
+    {
+      "expAmount": 420.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

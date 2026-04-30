@@ -1,0 +1,22 @@
+{
+  "action": "professions:enchant",
+  "conditions": [],
+  "enchantments": [
+    "minecraft:protection",
+    "minecraft:sharpness",
+    "minecraft:efficiency",
+    "minecraft:unbreaking",
+    "minecraft:power",
+    "minecraft:blast_protection",
+    "minecraft:fire_protection",
+    "minecraft:projectile_protection"
+  ],
+  "items": [],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 30.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

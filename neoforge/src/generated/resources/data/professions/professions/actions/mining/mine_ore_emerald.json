@@ -29,7 +29,7 @@
   "profession": "professions:mining",
   "rewards": [
     {
-      "expAmount": 18.0,
+      "expAmount": 1000.0,
       "reward": "professions:occupation_exp"
     }
   ]

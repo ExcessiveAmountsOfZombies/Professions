@@ -1,0 +1,17 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:diamond_pickaxe",
+    "minecraft:diamond_axe",
+    "minecraft:diamond_shovel",
+    "minecraft:diamond_hoe"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 220.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

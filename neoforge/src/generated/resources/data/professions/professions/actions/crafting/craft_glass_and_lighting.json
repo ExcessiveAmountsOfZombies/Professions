@@ -1,0 +1,15 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:tinted_glass",
+    "minecraft:torch"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 42.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

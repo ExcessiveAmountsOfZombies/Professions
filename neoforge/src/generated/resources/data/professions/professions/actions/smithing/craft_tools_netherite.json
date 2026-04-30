@@ -1,0 +1,17 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:netherite_pickaxe",
+    "minecraft:netherite_axe",
+    "minecraft:netherite_shovel",
+    "minecraft:netherite_hoe"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 360.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

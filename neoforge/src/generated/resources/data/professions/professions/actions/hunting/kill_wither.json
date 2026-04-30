@@ -1,0 +1,14 @@
+{
+  "action": "professions:slay",
+  "conditions": [],
+  "entities": [
+    "minecraft:wither"
+  ],
+  "profession": "professions:hunting",
+  "rewards": [
+    {
+      "expAmount": 800.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

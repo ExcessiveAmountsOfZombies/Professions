@@ -1,0 +1,14 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:lodestone"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 220.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

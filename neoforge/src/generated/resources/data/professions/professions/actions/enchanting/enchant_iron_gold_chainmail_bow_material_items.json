@@ -1,0 +1,31 @@
+{
+  "action": "professions:enchant",
+  "conditions": [],
+  "enchantments": [],
+  "items": [
+    "minecraft:stone_sword",
+    "minecraft:stone_axe",
+    "minecraft:stone_pickaxe",
+    "minecraft:stone_shovel",
+    "minecraft:stone_hoe",
+    "minecraft:golden_sword",
+    "minecraft:golden_axe",
+    "minecraft:golden_pickaxe",
+    "minecraft:golden_shovel",
+    "minecraft:golden_hoe",
+    "minecraft:chainmail_helmet",
+    "minecraft:chainmail_chestplate",
+    "minecraft:chainmail_leggings",
+    "minecraft:chainmail_boots",
+    "minecraft:bow",
+    "minecraft:crossbow",
+    "minecraft:fishing_rod"
+  ],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 80.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

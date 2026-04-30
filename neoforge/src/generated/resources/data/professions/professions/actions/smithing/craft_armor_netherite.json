@@ -1,0 +1,17 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:netherite_helmet",
+    "minecraft:netherite_chestplate",
+    "minecraft:netherite_leggings",
+    "minecraft:netherite_boots"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 480.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

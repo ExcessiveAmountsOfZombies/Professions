@@ -5,8 +5,8 @@
   },
   "formatting": {
     "description": [
-      "Earn money and experience",
-      "by placing blocks."
+      "Progress through building projects",
+      "by placing structural blocks."
     ],
     "descriptionColor": "#FFFFFF",
     "display": "Building",
@@ -15,6 +15,6 @@
   },
   "settings": {
     "levelUpSound": "minecraft:entity.player.levelup",
-    "maxLevel": 100
+    "maxLevel": 0
   }
 }

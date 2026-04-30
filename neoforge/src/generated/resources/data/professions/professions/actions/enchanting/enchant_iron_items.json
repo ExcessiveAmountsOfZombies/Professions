@@ -1,0 +1,25 @@
+{
+  "action": "professions:enchant",
+  "conditions": [],
+  "enchantments": [],
+  "items": [
+    "minecraft:iron_sword",
+    "minecraft:iron_axe",
+    "minecraft:iron_pickaxe",
+    "minecraft:iron_shovel",
+    "minecraft:iron_hoe",
+    "minecraft:iron_helmet",
+    "minecraft:iron_chestplate",
+    "minecraft:iron_leggings",
+    "minecraft:iron_boots",
+    "minecraft:shield",
+    "minecraft:trident"
+  ],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 125.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

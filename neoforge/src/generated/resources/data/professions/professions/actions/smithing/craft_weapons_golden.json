@@ -1,0 +1,14 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:golden_sword"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 140.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

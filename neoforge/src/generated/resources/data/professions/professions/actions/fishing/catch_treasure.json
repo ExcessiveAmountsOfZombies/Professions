@@ -1,0 +1,18 @@
+{
+  "action": "professions:fish",
+  "conditions": [],
+  "items": [
+    "minecraft:bow",
+    "minecraft:enchanted_book",
+    "minecraft:nautilus_shell",
+    "minecraft:name_tag",
+    "minecraft:saddle"
+  ],
+  "profession": "professions:fishing",
+  "rewards": [
+    {
+      "expAmount": 200.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

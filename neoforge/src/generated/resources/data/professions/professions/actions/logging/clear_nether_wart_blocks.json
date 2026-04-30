@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "#minecraft:wart_blocks"
+  ],
+  "conditions": [],
+  "profession": "professions:logging",
+  "rewards": [
+    {
+      "expAmount": 55.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

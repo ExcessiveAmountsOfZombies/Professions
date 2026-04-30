@@ -1,0 +1,17 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:blast_furnace",
+    "minecraft:tnt",
+    "minecraft:anvil",
+    "minecraft:jukebox"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 120.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

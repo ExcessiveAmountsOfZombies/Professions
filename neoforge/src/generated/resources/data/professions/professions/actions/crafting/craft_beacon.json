@@ -1,0 +1,14 @@
+{
+  "action": "professions:craft",
+  "conditions": [],
+  "items": [
+    "minecraft:beacon"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 420.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.actions.conditions.Condition;
 import com.epherical.professions.model.actions.rewards.Reward;
+import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -15,6 +16,7 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
@@ -22,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,6 +92,10 @@ public abstract class Action<T> implements Predicate<ProfessionContext> {
         return Items.STONE;
     }
 
+    public ItemStack getIconStack(Holder<?> holder) {
+        return new ItemStack(getIcon());
+    }
+
     public Holder<Profession> getProfession() {
         return profession;
     }
@@ -104,6 +111,14 @@ public abstract class Action<T> implements Predicate<ProfessionContext> {
     public List<Either<TagKey<T>, ResourceKey<T>>> getValues() {
         return values;
     }
+
+    /**
+     * This method is so that actions that take in multiple value lists can be added to the action maps.
+     * @param valueToActionsMap The value
+     * @param actionToValueMap the action to value map
+     * @param provider the registry lookup
+     */
+    public void getExtraValues(Multimap<Holder<?>, Action<?>> valueToActionsMap, Multimap<Action<?>, Holder<?>> actionToValueMap, HolderLookup.Provider provider) {}
 
     public @Nullable ResourceLocation getId() {
         return fileId;

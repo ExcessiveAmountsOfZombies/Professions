@@ -9,7 +9,10 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -22,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -31,6 +35,10 @@ public class UuidOccupationDataLoader extends OccupationDataLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Codec<List<Occupation>> OCCUPATION_LIST_CODEC = Occupation.CODEC.listOf();
+    private static final Codec<PlayerOccupationData> PLAYER_OCCUPATION_DATA_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            OCCUPATION_LIST_CODEC.fieldOf("occupations").forGetter(PlayerOccupationData::occupations),
+            ResourceLocation.CODEC.optionalFieldOf("professionCategory").forGetter(data -> Optional.ofNullable(data.professionCategoryId()))
+    ).apply(instance, (occupations, professionCategoryId) -> new PlayerOccupationData(occupations, professionCategoryId.orElse(null))));
 
     private final Supplier<RegistryAccess> registryAccessSupplier;
 
@@ -40,14 +48,14 @@ public class UuidOccupationDataLoader extends OccupationDataLoader {
     }
 
     @Override
-    public CompletableFuture<List<Occupation>> load(UUID uuid) {
+    public CompletableFuture<PlayerOccupationData> load(UUID uuid) {
         return CompletableFuture.supplyAsync(() -> readFile(uuid, getPath(uuid)));
     }
 
     @Override
-    public CompletableFuture<Map<UUID, List<Occupation>>> loadAll() {
+    public CompletableFuture<Map<UUID, PlayerOccupationData>> loadAll() {
         return CompletableFuture.supplyAsync(() -> {
-            Map<UUID, List<Occupation>> loadedOccupations = new HashMap<>();
+            Map<UUID, PlayerOccupationData> loadedOccupations = new HashMap<>();
             try {
                 Files.createDirectories(baseDirectory);
                 try (var paths = Files.list(baseDirectory)) {
@@ -70,12 +78,13 @@ public class UuidOccupationDataLoader extends OccupationDataLoader {
     }
 
     @Override
-    public CompletableFuture<Void> save(UUID uuid, Collection<Occupation> data) {
+    public CompletableFuture<Void> save(UUID uuid, Collection<Occupation> occupations, @Nullable ResourceLocation professionCategoryId) {
         return CompletableFuture.runAsync(() -> {
             Path filePath = getPath(uuid);
             try {
                 Files.createDirectories(baseDirectory);
-                DataResult<JsonElement> encodedResult = OCCUPATION_LIST_CODEC.encodeStart(JsonOps.INSTANCE, List.copyOf(data));
+                PlayerOccupationData data = new PlayerOccupationData(List.copyOf(occupations), professionCategoryId);
+                DataResult<JsonElement> encodedResult = PLAYER_OCCUPATION_DATA_CODEC.encodeStart(JsonOps.INSTANCE, data);
                 JsonElement element = encodedResult.resultOrPartial(message ->
                         LOGGER.error("Failed to encode occupations for {}: {}", uuid, message)
                 ).orElse(null);
@@ -93,28 +102,33 @@ public class UuidOccupationDataLoader extends OccupationDataLoader {
         });
     }
 
-    private List<Occupation> readFile(UUID uuid, Path filePath) {
+    private PlayerOccupationData readFile(UUID uuid, Path filePath) {
         if (!Files.exists(filePath)) {
-            return List.of();
+            return PlayerOccupationData.empty();
         }
 
         try (Reader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             JsonElement element = JsonParser.parseReader(reader);
-            DataResult<List<Occupation>> decodedResult = OCCUPATION_LIST_CODEC.parse(JsonOps.INSTANCE, element);
-            List<Occupation> occupations = decodedResult.resultOrPartial(message ->
-                    LOGGER.error("Failed to decode occupations for {} from {}: {}", uuid, filePath, message)
-            ).orElse(List.of());
+            PlayerOccupationData data = decodePlayerData(uuid, filePath, element);
+            List<Occupation> occupations = data.occupations();
 
             RegistryAccess registryAccess = registryAccessSupplier.get();
             for (Occupation occupation : occupations) {
                 occupation.resolveProfession(registryAccess);
             }
 
-            return occupations;
+            return data;
         } catch (IOException e) {
             LOGGER.error("Failed to read occupations for {} from {}", uuid, filePath, e);
-            return List.of();
+            return PlayerOccupationData.empty();
         }
+    }
+
+    private PlayerOccupationData decodePlayerData(UUID uuid, Path filePath, JsonElement element) {
+        DataResult<PlayerOccupationData> decodedResult = PLAYER_OCCUPATION_DATA_CODEC.parse(JsonOps.INSTANCE, element);
+        return decodedResult.resultOrPartial(message ->
+                LOGGER.error("Failed to decode occupations for {} from {}: {}", uuid, filePath, message)
+        ).orElse(PlayerOccupationData.empty());
     }
 
     private Path getPath(UUID uuid) {
@@ -131,4 +145,3 @@ public class UuidOccupationDataLoader extends OccupationDataLoader {
         }
     }
 }
-

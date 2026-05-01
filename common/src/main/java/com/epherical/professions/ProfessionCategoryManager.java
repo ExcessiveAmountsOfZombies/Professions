@@ -33,4 +33,13 @@ public class ProfessionCategoryManager {
     public synchronized @Nullable ProfessionCategory getCategory(ResourceLocation id) {
         return categoryMap.get(id);
     }
+
+    public synchronized @Nullable ResourceLocation getCategoryId(ProfessionCategory category) {
+        for (Map.Entry<ResourceLocation, ProfessionCategory> entry : categoryMap.entrySet()) {
+            if (entry.getValue().equals(category)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
 }

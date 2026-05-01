@@ -39,11 +39,13 @@ public class ClientInitializer {
     public static void handleInput(InputEvent.Key event) {
         if (occupationMenu.consumeClick()) {
             Minecraft mc = Minecraft.getInstance();
-            List<Occupation> activeOccupations = ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(mc.getUser().getProfileId()).getAllOccupations();
-
-            ProfessionCategoryManager categoryManager = ProfessionsCommon.INSTANCE.getCategoryLoader().getCategoryManager();
-            mc.setScreen(new OccupationCategorySelectionScreen(categoryManager.getCategories()));
-            //mc.setScreen(new OccupationMenuScreen(activeOccupations));
+            if (ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(mc.getUser().getProfileId()).getCategory() != null) {
+                List<Occupation> activeOccupations = ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(mc.getUser().getProfileId()).getActiveOccupations();
+                mc.setScreen(new OccupationMenuScreen(activeOccupations));
+            } else {
+                ProfessionCategoryManager categoryManager = ProfessionsCommon.INSTANCE.getCategoryLoader().getCategoryManager();
+                mc.setScreen(new OccupationCategorySelectionScreen(categoryManager.getCategories()));
+            }
         }
     }
 

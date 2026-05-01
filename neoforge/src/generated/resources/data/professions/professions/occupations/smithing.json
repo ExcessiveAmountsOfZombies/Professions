@@ -10,7 +10,7 @@
     ],
     "descriptionColor": "#FFFFFF",
     "display": "Smithing",
-    "icon": "minecraft:stone_pickaxe",
+    "icon": "minecraft:anvil",
     "nameColor": "#84ABAD"
   },
   "settings": {

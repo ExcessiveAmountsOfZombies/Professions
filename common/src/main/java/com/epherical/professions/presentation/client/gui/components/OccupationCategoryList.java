@@ -1,6 +1,7 @@
 package com.epherical.professions.presentation.client.gui.components;
 
 import com.epherical.professions.ProfessionsCommon;
+import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
 import net.minecraft.client.Minecraft;
@@ -9,6 +10,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +20,7 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class OccupationCategoryList extends AbstractOccupationSelector<OccupationCategoryList.Entry> {
 
@@ -112,35 +116,41 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
 
             gfx.drawString(minecraft.font, category.name(), x + 54, y + 5, 0xFFFFFF);
 
-
-            // todo; cache the literal
-           // gfx.drawString(minecraft.font, Component.literal(profession.displayNameRaw()).withStyle(Style.EMPTY.withColor(profession.professionColor())), x + 4, y + 3, 0xFFFFFF);
-
-            float scale = 0.5f;
-            int translationX = x + 54;
-            int translationY = y + 18;
-            gfx.pose().pushPose();
-            gfx.pose().translate(translationX, translationY, 0);
-            gfx.pose().scale(scale, scale, 1);
-            gfx.pose().translate(-translationX, -translationY, 0);
-            gfx.drawString(minecraft.font, String.format("Professions: (%s)", category.professions().size()), translationX, translationY, 0x777777, false);
-            gfx.pose().popPose();
-
-
-            translationX = x + 215;
-            translationY = y + 3;
-            gfx.pose().pushPose();
-            gfx.pose().translate(translationX, translationY, 0);
-            gfx.pose().scale(scale, scale, 1);
-            gfx.pose().translate(-translationX, -translationY, 0);
-            gfx.drawWordWrap(minecraft.font, FormattedText.of(category.description()), translationX, translationY, 172, 0xFFFFFFFF);
-            gfx.pose().popPose();
+            final float scale = 0.5f;
+            drawScaledString(gfx, minecraft.font, String.format("Professions: (%s)", category.professions().size()), x + 54, y + 17, scale, 0x777777, false);
+            renderProfessionColumns(gfx, x + 54, y + 22, scale);
+            drawWrappedScaledString(gfx, minecraft.font, category.description(), x + 215, y + 3, scale, 172, 0xFFFFFFFF);
 
 
 
 
             occupationMenuButton.setPosition(x + 165, y + 3);
             occupationMenuButton.render(gfx, mouseX, mouseY, partialTick);
+        }
+
+        // todo; split this off into a widget class so we can do a tooltip with it.
+        private void renderProfessionColumns(GuiGraphics gfx, int x, int y, float scale) {
+            final int columnWidth = 50;
+            final int maxRows = 3;
+            final int maxVisible = 9;
+
+            for (int i = 0; i < category.professions().size() && i < maxVisible; i++) {
+                int column = i / maxRows;
+                int row = i % maxRows;
+                int drawX = x + (column * (columnWidth));
+                int drawY = y + row * 8;
+
+                HolderLookup.RegistryLookup<Profession> professionRegistryLookup = minecraft.level.registryAccess().lookupOrThrow(ProfessionsCommon.PROFESSION_REGISTRY_KEY);
+                Optional<Holder.Reference<Profession>> professionReference = professionRegistryLookup.get(category.professions().get(i));
+                if (professionReference.isPresent()) {
+                    Holder.Reference<Profession> professionReference1 = professionReference.get();
+                    Profession value = professionReference1.value();
+                    drawScaledString(gfx, minecraft.font, value.displayNameRaw(), drawX + 9, drawY + 1, scale, value.professionColor().getValue(), true);
+                    drawScaled(gfx, drawX, drawY - 1, scale, () -> {
+                        gfx.renderFakeItem(new ItemStack(value.formatting().icon()), 0, 0);
+                    });
+                }
+            }
         }
 
         @Override

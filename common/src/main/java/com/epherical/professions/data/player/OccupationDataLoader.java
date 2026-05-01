@@ -1,10 +1,11 @@
 package com.epherical.professions.data.player;
 
 import com.epherical.professions.model.Occupation;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -18,10 +19,10 @@ public abstract class OccupationDataLoader {
     }
 
 
-    public abstract CompletableFuture<List<Occupation>> load(UUID uuid);
+    public abstract CompletableFuture<PlayerOccupationData> load(UUID uuid);
 
-    public abstract CompletableFuture<Map<UUID, List<Occupation>>> loadAll();
+    public abstract CompletableFuture<Map<UUID, PlayerOccupationData>> loadAll();
 
-    public abstract CompletableFuture<Void> save(UUID uuid, Collection<Occupation> data);
+    public abstract CompletableFuture<Void> save(UUID uuid, Collection<Occupation> occupations, @Nullable ResourceLocation professionCategoryId);
 
 }

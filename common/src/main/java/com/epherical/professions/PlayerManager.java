@@ -4,10 +4,12 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.ProfessionalPlayer;
 import com.epherical.professions.data.config.ProfessionConfig;
 import com.epherical.professions.data.player.OccupationDataLoader;
+import com.epherical.professions.data.player.PlayerOccupationData;
 import com.epherical.professions.model.actions.rewards.Reward;
 import com.epherical.professions.runtime.event.ActionProcessingEvent;
 import com.epherical.professions.runtime.event.ActionValidEvent;
@@ -20,8 +22,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -50,14 +54,16 @@ public class PlayerManager {
 
     private final ActionManager actionManager;
     private OccupationDataLoader occupationDataLoader;
+    private final ProfessionCategoryManager categoryManager;
 
     private final ProfessionEventBus eventBus;
 
-    public PlayerManager(MinecraftServer server, ActionManager actionManager, OccupationDataLoader loader, ProfessionEventBus eventBus) {
+    public PlayerManager(MinecraftServer server, ActionManager actionManager, OccupationDataLoader loader, ProfessionEventBus eventBus, ProfessionCategoryManager categoryManager) {
         this.server = server;
         this.actionManager = actionManager;
         this.occupationDataLoader = loader;
         this.eventBus = eventBus;
+        this.categoryManager = categoryManager;
         executor.scheduleAtFixedRate(this::saveAll, 5, 5, TimeUnit.MINUTES);
     }
 
@@ -67,9 +73,12 @@ public class PlayerManager {
             uuidToUsername.clear();
 
 
-            for (Map.Entry<UUID, List<Occupation>> entry : all.entrySet()) {
+            for (Map.Entry<UUID, PlayerOccupationData> entry : all.entrySet()) {
                 UUID uuid = entry.getKey();
-                players.put(uuid, new ProfessionalPlayer(uuid, entry.getValue()));
+                PlayerOccupationData data = entry.getValue();
+                ProfessionalPlayer player = new ProfessionalPlayer(uuid, data.occupations());
+                applyCategoryData(player, data.professionCategoryId(), uuid);
+                players.put(uuid, player);
 
                 Optional<GameProfile> gameProfile = server.getProfileCache().get(uuid);
                 if (gameProfile.isPresent()) {
@@ -90,8 +99,8 @@ public class PlayerManager {
             UUID uuid = entry.getKey();
             IProfessionalPlayer player = entry.getValue();
             if (player.isDirty()) {
-                saves.add(occupationDataLoader.save(uuid, player.getAllOccupations()));
-                player.setDirty(false);
+                saves.add(occupationDataLoader.save(uuid, player.getAllOccupations(), getCategoryId(player)));
+                player.markDirty(false);
             }
 
         }
@@ -113,9 +122,11 @@ public class PlayerManager {
             pPlayer.setPlayer(player);
         } else {
             // probably new player
-            CompletableFuture<List<Occupation>> load = occupationDataLoader.load(player.getUUID());
-            List<Occupation> join = load.join();
-            pPlayer = new ProfessionalPlayer(join, player, server.registryAccess());
+            CompletableFuture<PlayerOccupationData> load = occupationDataLoader.load(player.getUUID());
+            PlayerOccupationData join = load.join();
+            ProfessionalPlayer professionalPlayer = new ProfessionalPlayer(join.occupations(), player, server.registryAccess());
+            applyCategoryData(professionalPlayer, join.professionCategoryId(), player.getUUID());
+            pPlayer = professionalPlayer;
             players.put(player.getUUID(), pPlayer);
             LOGGER.debug("New player joined! Assigned professions data {}", player.getUUID());
         }
@@ -125,7 +136,7 @@ public class PlayerManager {
         // todo; fire an event
         UUID uuid = player.getUUID();
         IProfessionalPlayer pPlayer = players.get(uuid);
-        CompletableFuture<Void> save = occupationDataLoader.save(uuid, pPlayer.getAllOccupations());
+        CompletableFuture<Void> save = occupationDataLoader.save(uuid, pPlayer.getAllOccupations(), getCategoryId(pPlayer));
         save.thenAccept(a -> LOGGER.debug("Player {} saved their professions data", uuid));
         pPlayer.setPlayer(null);
     }
@@ -133,9 +144,11 @@ public class PlayerManager {
     public void processAction(Player player, ProfessionContext professionContext) {
         IProfessionalPlayer iProfessionalPlayer = professionContext.getParameter(ProfessionParameter.THIS_PLAYER);
         Collection<Action<?>> actions = actionManager.getActionsByType(professionContext.getParameter(ProfessionParameter.ACTION_TYPE));
-        // TODO: Assign a profession category to each player and persist it.
-        // TODO: Let players choose their category.
-        // TODO: Only process/give experience for actions whose profession belongs to the player's selected category.
+
+        if (iProfessionalPlayer.getCategory() == null) {
+            // todo; send a message to the player telling them to select a category
+            return; // do nothing.
+        }
 
         ActionProcessingEvent processingEvent = new ActionProcessingEvent(actions, iProfessionalPlayer, professionContext);
         eventBus.post(processingEvent);
@@ -145,7 +158,7 @@ public class PlayerManager {
 
         for (Action<?> action : actions) {
             Occupation occupation = iProfessionalPlayer.getOccupation(action.getProfession());
-            if (occupation == null || !occupation.isActive()) continue;
+            if (occupation == null || !occupation.isActive() || !iProfessionalPlayer.getCategory().hasProfession(action.getProfession())) continue;
 
             ActionValidEvent actionValidEvent = new ActionValidEvent(action, occupation, iProfessionalPlayer, professionContext);
 
@@ -320,6 +333,28 @@ public class PlayerManager {
 
     public void setOccupationDataLoader(OccupationDataLoader occupationDataLoader) {
         this.occupationDataLoader = occupationDataLoader;
+    }
+
+    private void applyCategoryData(ProfessionalPlayer player, @Nullable ResourceLocation categoryId, UUID uuid) {
+        if (categoryId == null) {
+            return;
+        }
+
+        ProfessionCategory category = categoryManager.getCategory(categoryId);
+        if (category == null) {
+            LOGGER.warn("Player {} has unknown profession category id {} in saved data.", uuid, categoryId);
+            return;
+        }
+
+        player.setCategory(category);
+    }
+
+    private @Nullable ResourceLocation getCategoryId(IProfessionalPlayer player) {
+        ProfessionCategory category = player.getCategory();
+        if (category == null) {
+            return null;
+        }
+        return categoryManager.getCategoryId(category);
     }
 
 }

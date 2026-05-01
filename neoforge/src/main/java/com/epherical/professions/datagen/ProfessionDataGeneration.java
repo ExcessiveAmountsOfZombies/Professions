@@ -1,7 +1,7 @@
 package com.epherical.professions.datagen;
 
-import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.NeoForgeProfessionsMod;
+import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.PackOutput;
@@ -9,14 +9,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.EntityTypeTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.mbertoli.jfep.Parser;
@@ -50,6 +46,7 @@ public final class ProfessionDataGeneration {
                                     "Progress through building projects",
                                     "by placing structural blocks."
                             })
+                            .icon(Items.OAK_PLANKS)
                             .display(Component.literal("Building"))
                             .build());
 
@@ -61,6 +58,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by crafting."
                             })
+                            .icon(Items.CRAFTING_TABLE)
                             .display(Component.literal("Crafting"))
                             .build());
 
@@ -71,6 +69,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by enchanting."
                             })
+                            .icon(Items.ENCHANTING_TABLE)
                             .display(Component.literal("Enchanting"))
                             .build());
 
@@ -81,6 +80,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by farming."
                             })
+                            .icon(Items.WHEAT)
                             .display(Component.literal("Farming"))
                             .build());
 
@@ -91,6 +91,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by fishing."
                             })
+                            .icon(Items.FISHING_ROD)
                             .display(Component.literal("Fishing"))
                             .build());
 
@@ -101,6 +102,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by hunting animals, killing monsters, and exploring"
                             })
+                            .icon(Items.BOW)
                             .display(Component.literal("Hunting"))
                             .build());
 
@@ -111,6 +113,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by farming trees."
                             })
+                            .icon(Items.OAK_SAPLING)
                             .display(Component.literal("Logging"))
                             .build());
 
@@ -121,6 +124,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by mining ores and minerals."
                             })
+                            .icon(Items.DIAMOND_PICKAXE)
                             .display(Component.literal("Mining"))
                             .build());
 
@@ -131,6 +135,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by smithing items."
                             })
+                            .icon(Items.ANVIL)
                             .display(Component.literal("Smithing"))
                             .build());
 

@@ -10,7 +10,7 @@
     ],
     "descriptionColor": "#FFFFFF",
     "display": "Mining",
-    "icon": "minecraft:stone_pickaxe",
+    "icon": "minecraft:diamond_pickaxe",
     "nameColor": "#666E63"
   },
   "settings": {

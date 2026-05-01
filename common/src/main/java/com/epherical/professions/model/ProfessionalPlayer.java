@@ -2,6 +2,7 @@ package com.epherical.professions.model;
 
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.progression.OccupationSlot;
 import net.minecraft.core.Holder;
@@ -10,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,9 @@ import static com.epherical.professions.ProfessionsCommon.PROFESSION_REGISTRY_KE
 public class ProfessionalPlayer implements IProfessionalPlayer {
 
     private final Map<ResourceLocation, Occupation> occupationMap = new HashMap<>();
+
+    @Nullable
+    private ProfessionCategory professionCategory;
 
     private volatile boolean dirty = false;
 
@@ -70,18 +75,24 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     }
 
     @Override
-    public void setDirty(boolean dirty) {
+    public void markDirty(boolean dirty) {
         this.dirty = dirty;
+    }
+
+    @Override
+    public void setCategory(ProfessionCategory category) {
+        this.professionCategory = category;
+        this.dirty = true;
+    }
+
+    @Override
+    public @Nullable ProfessionCategory getCategory() {
+        return professionCategory;
     }
 
     @Override
     public boolean isDirty() {
         return dirty;
-    }
-
-    @Override
-    public <T> void handleAction(ProfessionContext context, Holder<T> holder) {
-
     }
 
     @Override
@@ -91,33 +102,6 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
     @Override
     public boolean isOccupationActive(Holder<Profession> profession) {
-        return false;
-    }
-
-    @Override
-    public boolean joinOccupation(Holder<Profession> profession, OccupationSlot slot) {
-        /*if (!alreadyHasOccupation(profession)) {
-            addOccupationInternal(new Occupation(profession, 0, 1, slot));
-            resetMaxExperience();
-            return true;
-        } else {
-            for (Occupation occupation : allOccupations) {
-                if (occupation.isProfession(profession)) {
-                    occupation.setSlot(slot);
-                    return true;
-                }
-            }
-        }*/
-        return false;
-    }
-
-    @Override
-    public boolean leaveOccupation(Holder<Profession> profession) {
-        return false;
-    }
-
-    @Override
-    public boolean fireFromOccupation(Holder<Profession> profession) {
         return false;
     }
 
@@ -132,17 +116,21 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     }
 
     @Override
-    public List<Occupation> getActiveOccupations() {
-        return List.of();
-    }
-
-    @Override
-    public List<Occupation> getInactiveOccupations() {
-        return List.of();
-    }
-
-    @Override
     public List<Occupation> getAllOccupations() {
         return List.copyOf(occupationMap.values());
+    }
+
+    @Override
+    public List<Occupation> getActiveOccupations() {
+        List<Occupation> activeOccupations = new ArrayList<>();
+        if (professionCategory == null) {
+            return activeOccupations;
+        }
+        for (Occupation value : occupationMap.values()) {
+            if (professionCategory.hasProfession(value.getProfession())) {
+                activeOccupations.add(value);
+            }
+        }
+        return activeOccupations;
     }
 }

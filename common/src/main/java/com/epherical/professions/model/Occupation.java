@@ -78,7 +78,7 @@ public class Occupation {
         if (!professionExists) {
             throw new ProfessionNotActiveException("Profession not active! " + professionKey);
         }
-        player.setDirty(true);
+        player.markDirty(true);
 
         BigDecimal delta = BigDecimal.valueOf(exp);
         this.experience.expProgress = this.experience.expProgress.add(delta);
@@ -91,7 +91,7 @@ public class Occupation {
             throw new ProfessionNotActiveException("Profession not active! " + professionKey);
         }
 
-        player.setDirty(true);
+        player.markDirty(true);
         this.experience.level = level;
         this.experience.expProgress = BigDecimal.ZERO;
 

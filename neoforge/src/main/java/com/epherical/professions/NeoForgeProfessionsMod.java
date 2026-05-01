@@ -87,7 +87,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         super();
 
         actionManager = new ActionManager(null);
-        playerManager = new PlayerManager(null, actionManager, null, getEventBus());
+        playerManager = new PlayerManager(null, actionManager, null, getEventBus(), getCategoryManager());
 
         mod = this;
         PlatformBootstrap.init(NEO_FORGE_REGISTRAR_BACKEND);
@@ -177,10 +177,9 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
             // MVP for NF release
             // todo; build a better notification system (chat, pop up, toast, announcements)
-            // todo; use category selection data when processing player experience rewards
+            // todo; use OnDatapackSyncEvent - probably a lot of client problems rn
 
             // todo; we should improve the config next
-            // todo; fix the professionalplayer api class
             // todo; back buttons in the UI
             // todo; add commands back
 
@@ -251,8 +250,6 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                             .addParameter(ProfessionParameter.THIS_BLOCK, blockState)
                             .addParameter(ProfessionParameter.THIS_HOLDER, blockState.getBlockHolder());
                     mod.playerManager.processAction(player, builder.build());
-
-                    // todo; use OnDatapackSyncEvent
                 }
             }
         }

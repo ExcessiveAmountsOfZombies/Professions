@@ -1,10 +1,11 @@
 package com.epherical.professions.api;
 
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.core.progression.OccupationSlot;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
@@ -20,32 +21,34 @@ public interface IProfessionalPlayer {
 
     void setPlayer(@Nullable ServerPlayer player);
 
-    void setDirty(boolean dirty);
+    void markDirty(boolean dirty);
+
+    void setCategory(ProfessionCategory category);
+
+    @Nullable
+    ProfessionCategory getCategory();
 
     boolean isDirty();
-
-
-    <T> void handleAction(ProfessionContext context, Holder<T> holder);
 
     boolean alreadyHasOccupation(Holder<Profession> profession);
 
     boolean isOccupationActive(Holder<Profession> profession);
 
-    boolean joinOccupation(Holder<Profession> profession, OccupationSlot slot);
-
-    boolean leaveOccupation(Holder<Profession> profession);
-
-    boolean fireFromOccupation(Holder<Profession> profession);
-
+    @Nullable
     Occupation getOccupation(Holder<Profession> profession);
 
     void updateOccupationPerks();
 
-    List<Occupation> getActiveOccupations();
-
-    List<Occupation> getInactiveOccupations();
-
+    /**
+     * @return Will return ALL occupations, regardless of them being active or not. Mainly to make sure they can be saved.
+     */
     List<Occupation> getAllOccupations();
+
+    /**
+     *
+     * @return Only returns the active occupations
+     */
+    List<Occupation> getActiveOccupations();
 
 
 }

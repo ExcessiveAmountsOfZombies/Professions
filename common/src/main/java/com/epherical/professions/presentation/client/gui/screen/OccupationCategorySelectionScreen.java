@@ -64,7 +64,7 @@ public class OccupationCategorySelectionScreen extends Screen {
                 .build();
 
         confirmSelection = OccupationMenuButton.omButton(Component.literal("Confirm Selection"), pButton -> {
-            // todo; we need to finish this and assign the category to the profession player
+            ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(minecraft.getUser().getProfileId()).setCategory(occupationInfoList.getProfessionCategory());
             minecraft.setScreen(null);
         }).pos(leftPos + 220, topPos + 211).size(90, 16)
                 .build();

@@ -10,7 +10,7 @@
     ],
     "descriptionColor": "#FFFFFF",
     "display": "Fishing",
-    "icon": "minecraft:stone_pickaxe",
+    "icon": "minecraft:fishing_rod",
     "nameColor": "#0A91C7"
   },
   "settings": {

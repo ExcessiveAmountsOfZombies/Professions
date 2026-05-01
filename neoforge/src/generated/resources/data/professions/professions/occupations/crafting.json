@@ -10,7 +10,7 @@
     ],
     "descriptionColor": "#FFFFFF",
     "display": "Crafting",
-    "icon": "minecraft:stone_pickaxe",
+    "icon": "minecraft:crafting_table",
     "nameColor": "#F2A100"
   },
   "settings": {

@@ -10,7 +10,7 @@
     ],
     "descriptionColor": "#FFFFFF",
     "display": "Enchanting",
-    "icon": "minecraft:stone_pickaxe",
+    "icon": "minecraft:enchanting_table",
     "nameColor": "#C9008D"
   },
   "settings": {

@@ -1,8 +1,10 @@
 package com.epherical.professions.client;
 
 
+import com.epherical.professions.ProfessionCategoryManager;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.model.Occupation;
+import com.epherical.professions.presentation.client.gui.screen.OccupationCategorySelectionScreen;
 import com.epherical.professions.presentation.client.gui.screen.OccupationMenuScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -38,7 +40,10 @@ public class ClientInitializer {
         if (occupationMenu.consumeClick()) {
             Minecraft mc = Minecraft.getInstance();
             List<Occupation> activeOccupations = ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(mc.getUser().getProfileId()).getAllOccupations();
-            mc.setScreen(new OccupationMenuScreen(activeOccupations));
+
+            ProfessionCategoryManager categoryManager = ProfessionsCommon.INSTANCE.getCategoryLoader().getCategoryManager();
+            mc.setScreen(new OccupationCategorySelectionScreen(categoryManager.getCategories()));
+            //mc.setScreen(new OccupationMenuScreen(activeOccupations));
         }
     }
 

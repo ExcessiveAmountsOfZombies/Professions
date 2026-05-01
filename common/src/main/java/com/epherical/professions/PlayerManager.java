@@ -133,6 +133,9 @@ public class PlayerManager {
     public void processAction(Player player, ProfessionContext professionContext) {
         IProfessionalPlayer iProfessionalPlayer = professionContext.getParameter(ProfessionParameter.THIS_PLAYER);
         Collection<Action<?>> actions = actionManager.getActionsByType(professionContext.getParameter(ProfessionParameter.ACTION_TYPE));
+        // TODO: Assign a profession category to each player and persist it.
+        // TODO: Let players choose their category.
+        // TODO: Only process/give experience for actions whose profession belongs to the player's selected category.
 
         ActionProcessingEvent processingEvent = new ActionProcessingEvent(actions, iProfessionalPlayer, professionContext);
         eventBus.post(processingEvent);

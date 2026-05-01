@@ -2,6 +2,7 @@ package com.epherical.professions;
 
 import com.epherical.professions.data.config.CommonConfig;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.registries.CategoryLoad3;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.bootstrap.Actions;
@@ -35,7 +36,9 @@ public abstract class ProfessionsCommon {
 
 
     protected ActionLoad3 actionLoader;
+    protected CategoryLoad3 categoryLoader;
     protected CommonConfig config;
+    protected final ProfessionCategoryManager categoryManager;
 
     protected final ProfessionEventBus eventBus;
 
@@ -45,6 +48,7 @@ public abstract class ProfessionsCommon {
         config = new CommonConfig(false, "professions.conf", getModDir());
         config.loadConfig();
         this.eventBus = new ProfessionEventBus();
+        this.categoryManager = new ProfessionCategoryManager();
     }
 
     public static void register() {
@@ -62,8 +66,20 @@ public abstract class ProfessionsCommon {
         return eventBus;
     }
 
+    public ProfessionCategoryManager getCategoryManager() {
+        return categoryManager;
+    }
+
     public ActionLoad3 getActionLoader() {
         return actionLoader;
+    }
+
+    public CategoryLoad3 getCategoryLoader() {
+        return categoryLoader;
+    }
+
+    public void setCategoryLoader(CategoryLoad3 categoryLoader) {
+        this.categoryLoader = categoryLoader;
     }
 
     public abstract PlayerManager getPlayerManager();

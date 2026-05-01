@@ -12,6 +12,7 @@ import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
+import com.epherical.professions.registries.CategoryLoad3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -171,16 +172,20 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         public static void onDataReload(AddReloadListenerEvent event) {
             ActionLoad3 loader = new ActionLoad3(mod.actionManager);
             event.addListener(new NeoForgeActionReloadListener(loader));
+            CategoryLoad3 categoryLoader = new CategoryLoad3(mod.getCategoryManager());
+            event.addListener(new NeoForgeCategoryReloadListener(categoryLoader));
+
+            // MVP for NF release
+            // todo; build a better notification system (chat, pop up, toast, announcements)
+            // todo; use category selection data when processing player experience rewards
 
             // todo; we should improve the config next
-            // todo; build a better notification system (chat, pop up, toast, announcements)
-            // todo; re-add the rest of the events back in.
+            // todo; fix the professionalplayer api class
+            // todo; back buttons in the UI
+            // todo; add commands back
 
-
-            // todo; wednesday:
-            //  Implement the other events
-            //  Write data providers
             mod.setActionLoader(loader);
+            mod.setCategoryLoader(categoryLoader);
             REGISTRY_ACCESS = event.getRegistryAccess();
         }
 

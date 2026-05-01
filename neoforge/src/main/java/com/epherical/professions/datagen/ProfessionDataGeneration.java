@@ -155,6 +155,7 @@ public final class ProfessionDataGeneration {
                 java.util.Set.of(ProfessionsCommon.MOD_ID)
         );
         event.getGenerator().addProvider(true, professionsProvider);
+        event.getGenerator().addProvider(event.includeServer(), new CategoryDataProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new MinerActionProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new LoggingActionProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new FarmingActionProvider(out, professionsProvider.getRegistryProvider()));

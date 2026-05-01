@@ -1,7 +1,6 @@
 package com.epherical.professions.presentation.client.gui.widget;
 
 import com.epherical.professions.ProfessionsCommon;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -17,9 +16,12 @@ public class OccupationMenuButton extends Button {
 
 
     private static final WidgetSprites SPRITES = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_menu_button"),
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_menu_button_disabled"),
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_menu_button_highlighted"));
+            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button"),
+            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_disabled"),
+            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_highlighted"));
+
+    private WidgetSprites buttonSprites;
+    private ResourceLocation icon;
 
 
     public OccupationMenuButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, Button.OnPress pOnPress, Button.CreateNarration pCreateNarration) {
@@ -29,6 +31,8 @@ public class OccupationMenuButton extends Button {
     protected OccupationMenuButton(Builder builder) {
         this(builder.x, builder.y, builder.width, builder.height, builder.message, builder.onPress, builder.createNarration);
         this.setTooltip(builder.tooltip);
+        this.buttonSprites = builder.sprites;
+        this.icon = builder.icon;
     }
 
     public static Builder omButton(Component message, Button.OnPress onPress) {
@@ -39,12 +43,18 @@ public class OccupationMenuButton extends Button {
     @Override
     protected void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         Minecraft minecraft = Minecraft.getInstance();
-        pGuiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
-        RenderSystem.enableBlend();
-        RenderSystem.enableDepthTest();
 
-        pGuiGraphics.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-        pGuiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        if (buttonSprites != null) {
+            pGuiGraphics.blitSprite(buttonSprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        } else {
+            pGuiGraphics.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        }
+
+        if (icon != null) {
+            pGuiGraphics.blitSprite(icon, this.getX(), this.getY(), 18, 18);
+        }
+
+
         int i = this.active ? 0xFFFFFF : 0xA0A0A0;
         this.renderString(pGuiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
     }
@@ -57,6 +67,8 @@ public class OccupationMenuButton extends Button {
         private int y;
         private int width = Button.DEFAULT_WIDTH;
         private int height = Button.DEFAULT_HEIGHT;
+        private WidgetSprites sprites;
+        private ResourceLocation icon;
         private Button.CreateNarration createNarration = DEFAULT_NARRATION;
 
         public Builder(Component message, Button.OnPress onPress) {
@@ -78,6 +90,16 @@ public class OccupationMenuButton extends Button {
         public Builder size(int width, int height) {
             this.width = width;
             this.height = height;
+            return this;
+        }
+
+        public Builder background(WidgetSprites pBackground) {
+            this.sprites = pBackground;
+            return this;
+        }
+
+        public Builder icon(ResourceLocation pIcon) {
+            this.icon = pIcon;
             return this;
         }
 

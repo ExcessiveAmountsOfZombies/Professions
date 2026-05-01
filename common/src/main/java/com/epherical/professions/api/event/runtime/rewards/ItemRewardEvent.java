@@ -1,4 +1,4 @@
-package com.epherical.professions.runtime.event.rewards;
+package com.epherical.professions.api.event.runtime.rewards;
 
 
 import com.epherical.professions.ProfessionsCommon;

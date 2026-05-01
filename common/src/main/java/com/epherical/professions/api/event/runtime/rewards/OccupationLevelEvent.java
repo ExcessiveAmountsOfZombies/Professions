@@ -1,10 +1,10 @@
-package com.epherical.professions.runtime.event.rewards;
+package com.epherical.professions.api.event.runtime.rewards;
 
 import com.epherical.professions.ProfessionsCommon;
+import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.EventKey;
-import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.runtime.event.AbstractProfessionEvent;
+import com.epherical.professions.api.event.runtime.AbstractProfessionEvent;
 import net.minecraft.resources.ResourceLocation;
 
 public class OccupationLevelEvent extends AbstractProfessionEvent {
@@ -12,15 +12,21 @@ public class OccupationLevelEvent extends AbstractProfessionEvent {
     public static final EventKey<OccupationLevelEvent> KEY =
             new EventKey<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation_level"), OccupationLevelEvent.class);
     private final Occupation occupation;
+    private final IProfessionalPlayer player;
     private final int oldLevel;
     private final int newLevel;
 
 
-    public OccupationLevelEvent(Occupation occupation, int oldLevel, int newLevel) {
+    public OccupationLevelEvent(Occupation occupation, int oldLevel, int newLevel, IProfessionalPlayer player) {
         super(KEY);
         this.occupation = occupation;
         this.oldLevel = oldLevel;
         this.newLevel = newLevel;
+        this.player = player;
+    }
+
+    public IProfessionalPlayer getPlayer() {
+        return player;
     }
 
     public Occupation getOccupation() {

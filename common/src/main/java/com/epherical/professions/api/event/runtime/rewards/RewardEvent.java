@@ -1,11 +1,11 @@
-package com.epherical.professions.runtime.event.rewards;
+package com.epherical.professions.api.event.runtime.rewards;
 
 import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.api.event.ProfessionEvent;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.actions.Action;
-import com.epherical.professions.runtime.event.AbstractCancellableProfessionEvent;
+import com.epherical.professions.api.event.runtime.AbstractCancellableProfessionEvent;
 
 public abstract class RewardEvent extends AbstractCancellableProfessionEvent {
 

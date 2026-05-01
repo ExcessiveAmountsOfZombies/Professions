@@ -10,6 +10,9 @@ import com.epherical.professions.data.player.UuidOccupationDataLoader;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.networking.NetworkPayloadDispatcher;
+import com.epherical.professions.networking.S2CExperienceGainPayload;
+import com.epherical.professions.presentation.client.notification.ExperienceNotificationHandler;
 import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
 import com.epherical.professions.registries.CategoryLoad3;
@@ -51,6 +54,9 @@ import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -86,6 +92,8 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
     public NeoForgeProfessionsMod(IEventBus eventBus) {
         super();
 
+        NetworkPayloadDispatcher.setPayloadSender(PacketDistributor::sendToPlayer);
+
         actionManager = new ActionManager(null);
         playerManager = new PlayerManager(null, actionManager, null, getEventBus(), getCategoryManager());
 
@@ -109,6 +117,14 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
     @EventBusSubscriber(modid = ProfessionsCommon.MOD_ID)
     public static class EventHandler {
+
+        @SubscribeEvent
+        public static void registerNetworkPayloads(final RegisterPayloadHandlersEvent event) {
+            final PayloadRegistrar registrar = event.registrar("1");
+            registrar.playToClient(S2CExperienceGainPayload.TYPE, S2CExperienceGainPayload.STREAM_CODEC,
+                    (payload, context) -> ExperienceNotificationHandler.handle(payload));
+        }
+
 
         @SubscribeEvent
         public static void serverStarting(ServerStartingEvent event) {

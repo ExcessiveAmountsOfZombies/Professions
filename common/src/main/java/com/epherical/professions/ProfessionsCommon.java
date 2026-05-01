@@ -1,7 +1,10 @@
 package com.epherical.professions;
 
+import com.epherical.professions.api.event.EventPhase;
 import com.epherical.professions.data.config.CommonConfig;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.listener.GainExpNotificationListener;
+import com.epherical.professions.listener.LevelNotificationListener;
 import com.epherical.professions.registries.CategoryLoad3;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
@@ -10,7 +13,9 @@ import com.epherical.professions.bootstrap.Conditions;
 import com.epherical.professions.bootstrap.Rewards;
 import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.registries.ActionLoad3;
-import com.epherical.professions.runtime.event.ProfessionEventBus;
+import com.epherical.professions.api.event.runtime.ProfessionEventBus;
+import com.epherical.professions.api.event.runtime.rewards.OccupationExperienceEvent;
+import com.epherical.professions.api.event.runtime.rewards.OccupationLevelEvent;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -48,6 +53,10 @@ public abstract class ProfessionsCommon {
         config = new CommonConfig(false, "professions.conf", getModDir());
         config.loadConfig();
         this.eventBus = new ProfessionEventBus();
+
+        this.eventBus.register(OccupationLevelEvent.KEY, EventPhase.RESOLVE, new LevelNotificationListener());
+        this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.AFTER_APPLY, ProfessionEventBus.LAST, new GainExpNotificationListener());
+
         this.categoryManager = new ProfessionCategoryManager();
     }
 

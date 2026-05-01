@@ -1,4 +1,4 @@
-package com.epherical.professions.runtime.event;
+package com.epherical.professions.api.event.runtime;
 
 import com.epherical.professions.api.event.CancellableProfessionEvent;
 import com.epherical.professions.api.event.EventKey;

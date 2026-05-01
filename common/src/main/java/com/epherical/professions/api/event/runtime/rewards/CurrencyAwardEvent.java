@@ -1,11 +1,11 @@
-package com.epherical.professions.runtime.event.rewards;
+package com.epherical.professions.api.event.runtime.rewards;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.core.context.ProfessionContext;
-import com.epherical.professions.runtime.event.AbstractProfessionEvent;
+import com.epherical.professions.api.event.runtime.AbstractProfessionEvent;
 import net.minecraft.resources.ResourceLocation;
 
 public class CurrencyAwardEvent extends AbstractProfessionEvent {

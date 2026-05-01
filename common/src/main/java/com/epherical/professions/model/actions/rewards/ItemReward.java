@@ -5,7 +5,7 @@ import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.bootstrap.Rewards;
 import com.epherical.professions.model.actions.Action;
-import com.epherical.professions.runtime.event.rewards.ItemRewardEvent;
+import com.epherical.professions.api.event.runtime.rewards.ItemRewardEvent;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.Component;

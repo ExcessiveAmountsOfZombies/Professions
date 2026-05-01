@@ -8,8 +8,8 @@ import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.bootstrap.Rewards;
 import com.epherical.professions.domain.exception.ProfessionNotActiveException;
-import com.epherical.professions.runtime.event.rewards.OccupationExperienceEvent;
-import com.epherical.professions.runtime.event.rewards.OccupationLevelEvent;
+import com.epherical.professions.api.event.runtime.rewards.OccupationExperienceEvent;
+import com.epherical.professions.api.event.runtime.rewards.OccupationLevelEvent;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -50,7 +50,7 @@ public record OccupationExperience(double expAmount) implements Reward<Occupatio
         int currentLevel = occupation.getLevel();
         try {
             if (occupation.addExp(reward.getNewAmount(), player)) {
-                ProfessionsCommon.INSTANCE.getEventBus().post(new OccupationLevelEvent(occupation, currentLevel, occupation.getLevel()));
+                ProfessionsCommon.INSTANCE.getEventBus().post(new OccupationLevelEvent(occupation, currentLevel, occupation.getLevel(), player));
             }
         } catch (ProfessionNotActiveException ignored) {
             ProfessionsCommon.LOG.error("Profession wasn't active yet tried to add EXP to it. {}", occupation.getProfession());

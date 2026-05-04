@@ -14,9 +14,11 @@ public final class PlayerDataSyncPayloadHandler {
     public static void handle(S2CPlayerDataSyncPayload payload) {
         Minecraft.getInstance().doRunTask(() -> {
             Minecraft minecraft = Minecraft.getInstance();
-            RegistryAccess registryAccess = minecraft.level != null ? minecraft.level.registryAccess() : null;
-            ResourceLocation categoryId = payload.categoryId().orElse(null);
-            ProfessionsCommon.INSTANCE.getPlayerManager().applyClientSync(payload.playerId(), payload.occupations(), categoryId, payload.actions(), registryAccess);
+            if (!minecraft.isSingleplayer()) {
+                RegistryAccess registryAccess = minecraft.level != null ? minecraft.level.registryAccess() : null;
+                ResourceLocation categoryId = payload.categoryId().orElse(null);
+                ProfessionsCommon.INSTANCE.getPlayerManager().applyClientSync(payload.playerId(), payload.occupations(), categoryId, payload.actions(), registryAccess);
+            }
         });
     }
 }

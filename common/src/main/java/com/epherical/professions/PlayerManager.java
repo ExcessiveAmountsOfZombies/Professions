@@ -53,7 +53,7 @@ public class PlayerManager {
     private final Map<UUID, String> uuidToUsername = Maps.newHashMap();
 
 
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService executor;
 
 
     private MinecraftServer server;
@@ -72,6 +72,7 @@ public class PlayerManager {
     }
 
     public void startExecutor() {
+        executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(this::saveAll, 5, 5, TimeUnit.MINUTES);
     }
 

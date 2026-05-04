@@ -2,6 +2,8 @@ package com.epherical.professions.presentation.client.gui.screen;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.ProfessionCategory;
+import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
+import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.presentation.client.gui.components.OccupationCategoryList;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
 import net.minecraft.client.gui.Font;
@@ -13,9 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class OccupationCategorySelectionScreen extends Screen {
 
@@ -64,7 +64,13 @@ public class OccupationCategorySelectionScreen extends Screen {
                 .build();
 
         confirmSelection = OccupationMenuButton.omButton(Component.literal("Confirm Selection"), pButton -> {
-            ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(minecraft.getUser().getProfileId()).setCategory(occupationInfoList.getProfessionCategory());
+            ProfessionCategory selectedCategory = occupationInfoList.getProfessionCategory();
+            if (selectedCategory != null) {
+                ResourceLocation categoryId = ProfessionsCommon.INSTANCE.getCategoryManager().getCategoryId(selectedCategory);
+                if (categoryId != null) {
+                    NetworkPayloadDispatcher.sendToServer(new C2SCategorySelectionPayload(categoryId));
+                }
+            }
             minecraft.setScreen(null);
         }).pos(leftPos + 220, topPos + 211).size(90, 16)
                 .build();

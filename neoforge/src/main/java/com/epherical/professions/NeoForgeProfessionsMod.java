@@ -1,6 +1,7 @@
 package com.epherical.professions;
 
 
+import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.context.ProfessionContext;
@@ -11,8 +12,15 @@ import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
-import com.epherical.professions.networking.S2CExperienceGainPayload;
-import com.epherical.professions.presentation.client.notification.ExperienceNotificationHandler;
+import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
+import com.epherical.professions.networking.client.ExperienceOccupationSyncHandler;
+import com.epherical.professions.networking.client.ExperienceNotificationHandler;
+import com.epherical.professions.networking.client.PlayerDataSyncPayloadHandler;
+import com.epherical.professions.networking.client.ProfessionCategorySyncPayloadHandler;
+import com.epherical.professions.networking.server.CategorySelectionPayloadHandler;
+import com.epherical.professions.networking.server.S2CCategorySyncPayload;
+import com.epherical.professions.networking.server.S2CExperienceGainPayload;
+import com.epherical.professions.networking.server.S2CPlayerDataSyncPayload;
 import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
 import com.epherical.professions.registries.CategoryLoad3;
@@ -40,6 +48,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.brewing.PlayerBrewedPotionEvent;
 import net.neoforged.neoforge.event.entity.living.AnimalTameEvent;
@@ -67,6 +76,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 
 @Mod(ProfessionsCommon.MOD_ID)
@@ -93,9 +103,10 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         super();
 
         NetworkPayloadDispatcher.setPayloadSender(PacketDistributor::sendToPlayer);
+        NetworkPayloadDispatcher.setServerboundPayloadSender(PacketDistributor::sendToServer);
 
         actionManager = new ActionManager(null);
-        playerManager = new PlayerManager(null, actionManager, null, getEventBus(), getCategoryManager());
+        playerManager = new PlayerManager(actionManager, null, getEventBus(), getCategoryManager());
 
         mod = this;
         PlatformBootstrap.init(NEO_FORGE_REGISTRAR_BACKEND);
@@ -114,6 +125,11 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         return FMLPaths.CONFIGDIR.get().toFile();
     }
 
+    @Override
+    public ActionManager getActionManager() {
+        return actionManager;
+    }
+
 
     @EventBusSubscriber(modid = ProfessionsCommon.MOD_ID)
     public static class EventHandler {
@@ -122,7 +138,19 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         public static void registerNetworkPayloads(final RegisterPayloadHandlersEvent event) {
             final PayloadRegistrar registrar = event.registrar("1");
             registrar.playToClient(S2CExperienceGainPayload.TYPE, S2CExperienceGainPayload.STREAM_CODEC,
-                    (payload, context) -> ExperienceNotificationHandler.handle(payload));
+                    (payload, context) -> {
+                        ExperienceOccupationSyncHandler.handle(payload);
+                        ExperienceNotificationHandler.handle(payload);
+                    });
+            registrar.playToClient(S2CCategorySyncPayload.TYPE, S2CCategorySyncPayload.STREAM_CODEC,
+                    (payload, context) -> ProfessionCategorySyncPayloadHandler.handle(payload));
+            registrar.playToClient(S2CPlayerDataSyncPayload.TYPE, S2CPlayerDataSyncPayload.STREAM_CODEC,
+                    (payload, context) -> PlayerDataSyncPayloadHandler.handle(payload));
+            registrar.playToServer(C2SCategorySelectionPayload.TYPE, C2SCategorySelectionPayload.STREAM_CODEC, (payload, context) -> {
+                if (context.player() instanceof ServerPlayer serverPlayer) {
+                    context.enqueueWork(() -> CategorySelectionPayloadHandler.handle(serverPlayer, payload));
+                }
+            });
         }
 
 
@@ -131,6 +159,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             Path resolve = event.getServer().getWorldPath(LevelResource.ROOT).resolve("professions/playerdata");
             mod.playerManager.setOccupationDataLoader(new UuidOccupationDataLoader(resolve, () -> REGISTRY_ACCESS));
             mod.playerManager.setServer(event.getServer());
+            mod.playerManager.startExecutor();
         }
 
 
@@ -147,6 +176,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         @SubscribeEvent
         public static void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
             if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+
                 mod.playerManager.playerJoined(serverPlayer);
             }
         }
@@ -167,6 +197,31 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                     Profession.CODEC // todo; set to null. nmaybe
                     //professionRegistryBuilder -> professionRegistryBuilder.sync(true).create()
             );
+        }
+
+        @SubscribeEvent
+        public static void onDataPackSync(OnDatapackSyncEvent event) {
+            event.getRelevantPlayers().forEach(player -> {
+                IProfessionalPlayer professionalPlayer = mod.playerManager.getPlayer(player.getUUID());
+                if (professionalPlayer == null) {
+                    mod.playerManager.playerJoined(player);
+                    professionalPlayer = mod.playerManager.getPlayer(player.getUUID());
+                }
+
+                if (professionalPlayer == null) {
+                    return;
+                }
+
+                NetworkPayloadDispatcher.sendToPlayer(player, new S2CCategorySyncPayload(mod.getCategoryManager().getCategoryMap()));
+
+                S2CPlayerDataSyncPayload payload = new S2CPlayerDataSyncPayload(
+                        player.getUUID(),
+                        professionalPlayer.getAllOccupations(),
+                        Optional.ofNullable(mod.playerManager.getCategoryIdFor(professionalPlayer)),
+                        mod.playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory())
+                );
+                NetworkPayloadDispatcher.sendToPlayer(player, payload);
+            });
         }
 
 
@@ -193,7 +248,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
             // MVP for NF release
             // todo; build a better notification system (chat, pop up, toast, announcements)
-            // todo; use OnDatapackSyncEvent - probably a lot of client problems rn
+            // todo; we need a separate playerManager for the client code... yuck it works but I'll improve it.
 
             // todo; we should improve the config next
             // todo; back buttons in the UI

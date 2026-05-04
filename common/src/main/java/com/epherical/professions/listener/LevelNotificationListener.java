@@ -21,8 +21,7 @@ public class LevelNotificationListener implements EventListener<OccupationLevelE
     public void handle(OccupationLevelEvent event) {
         IProfessionalPlayer player = event.getPlayer();
 
-        if (player.getPlayer() != null) {
-            ServerPlayer serverPlayer =  player.getPlayer();
+        if (player.getPlayer() instanceof  ServerPlayer serverPlayer) {
             HolderLookup.RegistryLookup<SoundEvent> soundEventRegistryLookup = serverPlayer.serverLevel().registryAccess().lookupOrThrow(Registries.SOUND_EVENT);
             Optional<Holder.Reference<SoundEvent>> soundEventReference = soundEventRegistryLookup.get(ResourceKey.create(Registries.SOUND_EVENT, event.getOccupation().getProfession().value().settings().levelUpSound()));
             soundEventReference.ifPresent(soundEvent -> {

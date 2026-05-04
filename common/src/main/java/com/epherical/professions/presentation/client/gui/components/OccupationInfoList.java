@@ -38,10 +38,10 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
 
 
         // todo; this will need a specific place. things will get serialized to the player in some way so we probably wont be able to call it like this.
-        Collection<Action<?>> actionsByProfession = ProfessionsCommon.INSTANCE.getActionLoader().getActionManager().getActionsByProfession(occupation.getProfession());
+        Collection<Action<?>> actionsByProfession = ProfessionsCommon.INSTANCE.getActionManager().getActionsByProfession(occupation.getProfession());
         List<EntryItem> items = new ArrayList<>();
         for (Action<?> action : actionsByProfession) {
-            Collection<Holder<?>> actionsByValue = ProfessionsCommon.INSTANCE.getActionLoader().getActionManager().getValuesForAction(action);
+            Collection<Holder<?>> actionsByValue = ProfessionsCommon.INSTANCE.getActionManager().getValuesForAction(action);
             for (Holder<?> holder : actionsByValue) {
                 EntryItem item = EntryItem.create(holder, action);
                 if (item != null) {

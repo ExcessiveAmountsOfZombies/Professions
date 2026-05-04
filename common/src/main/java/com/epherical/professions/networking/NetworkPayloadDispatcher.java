@@ -8,6 +8,7 @@ import java.util.Objects;
 public final class NetworkPayloadDispatcher {
 
     private static PayloadSender payloadSender = (player, payload) -> {};
+    private static ServerboundPayloadSender serverboundPayloadSender = payload -> {};
 
     private NetworkPayloadDispatcher() {
     }
@@ -20,8 +21,21 @@ public final class NetworkPayloadDispatcher {
         payloadSender.sendToPlayer(player, payload);
     }
 
+    public static void setServerboundPayloadSender(ServerboundPayloadSender serverboundPayloadSender) {
+        NetworkPayloadDispatcher.serverboundPayloadSender = Objects.requireNonNull(serverboundPayloadSender);
+    }
+
+    public static void sendToServer(CustomPacketPayload payload) {
+        serverboundPayloadSender.sendToServer(payload);
+    }
+
     @FunctionalInterface
     public interface PayloadSender {
         void sendToPlayer(ServerPlayer player, CustomPacketPayload payload);
+    }
+
+    @FunctionalInterface
+    public interface ServerboundPayloadSender {
+        void sendToServer(CustomPacketPayload payload);
     }
 }

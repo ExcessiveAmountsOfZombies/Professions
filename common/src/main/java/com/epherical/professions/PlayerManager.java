@@ -1,28 +1,30 @@
 package com.epherical.professions;
 
 import com.epherical.professions.api.IProfessionalPlayer;
-import com.epherical.professions.model.actions.Action;
-import com.epherical.professions.core.context.ProfessionContext;
-import com.epherical.professions.core.context.ProfessionParameter;
-import com.epherical.professions.core.ProfessionCategory;
-import com.epherical.professions.model.Occupation;
-import com.epherical.professions.model.ProfessionalPlayer;
-import com.epherical.professions.data.config.ProfessionConfig;
-import com.epherical.professions.data.player.OccupationDataLoader;
-import com.epherical.professions.data.player.PlayerOccupationData;
-import com.epherical.professions.model.actions.rewards.Reward;
 import com.epherical.professions.api.event.runtime.ActionProcessingEvent;
 import com.epherical.professions.api.event.runtime.ActionValidEvent;
 import com.epherical.professions.api.event.runtime.ProfessionEventBus;
 import com.epherical.professions.api.event.runtime.rewards.RewardEvent;
+import com.epherical.professions.core.Profession;
+import com.epherical.professions.core.ProfessionCategory;
+import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.data.player.OccupationDataLoader;
+import com.epherical.professions.data.player.PlayerOccupationData;
+import com.epherical.professions.domain.exception.ProfessionNotActiveException;
+import com.epherical.professions.model.Occupation;
+import com.epherical.professions.model.ProfessionalPlayer;
+import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.model.actions.rewards.Reward;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.logging.LogUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
@@ -30,14 +32,18 @@ import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static com.epherical.professions.ProfessionsCommon.PROFESSION_REGISTRY_KEY;
 
 public class PlayerManager {
 
@@ -58,12 +64,14 @@ public class PlayerManager {
 
     private final ProfessionEventBus eventBus;
 
-    public PlayerManager(MinecraftServer server, ActionManager actionManager, OccupationDataLoader loader, ProfessionEventBus eventBus, ProfessionCategoryManager categoryManager) {
-        this.server = server;
+    public PlayerManager(ActionManager actionManager, OccupationDataLoader loader, ProfessionEventBus eventBus, ProfessionCategoryManager categoryManager) {
         this.actionManager = actionManager;
         this.occupationDataLoader = loader;
         this.eventBus = eventBus;
         this.categoryManager = categoryManager;
+    }
+
+    public void startExecutor() {
         executor.scheduleAtFixedRate(this::saveAll, 5, 5, TimeUnit.MINUTES);
     }
 
@@ -173,136 +181,6 @@ public class PlayerManager {
         }
     }
 
-    /*public void joinOccupation(@Nullable IProfessionalPlayer player, @Nullable Profession profession, OccupationSlot slot, ServerPlayer serverPlayer) {
-        if (profession == null) {
-            serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-            return;
-        }
-
-        if (!hasPermission(serverPlayer, profession)) {
-            serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.error.no_permission").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-            return;
-        }
-
-        if (player == null) {
-            return;
-        }
-
-        if (player.alreadyHasOccupation(profession) && player.isOccupationActive(profession)) {
-            serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.error.already_joined").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-            return;
-        }
-
-        if (ProfessionConfig.maxOccupations != 0 && player.getActiveOccupations().size() >= ProfessionConfig.maxOccupations) {
-            serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.error.max_occupations").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-            return;
-        }
-
-        if (!player.joinOccupation(profession, slot)) {
-            return;
-        }
-        ProfessionPlatform.platform.professionJoinEvent(player, profession, slot, player.getPlayer());
-        serverPlayer.sendSystemMessage(Component.translatable("professions.command.join.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
-
-        storage.saveUser(player);
-    }*/
-
-    /*public boolean leaveOccupation(@Nullable IProfessionalPlayer player, @Nullable Profession profession, ServerPlayer serverPlayer) {
-        if (profession == null) {
-            serverPlayer.sendSystemMessage(Component.translatable("professions.command.leave.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-            return false;
-        }
-
-        if (ProfessionPlatform.platform.isClientEnvironment() && ProfessionConfig.preventLeavingProfession && ProfessionPlatform.platform.checkPermission(serverPlayer, "professions.bypass.leave_prevention")) {
-            // todo translations
-            serverPlayer.sendSystemMessage(Component.translatable("Allowing you to leave profession, but only because cheats are enabled.").setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
-            return false;
-
-        }
-
-        if (ProfessionConfig.preventLeavingProfession && !ProfessionPlatform.platform.checkPermission(serverPlayer, "professions.bypass.leave_prevention")) {
-            serverPlayer.sendSystemMessage(Component.translatable("professions.command.leave.error.disabled_in_config").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-            return false;
-        }
-
-        if (player == null) {
-            return false;
-        }
-
-        if (!player.leaveOccupation(profession)) {
-            return false;
-        }
-        ProfessionPlatform.platform.professionLeaveEvent(player, profession, serverPlayer);
-        storage.saveUser(player);
-        serverPlayer.sendSystemMessage(Component.translatable("professions.command.leave.success", profession.getDisplayComponent()).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)));
-        return true;
-    }*/
-
-    /*public boolean fireFromOccupation(@Nullable IProfessionalPlayer player, @Nullable Profession profession, ServerPlayer serverPlayer) {
-        if (profession == null) {
-            serverPlayer.sendSystemMessage(Component.translatable("professions.command.fire.error.does_not_exist").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-            return false;
-        }
-
-        if (player == null) {
-            serverPlayer.sendSystemMessage(Component.translatable("professions.command.fire.error.cant_find_player").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
-            return false;
-        }
-
-        if (player.fireFromOccupation(profession)) {
-            storage.saveUser(player);
-            return true;
-        } else {
-            return false;
-        }
-    }*/
-
-    /**
-     * central method to send any announcements to the player or server about a player leveling up.
-     */
-    public void levelUp(IProfessionalPlayer player, Occupation occupation, int oldLevel) {
-        MutableComponent message;
-        // todo; fix this message
-
-        // todo; this will go into an event now.
-        ServerPlayer sPlayer = server.getPlayerList().getPlayer(player.getUUID());
-        if (sPlayer == null) {
-            return; // this probably won't happen, but if it does, no NPEs.
-        }
-        if (((ProfessionConfig.announceEveryXLevel % occupation.getLevel() == 0)) && ProfessionConfig.announceLevelUps) {
-            message = Component.translatable("professions.level_up.announcement",
-                            sPlayer.getDisplayName(),
-                            occupation.getProfession().value().displayName(),
-                            Component.literal("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
-            server.getPlayerList().broadcastSystemMessage(message, false);
-        } else {
-            message = Component.translatable("professions.level_up.local",
-                            occupation.getProfession().value().displayName(),
-                            Component.literal("" + occupation.getLevel()).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
-            sPlayer.sendSystemMessage(message);
-        }
-        List<Component> components = new ArrayList<>();
-        // TODO: size limit
-        /*occupation.getData().getUnlockables()
-                .stream()
-                .filter(singular -> singular.canUse(player))
-                .forEach(singular -> components.add(singular.createUnlockComponent()));
-        if (components.size() > 0) {
-            MutableComponent megaComponent = Component.translatable("professions.level_up.rewards").append("\n").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-            for (Component component : components) {
-                megaComponent.append("  ").append(component).append("\n");
-            }
-            megaComponent.append(Component.literal("=-=-=-=-=-=-=")).setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders));
-            MutableComponent unlockMessage = Component.translatable("professions.level_up.unlock",
-                            Component.literal(String.valueOf(components.size())).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, megaComponent)));
-            sPlayer.sendSystemMessage(unlockMessage);
-        }*/
-    }
-
     public Collection<IProfessionalPlayer> getPlayers() {
         return players.values();
     }
@@ -319,6 +197,7 @@ public class PlayerManager {
         }
     }
 
+    @Nullable
     public IProfessionalPlayer getPlayer(UUID uuid) {
         return players.get(uuid);
     }
@@ -333,6 +212,68 @@ public class PlayerManager {
 
     public void setOccupationDataLoader(OccupationDataLoader occupationDataLoader) {
         this.occupationDataLoader = occupationDataLoader;
+    }
+
+    public @Nullable ResourceLocation getCategoryIdFor(IProfessionalPlayer player) {
+        return getCategoryId(player);
+    }
+
+    public List<Action<?>> getRelevantActionsForCategory(@Nullable ProfessionCategory category) {
+        if (category == null || server == null) {
+            return List.of();
+        }
+
+        Optional<HolderLookup.RegistryLookup<Profession>> lookupOptional = server.registryAccess().lookup(PROFESSION_REGISTRY_KEY);
+        if (lookupOptional.isEmpty()) {
+            return List.of();
+        }
+
+        HolderLookup.RegistryLookup<Profession> lookup = lookupOptional.get();
+        Set<Action<?>> relevantActions = new LinkedHashSet<>();
+
+        for (ResourceKey<Profession> professionKey : category.professions()) {
+            lookup.get(professionKey).ifPresent(holder -> relevantActions.addAll(actionManager.getActionsByProfession(holder)));
+        }
+
+        return List.copyOf(relevantActions);
+    }
+
+    public void applyClientSync(UUID playerId, List<Occupation> occupations, @Nullable ResourceLocation categoryId,
+                                List<Action<?>> actions, @Nullable RegistryAccess registryAccess) {
+        for (Occupation occupation : occupations) {
+            occupation.resolveProfession(registryAccess);
+        }
+
+        ProfessionalPlayer player = new ProfessionalPlayer(playerId, occupations);
+        applyCategoryData(player, categoryId, playerId);
+        players.put(playerId, player);
+
+        if (registryAccess != null) {
+            actionManager.setRegistryLookup(registryAccess);
+        }
+        actionManager.reloadActions(actions);
+    }
+
+    public void applyClientExperienceGain(UUID playerId, ResourceLocation professionId, double gainedExperience, @Nullable RegistryAccess registryAccess) {
+        IProfessionalPlayer professionalPlayer = players.get(playerId);
+        if (professionalPlayer == null || registryAccess == null) {
+            return;
+        }
+
+        Optional<Holder.Reference<Profession>> professionReference = registryAccess.lookupOrThrow(PROFESSION_REGISTRY_KEY).get(ResourceKey.create(PROFESSION_REGISTRY_KEY, professionId));
+        if (professionReference.isPresent()) {
+            Holder.Reference<Profession> professionReference1 = professionReference.get();
+            Occupation occupation = professionalPlayer.getOccupation(professionReference1);
+            if (occupation == null) {
+                return;
+            }
+            occupation.resolveProfession(registryAccess);
+            try {
+                occupation.addExp(gainedExperience, professionalPlayer);
+            } catch (ProfessionNotActiveException exception) {
+                LOGGER.debug("Unable to apply client EXP sync for profession {}", professionId, exception);
+            }
+        }
     }
 
     private void applyCategoryData(ProfessionalPlayer player, @Nullable ResourceLocation categoryId, UUID uuid) {

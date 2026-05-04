@@ -93,4 +93,5 @@ public abstract class ProfessionsCommon {
 
     public abstract PlayerManager getPlayerManager();
     public abstract File getModDir();
+    public abstract ActionManager getActionManager();
 }

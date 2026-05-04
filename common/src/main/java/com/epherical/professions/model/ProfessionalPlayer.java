@@ -3,12 +3,12 @@ package com.epherical.professions.model;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.ProfessionCategory;
-import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.progression.OccupationSlot;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
     private volatile boolean dirty = false;
 
-    private volatile ServerPlayer player;
+    private volatile Player player;
     private UUID uuid;
 
 
@@ -65,12 +65,12 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     }
 
     @Override
-    public @Nullable ServerPlayer getPlayer() {
+    public @Nullable Player getPlayer() {
         return player;
     }
 
     @Override
-    public void setPlayer(@Nullable ServerPlayer player) {
+    public void setPlayer(@Nullable Player player) {
         this.player = player;
     }
 

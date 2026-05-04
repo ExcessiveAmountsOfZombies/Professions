@@ -3,10 +3,8 @@ package com.epherical.professions.api;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.core.progression.OccupationSlot;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -17,9 +15,9 @@ public interface IProfessionalPlayer {
     @Nullable
     UUID getUUID();
 
-    @Nullable ServerPlayer getPlayer();
+    @Nullable Player getPlayer();
 
-    void setPlayer(@Nullable ServerPlayer player);
+    void setPlayer(@Nullable Player player);
 
     void markDirty(boolean dirty);
 

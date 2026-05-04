@@ -37,7 +37,7 @@ public record ItemReward(ItemStack item) implements Reward<ItemRewardEvent> {
 
     @Override
     public void giveReward(ItemRewardEvent reward) {
-        ServerPlayer player = reward.getContext().getParameter(ProfessionParameter.THIS_PLAYER).getPlayer();
+        ServerPlayer player = (ServerPlayer) reward.getContext().getParameter(ProfessionParameter.THIS_PLAYER).getPlayer();
         if (player == null) return;
         Block.popResource(player.level(), player.getOnPos().above(), reward.getNewReward());
     }

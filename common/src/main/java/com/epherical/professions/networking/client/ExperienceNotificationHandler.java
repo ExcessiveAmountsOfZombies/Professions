@@ -1,10 +1,17 @@
-package com.epherical.professions.presentation.client.notification;
+package com.epherical.professions.networking.client;
 
-import com.epherical.professions.networking.S2CExperienceGainPayload;
+import com.epherical.professions.ProfessionsCommon;
+import com.epherical.professions.api.IProfessionalPlayer;
+import com.epherical.professions.core.Profession;
+import com.epherical.professions.model.Occupation;
+import com.epherical.professions.networking.server.S2CExperienceGainPayload;
 import com.epherical.professions.presentation.client.RenderHelperUtil;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Locale;
 
@@ -41,7 +48,8 @@ public class ExperienceNotificationHandler {
     /**
      * Profession label currently shown in the notification.
      */
-    private static String activeProfession;
+    private static ResourceLocation activeProfession;
+    private static Component activeProfessionLabel;
 
     /**
      * Total EXP accumulated for the current burst (what we want to reach).
@@ -72,11 +80,12 @@ public class ExperienceNotificationHandler {
 
         Minecraft.getInstance().doRunTask(() -> {
             long now = System.currentTimeMillis();
-            boolean sameProfession = payload.professionName().equals(activeProfession);
+            boolean sameProfession = payload.professionId().equals(activeProfession);
             boolean withinWindow = now - lastExpTimestamp <= XP_NOTIFICATION_WINDOW_MS;
 
             if (!sameProfession || !withinWindow) {
-                activeProfession = payload.professionName();
+                activeProfession = payload.professionId();
+                activeProfessionLabel = resolveProfessionLabel(payload.professionId());
                 targetExp = 0.0D;
                 displayedExp = 0.0D;
             }
@@ -114,6 +123,7 @@ public class ExperienceNotificationHandler {
         boolean caughtUp = targetExp - displayedExp < EPSILON;
         if (idleTooLong && caughtUp) {
             activeProfession = null;
+            activeProfessionLabel = null;
             targetExp = 0.0D;
             displayedExp = 0.0D;
             lastExpTimestamp = 0L;
@@ -123,12 +133,31 @@ public class ExperienceNotificationHandler {
         return true;
     }
 
-    /**
-     * Formats EXP for HUD output:
-     * whole numbers stay compact, fractional values keep two decimals.
-     */
     private static String formatExp(double value) {
         return String.format(Locale.ROOT, "%.2f", value);
+    }
+
+    private static Component resolveProfessionLabel(ResourceLocation professionId) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.player == null) {
+            return Component.literal(professionId.getPath());
+        }
+
+        IProfessionalPlayer professionalPlayer = ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(minecraft.player.getUUID());
+        if (professionalPlayer == null) {
+            return Component.literal(professionId.getPath());
+        }
+
+        for (Occupation occupation : professionalPlayer.getAllOccupations()) {
+            if (occupation.getProfessionKey().equals(professionId)) {
+                return occupation.getProfessionHolder().map(professionHolder -> {
+                    Profession value = professionHolder.value();
+                    return Component.literal(value.displayNameRaw()).setStyle(Style.EMPTY.withColor(value.professionColor()));
+                }).orElse(Component.literal(professionId.getPath()));
+            }
+        }
+
+        return Component.literal(professionId.getPath());
     }
 
     /**
@@ -144,8 +173,8 @@ public class ExperienceNotificationHandler {
         int screenWidth = gfx.guiWidth();
         int screenHeight = gfx.guiHeight();
 
-        String profession = activeProfession + ": ";
-        String xp = "+" + formatExp(displayedExp) + " XP";
+        Component profession = activeProfessionLabel;
+        String xp = " +" + formatExp(displayedExp) + " XP";
 
         int professionColor = 0xFF55FF55; // ARGB green
         int xpColor = 0xFFFFD34E;         // ARGB gold

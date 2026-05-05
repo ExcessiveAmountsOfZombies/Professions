@@ -1,7 +1,6 @@
 package com.epherical.professions.presentation.client.gui.components;
 
 import com.epherical.professions.ProfessionsCommon;
-import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.actions.Action;
 import net.minecraft.client.Minecraft;
@@ -11,18 +10,15 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class OccupationInfoList extends AbstractOccupationSelector<OccupationInfoList.Entry> {
@@ -35,7 +31,13 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
         super(mc, width, top, bottom, height);
         this.occupation = occupation;
 
+        addEntries("");
+    }
 
+    public void addEntries(String filter) {
+        clearEntries();
+        String normalizedFilter = filter.toLowerCase(Locale.ROOT).trim();
+        boolean shouldNotFilter = normalizedFilter.isEmpty();
 
         // todo; this will need a specific place. things will get serialized to the player in some way so we probably wont be able to call it like this.
         Collection<Action<?>> actionsByProfession = ProfessionsCommon.INSTANCE.getActionManager().getActionsByProfession(occupation.getProfession());
@@ -44,15 +46,22 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
             Collection<Holder<?>> actionsByValue = ProfessionsCommon.INSTANCE.getActionManager().getValuesForAction(action);
             for (Holder<?> holder : actionsByValue) {
                 EntryItem item = EntryItem.create(holder, action);
-                if (item != null) {
-                    items.add(item);
-                }
+                if (item != null)
+                    if (shouldNotFilter) {
+                        items.add(item);
+                    } else if (item.holder().getHoverName().getString().toLowerCase(Locale.ROOT).contains(normalizedFilter)) {
+                        items.add(item);
+                    }
             }
         }
 
         for (int i = 0; i < items.size(); i += ITEMS_PER_ROW) {
             addEntry(new Entry(items.subList(i, Math.min(i + ITEMS_PER_ROW, items.size()))));
         }
+    }
+
+    @Override
+    protected void renderListSeparators(GuiGraphics pGuiGraphics) {
     }
 
     @Override

@@ -63,6 +63,10 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
         orderedDescription = visualOrder;
     }
 
+    @Override
+    protected void renderListSeparators(GuiGraphics pGuiGraphics) {
+    }
+
     protected int getRowTop(int pIndex) {
         return this.getY() - (int)this.getScrollAmount() + pIndex * this.itemHeight;
     }

@@ -5,8 +5,11 @@ import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.actions.rewards.Reward;
 import com.epherical.professions.presentation.client.gui.components.OccupationInfoList;
 import com.epherical.professions.presentation.client.gui.components.OccupationXpBar;
+import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -14,9 +17,11 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
+import static com.epherical.professions.presentation.client.gui.screen.OccupationCategorySelectionScreen.SPRITES;
+
 public class OccupationInfoScreen extends Screen {
 
-    private static final int XP_BAR_X = 120;
+    private static final int XP_BAR_X = 115;
     private static final int XP_BAR_Y = 216;
 
     private int imageWidth = 214;
@@ -27,6 +32,9 @@ public class OccupationInfoScreen extends Screen {
 
 
     private OccupationInfoList occupationInfoList;
+    private OccupationMenuButton closeButton;
+    private EditBox editBox;
+
 
     private final Occupation occupation;
 
@@ -52,6 +60,38 @@ public class OccupationInfoScreen extends Screen {
 
         addRenderableWidget(occupationInfoList);
         addRenderableOnly(createXpBar());
+
+        closeButton = OccupationMenuButton.omButton(Component.literal(""), button -> {
+                    minecraft.setScreen(null);
+                }).pos(leftPos + 193, topPos + 1).size(18, 18)
+                .background(SPRITES)
+                .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
+                .tooltip(Tooltip.create(Component.literal("Close Menu")))
+                .build();
+
+        addRenderableWidget(closeButton);
+
+        addRenderableWidget(OccupationMenuButton.omButton(Component.literal(""), pButton -> {
+                            List<Occupation> activeOccupations = ProfessionsCommon.INSTANCE.getPlayerManager()
+                                    .getPlayer(minecraft.getUser().getProfileId()).getActiveOccupations();
+                            minecraft.setScreen(new OccupationMenuScreen(activeOccupations));
+                        }).pos(leftPos + 193 - 18, topPos + 1).size(18, 18)
+                        .background(SPRITES)
+                        .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/grey_back"))
+                        .tooltip(Tooltip.create(Component.literal("Back"))).build()
+        );
+
+        editBox = new EditBox(minecraft.font, leftPos + 10, topPos + 26, 94, 16, Component.literal("Filter actions"));
+        editBox.setEditable(true);
+        editBox.setSuggestion("Filter...");
+        editBox.setBordered(false);
+        editBox.setResponder(s -> {
+            occupationInfoList.addEntries(s);
+            editBox.setSuggestion("");
+        });
+
+        addRenderableWidget(editBox);
+
     }
 
 
@@ -72,7 +112,7 @@ public class OccupationInfoScreen extends Screen {
             pGuiGraphics.pose().translate(-paintX, -paintY, 0);
             pGuiGraphics.drawString(
                     minecraft.font,
-                    "Actions to earn",
+                    "Activated by Action(s)",
                     paintX, paintY,
                     0xFF025E66, false);
             pGuiGraphics.pose().popPose();

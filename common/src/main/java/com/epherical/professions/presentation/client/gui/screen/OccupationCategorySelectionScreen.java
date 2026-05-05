@@ -26,7 +26,7 @@ public class OccupationCategorySelectionScreen extends Screen {
     public static final ResourceLocation INFO_ICON = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/blue_i");
 
 
-    private static final WidgetSprites SPRITES = new WidgetSprites(
+    public static final WidgetSprites SPRITES = new WidgetSprites(
             ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_icon_button"),
             ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_disabled"),
             ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_icon_button_highlighted"));

@@ -8,6 +8,7 @@ import com.epherical.professions.presentation.client.gui.widget.OccupationMenuBu
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.VideoSettingsScreen;
 import net.minecraft.client.tutorial.TutorialSteps;
@@ -22,6 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epherical.professions.presentation.client.gui.screen.OccupationCategorySelectionScreen.SPRITES;
+
 public class OccupationMenuScreen extends Screen {
 
     private int imageWidth = 214;
@@ -34,6 +37,8 @@ public class OccupationMenuScreen extends Screen {
     private OccupationList occupationList;
 
     private OccupationMenuButton occupationMenuButton;
+    private OccupationMenuButton closeButton;
+
 
 
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_menu");
@@ -61,6 +66,18 @@ public class OccupationMenuScreen extends Screen {
             minecraft.setScreen(new OccupationInfoScreen(occupationList.getSelected().getOccupation()));
         }).pos(leftPos + 112, topPos + 108).size(94, 24).build());
         occupationMenuButton.visible = false;
+
+        closeButton = OccupationMenuButton.omButton(Component.literal(""), button -> {
+                    minecraft.setScreen(null);
+                }).pos(leftPos + 193, topPos + 1).size(18, 18)
+                .background(SPRITES)
+                .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
+                .tooltip(Tooltip.create(Component.literal("Close Menu")))
+                .build();
+
+        addRenderableWidget(closeButton);
+
+
     }
 
 

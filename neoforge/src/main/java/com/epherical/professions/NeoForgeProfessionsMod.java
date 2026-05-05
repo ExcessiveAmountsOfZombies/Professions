@@ -8,6 +8,7 @@ import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.core.register.PlatformBootstrap;
 import com.epherical.professions.data.player.UuidOccupationDataLoader;
+import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
@@ -28,6 +29,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.commands.ReloadCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
@@ -191,6 +194,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
         @SubscribeEvent
         public static void registerDatapackRegistry(DataPackRegistryEvent.NewRegistry event) {
+            // TODO: this isn't able to be hot reloaded
             event.dataPackRegistry(
                     PROFESSION_REGISTRY_KEY,
                     Profession.CODEC,

@@ -11,6 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import org.mbertoli.jfep.Parser;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -74,6 +77,35 @@ public record Profession(
                     return value.getValue();
                 }
             }
+        }
+    }
+
+    public synchronized String getProgressionSignature() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(maxLevel()).append('|');
+        if (expScaling.expScalers().isEmpty()) {
+            builder.append(expScaling.defaultExpScale() == null ? "" : expScaling.defaultExpScale().getInputString());
+        } else {
+            for (Map.Entry<Integer, Parser> entry : expScaling.expScalers().entrySet()) {
+                builder.append(entry.getKey()).append('=');
+                Parser scaling = entry.getValue();
+                builder.append(scaling == null ? "" : scaling.getInputString()).append(';');
+            }
+        }
+        return hashProgression(builder.toString());
+    }
+
+    private static String hashProgression(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder(hash.length * 2);
+            for (byte b : hash) {
+                builder.append(String.format("%02x", b));
+            }
+            return builder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 unavailable", e);
         }
     }
 

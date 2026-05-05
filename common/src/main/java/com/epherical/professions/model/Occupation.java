@@ -47,6 +47,7 @@ public class Occupation {
         this.receivedBenefitsUpToLevel = experience.level;
         this.slot = slot;
         this.professionExists = false;
+        // rest is called in resolveProfession
     }
 
     public Occupation(Holder<Profession> profession, double exp, int level, OccupationSlot slot) {
@@ -54,6 +55,7 @@ public class Occupation {
         this.profession = profession;
         this.professionExists = true;
         resetMaxExperience();
+        synchronizeProgressionState();
     }
 
     public void resolveProfession(@Nullable RegistryAccess registryAccess) {
@@ -71,6 +73,7 @@ public class Occupation {
                     this.profession = holder;
                     this.professionExists = true;
                     resetMaxExperience();
+                    synchronizeProgressionState();
                 });
     }
 
@@ -102,6 +105,7 @@ public class Occupation {
         this.experience.expTotal = total;
 
         resetMaxExperience();
+        this.experience.progressionSignature = getProfession().value().getProgressionSignature();
     }
 
     public boolean checkIfLevelUp(IProfessionalPlayer player) throws ProfessionNotActiveException {
@@ -128,6 +132,57 @@ public class Occupation {
         }
 
         return willLevel;
+    }
+
+    public boolean synchronizeProgressionState() {
+        if (!professionExists || profession == null) {
+            return false;
+        }
+
+        String currentSignature = profession.value().getProgressionSignature();
+        boolean shouldRecalculate = !Objects.equals(experience.progressionSignature, currentSignature);
+        if (shouldRecalculate) {
+            recalculateFromTotal();
+        } else if (maxLevelExp.signum() < 0) {
+            resetMaxExperience();
+        }
+
+        experience.progressionSignature = currentSignature;
+        return shouldRecalculate;
+    }
+
+    private void recalculateFromTotal() {
+        double remainingExp = experience.expTotal.doubleValue();
+        int resolvedLevel = 0;
+        int maxLevel = profession.value().maxLevel();
+
+        // TODO: If formula-driven recalculations ever need to handle very large level jumps efficiently,
+        //  replace this direct level-by-level walk with a sparse checkpoint index keyed by the profession's
+        //  progression signature. Store cumulative XP totals every N levels (for example 500 or 1000),
+        //  grow those checkpoints lazily, then use exponential search + binary search against cumulative
+        //  totals to resolve the level. That keeps memory small while avoiding O(level delta) recalculations
+        //  when a progression formula change moves players by hundreds of thousands or millions of levels.
+        while (remainingExp > 0) {
+            if (maxLevel > 0 && resolvedLevel >= maxLevel) {
+                break;
+            }
+
+            double levelRequirement = profession.value().getExperienceForLevel(resolvedLevel);
+            if (remainingExp < levelRequirement) {
+                break;
+            }
+
+            remainingExp -= levelRequirement;
+            resolvedLevel++;
+        }
+
+        experience.level = resolvedLevel;
+        experience.expProgress = BigDecimal.valueOf(Math.max(0D, remainingExp));
+        resetMaxExperience();
+
+        if (experience.expProgress.compareTo(maxLevelExp) > 0) {
+            experience.expProgress = maxLevelExp;
+        }
     }
 
     public void setReceivedBenefitsUpToLevel(int receivedBenefitsUpToLevel) {
@@ -232,17 +287,24 @@ public class Occupation {
         public static final Codec<ExperienceData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.DOUBLE.fieldOf("exp").forGetter(experienceData -> experienceData.expProgress.doubleValue()),
                 Codec.INT.fieldOf("level").forGetter(ExperienceData::getLevel),
-                Codec.DOUBLE.fieldOf("expTotal").forGetter(experienceData -> experienceData.expTotal.doubleValue())
+                Codec.DOUBLE.fieldOf("expTotal").forGetter(experienceData -> experienceData.expTotal.doubleValue()),
+                Codec.STRING.optionalFieldOf("progressionSignature", "").forGetter(ExperienceData::getProgressionSignature)
         ).apply(instance, ExperienceData::new));
 
         private BigDecimal expProgress = BigDecimal.ZERO;
         private int level;
         private BigDecimal expTotal = BigDecimal.ZERO;
+        private String progressionSignature = "";
 
         public ExperienceData(double exp, int level, double expTotal) {
+            this(exp, level, expTotal, "");
+        }
+
+        public ExperienceData(double exp, int level, double expTotal, String progressionSignature) {
             this.expProgress = BigDecimal.valueOf(exp);
             this.level = level;
             this.expTotal = BigDecimal.valueOf(expTotal);
+            this.progressionSignature = progressionSignature;
         }
 
         public BigDecimal getExpProgress() {
@@ -255,6 +317,10 @@ public class Occupation {
 
         public BigDecimal getExpTotal() {
             return expTotal;
+        }
+
+        public String getProgressionSignature() {
+            return progressionSignature;
         }
 
         @Override

@@ -10,6 +10,7 @@ repositories {
 neoForge {
     version = neoforge_version
     // Automatically enable neoforge AccessTransformers if the file exists
+    def commonProject = rootProject.project(':common')
     def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
         accessTransformers.add(at.absolutePath)
@@ -28,7 +29,10 @@ neoForge {
         }
         data {
             data()
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', commonProject.file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath(),
+                    '--existing', commonProject.file('src/main/resources/').getAbsolutePath()
         }
         server {
             server()
@@ -44,5 +48,3 @@ neoForge {
 dependencies {
     implementation ('com.epherical.epherolib:EpheroLib-neoforge:1.2.0-1.21.1')
 }
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }

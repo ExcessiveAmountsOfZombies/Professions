@@ -1,12 +1,15 @@
 package com.epherical.professions.platform;
 
+import com.epherical.professions.FabricProfessionsMod;
+import com.epherical.professions.ProfessionsCommon;
+import com.epherical.professions.bootstrap.platform.IPlatformHelper;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.core.actions.ActionType;
-import com.epherical.professions.core.conditions.ConditionType;
-import com.epherical.professions.core.rewards.RewardType;
-import com.epherical.professions.platform.services.IPlatformHelper;
+import com.epherical.professions.model.actions.ActionType;
+import com.epherical.professions.model.actions.conditions.ConditionType;
+import com.epherical.professions.model.actions.rewards.RewardType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
@@ -26,22 +29,23 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Registry<Profession> getProfessionRegistry() {
-        return null;
+        return (Registry<Profession>) BuiltInRegistries.REGISTRY.get(ProfessionsCommon.PROFESSION_REGISTRY_KEY.location());
     }
 
     @Override
     public Registry<ActionType> getActionTypeRegistry() {
-        return null;
+        return FabricProfessionsMod.ACTIONS;
     }
 
     @Override
     public Registry<ConditionType> getConditionTypeRegistry() {
-        return null;
+        return FabricProfessionsMod.CONDITIONS;
     }
 
     @Override
     public Registry<RewardType> getRewardTypeRegistry() {
-        return null;
+        return FabricProfessionsMod.REWARDS;
     }
 }

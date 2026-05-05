@@ -5,8 +5,9 @@ import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.model.Occupation;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
+
 import java.util.List;
 import java.util.UUID;
 

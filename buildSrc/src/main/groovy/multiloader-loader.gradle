@@ -34,6 +34,8 @@ processResources {
 tasks.named('javadoc', Javadoc).configure {
     dependsOn(configurations.commonJava)
     source(configurations.commonJava)
+    include('**/*.java')
+    exclude('**/*.md')
 }
 
 tasks.named('sourcesJar', Jar) {

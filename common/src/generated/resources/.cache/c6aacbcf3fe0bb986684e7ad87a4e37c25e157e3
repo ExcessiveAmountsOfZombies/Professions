@@ -1,4 +1,4 @@
-// 1.21.1	2026-04-30T00:20:54.5124576	Professions Hunting Action Provider
+// 1.21.1	2026-05-05T13:51:46.2625336	Professions Hunting Action Provider
 088b34dec5b781fad32bfc35128acc661fa5e841 data/professions/professions/actions/hunting/kill_common_hostiles.json
 37267ffcaff3bb8613ac4570f2f1ed17e68ebc4e data/professions/professions/actions/hunting/kill_dangerous_hostiles.json
 c45b525439ca8455fc40b1d92c8fc6df04cdbe10 data/professions/professions/actions/hunting/kill_elite_hostiles.json

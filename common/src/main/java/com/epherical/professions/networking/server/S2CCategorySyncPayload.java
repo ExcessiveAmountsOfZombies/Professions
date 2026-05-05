@@ -24,10 +24,6 @@ public record S2CCategorySyncPayload(Map<ResourceLocation, ProfessionCategory> c
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CCategorySyncPayload> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CATEGORY_MAP_CODEC).map(S2CCategorySyncPayload::new, S2CCategorySyncPayload::categories);
 
-    public S2CCategorySyncPayload {
-        categories = Map.copyOf(new LinkedHashMap<>(categories));
-    }
-
     @Override
     public @NotNull Type<S2CCategorySyncPayload> type() {
         return TYPE;

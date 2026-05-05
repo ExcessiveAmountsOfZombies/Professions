@@ -10,8 +10,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Objects;

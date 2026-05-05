@@ -268,7 +268,7 @@ public class PlayerManager {
             if (occupation == null) {
                 return;
             }
-            occupation.resolveProfession(registryAccess);
+            //occupation.resolveProfession(registryAccess);
             try {
                 occupation.addExp(gainedExperience, professionalPlayer);
             } catch (ProfessionNotActiveException exception) {

@@ -4,7 +4,16 @@
   "package": "com.epherical.professions.mixin",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "BlockItemPlacementMixin",
+    "BreedActionMixin",
+    "CraftingActionMixin",
+    "EnchantActionMixin",
+    "ExplosionActionMixin",
+    "FishingActionMixin",
+    "SmeltTakeActionMixin",
+    "TameActionMixin"
+  ],
   "client": [
     "MixinTitleScreen"
   ],

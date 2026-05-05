@@ -16,7 +16,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.epherical.professions.ProfessionsMod"
+      "com.epherical.professions.FabricProfessionsMod"
+    ],
+    "client": [
+      "com.epherical.professions.client.FabricClientInitializer"
     ]
   },
   "mixins": [

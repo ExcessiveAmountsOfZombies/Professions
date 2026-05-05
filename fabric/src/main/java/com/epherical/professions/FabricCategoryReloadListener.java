@@ -17,7 +17,7 @@ import java.util.concurrent.Executor;
 
 public final class FabricCategoryReloadListener implements IdentifiableResourceReloadListener {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "categories");
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "categories");
 
     private final CategoryLoad3 delegate;
     private final HolderLookup.Provider registries;

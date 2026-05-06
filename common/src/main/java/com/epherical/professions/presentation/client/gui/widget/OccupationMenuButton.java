@@ -79,7 +79,7 @@ public class OccupationMenuButton extends Button {
         if (buttonSprites != null) {
             pGuiGraphics.blitSprite(buttonSprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         } else {
-            pGuiGraphics.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            pGuiGraphics.blitSprite(SPRITES.get(this.active, this.isHovered()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         }
 
         if (icon != null) {

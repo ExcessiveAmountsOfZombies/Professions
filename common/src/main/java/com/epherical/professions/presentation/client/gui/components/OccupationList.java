@@ -89,13 +89,13 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
 
     public class Entry extends ContainerObjectSelectionList.Entry<Entry> {
 
-        private static final ResourceLocation BACKGROUND_BUTTON = ResourceLocation
+        public static final ResourceLocation BACKGROUND_BUTTON = ResourceLocation
                 .fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_menu_profession_button_enabled");
-        private static final ResourceLocation BACKGROUND_BUTTON_HOVERED = ResourceLocation
+        public static final ResourceLocation BACKGROUND_BUTTON_HOVERED = ResourceLocation
                 .fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_menu_profession_button_enabled_hovered");
-        private static final ResourceLocation PROGRESS_BAR_EMPTY = ResourceLocation
+        public static final ResourceLocation PROGRESS_BAR_EMPTY = ResourceLocation
                 .fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_small_xp_bar_empty");
-        private static final ResourceLocation PROGRESS_BAR_FULL = ResourceLocation
+        public static final ResourceLocation PROGRESS_BAR_FULL = ResourceLocation
                 .fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_small_xp_bar_full");
         private static final int PROGRESS_BAR_WIDTH = 22;
         private static final int PROGRESS_BAR_HEIGHT = 7;
@@ -130,9 +130,10 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
 
 
             if (hovering || this.equals(getSelected())) {
-                gfx.blitSprite(BACKGROUND_BUTTON_HOVERED, 94, 32, 0, 0, x, y, rowWidth, 32);
+                gfx.blitSprite(BACKGROUND_BUTTON_HOVERED, x, y, rowWidth -2, rowHeight + 3);
+                //gfx.blitSprite(BACKGROUND_BUTTON_HOVERED, 0, 0, x, y, rowWidth);
             } else {
-                gfx.blitSprite(BACKGROUND_BUTTON, 94, 32, 0, 0, x, y, rowWidth, 32);
+                gfx.blitSprite(BACKGROUND_BUTTON, x, y, rowWidth -2, rowHeight + 3);
             }
 
             // todo; cache the literal
@@ -153,11 +154,17 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
             gfx.blitSprite(PROGRESS_BAR_EMPTY, PROGRESS_BAR_WIDTH, PROGRESS_BAR_HEIGHT, 0, 0, barX, barY, PROGRESS_BAR_WIDTH, PROGRESS_BAR_HEIGHT);
 
             int filledWidth = Mth.floor(PROGRESS_BAR_WIDTH * clampedPercentage);
+            int rgb = occupation.getProfession().value().professionColor().getValue();
+            float red = ((rgb >> 16) & 0xFF) / 255.0f;
+            float green = ((rgb >> 8) & 0xFF) / 255.0f;
+            float blue = (rgb & 0xFF) / 255.0f;
             if (filledWidth > 0) {
-                gfx.blitSprite(PROGRESS_BAR_FULL, PROGRESS_BAR_WIDTH, PROGRESS_BAR_HEIGHT, 0, 0, barX, barY, filledWidth, PROGRESS_BAR_HEIGHT);
+                gfx.setColor(red, green, blue, 1.0f);
+                gfx.blitSprite(PROGRESS_BAR_FULL, barX, barY, filledWidth, PROGRESS_BAR_HEIGHT);
+                gfx.setColor(1f, 1f, 1f, 1.2f);
             }
 
-            gfx.drawString(minecraft.font, percentageText + "%", barX + PROGRESS_BAR_WIDTH + 4, barY - 2, 0xFFFFFF);
+            gfx.drawString(minecraft.font, percentageText + "%", barX + PROGRESS_BAR_WIDTH + 4, barY - 2, rgb);
         }
 
         @Override

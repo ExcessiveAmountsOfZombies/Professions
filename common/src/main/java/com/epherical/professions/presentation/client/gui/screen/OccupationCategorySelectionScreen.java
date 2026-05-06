@@ -4,6 +4,7 @@ import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
+import com.epherical.professions.presentation.client.RenderHelperUtil;
 import com.epherical.professions.presentation.client.gui.components.OccupationCategoryList;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
 import net.minecraft.client.gui.Font;
@@ -115,28 +116,16 @@ public class OccupationCategorySelectionScreen extends Screen {
     }
 
     private void drawScaled(GuiGraphics gfx, int x, int y, float scale, Runnable voidConsumer) {
-        gfx.pose().pushPose();
-        gfx.pose().translate(x, y, 0);
-        gfx.pose().scale(scale, scale, 1.0f);
-        voidConsumer.run();
-        gfx.pose().popPose();
+        RenderHelperUtil.drawScaled(gfx, x, y, scale, voidConsumer);
     }
 
     private void drawScaledString(GuiGraphics gfx, Font font, String text, int x, int y, float scale,
                                   int color, boolean dropShadow) {
-        gfx.pose().pushPose();
-        gfx.pose().translate(x, y, 0);
-        gfx.pose().scale(scale, scale, 1.0f);
-        gfx.drawString(font, text, 0, 0, color, dropShadow);
-        gfx.pose().popPose();
+        RenderHelperUtil.drawScaledString(gfx, font, text, x, y, scale, color, dropShadow);
     }
 
     private void drawWrappedScaledString(GuiGraphics gfx, Font font, String text, int x, int y, float scale, int lineWidth, int color) {
-        gfx.pose().pushPose();
-        gfx.pose().translate(x, y, 0);
-        gfx.pose().scale(scale, scale, 1.0f);
-        gfx.drawWordWrap(font, FormattedText.of(text), 0, 0, lineWidth, color);
-        gfx.pose().popPose();
+        RenderHelperUtil.drawWrappedScaledString(gfx, font, text, x, y, scale, lineWidth, color);
     }
 
     @Override

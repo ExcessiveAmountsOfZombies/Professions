@@ -12,7 +12,9 @@ import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
+import com.epherical.professions.networking.client.C2SOccupationExperienceTrackingPayload;
 import com.epherical.professions.networking.server.CategorySelectionPayloadHandler;
+import com.epherical.professions.networking.server.OccupationExperienceTrackingPayloadHandler;
 import com.epherical.professions.networking.server.S2CCategorySyncPayload;
 import com.epherical.professions.networking.server.S2CExperienceGainPayload;
 import com.epherical.professions.networking.server.S2CPlayerDataSyncPayload;
@@ -99,9 +101,12 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
         PayloadTypeRegistry.playS2C().register(S2CCategorySyncPayload.TYPE, S2CCategorySyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(S2CPlayerDataSyncPayload.TYPE, S2CPlayerDataSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(C2SCategorySelectionPayload.TYPE, C2SCategorySelectionPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(C2SOccupationExperienceTrackingPayload.TYPE, C2SOccupationExperienceTrackingPayload.STREAM_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(C2SCategorySelectionPayload.TYPE,
                 (payload, context) -> CategorySelectionPayloadHandler.handle(context.player(), payload));
+        ServerPlayNetworking.registerGlobalReceiver(C2SOccupationExperienceTrackingPayload.TYPE,
+                (payload, context) -> OccupationExperienceTrackingPayloadHandler.handle(context.player(), payload));
     }
 
     private void registerReloadListeners() {

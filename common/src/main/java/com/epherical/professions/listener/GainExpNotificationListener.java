@@ -4,6 +4,7 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.EventListener;
 import com.epherical.professions.api.event.runtime.rewards.OccupationExperienceEvent;
 import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.model.Occupation;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.server.S2CExperienceGainPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,12 +20,15 @@ public class GainExpNotificationListener implements EventListener<OccupationExpe
         }
 
         if (player.getPlayer() instanceof ServerPlayer serverPlayer) {
-            S2CExperienceGainPayload packet = new S2CExperienceGainPayload(
-                    event.getOccupation().getProfessionKey(),
-                    event.getNewAmount()
-            );
+            Occupation occupation = event.getOccupation();
+            if (occupation.isExperienceGainTrackingEnabled()) {
+                S2CExperienceGainPayload packet = new S2CExperienceGainPayload(
+                        event.getOccupation().getProfessionKey(),
+                        event.getNewAmount()
+                );
 
-            NetworkPayloadDispatcher.sendToPlayer(serverPlayer, packet);
+                NetworkPayloadDispatcher.sendToPlayer(serverPlayer, packet);
+            }
         }
     }
 }

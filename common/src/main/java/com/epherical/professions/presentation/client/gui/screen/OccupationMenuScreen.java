@@ -1,29 +1,22 @@
 package com.epherical.professions.presentation.client.gui.screen;
 
 import com.epherical.professions.ProfessionsCommon;
-import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.Occupation;
+import com.epherical.professions.networking.NetworkPayloadDispatcher;
+import com.epherical.professions.networking.client.C2SOccupationExperienceTrackingPayload;
 import com.epherical.professions.presentation.client.gui.components.OccupationList;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.options.VideoSettingsScreen;
-import net.minecraft.client.tutorial.TutorialSteps;
-import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.epherical.professions.presentation.client.gui.screen.OccupationCategorySelectionScreen.SPRITES;
+import static com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton.NO_HIGHLIGHT_SPRITES;
 
 public class OccupationMenuScreen extends Screen {
 
@@ -38,7 +31,9 @@ public class OccupationMenuScreen extends Screen {
 
     private OccupationMenuButton occupationMenuButton;
     private OccupationMenuButton closeButton;
-
+    private OccupationMenuButton trackButton;
+    private boolean trackEnabled;
+    private ResourceLocation trackedProfessionId;
 
 
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_menu");
@@ -67,6 +62,20 @@ public class OccupationMenuScreen extends Screen {
         }).pos(leftPos + 112, topPos + 108).size(94, 24).build());
         occupationMenuButton.visible = false;
 
+        trackButton = addRenderableWidget(OccupationMenuButton.omToggleButton(Component.literal("Track"), pButton -> {
+            Occupation selectedOccupation = getSelectedOccupation();
+            if (selectedOccupation == null) {
+                return;
+            }
+            trackEnabled = !trackEnabled;
+            selectedOccupation.setExperienceGainTrackingEnabled(trackEnabled);
+            NetworkPayloadDispatcher.sendToServer(new C2SOccupationExperienceTrackingPayload(selectedOccupation.getProfessionKey(), trackEnabled));
+        }, () -> trackEnabled).pos(leftPos + 112, topPos + 108 + 26).size(56, 24)
+                .background(NO_HIGHLIGHT_SPRITES)
+                .toggleTextOffset(20).build());
+
+        trackButton.visible = false;
+
         closeButton = OccupationMenuButton.omButton(Component.literal(""), button -> {
                     minecraft.setScreen(null);
                 }).pos(leftPos + 193, topPos + 1).size(18, 18)
@@ -86,7 +95,9 @@ public class OccupationMenuScreen extends Screen {
         super.render(gfx, pMouseX, pMouseY, pPartialTick);
 
         if (occupationList.getSelected() != null) {
+            syncTrackStateFromSelection();
             occupationMenuButton.visible = true;
+            trackButton.visible = true;
 
             OccupationList.Entry selected = occupationList.getSelected();
             gfx.drawString(minecraft.font, "Selected Overview", leftPos + 114, topPos + 28, 0x6f4d15, false); // todo; add translation
@@ -101,8 +112,29 @@ public class OccupationMenuScreen extends Screen {
                 gfx.drawString(minecraft.font, seq, pX, pY, 0x6f4d15, false);
                 pY += 9;
             }
+        } else {
+            occupationMenuButton.visible = false;
+            trackButton.visible = false;
         }
 
+    }
+
+    private Occupation getSelectedOccupation() {
+        OccupationList.Entry selected = occupationList.getSelected();
+        return selected == null ? null : selected.getOccupation();
+    }
+
+    private void syncTrackStateFromSelection() {
+        Occupation selectedOccupation = getSelectedOccupation();
+        if (selectedOccupation == null) {
+            return;
+        }
+
+        ResourceLocation selectedProfessionId = selectedOccupation.getProfessionKey();
+        if (!selectedProfessionId.equals(trackedProfessionId)) {
+            trackedProfessionId = selectedProfessionId;
+            trackEnabled = selectedOccupation.isExperienceGainTrackingEnabled();
+        }
     }
 
     @Override

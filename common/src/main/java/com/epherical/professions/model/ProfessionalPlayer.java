@@ -107,7 +107,12 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
     @Override
     public Occupation getOccupation(Holder<Profession> profession) {
-        return occupationMap.get(profession.unwrapKey().get().location());
+        return getOccupation(profession.unwrapKey().get().location());
+    }
+
+    @Override
+    public Occupation getOccupation(ResourceLocation profession) {
+        return occupationMap.get(profession);
     }
 
     @Override

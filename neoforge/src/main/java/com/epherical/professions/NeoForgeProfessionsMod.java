@@ -14,11 +14,13 @@ import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
+import com.epherical.professions.networking.client.C2SOccupationExperienceTrackingPayload;
 import com.epherical.professions.networking.client.ExperienceOccupationSyncHandler;
 import com.epherical.professions.networking.client.ExperienceNotificationHandler;
 import com.epherical.professions.networking.client.PlayerDataSyncPayloadHandler;
 import com.epherical.professions.networking.client.ProfessionCategorySyncPayloadHandler;
 import com.epherical.professions.networking.server.CategorySelectionPayloadHandler;
+import com.epherical.professions.networking.server.OccupationExperienceTrackingPayloadHandler;
 import com.epherical.professions.networking.server.S2CCategorySyncPayload;
 import com.epherical.professions.networking.server.S2CExperienceGainPayload;
 import com.epherical.professions.networking.server.S2CPlayerDataSyncPayload;
@@ -152,6 +154,11 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             registrar.playToServer(C2SCategorySelectionPayload.TYPE, C2SCategorySelectionPayload.STREAM_CODEC, (payload, context) -> {
                 if (context.player() instanceof ServerPlayer serverPlayer) {
                     context.enqueueWork(() -> CategorySelectionPayloadHandler.handle(serverPlayer, payload));
+                }
+            });
+            registrar.playToServer(C2SOccupationExperienceTrackingPayload.TYPE, C2SOccupationExperienceTrackingPayload.STREAM_CODEC, (payload, context) -> {
+                if (context.player() instanceof ServerPlayer serverPlayer) {
+                    context.enqueueWork(() -> OccupationExperienceTrackingPayloadHandler.handle(serverPlayer, payload));
                 }
             });
         }

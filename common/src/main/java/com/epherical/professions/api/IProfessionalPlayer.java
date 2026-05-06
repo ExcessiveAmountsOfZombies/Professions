@@ -4,6 +4,7 @@ import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.model.Occupation;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +36,9 @@ public interface IProfessionalPlayer {
 
     @Nullable
     Occupation getOccupation(Holder<Profession> profession);
+
+    @Nullable
+    Occupation getOccupation(ResourceLocation profession);
 
     void updateOccupationPerks();
 

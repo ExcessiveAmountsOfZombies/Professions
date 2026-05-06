@@ -13,7 +13,9 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,11 +30,15 @@ public class Occupation {
     public static final Codec<Occupation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("profession").forGetter(Occupation::getProfessionKey),
             ExperienceData.CODEC.fieldOf("experience").forGetter(Occupation::getExperience),
-            SLOT_CODEC.fieldOf("slot").forGetter(Occupation::getSlot)
+            SLOT_CODEC.fieldOf("slot").forGetter(Occupation::getSlot),
+            Settings.CODEC.optionalFieldOf("settings", Settings.empty()).forGetter(Occupation::getSettings)
     ).apply(instance, Occupation::new));
+
+    public static final String TRACK_EXPERIENCE_GAINS_SETTING_KEY = "track_experience_gains";
 
     private final ResourceLocation professionKey;
     private final ExperienceData experience;
+    private final Settings settings;
     private int receivedBenefitsUpToLevel;
     private OccupationSlot slot;
 
@@ -42,8 +48,13 @@ public class Occupation {
     private transient BigDecimal maxLevelExp = BigDecimal.valueOf(-1);
 
     public Occupation(ResourceLocation professionKey, ExperienceData experience, OccupationSlot slot) {
+        this(professionKey, experience, slot, Settings.empty());
+    }
+
+    public Occupation(ResourceLocation professionKey, ExperienceData experience, OccupationSlot slot, Settings settings) {
         this.professionKey = professionKey;
         this.experience = experience;
+        this.settings = settings.copy();
         this.receivedBenefitsUpToLevel = experience.level;
         this.slot = slot;
         this.professionExists = false;
@@ -210,6 +221,7 @@ public class Occupation {
                 professionExists == that.professionExists &&
                 Objects.equals(professionKey, that.professionKey) &&
                 Objects.equals(experience, that.experience) &&
+                Objects.equals(settings, that.settings) &&
                 slot == that.slot &&
                 Objects.equals(profession, that.profession) &&
                 Objects.equals(maxLevelExp, that.maxLevelExp);
@@ -217,7 +229,7 @@ public class Occupation {
 
     @Override
     public int hashCode() {
-        return Objects.hash(professionKey, professionExists, experience, receivedBenefitsUpToLevel, slot, maxLevelExp);
+        return Objects.hash(professionKey, professionExists, experience, settings, receivedBenefitsUpToLevel, slot, maxLevelExp);
     }
 
     public Holder<Profession> getProfession() {
@@ -279,8 +291,75 @@ public class Occupation {
         return slot;
     }
 
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public boolean isExperienceGainTrackingEnabled() {
+        return settings.getBoolean(TRACK_EXPERIENCE_GAINS_SETTING_KEY, false);
+    }
+
+    public void setExperienceGainTrackingEnabled(boolean enabled) {
+        settings.setBoolean(TRACK_EXPERIENCE_GAINS_SETTING_KEY, enabled);
+    }
+
     public double getMaxExperience() {
         return maxLevelExp.doubleValue();
+    }
+
+    public static class Settings {
+        public static final Codec<Settings> CODEC = Codec.unboundedMap(Codec.STRING, Codec.STRING).xmap(Settings::new, Settings::asMap);
+
+        private final Map<String, String> values = new HashMap<>();
+
+        public Settings(Map<String, String> values) {
+            this.values.putAll(values);
+        }
+
+        public static Settings empty() {
+            return new Settings(Map.of());
+        }
+
+        public Settings copy() {
+            return new Settings(values);
+        }
+
+        public Map<String, String> asMap() {
+            return Map.copyOf(values);
+        }
+
+        public void set(String key, String value) {
+            values.put(key, value);
+        }
+
+        public String get(String key) {
+            return values.get(key);
+        }
+
+        public boolean getBoolean(String key, boolean defaultValue) {
+            String value = get(key);
+            if (value == null) {
+                return defaultValue;
+            }
+            return Boolean.parseBoolean(value);
+        }
+
+        public void setBoolean(String key, boolean value) {
+            set(key, String.valueOf(value));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Settings settings = (Settings) o;
+            return Objects.equals(values, settings.values);
+        }
+
+        @Override
+        public int hashCode() {
+            return values.hashCode();
+        }
     }
 
     public static class ExperienceData {

@@ -74,18 +74,34 @@ public class ExperienceNotificationHandler {
      */
     public static void handle(S2CExperienceGainPayload payload) {
 
+
+
         // todo; in the future i'll turn this into something can handle multiple ways of displaying the notification
         // todo; also add a texture, so the user can decide how it'll look.
 
 
         Minecraft.getInstance().doRunTask(() -> {
+            Minecraft minecraft = Minecraft.getInstance();
+            if (minecraft.player == null) {
+                return;
+            }
+
+            IProfessionalPlayer professionalPlayer = ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(minecraft.player.getUUID());
+            if (professionalPlayer == null) {
+                return;
+            }
+
+            Occupation occupation = professionalPlayer.getOccupation(payload.professionId());
+            if (occupation == null || !occupation.isExperienceGainTrackingEnabled()) {
+                return;
+            }
             long now = System.currentTimeMillis();
             boolean sameProfession = payload.professionId().equals(activeProfession);
             boolean withinWindow = now - lastExpTimestamp <= XP_NOTIFICATION_WINDOW_MS;
 
             if (!sameProfession || !withinWindow) {
                 activeProfession = payload.professionId();
-                activeProfessionLabel = resolveProfessionLabel(payload.professionId());
+                activeProfessionLabel = resolveProfessionLabel(payload.professionId(), occupation);
                 targetExp = 0.0D;
                 displayedExp = 0.0D;
             }
@@ -137,27 +153,15 @@ public class ExperienceNotificationHandler {
         return String.format(Locale.ROOT, "%.2f", value);
     }
 
-    private static Component resolveProfessionLabel(ResourceLocation professionId) {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null) {
+    private static Component resolveProfessionLabel(ResourceLocation professionId, Occupation occupation) {
+        if (occupation == null) {
             return Component.literal(professionId.getPath());
         }
 
-        IProfessionalPlayer professionalPlayer = ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(minecraft.player.getUUID());
-        if (professionalPlayer == null) {
-            return Component.literal(professionId.getPath());
-        }
-
-        for (Occupation occupation : professionalPlayer.getAllOccupations()) {
-            if (occupation.getProfessionKey().equals(professionId)) {
-                return occupation.getProfessionHolder().map(professionHolder -> {
-                    Profession value = professionHolder.value();
-                    return Component.literal(value.displayNameRaw()).setStyle(Style.EMPTY.withColor(value.professionColor()));
-                }).orElse(Component.literal(professionId.getPath()));
-            }
-        }
-
-        return Component.literal(professionId.getPath());
+        return occupation.getProfessionHolder().map(professionHolder -> {
+            Profession value = professionHolder.value();
+            return Component.literal(value.displayNameRaw()).setStyle(Style.EMPTY.withColor(value.professionColor()));
+        }).orElse(Component.literal(professionId.getPath()));
     }
 
     /**

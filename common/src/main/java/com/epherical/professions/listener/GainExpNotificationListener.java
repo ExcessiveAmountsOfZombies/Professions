@@ -21,14 +21,11 @@ public class GainExpNotificationListener implements EventListener<OccupationExpe
 
         if (player.getPlayer() instanceof ServerPlayer serverPlayer) {
             Occupation occupation = event.getOccupation();
-            if (occupation.isExperienceGainTrackingEnabled()) {
-                S2CExperienceGainPayload packet = new S2CExperienceGainPayload(
-                        event.getOccupation().getProfessionKey(),
-                        event.getNewAmount()
-                );
-
-                NetworkPayloadDispatcher.sendToPlayer(serverPlayer, packet);
-            }
+            S2CExperienceGainPayload packet = new S2CExperienceGainPayload(
+                    event.getOccupation().getProfessionKey(),
+                    event.getNewAmount()
+            );
+            NetworkPayloadDispatcher.sendToPlayer(serverPlayer, packet);
         }
     }
 }

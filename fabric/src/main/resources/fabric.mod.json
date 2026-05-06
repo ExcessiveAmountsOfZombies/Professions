@@ -8,8 +8,8 @@
     "${mod_author}"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://discord.gg/a3cX6ttPJK",
+    "sources": "https://github.com/ExcessiveAmountsOfZombies/Professions"
   },
   "license": "${license}",
   "icon": "${mod_id}.png",

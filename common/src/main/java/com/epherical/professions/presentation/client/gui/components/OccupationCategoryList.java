@@ -3,18 +3,20 @@ package com.epherical.professions.presentation.client.gui.components;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.ProfessionCategory;
+import com.epherical.professions.presentation.client.RenderHelperUtil;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +52,7 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
     }
 
     @Override
-    protected void renderListSeparators(GuiGraphics pGuiGraphics) {
+    protected void extractListSeparators(GuiGraphicsExtractor pGuiGraphics) {
     }
 
 
@@ -62,28 +64,19 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
         return professionCategory;
     }
 
-    protected int getRowTop(int pIndex) {
-        return this.getY() - (int)this.getScrollAmount() + pIndex * this.itemHeight;
-    }
-
     public class Entry extends ContainerObjectSelectionList.Entry<Entry> {
 
-        private static final ResourceLocation BACKGROUND_BUTTON = ResourceLocation
+        private static final Identifier BACKGROUND_BUTTON = Identifier
                 .fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/category/selection_entry");
-        private static final ResourceLocation COLOR_BAND = ResourceLocation
+        private static final Identifier COLOR_BAND = Identifier
                 .fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/category/selection_entry_color_band");
 
         private final ProfessionCategory category;
 
         private final OccupationMenuButton occupationMenuButton;
 
-        private final ItemStack icon;
-
-
         public Entry(ProfessionCategory category) {
             this.category = category;
-
-            this.icon = new ItemStack(Items.BOOK);
 
 
             occupationMenuButton = OccupationMenuButton.omButton(Component.translatable("professions.screen.occupation_category_list.select"), button -> {
@@ -96,14 +89,15 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
 
 
         @Override
-        public void render(GuiGraphics gfx,
-                           int index, int y, int x, int rowWidth, int rowHeight,
-                           int mouseX, int mouseY, boolean hovering, float partialTick) {
-            gfx.blitSprite(BACKGROUND_BUTTON, 305, 47, 0, 0, x, y, rowWidth, 47);
+        public void extractContent(GuiGraphicsExtractor gfx, int mouseX, int mouseY, boolean hovering, float partialTick) {
+            int y = this.getY();
+            int x = this.getX();
+            int rowWidth = this.getWidth();
+            gfx.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_BUTTON, x, y, rowWidth, 47);
 
 
             drawScaled(gfx, x + 7, y + 4, 2.5f, () -> {
-                gfx.renderItem(new ItemStack(Items.BOOK), 0, 0);
+                gfx.item(new ItemStack(Items.BOOK), 0, 0);
             });
 
 
@@ -112,29 +106,30 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
             float green = ((rgb >> 8) & 0xFF) / 255.0f;
             float blue = (rgb & 0xFF) / 255.0f;
 
-            gfx.setColor(red, green, blue, 1.0f);
-            gfx.blitSprite(COLOR_BAND, 4, 47, 0, 0, x, y, 4, 47);
-            gfx.setColor(1f, 1f, 1f, 1.0f);
+            int bandColor = (0xFF << 24)
+                    | ((int) (255.0F * red) << 16)
+                    | ((int) (255.0F * green) << 8)
+                    | (int) (255.0F * blue);
+            gfx.blitSprite(RenderPipelines.GUI_TEXTURED, COLOR_BAND, x, y, 4, 47, bandColor);
 
-
-            gfx.drawString(minecraft.font, category.name(), x + 54, y + 5, 0xFFFFFF);
+            gfx.text(minecraft.font, category.name(), x + 54, y + 5, 0xFFFFFFFF);
 
             final float scale = 0.5f;
             drawScaledString(gfx, minecraft.font,
                     Component.translatable("professions.screen.occupation_category_list.profession_count", category.professions().size()),
-                    x + 54, y + 17, scale, 0x777777, false);
+                    x + 54, y + 17, scale, 0xFF777777, false);
             renderProfessionColumns(gfx, x + 54, y + 22, scale);
-            drawWrappedScaledString(gfx, minecraft.font, category.description(), x + 215, y + 3, scale, 172, 0xFFFFFFFF);
+            drawWrappedScaledString(gfx, minecraft.font, category.description(), x + 218, y + 3, scale, 172, 0xFFFFFFFF);
 
 
 
 
             occupationMenuButton.setPosition(x + 165, y + 3);
-            occupationMenuButton.render(gfx, mouseX, mouseY, partialTick);
+            occupationMenuButton.extractRenderState(gfx, mouseX, mouseY, partialTick);
         }
 
         // todo; split this off into a widget class so we can do a tooltip with it.
-        private void renderProfessionColumns(GuiGraphics gfx, int x, int y, float scale) {
+        private void renderProfessionColumns(GuiGraphicsExtractor gfx, int x, int y, float scale) {
             final int columnWidth = 50;
             final int maxRows = 3;
             final int maxVisible = 9;
@@ -155,15 +150,15 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
                             drawX + 9, drawY + 1, scale, value.professionColor().getValue(), true);
 
                     drawScaled(gfx, drawX, drawY - 1, scale, () -> {
-                        gfx.renderFakeItem(new ItemStack(value.formatting().icon()), 0, 0);
+                        gfx.fakeItem(new ItemStack(value.formatting().icon()), 0, 0);
                     });
                 }
             }
         }
 
         @Override
-        public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-            boolean b = super.mouseClicked(pMouseX, pMouseY, pButton);
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            boolean b = super.mouseClicked(event, doubleClick);
             /*setSelected(this);
             playDownSound(Minecraft.getInstance().getSoundManager());*/
             return b;

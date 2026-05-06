@@ -121,7 +121,7 @@ public class ProfessionsStandardCommands {
                                     return builder.buildFuture();
                                 })
                                 .executes(this::claimPerk)));
-        stack.register(command);
+        stack.register(command);*/
     }
 
     private int setCategory(CommandContext<CommandSourceStack> stack) {

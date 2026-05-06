@@ -2,17 +2,14 @@ package com.epherical.professions;
 
 import com.epherical.professions.core.register.IRegistrarBackend;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DataMapLoader;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 /**
  * Uses one DeferredRegister per vanilla Registry.
@@ -23,7 +20,7 @@ public final class NeoForgeRegistrarBackend implements IRegistrarBackend {
 
     @Override
     public <T> T register(ResourceKey<Registry<T>> registryKey,
-                                    ResourceLocation idPath,
+                          Identifier idPath,
                                     T factory) {
 
 
@@ -47,7 +44,8 @@ public final class NeoForgeRegistrarBackend implements IRegistrarBackend {
         });
     }
 
-    private record Pending<T>(ResourceLocation idPath, T instance) {}
+    private record Pending<T>(Identifier idPath, T instance) {
+    }
 
 
 }

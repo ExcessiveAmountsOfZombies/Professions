@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -39,6 +39,18 @@ public class ActionLoad3 {
     }
 
     public CompletableFuture<Void> reload(HolderLookup.Provider registryLookup,
+                                          @NotNull PreparableReloadListener.SharedState sharedState,
+                                          @NotNull Executor taskExecutor,
+                                          @NotNull PreparableReloadListener.PreparationBarrier preparationBarrier,
+                                          @NotNull Executor reloadExecutor) {
+        actionManager.setRegistryLookup(registryLookup);
+        return CompletableFuture
+                .supplyAsync(() -> decodeAll(sharedState.resourceManager(), registryLookup), taskExecutor)
+                .thenCompose(preparationBarrier::wait)
+                .thenAcceptAsync(actionManager::reloadActions, reloadExecutor);
+    }
+
+    public CompletableFuture<Void> reload(HolderLookup.Provider registryLookup,
                                           @NotNull PreparableReloadListener.PreparationBarrier barrier,
                                           @NotNull ResourceManager resourceManager,
                                           @NotNull ProfilerFiller prepProfiler,
@@ -55,13 +67,13 @@ public class ActionLoad3 {
     private List<Action<?>> decodeAll(ResourceManager manager, HolderLookup.Provider registryLookup) {
         List<Action<?>> actions = new ArrayList<>();
         FileToIdConverter fileToIdConverter = FileToIdConverter.json(PATH);
-        Map<ResourceLocation, List<Resource>> resources = fileToIdConverter.listMatchingResourceStacks(manager);
+        Map<Identifier, List<Resource>> resources = fileToIdConverter.listMatchingResourceStacks(manager);
         var ops = registryLookup.createSerializationContext(JsonOps.INSTANCE);
 
-        for (Map.Entry<ResourceLocation, List<Resource>> stackEntry : resources.entrySet()) {
+        for (Map.Entry<Identifier, List<Resource>> stackEntry : resources.entrySet()) {
             for (Resource entry : stackEntry.getValue()) {
-                ResourceLocation fileId = stackEntry.getKey();
-                ResourceLocation idFile = fileToIdConverter.fileToId(fileId);
+                Identifier fileId = stackEntry.getKey();
+                Identifier idFile = fileToIdConverter.fileToId(fileId);
                 // todo; this would be a map with all the actions that are tied to that particular file
                 //  that means we can build a way to merge content together. not right now cause im not sure how i want to do it.
                 //  at least now i think content can be overridden.

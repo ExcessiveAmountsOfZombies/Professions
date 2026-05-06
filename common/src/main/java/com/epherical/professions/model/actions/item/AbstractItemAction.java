@@ -32,10 +32,10 @@ public abstract class AbstractItemAction extends Action<Item> {
         }
 
         for (Either<TagKey<Item>, ResourceKey<Item>> value : getValues()) {
-            if (value.left().isPresent() && itemStack.getItemHolder().is(value.left().get())) {
+            if (value.left().isPresent() && itemStack.typeHolder().is(value.left().get())) {
                 return true;
             }
-            if (value.right().isPresent() && itemStack.getItemHolder().is(value.right().get())) {
+            if (value.right().isPresent() && itemStack.typeHolder().is(value.right().get())) {
                 return true;
             }
         }

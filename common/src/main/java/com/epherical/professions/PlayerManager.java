@@ -26,11 +26,14 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.commands.WhitelistCommand;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,9 +103,10 @@ public class PlayerManager {
                 applyCategoryData(player, data.professionCategoryId(), uuid);
                 players.put(uuid, player);
 
-                Optional<GameProfile> gameProfile = server.getProfileCache().get(uuid);
+
+                Optional<NameAndId> gameProfile = server.services().nameToIdCache().get(uuid);
                 if (gameProfile.isPresent()) {
-                    uuidToUsername.put(uuid, gameProfile.get().getName());
+                    uuidToUsername.put(uuid, gameProfile.get().name());
                 } else {
                     uuidToUsername.put(uuid, uuid.toString());
                 }
@@ -228,7 +232,7 @@ public class PlayerManager {
         this.occupationDataLoader = occupationDataLoader;
     }
 
-    public @Nullable ResourceLocation getCategoryIdFor(IProfessionalPlayer player) {
+    public @Nullable Identifier getCategoryIdFor(IProfessionalPlayer player) {
         return getCategoryId(player);
     }
 
@@ -237,7 +241,7 @@ public class PlayerManager {
             return List.of();
         }
 
-        Optional<HolderLookup.RegistryLookup<Profession>> lookupOptional = server.registryAccess().lookup(PROFESSION_REGISTRY_KEY);
+        Optional<Registry<Profession>> lookupOptional = server.registryAccess().lookup(PROFESSION_REGISTRY_KEY);
         if (lookupOptional.isEmpty()) {
             return List.of();
         }
@@ -305,7 +309,7 @@ public class PlayerManager {
      * THIS IS ONLY CALLED ON THE CLIENT. there's probably a better way to do it but im dum
      * Synchronizes client-side occupation + category state for a player.
      */
-    public void applyClientOccupationSync(UUID playerId, List<Occupation> occupations, @Nullable ResourceLocation categoryId,
+    public void applyClientOccupationSync(UUID playerId, List<Occupation> occupations, @Nullable Identifier categoryId,
                                           @Nullable RegistryAccess registryAccess, @Nullable Player localPlayer) {
         for (Occupation occupation : occupations) {
             occupation.resolveProfession(registryAccess);
@@ -341,7 +345,7 @@ public class PlayerManager {
         gateManager.reloadGates(gates);
     }
 
-    public void applyClientExperienceGain(UUID playerId, ResourceLocation professionId, double gainedExperience, @Nullable RegistryAccess registryAccess) {
+    public void applyClientExperienceGain(UUID playerId, Identifier professionId, double gainedExperience, @Nullable RegistryAccess registryAccess) {
         IProfessionalPlayer professionalPlayer = players.get(playerId);
         if (professionalPlayer == null || registryAccess == null) {
             return;
@@ -363,7 +367,7 @@ public class PlayerManager {
         }
     }
 
-    private void applyCategoryData(ProfessionalPlayer player, @Nullable ResourceLocation categoryId, UUID uuid) {
+    private void applyCategoryData(ProfessionalPlayer player, @Nullable Identifier categoryId, UUID uuid) {
         if (categoryId == null) {
             return;
         }
@@ -397,7 +401,7 @@ public class PlayerManager {
         }
     }
 
-    private @Nullable ResourceLocation getCategoryId(IProfessionalPlayer player) {
+    private @Nullable Identifier getCategoryId(IProfessionalPlayer player) {
         ProfessionCategory category = player.getCategory();
         if (category == null) {
             return null;

@@ -76,10 +76,10 @@ public abstract class AbstractBlockAction extends Action<Block> {
 
     private boolean matchesTargetBlock(BlockState blockState) {
         for (Either<TagKey<Block>, ResourceKey<Block>> value : getValues()) {
-            if (value.left().isPresent() && blockState.getBlockHolder().is(value.left().get())) {
+            if (value.left().isPresent() && blockState.typeHolder().is(value.left().get())) {
                 return true;
             }
-            if (value.right().isPresent() && blockState.getBlockHolder().is(value.right().get())) {
+            if (value.right().isPresent() && blockState.typeHolder().is(value.right().get())) {
                 return true;
             }
         }

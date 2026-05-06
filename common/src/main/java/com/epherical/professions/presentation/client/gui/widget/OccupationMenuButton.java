@@ -1,15 +1,14 @@
 package com.epherical.professions.presentation.client.gui.widget;
 
 import com.epherical.professions.ProfessionsCommon;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.ActiveTextCollector;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
@@ -18,18 +17,18 @@ public class OccupationMenuButton extends Button {
 
 
     private static final WidgetSprites SPRITES = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button"),
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_disabled"),
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_highlighted"));
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button"),
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_disabled"),
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_highlighted"));
 
     public static final WidgetSprites NO_HIGHLIGHT_SPRITES = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button"),
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_disabled"),
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button"));
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button"),
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_disabled"),
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button"));
 
-    private static final ResourceLocation TOGGLE_ON_SPRITE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_toggle_on");
-    private static final ResourceLocation TOGGLE_OFF_SPRITE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_toggle_off");
-    private static final ResourceLocation TOGGLE_KNOB_SPRITE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_toggle_knob");
+    private static final Identifier TOGGLE_ON_SPRITE = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_toggle_on");
+    private static final Identifier TOGGLE_OFF_SPRITE = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_toggle_off");
+    private static final Identifier TOGGLE_KNOB_SPRITE = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_toggle_knob");
 
     private static final int TOGGLE_TRACK_WIDTH = 14;
     private static final int TOGGLE_TRACK_HEIGHT = 8;
@@ -39,11 +38,11 @@ public class OccupationMenuButton extends Button {
     private static final int DEFAULT_TOGGLE_TEXT_OFFSET = 24;
 
     private WidgetSprites buttonSprites;
-    private ResourceLocation icon;
+    private Identifier icon;
     private BooleanSupplier toggleStateSupplier;
-    private ResourceLocation toggleOnSprite;
-    private ResourceLocation toggleOffSprite;
-    private ResourceLocation toggleKnobSprite;
+    private Identifier toggleOnSprite;
+    private Identifier toggleOffSprite;
+    private Identifier toggleKnobSprite;
     private int toggleTextOffset;
 
 
@@ -73,61 +72,80 @@ public class OccupationMenuButton extends Button {
 
 
     @Override
-    protected void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        Minecraft minecraft = Minecraft.getInstance();
-
+    protected void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a) {
         if (buttonSprites != null) {
-            pGuiGraphics.blitSprite(buttonSprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    buttonSprites.get(this.active, this.isHoveredOrFocused()),
+                    this.getX(),
+                    this.getY(),
+                    this.getWidth(),
+                    this.getHeight(),
+                    this.alpha
+            );
         } else {
-            pGuiGraphics.blitSprite(SPRITES.get(this.active, this.isHovered()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    SPRITES.get(this.active, this.isHoveredOrFocused()),
+                    this.getX(),
+                    this.getY(),
+                    this.getWidth(),
+                    this.getHeight(),
+                    this.alpha
+            );
         }
 
         if (icon != null) {
-            pGuiGraphics.blitSprite(icon, this.getX(), this.getY(), 18, 18);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon, this.getX(), this.getY(), 18, 18, this.alpha);
         }
 
         if (hasToggle()) {
-            renderToggle(pGuiGraphics);
+            renderToggle(guiGraphics);
         }
 
-
-        int i = this.active ? 0xFFFFFF : 0xA0A0A0;
-        this.renderString(pGuiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
-    }
-
-
-    @Override
-    public void setFocused(boolean pFocused) {
-        super.setFocused(pFocused);
-    }
-
-    @Override
-    public void renderString(GuiGraphics guiGraphics, Font font, int color) {
         if (!hasToggle()) {
-            super.renderString(guiGraphics, font, color);
+            this.extractDefaultLabel(guiGraphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
             return;
         }
 
         int minX = this.getX() + this.toggleTextOffset;
         int maxX = this.getX() + this.getWidth() - 2;
         if (minX >= maxX) {
-            super.renderString(guiGraphics, font, color);
+            this.extractDefaultLabel(guiGraphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
             return;
         }
 
-        renderScrollingString(guiGraphics, font, this.getMessage(), minX, this.getY(), maxX, this.getY() + this.getHeight(), color);
+        int centerX = this.getX() + this.getWidth() / 2;
+        ActiveTextCollector output = guiGraphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE);
+        output.acceptScrolling(this.getMessage(), centerX, minX, maxX, this.getY(), this.getY() + this.getHeight());
     }
 
-    private void renderToggle(GuiGraphics guiGraphics) {
+    private void renderToggle(GuiGraphicsExtractor guiGraphics) {
         boolean toggledOn = this.toggleStateSupplier.getAsBoolean();
 
         int trackX = this.getX() + TOGGLE_LEFT_PADDING;
         int trackY = this.getY() + (this.getHeight() - TOGGLE_TRACK_HEIGHT) / 2;
-        guiGraphics.blitSprite(toggledOn ? this.toggleOnSprite : this.toggleOffSprite, trackX, trackY, TOGGLE_TRACK_WIDTH, TOGGLE_TRACK_HEIGHT);
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                toggledOn ? this.toggleOnSprite : this.toggleOffSprite,
+                trackX,
+                trackY,
+                TOGGLE_TRACK_WIDTH,
+                TOGGLE_TRACK_HEIGHT,
+                this.alpha
+        );
 
         int knobX = toggledOn ? trackX + TOGGLE_TRACK_WIDTH - TOGGLE_KNOB_WIDTH : trackX;
         int knobY = trackY + (TOGGLE_TRACK_HEIGHT - TOGGLE_KNOB_HEIGHT) / 2;
-        guiGraphics.blitSprite(this.toggleKnobSprite, knobX, knobY, TOGGLE_KNOB_WIDTH, TOGGLE_KNOB_HEIGHT);
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                this.toggleKnobSprite,
+                knobX,
+                knobY,
+                TOGGLE_KNOB_WIDTH,
+                TOGGLE_KNOB_HEIGHT,
+                this.alpha
+        );
     }
 
     private boolean hasToggle() {
@@ -146,12 +164,12 @@ public class OccupationMenuButton extends Button {
         private int width = Button.DEFAULT_WIDTH;
         private int height = Button.DEFAULT_HEIGHT;
         private WidgetSprites sprites;
-        private ResourceLocation icon;
+        private Identifier icon;
         private Button.CreateNarration createNarration = DEFAULT_NARRATION;
         private BooleanSupplier toggleStateSupplier;
-        private ResourceLocation toggleOnSprite;
-        private ResourceLocation toggleOffSprite;
-        private ResourceLocation toggleKnobSprite;
+        private Identifier toggleOnSprite;
+        private Identifier toggleOffSprite;
+        private Identifier toggleKnobSprite;
         private int toggleTextOffset = DEFAULT_TOGGLE_TEXT_OFFSET;
 
         public Builder(Component message, Button.OnPress onPress) {
@@ -181,7 +199,7 @@ public class OccupationMenuButton extends Button {
             return this;
         }
 
-        public Builder icon(ResourceLocation pIcon) {
+        public Builder icon(Identifier pIcon) {
             this.icon = pIcon;
             return this;
         }
@@ -194,7 +212,7 @@ public class OccupationMenuButton extends Button {
             return this;
         }
 
-        public Builder toggleSprites(ResourceLocation onSprite, ResourceLocation offSprite, ResourceLocation knobSprite) {
+        public Builder toggleSprites(Identifier onSprite, Identifier offSprite, Identifier knobSprite) {
             this.toggleOnSprite = onSprite;
             this.toggleOffSprite = offSprite;
             this.toggleKnobSprite = knobSprite;

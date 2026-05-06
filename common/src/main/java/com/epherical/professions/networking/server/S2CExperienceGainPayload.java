@@ -4,17 +4,17 @@ import com.epherical.professions.ProfessionsCommon;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
-public record S2CExperienceGainPayload(ResourceLocation professionId, double experienceGained) implements CustomPacketPayload {
+public record S2CExperienceGainPayload(Identifier professionId, double experienceGained) implements CustomPacketPayload {
 
     public static final Type<S2CExperienceGainPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "experience_gain"));
+            new Type<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "experience_gain"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CExperienceGainPayload> STREAM_CODEC =
             StreamCodec.composite(
-                    ResourceLocation.STREAM_CODEC, S2CExperienceGainPayload::professionId,
+                    Identifier.STREAM_CODEC, S2CExperienceGainPayload::professionId,
                     net.minecraft.network.codec.ByteBufCodecs.DOUBLE, S2CExperienceGainPayload::experienceGained,
                     S2CExperienceGainPayload::new
             );

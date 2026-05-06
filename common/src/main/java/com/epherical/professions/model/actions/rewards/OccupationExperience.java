@@ -17,12 +17,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 
 public record OccupationExperience(double expAmount) implements Reward<OccupationExperienceEvent> {
 
-    private static final ItemStack REWARD_ICON = new ItemStack(Items.EXPERIENCE_BOTTLE);
 
     public static final MapCodec<OccupationExperience> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
@@ -36,7 +37,7 @@ public record OccupationExperience(double expAmount) implements Reward<Occupatio
 
     @Override
     public ItemStack getRewardIcon() {
-        return REWARD_ICON;
+        return new ItemStack(Items.EXPERIENCE_BOTTLE);
     }
 
     @Override

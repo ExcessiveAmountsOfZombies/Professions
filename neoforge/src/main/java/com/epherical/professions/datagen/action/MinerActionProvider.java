@@ -8,7 +8,7 @@ import com.epherical.professions.api.actions.Condition;
 import com.epherical.professions.model.actions.conditions.InvertedCondition;
 import com.epherical.professions.model.actions.conditions.ToolMatcher;
 import com.epherical.professions.model.actions.rewards.OccupationExperience;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;

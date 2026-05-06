@@ -7,7 +7,7 @@ import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.core.progression.OccupationSlot;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     private static final ResourceLocation ATTACK_DAMAGE_ADDITIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/attack_damage/additive");
     private static final ResourceLocation ATTACK_DAMAGE_MULTIPLICATIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/attack_damage/multiplicative");
 
-    private final Map<ResourceLocation, Occupation> occupationMap = new HashMap<>();
+    private final Map<Identifier, Occupation> occupationMap = new HashMap<>();
 
     @Nullable
     private ProfessionCategory professionCategory;
@@ -115,11 +115,11 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
     @Override
     public Occupation getOccupation(Holder<Profession> profession) {
-        return getOccupation(profession.unwrapKey().get().location());
+        return getOccupation(profession.unwrapKey().get().identifier());
     }
 
     @Override
-    public Occupation getOccupation(ResourceLocation profession) {
+    public Occupation getOccupation(Identifier profession) {
         return occupationMap.get(profession);
     }
 

@@ -12,7 +12,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,9 +29,9 @@ public class ProfessionCategory {
     private final Map<String, Dynamic<?>> features;
     private @Nullable ResourceLocation fileId;
 
-    private static final Codec<ResourceKey<Profession>> PROFESSION_KEY_CODEC = ResourceLocation.CODEC.xmap(
+    private static final Codec<ResourceKey<Profession>> PROFESSION_KEY_CODEC = Identifier.CODEC.xmap(
             resourceLocation -> ResourceKey.create(ProfessionsCommon.PROFESSION_REGISTRY_KEY, resourceLocation),
-            ResourceKey::location
+            ResourceKey::identifier
     );
     private static final Codec<Map<String, Dynamic<?>>> FEATURES_CODEC = Codec.unboundedMap(Codec.STRING, Codec.PASSTHROUGH);
 

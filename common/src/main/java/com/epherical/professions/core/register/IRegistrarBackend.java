@@ -2,7 +2,7 @@ package com.epherical.professions.core.register;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Supplier;
 
@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public interface IRegistrarBackend {
 
     <T> T register(ResourceKey<Registry<T>> registryKey,
-                             ResourceLocation id,
+                             Identifier id,
                              T object);
 
 }

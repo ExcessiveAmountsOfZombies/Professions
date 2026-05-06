@@ -7,7 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,10 +15,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public record S2CPlayerDataSyncPayload(UUID playerId, List<Occupation> occupations,
-        Optional<ResourceLocation> categoryId) implements CustomPacketPayload {
+        Optional<Identifier> categoryId) implements CustomPacketPayload {
 
     public static final Type<S2CPlayerDataSyncPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "player_data_sync"));
+            new Type<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "player_data_sync"));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, List<Occupation>> OCCUPATIONS_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(Occupation.CODEC.listOf());
@@ -27,7 +27,7 @@ public record S2CPlayerDataSyncPayload(UUID playerId, List<Occupation> occupatio
             StreamCodec.composite(
                     UUIDUtil.STREAM_CODEC, S2CPlayerDataSyncPayload::playerId,
                     OCCUPATIONS_CODEC, S2CPlayerDataSyncPayload::occupations,
-                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC), S2CPlayerDataSyncPayload::categoryId,
+                    ByteBufCodecs.optional(Identifier.STREAM_CODEC), S2CPlayerDataSyncPayload::categoryId,
                     S2CPlayerDataSyncPayload::new
             );
 

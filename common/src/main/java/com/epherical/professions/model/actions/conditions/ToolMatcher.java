@@ -6,15 +6,17 @@ import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.bootstrap.Conditions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.critereon.EnchantmentPredicate;
-import net.minecraft.advancements.critereon.ItemEnchantmentsPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.ItemSubPredicate;
-import net.minecraft.advancements.critereon.ItemSubPredicates;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.DataComponentMatchers;
+import net.minecraft.advancements.criterion.EnchantmentPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.component.predicates.DataComponentPredicate;
+import net.minecraft.core.component.predicates.DataComponentPredicates;
+import net.minecraft.core.component.predicates.EnchantmentsPredicate;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -30,7 +32,7 @@ public record ToolMatcher(MatchTool tool) implements Condition {
 
     public static final MapCodec<ToolMatcher> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                            MatchTool.CODEC.fieldOf("matches").forGetter(ToolMatcher::tool))
+                            MatchTool.MAP_CODEC.fieldOf("matches").forGetter(ToolMatcher::tool))
                     .apply(i, ToolMatcher::new)
     );
 
@@ -47,6 +49,7 @@ public record ToolMatcher(MatchTool tool) implements Condition {
 
     public static class Builder implements Condition.Builder {
         private final ItemPredicate.Builder itemPredicate = ItemPredicate.Builder.item();
+        private final DataComponentMatchers.Builder componentMatchers = DataComponentMatchers.Builder.components();
         private final HolderLookup.Provider registries;
 
         public Builder(HolderLookup.Provider registries) {
@@ -54,22 +57,24 @@ public record ToolMatcher(MatchTool tool) implements Condition {
         }
 
         public Builder items(ItemLike... items) {
-            this.itemPredicate.of(items);
+            HolderGetter<Item> itemLookup = this.registries.lookupOrThrow(Registries.ITEM);
+            this.itemPredicate.of(itemLookup, items);
             return this;
         }
 
         public Builder itemTag(TagKey<Item> itemTag) {
-            this.itemPredicate.of(itemTag);
+            HolderGetter<Item> itemLookup = this.registries.lookupOrThrow(Registries.ITEM);
+            this.itemPredicate.of(itemLookup, itemTag);
             return this;
         }
 
-        public <T extends ItemSubPredicate> Builder withSubPredicate(ItemSubPredicate.Type<T> type, T predicate) {
-            this.itemPredicate.withSubPredicate(type, predicate);
+        public <T extends DataComponentPredicate> Builder withSubPredicate(DataComponentPredicate.Type<T> type, T predicate) {
+            this.componentMatchers.partial(type, predicate);
             return this;
         }
 
         public Builder withEnchantments(List<EnchantmentPredicate> enchantments) {
-            return withSubPredicate(ItemSubPredicates.ENCHANTMENTS, ItemEnchantmentsPredicate.enchantments(enchantments));
+            return withSubPredicate(DataComponentPredicates.ENCHANTMENTS, EnchantmentsPredicate.enchantments(enchantments));
         }
 
         public Builder withEnchantment(ResourceKey<Enchantment> enchantment, MinMaxBounds.Ints level) {
@@ -85,6 +90,7 @@ public record ToolMatcher(MatchTool tool) implements Condition {
 
         @Override
         public Condition build() {
+            this.itemPredicate.withComponents(this.componentMatchers.build());
             return new ToolMatcher(new MatchTool(Optional.of(this.itemPredicate.build())));
         }
     }

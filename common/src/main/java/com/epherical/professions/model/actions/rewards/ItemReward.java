@@ -18,7 +18,7 @@ public record ItemReward(ItemStack item) implements Reward<ItemRewardEvent> {
 
     public static final MapCodec<ItemReward> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    ItemStack.SINGLE_ITEM_CODEC.fieldOf("item").forGetter(ItemReward::item)
+                    ItemStack.CODEC.fieldOf("item").forGetter(ItemReward::item)
             ).apply(i, ItemReward::new));
 
     @Override

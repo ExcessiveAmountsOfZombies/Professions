@@ -94,7 +94,7 @@ public class ActionManager {
             Action<T> action = (Action<T>) entry.getValue();
             ResourceKey<? extends Registry<T>> registryKey = action.getRegistryKey();
             HolderLookup.RegistryLookup<T> lookup = registryLookup.lookup(registryKey)
-                    .orElseThrow(() -> new IllegalStateException("Could not find registry lookup for " + registryKey.location()));
+                    .orElseThrow(() -> new IllegalStateException("Could not find registry lookup for " + registryKey.identifier()));
 
             for (Either<TagKey<T>, ResourceKey<T>> value : action.getValues()) {
                 if (value.left().isPresent()) {

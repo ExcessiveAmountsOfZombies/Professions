@@ -32,7 +32,7 @@ import com.epherical.professions.api.event.runtime.rewards.OccupationExperienceE
 import com.epherical.professions.api.event.runtime.rewards.OccupationLevelEvent;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,19 +43,19 @@ public abstract class ProfessionsCommon {
     public static final String MOD_ID = "professions";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_ID);
     public static final ResourceKey<Registry<ActionType>> ACTION_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/actions"));
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "professions/actions"));
     public static final ResourceKey<Registry<GateType>> GATE_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/gates"));
     public static final ResourceKey<Registry<GateRequirementType>> REQUIREMENT_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/requirements"));
     public static final ResourceKey<Registry<ConditionType>> CONDITION_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/conditions"));
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "professions/conditions"));
     public static final ResourceKey<Registry<RewardType>> REWARD_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/rewards"));
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "professions/rewards"));
     public static final ResourceKey<Registry<PerkType>> PERK_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/perks"));
     public static final ResourceKey<Registry<Profession>> PROFESSION_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "occupations"));
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "occupations"));
 
     public static ProfessionsCommon INSTANCE;
 

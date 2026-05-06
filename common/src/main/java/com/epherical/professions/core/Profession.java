@@ -8,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import com.epherical.professions.org.mbertoli.jfep.Parser;
 
@@ -26,7 +26,7 @@ public record Profession(
         ExpScaling expScaling) {
 
     public static final Codec<Profession> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            //ResourceLocation.CODEC.fieldOf("id").forGetter(Profession::key),
+            //Identifier.CODEC.fieldOf("id").forGetter(Profession::key),
             Formatting.CODEC.fieldOf("formatting").forGetter(Profession::formatting),
             Settings.CODEC.fieldOf("settings").forGetter(Profession::settings),
             ExpScaling.CODEC.fieldOf("expScaling").forGetter(Profession::expScaling)
@@ -132,10 +132,10 @@ public record Profession(
 
         }
 
-        public record Settings(int maxLevel, ResourceLocation levelUpSound) {
+        public record Settings(int maxLevel, Identifier levelUpSound) {
             public static final Codec<Settings> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.INT.fieldOf("maxLevel").forGetter(Settings::maxLevel),
-                    ResourceLocation.CODEC.fieldOf("levelUpSound").forGetter(Settings::levelUpSound)
+                    Identifier.CODEC.fieldOf("levelUpSound").forGetter(Settings::levelUpSound)
             ).apply(instance, Settings::new));
         }
 

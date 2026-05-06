@@ -5,14 +5,14 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.api.actions.Action;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 
 public class ActionProcessingEvent extends AbstractCancellableProfessionEvent {
 
     public static final EventKey<ActionProcessingEvent> KEY =
-            new EventKey<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "action_processing"), ActionProcessingEvent.class);
+            new EventKey<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "action_processing"), ActionProcessingEvent.class);
 
     private final Collection<Action<?>> actions;
     private final IProfessionalPlayer player;

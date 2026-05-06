@@ -4,7 +4,7 @@ import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.api.actions.Action;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -61,21 +61,7 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
     }
 
     @Override
-    protected void renderListSeparators(GuiGraphics pGuiGraphics) {
-    }
-
-    @Override
-    protected int getRowTop(int pIndex) {
-        return super.getRowTop(pIndex);
-    }
-
-    @Override
-    public int getBottom() {
-        return super.getBottom();
-    }
-
-    protected int getRowBottom(int pIndex) {
-        return super.getRowBottom(pIndex);
+    protected void extractListSeparators(GuiGraphicsExtractor pGuiGraphics) {
     }
 
     public Occupation getProfession() {
@@ -136,16 +122,17 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
         }
 
         @Override
-        public void render(GuiGraphics gfx,
-                           int index, int y, int x, int rowWidth, int rowHeight,
-                           int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor gfx, int mouseX, int mouseY, boolean hovering, float partialTick) {
+            int y = this.getY();
+            int x = this.getX() + 1;
+            int rowHeight = this.getHeight();
             int baseY = y + (rowHeight - ICON_SIZE) / 2;
 
             //gfx.fill(x, y, rowWidth + x, rowHeight + y, 0xFFFFFFFF);
 
             for (int i = 0; i < items.size(); i++) {
                 int iconX = x + i * ICON_SPACING;
-                gfx.renderFakeItem(items.get(i).holder(), iconX, baseY);
+                gfx.fakeItem(items.get(i).holder(), iconX, baseY);
                 drawBorder(gfx, iconX, baseY, false);
             }
 
@@ -160,7 +147,7 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
             }
         }
 
-        private void drawBorder(GuiGraphics gfx, int iconX, int baseY, boolean highlighted) {
+        private void drawBorder(GuiGraphicsExtractor gfx, int iconX, int baseY, boolean highlighted) {
             int color = highlighted ? 0xFFFFFFFF : BORDER_COLOR;
             int left = iconX - 1;
             int top = baseY - 1;
@@ -173,8 +160,7 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
         }
 
         private int getHoveredIndex(double mouseX, double mouseY, int rowLeft) {
-            int rowTop = OccupationInfoList.this.getRowTop(OccupationInfoList.this.children().indexOf(this));
-            int baseY = rowTop + (OccupationInfoList.this.itemHeight - ICON_SIZE) / 2;
+            int baseY = this.getY() + (this.getHeight() - ICON_SIZE) / 2;
             return getHoveredIndex(mouseX, mouseY, rowLeft, baseY);
         }
 

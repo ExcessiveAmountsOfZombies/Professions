@@ -1,7 +1,7 @@
 package com.epherical.professions.presentation.client.gui.components;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,17 +16,8 @@ public abstract class AbstractOccupationSelector<E extends ContainerObjectSelect
     }
 
     @Override
-    protected void renderListBackground(GuiGraphics pGuiGraphics) {
-    }
+    protected void extractListBackground(GuiGraphicsExtractor graphics) {
 
-    @Override
-    protected void setRenderHeader(boolean pRenderHeader, int pHeaderHeight) {
-        super.setRenderHeader(false, pHeaderHeight);
-    }
-
-    @Override
-    public int getMaxScroll() {
-        return Math.max(0, this.getMaxPosition() - (this.height - 8));
     }
 
     @Override
@@ -35,17 +26,17 @@ public abstract class AbstractOccupationSelector<E extends ContainerObjectSelect
     }
 
     @Override
-    protected int getScrollbarPosition() {
-        return listWidth;
-    }
-
-    @Override
     public int getRowWidth() {
         return listWidth;
     }
 
     @Override
-    protected boolean scrollbarVisible() {
+    protected int scrollBarX() {
+        return listWidth;
+    }
+
+    @Override
+    protected boolean scrollable() {
         return false;
     }
 }

@@ -40,7 +40,7 @@ final class CategoryDataProvider implements DataProvider {
         return lookupProvider.thenCompose(registries -> {
             List<ResourceKey<Profession>> professions = registries.lookupOrThrow(ProfessionsCommon.PROFESSION_REGISTRY_KEY)
                     .listElementIds()
-                    .sorted(Comparator.comparing(key -> key.location().toString()))
+                    .sorted(Comparator.comparing(key -> key.identifier().toString()))
                     .toList();
 
             ProfessionCategory defaultCategory = new ProfessionCategory(

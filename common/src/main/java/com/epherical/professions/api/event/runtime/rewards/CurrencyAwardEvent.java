@@ -6,12 +6,12 @@ import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.api.event.runtime.AbstractProfessionEvent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class CurrencyAwardEvent extends AbstractProfessionEvent {
 
     public static final EventKey<CurrencyAwardEvent> KEY =
-            new EventKey<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "reward_currency"), CurrencyAwardEvent.class);
+            new EventKey<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "reward_currency"), CurrencyAwardEvent.class);
 
     private final ProfessionContext context;
     private final IProfessionalPlayer player;

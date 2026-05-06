@@ -7,12 +7,14 @@ import com.epherical.professions.presentation.client.gui.components.OccupationIn
 import com.epherical.professions.presentation.client.gui.components.OccupationXpBar;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
@@ -39,12 +41,16 @@ public class OccupationInfoScreen extends Screen {
     private final Occupation occupation;
 
 
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_info");
+    public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_info");
 
     public OccupationInfoScreen(Occupation occupation) {
         super(Component.translatable("professions.screen.occupation_info.title"));
         this.occupation = occupation;
     }
+
+    // todo; need to fix the lists
+    // todo; text isn't visible for some reason
+    // todo; regenerate the data
 
 
     @Override
@@ -54,7 +60,8 @@ public class OccupationInfoScreen extends Screen {
         this.topPos = (this.height - this.imageHeight) / 2;
 
         occupationInfoList = new OccupationInfoList(this.minecraft, 93, topPos + 43, 228 + topPos, 18, occupation);
-        occupationInfoList.setX(leftPos + 9);
+        occupationInfoList.setX(leftPos + 10);
+        occupationInfoList.setScrollAmount(0.0d);
        // occupationInfoList.setY(topPos + 42);
         //occupationInfoList.setRectangle(94, 186, leftPos + 9, topPos + 42);
 
@@ -65,7 +72,7 @@ public class OccupationInfoScreen extends Screen {
                     minecraft.setScreen(null);
                 }).pos(leftPos + 193, topPos + 1).size(18, 18)
                 .background(SPRITES)
-                .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
+                .icon(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
                 .tooltip(Tooltip.create(Component.translatable("professions.screen.common.close_menu")))
                 .build();
 
@@ -77,7 +84,7 @@ public class OccupationInfoScreen extends Screen {
                             minecraft.setScreen(new OccupationMenuScreen(activeOccupations));
                         }).pos(leftPos + 193 - 18, topPos + 1).size(18, 18)
                         .background(SPRITES)
-                        .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/grey_back"))
+                        .icon(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/grey_back"))
                         .tooltip(Tooltip.create(Component.translatable("professions.screen.common.back"))).build()
         );
 
@@ -97,8 +104,8 @@ public class OccupationInfoScreen extends Screen {
 
 
     @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+    public void extractRenderState(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractRenderState(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 
         OccupationInfoList.Entry focused = occupationInfoList.getHovered();
         if (focused != null) {
@@ -106,28 +113,28 @@ public class OccupationInfoScreen extends Screen {
             int paintX = leftPos + 115;
             int paintY = topPos + 89;
 
-            pGuiGraphics.pose().pushPose();
-            pGuiGraphics.pose().translate(paintX, paintY, 0);
-            pGuiGraphics.pose().scale(s, s, 1);
-            pGuiGraphics.pose().translate(-paintX, -paintY, 0);
-            pGuiGraphics.drawString(
+            pGuiGraphics.pose().pushMatrix();
+            pGuiGraphics.pose().translate(paintX, paintY);
+            pGuiGraphics.pose().scale(s, s);
+            pGuiGraphics.pose().translate(-paintX, -paintY);
+            pGuiGraphics.text(
                     minecraft.font,
                     Component.translatable("professions.screen.occupation_info.activated_by_actions"),
                     paintX, paintY,
                     0xFF025E66, false);
-            pGuiGraphics.pose().popPose();
+            pGuiGraphics.pose().popMatrix();
 
 
 
             s = 2.5f;
             paintX = leftPos + 141;
             paintY = topPos + 23;
-            pGuiGraphics.pose().pushPose();
-            pGuiGraphics.pose().translate(paintX, paintY, 0);
-            pGuiGraphics.pose().scale(s, s, 1);
-            pGuiGraphics.pose().translate(-paintX, -paintY, 0);
-            pGuiGraphics.renderFakeItem(focused.getHolder(), paintX, paintY, 1000);
-            pGuiGraphics.pose().popPose();
+            pGuiGraphics.pose().pushMatrix();
+            pGuiGraphics.pose().translate(paintX, paintY);
+            pGuiGraphics.pose().scale(s, s);
+            pGuiGraphics.pose().translate(-paintX, -paintY);
+            pGuiGraphics.fakeItem(focused.getHolder(), paintX, paintY, 1000);
+            pGuiGraphics.pose().popMatrix();
 
 
             int boxL = leftPos + 115;
@@ -148,26 +155,26 @@ public class OccupationInfoScreen extends Screen {
 
             // todo; we'll turn this into a button object or something in the future
 
-            pGuiGraphics.pose().pushPose();
-            pGuiGraphics.pose().translate(paintX, paintY, 0);
-            pGuiGraphics.pose().scale(s, s, 1);
-            pGuiGraphics.pose().translate(-paintX, -paintY, 0);
-            pGuiGraphics.renderFakeItem(focused.getActionItem(), paintX, paintY, 1000);
+            pGuiGraphics.pose().pushMatrix();
+            pGuiGraphics.pose().translate(paintX, paintY);
+            pGuiGraphics.pose().scale(s, s);
+            pGuiGraphics.pose().translate(-paintX, -paintY);
+            pGuiGraphics.fakeItem(focused.getActionItem(), paintX, paintY, 1000);
 
             paintX = leftPos + 134;
             paintY += 4;
 
-            pGuiGraphics.drawString(minecraft.font,
+            pGuiGraphics.text(minecraft.font,
                     Component.translatable(focused.getAction().getType().translationKey()),
                     paintX, paintY, 0xFFFFFFFF, false);
 
-            pGuiGraphics.pose().popPose();
+            pGuiGraphics.pose().popMatrix();
 
 
             paintX = leftPos + 115;
             paintY += 16;
 
-            pGuiGraphics.drawString(minecraft.font,
+            pGuiGraphics.text(minecraft.font,
                     Component.translatable("professions.screen.occupation_info.rewards"), paintX, paintY, 0xFF025E66, false);
 
 
@@ -175,8 +182,8 @@ public class OccupationInfoScreen extends Screen {
             paintY += 16;
 
             for (Reward<?> reward : focused.getAction().getRewards()) {
-                pGuiGraphics.renderFakeItem(reward.getRewardIcon(), paintX, paintY, 1000);
-                pGuiGraphics.drawString(minecraft.font, reward.getRewardName(), paintX + 18, paintY + 6, 0xFFFFFFFF, true);
+                pGuiGraphics.fakeItem(reward.getRewardIcon(), paintX, paintY, 1000);
+                pGuiGraphics.text(minecraft.font, reward.getRewardName(), paintX + 18, paintY + 6, 0xFFFFFFFF, true);
                 paintY+= 16;
             }
 
@@ -184,9 +191,9 @@ public class OccupationInfoScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        pGuiGraphics.blitSprite(TEXTURE, leftPos, topPos, imageWidth, imageHeight);
+    public void extractBackground(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        pGuiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, imageWidth, imageHeight);
     }
 
 
@@ -199,7 +206,7 @@ public class OccupationInfoScreen extends Screen {
     }
 
 
-    public static void drawLabelAutoScale(GuiGraphics gfx,
+    public static void drawLabelAutoScale(GuiGraphicsExtractor gfx,
                                           Font font,
                                           Component msg,
                                           int left, int top,
@@ -224,18 +231,18 @@ public class OccupationInfoScreen extends Screen {
         int startX = left + (boxW - scaledW) / 2;
         int startY = top + (boxH - scaledH) / 2;
 
-        gfx.pose().pushPose();
-        gfx.pose().translate(startX, startY, 0);
-        gfx.pose().scale(scale, scale, 1);
+        gfx.pose().pushMatrix();
+        gfx.pose().translate(startX, startY);
+        gfx.pose().scale(scale, scale);
 
         for (int i = 0; i < lines.size(); i++) {
             FormattedCharSequence line = lines.get(i);
             int w = font.width(line);
             int dx = (widest - w) / 2;
             int dy = i * font.lineHeight;
-            gfx.drawString(font, line, dx, dy, colour, false);
+            gfx.text(font, line, dx, dy, colour, false);
         }
 
-        gfx.pose().popPose();
+        gfx.pose().popMatrix();
     }
 }

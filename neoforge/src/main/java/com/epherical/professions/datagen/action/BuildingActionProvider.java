@@ -75,7 +75,7 @@ public final class BuildingActionProvider implements DataProvider {
                     36,
                     List.of(),
                     List.of(
-                            Blocks.GLASS, Blocks.GLASS_PANE, Blocks.IRON_BARS, Blocks.CHAIN,
+                            Blocks.GLASS, Blocks.GLASS_PANE, Blocks.IRON_BARS, Blocks.IRON_CHAIN,
                             Blocks.WHITE_STAINED_GLASS, Blocks.ORANGE_STAINED_GLASS, Blocks.MAGENTA_STAINED_GLASS,
                             Blocks.LIGHT_BLUE_STAINED_GLASS, Blocks.YELLOW_STAINED_GLASS, Blocks.LIME_STAINED_GLASS,
                             Blocks.PINK_STAINED_GLASS, Blocks.GRAY_STAINED_GLASS, Blocks.LIGHT_GRAY_STAINED_GLASS,

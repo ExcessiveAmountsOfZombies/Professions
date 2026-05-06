@@ -5,12 +5,12 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.api.event.runtime.AbstractProfessionEvent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class OccupationLevelEvent extends AbstractProfessionEvent {
 
     public static final EventKey<OccupationLevelEvent> KEY =
-            new EventKey<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation_level"), OccupationLevelEvent.class);
+            new EventKey<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation_level"), OccupationLevelEvent.class);
     private final Occupation occupation;
     private final IProfessionalPlayer player;
     private final int oldLevel;

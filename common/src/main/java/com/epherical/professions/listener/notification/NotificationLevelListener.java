@@ -22,10 +22,10 @@ public class NotificationLevelListener implements EventListener<OccupationLevelE
         IProfessionalPlayer player = event.getPlayer();
 
         if (player.getPlayer() instanceof  ServerPlayer serverPlayer) {
-            HolderLookup.RegistryLookup<SoundEvent> soundEventRegistryLookup = serverPlayer.serverLevel().registryAccess().lookupOrThrow(Registries.SOUND_EVENT);
+            HolderLookup.RegistryLookup<SoundEvent> soundEventRegistryLookup = serverPlayer.level().registryAccess().lookupOrThrow(Registries.SOUND_EVENT);
             Optional<Holder.Reference<SoundEvent>> soundEventReference = soundEventRegistryLookup.get(ResourceKey.create(Registries.SOUND_EVENT, event.getOccupation().getProfession().value().settings().levelUpSound()));
             soundEventReference.ifPresent(soundEvent -> {
-                serverPlayer.playNotifySound(soundEvent.value(), SoundSource.PLAYERS, 0.5f, 1f);
+                serverPlayer.playSound(soundEvent.value(), 0.5f, 1f);
             });
             serverPlayer.sendSystemMessage(Component.literal(String.format("You have leveled %s from %s to %s",
                     event.getOccupation().getProfession().value().displayNameRaw(), event.getOldLevel(), event.getNewLevel())));

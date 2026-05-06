@@ -11,7 +11,7 @@ import com.epherical.professions.presentation.client.gui.screen.OccupationPerkMe
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -27,16 +27,19 @@ import java.util.List;
 public class ClientInitializer {
 
     private static KeyMapping occupationMenu;
+    private static final KeyMapping.Category OCCUPATION_CATEGORY =
+            new KeyMapping.Category(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation"));
 
 
 
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
+        event.registerCategory(OCCUPATION_CATEGORY);
         event.register(occupationMenu = new KeyMapping(
                 "key.professions.open_occupation_menu",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_R,
-                "category.professions.occupation"));
+                OCCUPATION_CATEGORY));
     }
 
 
@@ -55,8 +58,8 @@ public class ClientInitializer {
         }
     }
 
-    private static final ResourceLocation PROFESSION_XP =
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "profession_xp");
+    private static final Identifier PROFESSION_XP =
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "profession_xp");
 
     @SubscribeEvent
     public static void registerLayer(RegisterGuiLayersEvent event) {

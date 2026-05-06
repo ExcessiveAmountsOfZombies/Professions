@@ -4,7 +4,7 @@ import com.epherical.professions.registries.CategoryLoad3;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceReloadListenerKeys;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -17,7 +17,7 @@ import java.util.concurrent.Executor;
 
 public final class FabricCategoryReloadListener implements IdentifiableResourceReloadListener {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "categories");
+    public static final Identifier ID = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "categories");
 
     private final CategoryLoad3 delegate;
     private final HolderLookup.Provider registries;
@@ -28,12 +28,12 @@ public final class FabricCategoryReloadListener implements IdentifiableResourceR
     }
 
     @Override
-    public ResourceLocation getFabricId() {
+    public Identifier getFabricId() {
         return ID;
     }
 
     @Override
-    public Collection<ResourceLocation> getFabricDependencies() {
+    public Collection<Identifier> getFabricDependencies() {
         return List.of(ResourceReloadListenerKeys.TAGS);
     }
 

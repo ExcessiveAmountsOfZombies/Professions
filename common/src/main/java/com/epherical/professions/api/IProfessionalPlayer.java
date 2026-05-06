@@ -4,7 +4,7 @@ import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.model.Occupation;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +39,7 @@ public interface IProfessionalPlayer {
     Occupation getOccupation(Holder<Profession> profession);
 
     @Nullable
-    Occupation getOccupation(ResourceLocation profession);
+    Occupation getOccupation(Identifier profession);
 
     /**
      * @return Will return ALL occupations, regardless of them being active or not. Mainly to make sure they can be saved.

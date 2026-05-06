@@ -85,7 +85,7 @@ public final class CraftingActionProvider implements DataProvider {
                             Items.IRON_BARS,
                             Items.HOPPER,
                             Items.CAULDRON,
-                            Items.CHAIN,
+                            Items.IRON_CHAIN,
                             Items.STONE_PRESSURE_PLATE,
                             Items.POLISHED_BLACKSTONE_PRESSURE_PLATE,
                             Items.LIGHT_WEIGHTED_PRESSURE_PLATE,

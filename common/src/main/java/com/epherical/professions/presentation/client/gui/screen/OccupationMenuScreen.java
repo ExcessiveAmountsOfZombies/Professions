@@ -8,11 +8,12 @@ import com.epherical.professions.networking.client.C2SOccupationExperienceTracki
 import com.epherical.professions.presentation.client.RenderHelperUtil;
 import com.epherical.professions.presentation.client.gui.components.OccupationProfessionList;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
@@ -41,10 +42,10 @@ public class OccupationMenuScreen extends Screen {
     private OccupationMenuButton trackButton;
     private OccupationMenuButton perkButton;
     private boolean trackEnabled;
-    private ResourceLocation trackedProfessionId;
+    private Identifier trackedProfessionId;
 
 
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/main_menu/occupation_menu");
+    public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/main_menu/occupation_menu");
 
     private final List<Occupation> occupations;
 
@@ -108,7 +109,7 @@ public class OccupationMenuScreen extends Screen {
                     minecraft.setScreen(null);
                 }).pos(leftPos + 296, topPos + 2).size(18, 18)
                 .background(SPRITES)
-                .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
+                .icon(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
                 .tooltip(Tooltip.create(Component.translatable("professions.screen.common.close_menu")))
                 .build();
 
@@ -117,12 +118,12 @@ public class OccupationMenuScreen extends Screen {
 
 
     @Override
-    public void render(@NotNull GuiGraphics gfx, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(gfx, pMouseX, pMouseY, pPartialTick);
+    public void extractRenderState(GuiGraphicsExtractor gfx, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractRenderState(gfx, pMouseX, pMouseY, pPartialTick);
 
         RenderHelperUtil.drawScaledString(gfx, font,
                 Component.translatable("professions.screen.occupation_menu.header"),
-                leftPos + 5, topPos + 5, 1.5f, 0xd5af47, false);
+                leftPos + 5, topPos + 5, 1.5f, 0xFFd5af47, false);
 
 
         if (occupationProfessionList.getSelected() != null) {
@@ -137,13 +138,13 @@ public class OccupationMenuScreen extends Screen {
 
             RenderHelperUtil.drawScaledString(gfx, minecraft.font,
                     Component.translatable("professions.screen.occupation_menu.selected_overview"),
-                    leftPos + 150, topPos + 32, 1.5f, 0x6f4d15, false);
+                    leftPos + 150, topPos + 32, 1.5f, 0xFF6f4d15, false);
 
             RenderHelperUtil.drawScaled(gfx, leftPos + 156, topPos + 50, 2f, () -> {
-                gfx.renderItem(occupationProfessionList.getProfessionIcon(), 0, 0);
+                gfx.item(occupationProfessionList.getProfessionIcon(), 0, 0);
             });
 
-            gfx.drawString(minecraft.font, occupationProfessionList.getProfessionName(), leftPos + 200, topPos + 50, 0xFFFFFF);
+            gfx.text(minecraft.font, occupationProfessionList.getProfessionName(), leftPos + 200, topPos + 50, 0xFFFFFFFF);
 
 
             int pX = leftPos + 200;
@@ -152,7 +153,7 @@ public class OccupationMenuScreen extends Screen {
             RenderHelperUtil.drawScaled(gfx, pX, pY, 0.8f, () -> {
                 int translateY = 0;
                 for(FormattedCharSequence seq : occupationProfessionList.getOrderedDescription()) {
-                    gfx.drawString(minecraft.font, seq, 0, translateY, 0x6f4d15, false);
+                    gfx.text(minecraft.font, seq, 0, translateY, 0x6f4d15, false);
                     translateY += 10;
                 }
             });
@@ -160,10 +161,10 @@ public class OccupationMenuScreen extends Screen {
             int rgb = selected.getProfession().professionColor().getValue();
 
             RenderHelperUtil.drawScaledString(gfx, minecraft.font, Component.translatable("professions.screen.occupation_menu.progress"),
-                    leftPos + 150, topPos + 90, 0.75f, 0x6f4d15, false);
+                    leftPos + 150, topPos + 90, 0.75f, 0xFF6f4d15, false);
 
 
-            gfx.drawString(minecraft.font,
+            gfx.text(minecraft.font,
                     Component.translatable("professions.screen.occupation_menu.level", occupationProfessionList.getSelected().getOccupation().getLevel()),
                     leftPos + 150, topPos + 99, rgb, true);
 
@@ -173,7 +174,7 @@ public class OccupationMenuScreen extends Screen {
 
             int barX = leftPos + 150;
             int barY = topPos + 110;
-            gfx.blitSprite(PROGRESS_BAR_EMPTY, barX, barY, 150, 7);
+            gfx.blitSprite(RenderPipelines.GUI_TEXTURED, PROGRESS_BAR_EMPTY, barX, barY, 150, 7);
 
             int filledWidth = Mth.floor(150 * clampedPercentage);
 
@@ -182,10 +183,12 @@ public class OccupationMenuScreen extends Screen {
             float blue = (rgb & 0xFF) / 255.0f;
 
             if (filledWidth > 0) {
-                gfx.setColor(red, green, blue, 1.0f);
-                gfx.blitSprite(PROGRESS_BAR_FULL, barX, barY, filledWidth, 7);
+                int progressColor = ((int) (255.0F * 1.0F) << 24)
+                        | ((int) (255.0F * red) << 16)
+                        | ((int) (255.0F * green) << 8)
+                        | (int) (255.0F * blue);
+                gfx.blitSprite(RenderPipelines.GUI_TEXTURED, PROGRESS_BAR_FULL, barX, barY, filledWidth, 7, progressColor);
                 //gfx.blitSprite(PROGRESS_BAR_FULL, PROGRESS_BAR_WIDTH, PROGRESS_BAR_HEIGHT, 0, 0, barX, barY, filledWidth, PROGRESS_BAR_HEIGHT);
-                gfx.setColor(1f, 1f, 1f, 1.2f);
             }
 
             RenderHelperUtil.drawScaledString(gfx, minecraft.font,
@@ -194,17 +197,17 @@ public class OccupationMenuScreen extends Screen {
                             String.format(Locale.ROOT, "%.2f", getSelectedOccupation().getExpProgress()),
                             String.format(Locale.ROOT, "%.2f", getSelectedOccupation().getMaxExperience())
                     ),
-                    leftPos + 190, topPos + 120, 0.75f, 0x6f4d15, false);
+                    leftPos + 190, topPos + 120, 0.75f, 0xFF6f4d15, false);
 
 
             RenderHelperUtil.drawScaledString(gfx, minecraft.font,
                     Component.translatable("professions.screen.occupation_menu.base_rewards"),
-                    leftPos + 150, topPos + 130, 0.66f, 0x6f4d15, false
+                    leftPos + 150, topPos + 130, 0.66f, 0xFF6f4d15, false
             );
 
             RenderHelperUtil.drawScaledString(gfx, minecraft.font,
                     Component.translatable("professions.screen.occupation_menu.extras"),
-                    leftPos + 150, topPos + 170, 0.75f, 0x6f4d15, false);
+                    leftPos + 150, topPos + 170, 0.75f, 0xFF6f4d15, false);
 
 
         } else {
@@ -224,7 +227,7 @@ public class OccupationMenuScreen extends Screen {
             return;
         }
 
-        ResourceLocation selectedProfessionId = selectedOccupation.getProfessionKey();
+        Identifier selectedProfessionId = selectedOccupation.getProfessionKey();
         if (!selectedProfessionId.equals(trackedProfessionId)) {
             trackedProfessionId = selectedProfessionId;
             trackEnabled = selectedOccupation.isExperienceGainTrackingEnabled();
@@ -232,8 +235,8 @@ public class OccupationMenuScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        pGuiGraphics.blitSprite(TEXTURE, leftPos, topPos, imageWidth, imageHeight);
+    public void extractBackground(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        pGuiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, imageWidth, imageHeight);
     }
 }

@@ -3,7 +3,7 @@ package com.epherical.professions.core.register;
 import com.epherical.professions.ProfessionsCommon;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class PlatformBootstrap {
 
@@ -23,7 +23,7 @@ public final class PlatformBootstrap {
     public static <T> T register(ResourceKey<Registry<T>> registryKey,
                                            String path,
                                            T object) {
-        return backend().register(registryKey, ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, path), object);
+        return backend().register(registryKey, Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, path), object);
     }
 
 }

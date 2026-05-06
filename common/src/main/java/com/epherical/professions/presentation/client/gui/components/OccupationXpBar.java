@@ -1,9 +1,10 @@
 package com.epherical.professions.presentation.client.gui.components;
 
 import com.epherical.professions.ProfessionsCommon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,8 +12,8 @@ public class OccupationXpBar implements Renderable {
 
     private static final int WIDTH = 86;
     private static final int HEIGHT = 12;
-    private static final ResourceLocation EMPTY_SPRITE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_xp_bar_empty");
-    private static final ResourceLocation FULL_SPRITE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_xp_bar_full");
+    private static final Identifier EMPTY_SPRITE = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_xp_bar_empty");
+    private static final Identifier FULL_SPRITE = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_xp_bar_full");
 
     private final double percentage;
 
@@ -32,12 +33,12 @@ public class OccupationXpBar implements Renderable {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        guiGraphics.blitSprite(EMPTY_SPRITE, x, y, WIDTH, HEIGHT);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED,EMPTY_SPRITE, x, y, WIDTH, HEIGHT);
 
         int filledWidth = Mth.clamp((int) Math.round(WIDTH * percentage), 0, WIDTH);
         if (filledWidth > 0) {
-            guiGraphics.blitSprite(FULL_SPRITE, WIDTH, HEIGHT, 0, 0, x, y, filledWidth , HEIGHT);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, FULL_SPRITE, WIDTH, HEIGHT, 0, 0, x, y, filledWidth , HEIGHT);
         }
     }
 }

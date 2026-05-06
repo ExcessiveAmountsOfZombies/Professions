@@ -11,7 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +37,7 @@ public class Occupation {
             .xmap(LinkedHashSet::new, List::copyOf);
 
     public static final Codec<Occupation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("profession").forGetter(Occupation::getProfessionKey),
+            Identifier.CODEC.fieldOf("profession").forGetter(Occupation::getProfessionKey),
             ExperienceData.CODEC.fieldOf("experience").forGetter(Occupation::getExperience),
             SLOT_CODEC.fieldOf("slot").forGetter(Occupation::getSlot),
             Settings.CODEC.optionalFieldOf("settings", Settings.empty()).forGetter(Occupation::getSettings),
@@ -47,7 +47,7 @@ public class Occupation {
 
     public static final String TRACK_EXPERIENCE_GAINS_SETTING_KEY = "track_experience_gains";
 
-    private final ResourceLocation professionKey;
+    private final Identifier professionKey;
     private final ExperienceData experience;
     private final Settings settings;
     private Set<ResourceLocation> unclaimedPerks;
@@ -60,11 +60,11 @@ public class Occupation {
     private transient Holder<Profession> profession;
     private transient BigDecimal maxLevelExp = BigDecimal.valueOf(-1);
 
-    public Occupation(ResourceLocation professionKey, ExperienceData experience, OccupationSlot slot) {
+    public Occupation(Identifier professionKey, ExperienceData experience, OccupationSlot slot) {
         this(professionKey, experience, slot, Settings.empty(), Set.of(), Set.of());
     }
 
-    public Occupation(ResourceLocation professionKey, ExperienceData experience, OccupationSlot slot, Settings settings) {
+    public Occupation(Identifier professionKey, ExperienceData experience, OccupationSlot slot, Settings settings) {
         this(professionKey, experience, slot, settings, Set.of(), Set.of());
     }
 
@@ -83,7 +83,7 @@ public class Occupation {
     }
 
     public Occupation(Holder<Profession> profession, double exp, int level, OccupationSlot slot) {
-        this(profession.unwrapKey().orElseThrow().location(), new ExperienceData(exp, level, exp), slot);
+        this(profession.unwrapKey().orElseThrow().identifier(), new ExperienceData(exp, level, exp), slot);
         this.profession = profession;
         this.professionExists = true;
         resetMaxExperience();
@@ -324,7 +324,7 @@ public class Occupation {
         return Optional.ofNullable(profession);
     }
 
-    public ResourceLocation getProfessionKey() {
+    public Identifier getProfessionKey() {
         return professionKey;
     }
 

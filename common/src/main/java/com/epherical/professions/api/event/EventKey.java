@@ -1,10 +1,10 @@
 package com.epherical.professions.api.event;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 
-public record EventKey<E extends ProfessionEvent>(ResourceLocation name, Class<E> type) {
+public record EventKey<E extends ProfessionEvent>(Identifier name, Class<E> type) {
 
     public EventKey {
         Objects.requireNonNull(name, "name");

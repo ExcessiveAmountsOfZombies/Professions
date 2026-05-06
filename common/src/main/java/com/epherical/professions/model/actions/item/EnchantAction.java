@@ -57,10 +57,10 @@ public class EnchantAction extends AbstractItemAction {
             }
 
             for (Either<TagKey<Enchantment>, ResourceKey<Enchantment>> value : getEnchantments()) {
-                if (value.left().isPresent() && instance.enchantment.is(value.left().get())) {
+                if (value.left().isPresent() && instance.enchantment().is(value.left().get())) {
                     return true;
                 }
-                if (value.right().isPresent() && instance.enchantment.is(value.right().get())) {
+                if (value.right().isPresent() && instance.enchantment().is(value.right().get())) {
                     return true;
                 }
             }

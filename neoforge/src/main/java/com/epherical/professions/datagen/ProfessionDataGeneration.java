@@ -27,7 +27,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -45,7 +45,7 @@ public final class ProfessionDataGeneration {
 
 
     @SubscribeEvent
-    public static void onGatherData(GatherDataEvent event) {
+    public static void onGatherData(GatherDataEvent.Client event) {
 
         RegistrySetBuilder builder = new RegistrySetBuilder()
                 .add(NeoForgeProfessionsMod.PROFESSION_REGISTRY_KEY, ctx -> {
@@ -179,9 +179,9 @@ public final class ProfessionDataGeneration {
                 java.util.Set.of(ProfessionsCommon.MOD_ID)
         );
         event.getGenerator().addProvider(true, professionsProvider);
-        event.getGenerator().addProvider(event.includeServer(), new CategoryDataProvider(out, professionsProvider.getRegistryProvider()));
-        event.getGenerator().addProvider(event.includeServer(), new MinerActionProvider(out, professionsProvider.getRegistryProvider()));
-        event.getGenerator().addProvider(event.includeServer(), new GateProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new CategoryDataProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new MinerActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new GateProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new MiningPerkProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new LoggingPerkProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new FarmingPerkProvider(out, professionsProvider.getRegistryProvider()));
@@ -192,13 +192,13 @@ public final class ProfessionDataGeneration {
         event.getGenerator().addProvider(event.includeServer(), new SmithingPerkProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new BuildingPerkProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new LoggingActionProvider(out, professionsProvider.getRegistryProvider()));
-        event.getGenerator().addProvider(event.includeServer(), new FarmingActionProvider(out, professionsProvider.getRegistryProvider()));
-        event.getGenerator().addProvider(event.includeServer(), new FishingActionProvider(out, professionsProvider.getRegistryProvider()));
-        event.getGenerator().addProvider(event.includeServer(), new HuntingActionProvider(out, professionsProvider.getRegistryProvider()));
-        event.getGenerator().addProvider(event.includeServer(), new EnchantingActionProvider(out, professionsProvider.getRegistryProvider()));
-        event.getGenerator().addProvider(event.includeServer(), new CraftingActionProvider(out, professionsProvider.getRegistryProvider()));
-        event.getGenerator().addProvider(event.includeServer(), new SmithingActionProvider(out, professionsProvider.getRegistryProvider()));
-        event.getGenerator().addProvider(event.includeServer(), new BuildingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new FarmingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new FishingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new HuntingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new EnchantingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new CraftingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new SmithingActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(true, new BuildingActionProvider(out, professionsProvider.getRegistryProvider()));
 
     }
 
@@ -207,24 +207,24 @@ public final class ProfessionDataGeneration {
         return ResourceKey.create(NeoForgeProfessionsMod.PROFESSION_REGISTRY_KEY, rl(path));
     }
 
-    public static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, path);
+    public static Identifier rl(String path) {
+        return Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, path);
     }
 
 
     public static final class Builder {
-        private final ResourceLocation id;
+        private final Identifier id;
         private Component display = Component.empty();
         private String[] description = new String[0];
         private TextColor nameColor = TextColor.parseColor("#FFFFFF").getOrThrow();
         private TextColor descColor = TextColor.parseColor("#AAAAAA").getOrThrow();
         private Item icon = Items.STONE_PICKAXE;
         private int maxLevel = 0;
-        private ResourceLocation levelUpSound = ResourceLocation.parse("minecraft:entity.player.levelup");
+        private Identifier levelUpSound = Identifier.parse("minecraft:entity.player.levelup");
         private String expEquation = "1000+(lvl*50)";
         private final NavigableMap<Integer, Parser> expScalers = new TreeMap<>();
 
-        public Builder(ResourceLocation id) {
+        public Builder(Identifier id) {
             this.id = id;
         }
 
@@ -258,7 +258,7 @@ public final class ProfessionDataGeneration {
             return this;
         }
 
-        public Builder levelUpSound(ResourceLocation sound) {
+        public Builder levelUpSound(Identifier sound) {
             this.levelUpSound = sound;
             return this;
         }

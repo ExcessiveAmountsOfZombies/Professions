@@ -10,6 +10,6 @@ public final class ProfessionCategorySyncPayloadHandler {
     }
 
     public static void handle(S2CCategorySyncPayload payload) {
-        Minecraft.getInstance().doRunTask(() -> ProfessionsCommon.INSTANCE.getCategoryManager().reloadCategories(payload.categories()));
+        Minecraft.getInstance().execute(() -> ProfessionsCommon.INSTANCE.getCategoryManager().reloadCategories(payload.categories()));
     }
 }

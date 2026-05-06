@@ -8,13 +8,15 @@ import com.epherical.professions.presentation.client.RenderHelperUtil;
 import com.epherical.professions.presentation.client.gui.components.OccupationCategoryList;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,14 +28,14 @@ public class OccupationCategorySelectionScreen extends Screen {
     private final int imageWidth = 320;
     private final int imageHeight = 238;
 
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/category/selection_menu");
-    public static final ResourceLocation INFO_ICON = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/blue_i");
+    public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/category/selection_menu");
+    public static final Identifier INFO_ICON = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/blue_i");
 
 
     public static final WidgetSprites SPRITES = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_icon_button"),
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_disabled"),
-            ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_icon_button_highlighted"));
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_icon_button"),
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button_disabled"),
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_icon_button_highlighted"));
 
 
     private int leftPos;
@@ -63,14 +65,14 @@ public class OccupationCategorySelectionScreen extends Screen {
             minecraft.setScreen(null);
         }).pos(leftPos + 296, topPos + 2).size(18, 18)
                 .background(SPRITES)
-                .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
+                .icon(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
                 .tooltip(Tooltip.create(Component.translatable("professions.screen.common.close_menu")))
                 .build();
 
         confirmSelection = OccupationMenuButton.omButton(Component.translatable("professions.screen.occupation_category_selection.confirm_selection"), pButton -> {
             ProfessionCategory selectedCategory = occupationInfoList.getProfessionCategory();
             if (selectedCategory != null) {
-                ResourceLocation categoryId = ProfessionsCommon.INSTANCE.getCategoryManager().getCategoryId(selectedCategory);
+                Identifier categoryId = ProfessionsCommon.INSTANCE.getCategoryManager().getCategoryId(selectedCategory);
                 if (categoryId != null) {
                     NetworkPayloadDispatcher.sendToServer(new C2SCategorySelectionPayload(categoryId));
                 }
@@ -84,6 +86,7 @@ public class OccupationCategorySelectionScreen extends Screen {
 
         occupationInfoList = new OccupationCategoryList(this.minecraft, 307, topPos + 40, 207 + topPos, 48, categories);
         occupationInfoList.setX(leftPos + 6);
+        occupationInfoList.setScrollAmount(0.0d);
         addRenderableWidget(occupationInfoList);
         addRenderableWidget(closeButton);
         addRenderableWidget(confirmSelection);
@@ -94,20 +97,21 @@ public class OccupationCategorySelectionScreen extends Screen {
     }
 
 
+
     @Override
-    public void render(GuiGraphics gfx, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(gfx, pMouseX, pMouseY, pPartialTick);
+    public void extractRenderState(GuiGraphicsExtractor gfx, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractRenderState(gfx, pMouseX, pMouseY, pPartialTick);
 
 
         drawScaledString(gfx, font, Component.translatable("professions.screen.occupation_category_selection.header"),
-                leftPos + 5, topPos + 5, 1.5f, 0xd5af47, false);
+                leftPos + 5, topPos + 5, 1.5f, 0xFFd5af47, false);
         drawScaledString(gfx, font, Component.translatable("professions.screen.occupation_category_selection.subtitle"),
-                leftPos + 8, topPos + 29, 0.75f, 0x777777, false);
+                leftPos + 8, topPos + 29, 0.75f, 0xFF777777, false);
 
 
 
         drawScaled(gfx, leftPos + 8, topPos + 209, 0.75f, () -> {
-            gfx.blitSprite(INFO_ICON, 0, 0, 18, 18);
+            gfx.blitSprite(RenderPipelines.GUI_TEXTURED, INFO_ICON, 0, 0, 18, 18);
         });
 
 
@@ -121,8 +125,8 @@ public class OccupationCategorySelectionScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        pGuiGraphics.blitSprite(TEXTURE, leftPos, topPos, imageWidth, imageHeight);
+    public void extractBackground(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        pGuiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, imageWidth, imageHeight);
     }
 }

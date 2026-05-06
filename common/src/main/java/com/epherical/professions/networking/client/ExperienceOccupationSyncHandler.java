@@ -11,7 +11,7 @@ public final class ExperienceOccupationSyncHandler {
     }
 
     public static void handle(S2CExperienceGainPayload payload) {
-        Minecraft.getInstance().doRunTask(() -> {
+        Minecraft.getInstance().execute(() -> {
             Minecraft minecraft = Minecraft.getInstance();
             if (minecraft.player == null || minecraft.isSingleplayer()) {
                 return;

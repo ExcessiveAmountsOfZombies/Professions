@@ -6,7 +6,7 @@ import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.gating.GateType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
-public record ProfessionParameter<T>(ResourceLocation name) {
+public record ProfessionParameter<T>(Identifier name) {
     public static final ProfessionParameter<IProfessionalPlayer> THIS_PLAYER = of("player");
     public static final ProfessionParameter<Holder<?>> THIS_HOLDER = of("holder");
     public static final ProfessionParameter<BlockState> THIS_BLOCK_STATE = of("block_state");
@@ -34,6 +34,6 @@ public record ProfessionParameter<T>(ResourceLocation name) {
 
 
     public static <T> ProfessionParameter<T> of(String name) {
-        return new ProfessionParameter<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, name));
+        return new ProfessionParameter<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, name));
     }
 }

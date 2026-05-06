@@ -21,6 +21,7 @@ import com.epherical.professions.networking.client.C2SOccupationPerkClaimPayload
 import com.epherical.professions.networking.client.ExperienceOccupationSyncHandler;
 import com.epherical.professions.networking.client.ExperienceNotificationHandler;
 import com.epherical.professions.networking.client.PlayerActionsSyncPayloadHandler;
+import com.epherical.professions.networking.client.ExperienceOccupationSyncHandler;
 import com.epherical.professions.networking.client.PlayerDataSyncPayloadHandler;
 import com.epherical.professions.networking.client.PlayerGatesSyncPayloadHandler;
 import com.epherical.professions.networking.client.PlayerPerksSyncPayloadHandler;
@@ -44,6 +45,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
@@ -63,7 +65,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.brewing.PlayerBrewedPotionEvent;
@@ -122,7 +125,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         super();
 
         NetworkPayloadDispatcher.setPayloadSender(PacketDistributor::sendToPlayer);
-        NetworkPayloadDispatcher.setServerboundPayloadSender(PacketDistributor::sendToServer);
+        NetworkPayloadDispatcher.setServerboundPayloadSender(ClientPacketDistributor::sendToServer);
 
         actionManager = new ActionManager(null);
         gateManager = new GateManager(null);
@@ -280,13 +283,13 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         }
 
         @SubscribeEvent
-        public static void onDataReload(AddReloadListenerEvent event) {
+        public static void onDataReload(AddServerReloadListenersEvent event) {
             ActionLoad3 loader = new ActionLoad3(mod.actionManager);
-            event.addListener(new NeoForgeActionReloadListener(loader));
+            event.addListener(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "action_reloader"), new NeoForgeActionReloadListener(loader));
             GateLoad3 gateLoader = new GateLoad3(mod.gateManager);
             event.addListener(new NeoForgeGateReloadListener(gateLoader));
             CategoryLoad3 categoryLoader = new CategoryLoad3(mod.getCategoryManager(), mod.playerManager);
-            event.addListener(new NeoForgeCategoryReloadListener(categoryLoader));
+            event.addListener(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "category_reloader"), new NeoForgeCategoryReloadListener(categoryLoader));
             PerkLoad3 perkLoader = new PerkLoad3(mod.getPerkManager());
             event.addListener(new NeoForgePerkReloadListener(perkLoader));
 
@@ -312,7 +315,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onBlockBreak(BlockEvent.BreakEvent event) {
-            Holder<Block> blockHolder = event.getState().getBlockHolder();
+            Holder<Block> blockHolder = event.getState().typeHolder();
             Player player = event.getPlayer();
 
             if (event.isCanceled()) {
@@ -334,7 +337,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
-            Holder<Block> blockHolder = event.getState().getBlockHolder();
+            Holder<Block> blockHolder = event.getState().typeHolder();
             Entity entity = event.getEntity();
 
             if (event.isCanceled()) {
@@ -362,7 +365,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                                     Actions.BLOCK_EXPLODE, mod.playerManager.getPlayer(player.getUUID()))
                             .addParameter(ProfessionParameter.BLOCKPOS, affectedBlock)
                             .addParameter(ProfessionParameter.THIS_BLOCK_STATE, blockState)
-                            .addParameter(ProfessionParameter.THIS_HOLDER, blockState.getBlockHolder());
+                            .addParameter(ProfessionParameter.THIS_HOLDER, blockState.typeHolder());
                     mod.playerManager.processAction(player, builder.build());
                 }
             }
@@ -370,7 +373,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onEntityDeath(LivingDeathEvent event) {
-            if (event.isCanceled() || event.getEntity().level().isClientSide) {
+            if (event.isCanceled() || event.getEntity().level().isClientSide()) {
                 return;
             }
 
@@ -398,7 +401,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onFishedItem(ItemFishedEvent event) {
             Player player = event.getEntity();
-            if (event.isCanceled() || player.level().isClientSide) {
+            if (event.isCanceled() || player.level().isClientSide()) {
                 return;
             }
             ServerLevel level = (ServerLevel) event.getEntity().level();
@@ -415,7 +418,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
 
             Player player = event.getEntity();
-            if (player.level().isClientSide) {
+            if (player.level().isClientSide()) {
                 return;
             }
 
@@ -430,7 +433,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onItemSmelted(PlayerEvent.ItemSmeltedEvent event) {
             Player player = event.getEntity();
-            if (player.level().isClientSide) {
+            if (player.level().isClientSide()) {
                 return;
             }
             ServerLevel level = (ServerLevel) player.level();
@@ -444,7 +447,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onBreedAnimal(BabyEntitySpawnEvent event) {
             Player player = event.getCausedByPlayer();
-            if (event.isCanceled() || player == null || player.level().isClientSide) {
+            if (event.isCanceled() || player == null || player.level().isClientSide()) {
                 return;
             }
             ServerLevel level = (ServerLevel) player.level();
@@ -457,7 +460,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onTameAnimal(AnimalTameEvent event) {
             Player player = event.getTamer();
-            if (event.isCanceled() || player.level().isClientSide) {
+            if (event.isCanceled() || player.level().isClientSide()) {
                 return;
             }
             ServerLevel level = (ServerLevel) player.level();

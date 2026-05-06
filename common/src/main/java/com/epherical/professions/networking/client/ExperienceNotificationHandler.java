@@ -8,10 +8,10 @@ import com.epherical.professions.networking.server.S2CExperienceGainPayload;
 import com.epherical.professions.presentation.client.RenderHelperUtil;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Locale;
 
@@ -48,7 +48,7 @@ public class ExperienceNotificationHandler {
     /**
      * Profession label currently shown in the notification.
      */
-    private static ResourceLocation activeProfession;
+    private static Identifier activeProfession;
     private static Component activeProfessionLabel;
 
     /**
@@ -80,7 +80,7 @@ public class ExperienceNotificationHandler {
         // todo; also add a texture, so the user can decide how it'll look.
 
 
-        Minecraft.getInstance().doRunTask(() -> {
+        Minecraft.getInstance().execute(() -> {
             Minecraft minecraft = Minecraft.getInstance();
             if (minecraft.player == null) {
                 return;
@@ -153,7 +153,7 @@ public class ExperienceNotificationHandler {
         return String.format(Locale.ROOT, "%.2f", value);
     }
 
-    private static Component resolveProfessionLabel(ResourceLocation professionId, Occupation occupation) {
+    private static Component resolveProfessionLabel(Identifier professionId, Occupation occupation) {
         if (occupation == null) {
             return Component.literal(professionId.getPath());
         }
@@ -167,7 +167,7 @@ public class ExperienceNotificationHandler {
     /**
      * Renders the current EXP notification above the hotbar.
      */
-    public static void render(GuiGraphics gfx, DeltaTracker deltaTracker) {
+    public static void render(GuiGraphicsExtractor gfx, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (minecraft.options.hideGui || minecraft.player == null || !tick(deltaTracker)) {
@@ -190,8 +190,8 @@ public class ExperienceNotificationHandler {
 
         RenderHelperUtil.drawScaled(gfx, x, y, 0.5f, () -> {
             gfx.fill(-2, -3, totalTextWidth + 2, 11, 0xAA000000);
-            gfx.drawString(minecraft.font, profession, 0, 0, professionColor, true);
-            gfx.drawString(minecraft.font, xp, professionWidth, 0, xpColor, true);
+            gfx.text(minecraft.font, profession, 0, 0, professionColor, true);
+            gfx.text(minecraft.font, xp, professionWidth, 0, xpColor, true);
         });
 
     }

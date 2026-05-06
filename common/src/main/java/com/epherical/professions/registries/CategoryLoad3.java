@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -42,6 +42,17 @@ public class CategoryLoad3 {
     }
 
     public CompletableFuture<Void> reload(HolderLookup.Provider registryLookup,
+                                          @NotNull PreparableReloadListener.SharedState sharedState,
+                                          @NotNull Executor taskExecutor,
+                                          @NotNull PreparableReloadListener.PreparationBarrier preparationBarrier,
+                                          @NotNull Executor reloadExecutor) {
+        return CompletableFuture
+                .supplyAsync(() -> decodeAll(sharedState.resourceManager()), taskExecutor)
+                .thenCompose(preparationBarrier::wait)
+                .thenAcceptAsync(categoryManager::reloadCategories, reloadExecutor);
+    }
+
+    public CompletableFuture<Void> reload(HolderLookup.Provider registryLookup,
                                           @NotNull PreparableReloadListener.PreparationBarrier barrier,
                                           @NotNull ResourceManager resourceManager,
                                           @NotNull ProfilerFiller prepProfiler,
@@ -55,10 +66,10 @@ public class CategoryLoad3 {
                 .thenAcceptAsync(playerManager::refreshProfessionCategories, gameThread);
     }
 
-    private Map<ResourceLocation, ProfessionCategory> decodeAll(ResourceManager manager) {
-        Map<ResourceLocation, ProfessionCategory> categories = new LinkedHashMap<>();
+    private Map<Identifier, ProfessionCategory> decodeAll(ResourceManager manager) {
+        Map<Identifier, ProfessionCategory> categories = new LinkedHashMap<>();
         FileToIdConverter fileToIdConverter = FileToIdConverter.json(PATH);
-        Map<ResourceLocation, List<Resource>> resources = fileToIdConverter.listMatchingResourceStacks(manager);
+        Map<Identifier, List<Resource>> resources = fileToIdConverter.listMatchingResourceStacks(manager);
 
         // todo; we need to write a system for merging the categories together now
         //  it can either merge the professions and the features
@@ -67,10 +78,10 @@ public class CategoryLoad3 {
         //  priority/full replace functionality?
 
 
-        for (Map.Entry<ResourceLocation, List<Resource>> stackEntry : resources.entrySet()) {
+        for (Map.Entry<Identifier, List<Resource>> stackEntry : resources.entrySet()) {
             for (Resource entry : stackEntry.getValue()) {
-                ResourceLocation fileId = stackEntry.getKey();
-                ResourceLocation id = fileToIdConverter.fileToId(fileId);
+                Identifier fileId = stackEntry.getKey();
+                Identifier id = fileToIdConverter.fileToId(fileId);
 
                 try (Reader reader = entry.openAsReader()) {
                     JsonElement element = GsonHelper.fromJson(GSON, reader, JsonElement.class);

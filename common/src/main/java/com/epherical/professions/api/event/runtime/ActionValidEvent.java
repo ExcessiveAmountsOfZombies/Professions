@@ -6,12 +6,12 @@ import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.api.actions.Action;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ActionValidEvent extends AbstractCancellableProfessionEvent {
 
     public static final EventKey<ActionValidEvent> KEY =
-            new EventKey<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "action_valid"), ActionValidEvent.class);
+            new EventKey<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "action_valid"), ActionValidEvent.class);
     private final Action<?> action;
     private final Occupation occupation;
     private final IProfessionalPlayer player;

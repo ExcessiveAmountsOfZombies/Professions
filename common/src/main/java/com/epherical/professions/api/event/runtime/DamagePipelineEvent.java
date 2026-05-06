@@ -3,7 +3,7 @@ package com.epherical.professions.api.event.runtime;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.core.context.ProfessionContext;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 public class DamagePipelineEvent extends AbstractCancellableProfessionEvent {
 
     public static final EventKey<DamagePipelineEvent> KEY =
-            new EventKey<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "damage_pipeline"), DamagePipelineEvent.class);
+            new EventKey<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "damage_pipeline"), DamagePipelineEvent.class);
 
     private final DamageSource source;
     private final LivingEntity attacker;

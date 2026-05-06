@@ -11,7 +11,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -37,7 +37,7 @@ public class UuidOccupationDataLoader extends OccupationDataLoader {
     private static final Codec<List<Occupation>> OCCUPATION_LIST_CODEC = Occupation.CODEC.listOf();
     private static final Codec<PlayerOccupationData> PLAYER_OCCUPATION_DATA_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             OCCUPATION_LIST_CODEC.fieldOf("occupations").forGetter(PlayerOccupationData::occupations),
-            ResourceLocation.CODEC.optionalFieldOf("professionCategory").forGetter(data -> Optional.ofNullable(data.professionCategoryId()))
+            Identifier.CODEC.optionalFieldOf("professionCategory").forGetter(data -> Optional.ofNullable(data.professionCategoryId()))
     ).apply(instance, (occupations, professionCategoryId) -> new PlayerOccupationData(occupations, professionCategoryId.orElse(null))));
 
     private final Supplier<RegistryAccess> registryAccessSupplier;
@@ -78,7 +78,7 @@ public class UuidOccupationDataLoader extends OccupationDataLoader {
     }
 
     @Override
-    public CompletableFuture<Void> save(UUID uuid, Collection<Occupation> occupations, @Nullable ResourceLocation professionCategoryId) {
+    public CompletableFuture<Void> save(UUID uuid, Collection<Occupation> occupations, @Nullable Identifier professionCategoryId) {
         return CompletableFuture.runAsync(() -> {
             Path filePath = getPath(uuid);
             try {

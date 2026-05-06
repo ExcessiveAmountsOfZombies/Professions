@@ -5,12 +5,12 @@ import com.epherical.professions.api.event.EventKey;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.api.actions.Action;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class OccupationExperienceEvent extends RewardEvent {
 
     public static final EventKey<OccupationExperienceEvent> KEY =
-            new EventKey<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "reward_occupation_experience"), OccupationExperienceEvent.class);
+            new EventKey<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "reward_occupation_experience"), OccupationExperienceEvent.class);
 
     private final double baseAmount;
 

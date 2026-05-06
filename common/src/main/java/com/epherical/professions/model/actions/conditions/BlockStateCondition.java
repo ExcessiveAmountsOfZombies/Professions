@@ -14,7 +14,7 @@ public record BlockStateCondition(LootItemBlockStatePropertyCondition block) imp
 
     public static final MapCodec<BlockStateCondition> CODEC = RecordCodecBuilder.<BlockStateCondition>mapCodec(
             i -> i.group(
-                    LootItemBlockStatePropertyCondition.CODEC.fieldOf("term").forGetter(BlockStateCondition::block)
+                    LootItemBlockStatePropertyCondition.MAP_CODEC.fieldOf("term").forGetter(BlockStateCondition::block)
             ).apply(i, BlockStateCondition::new))
             .validate(BlockStateCondition::validate);
 

@@ -19,7 +19,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
@@ -63,7 +63,7 @@ public abstract class Action<T> implements Predicate<ProfessionContext> {
     private final List<Condition> conditions;
     private final List<Reward<?>> rewards;
     private final Predicate<ProfessionContext> predicate;
-    private @Nullable ResourceLocation fileId;
+    private @Nullable Identifier fileId;
 
     protected Action(Common common, List<Either<TagKey<T>, ResourceKey<T>>> targets) {
         this(common.profession, common.conditions, common.rewards, targets);
@@ -119,11 +119,11 @@ public abstract class Action<T> implements Predicate<ProfessionContext> {
      */
     public void getExtraValues(Multimap<Holder<?>, Action<?>> valueToActionsMap, Multimap<Action<?>, Holder<?>> actionToValueMap, HolderLookup.Provider provider) {}
 
-    public @Nullable ResourceLocation getId() {
+    public @Nullable Identifier getId() {
         return fileId;
     }
 
-    public void setId(ResourceLocation fileId) {
+    public void setId(Identifier fileId) {
         if (this.fileId != null && !this.fileId.equals(fileId)) {
             throw new IllegalStateException("Action file id already set to " + this.fileId + ", cannot reset to " + fileId);
         }
@@ -201,7 +201,7 @@ public abstract class Action<T> implements Predicate<ProfessionContext> {
                                 : Either.right(ResourceKey.create(registryKey, rl.id())),
                         e -> e.map(
                                 tk -> new ExtraCodecs.TagOrElementLocation(tk.location(), true),
-                                rk -> new ExtraCodecs.TagOrElementLocation(rk.location(), false)
+                                rk -> new ExtraCodecs.TagOrElementLocation(rk.identifier(), false)
                         )
                 );
         return single.listOf();

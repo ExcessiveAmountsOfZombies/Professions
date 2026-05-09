@@ -7,6 +7,7 @@ import com.epherical.professions.model.Occupation;
 import com.epherical.professions.presentation.client.gui.screen.OccupationCategorySelectionScreen;
 import com.epherical.professions.presentation.client.gui.screen.OccupationMenuScreen;
 import com.epherical.professions.networking.client.ExperienceNotificationHandler;
+import com.epherical.professions.presentation.client.gui.screen.OccupationPerkMenuScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;

@@ -1,18 +1,27 @@
 package com.epherical.professions;
 
 import com.epherical.professions.api.event.EventPhase;
+import com.epherical.professions.api.event.runtime.PlayerJoinEvent;
+import com.epherical.professions.api.event.runtime.perks.PerkClaimedEvent;
 import com.epherical.professions.data.config.CommonConfig;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.listener.GainExpNotificationListener;
-import com.epherical.professions.listener.LevelNotificationListener;
+import com.epherical.professions.listener.perks.PerkClaimListener;
+import com.epherical.professions.listener.perks.PerkGainExperienceListener;
+import com.epherical.professions.listener.perks.PerkLevelListener;
+import com.epherical.professions.listener.notification.NotificationGainExperienceListener;
+import com.epherical.professions.listener.notification.NotificationLevelListener;
+import com.epherical.professions.listener.perks.PerkPlayerJoinListener;
 import com.epherical.professions.registries.CategoryLoad3;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.bootstrap.Conditions;
+import com.epherical.professions.bootstrap.Perks;
 import com.epherical.professions.bootstrap.Rewards;
 import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.model.perks.PerkType;
 import com.epherical.professions.registries.ActionLoad3;
+import com.epherical.professions.registries.PerkLoad3;
 import com.epherical.professions.api.event.runtime.ProfessionEventBus;
 import com.epherical.professions.api.event.runtime.rewards.OccupationExperienceEvent;
 import com.epherical.professions.api.event.runtime.rewards.OccupationLevelEvent;
@@ -34,6 +43,8 @@ public abstract class ProfessionsCommon {
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/conditions"));
     public static final ResourceKey<Registry<RewardType>> REWARD_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/rewards"));
+    public static final ResourceKey<Registry<PerkType>> PERK_REGISTRY_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/perks"));
     public static final ResourceKey<Registry<Profession>> PROFESSION_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "occupations"));
 
@@ -42,8 +53,10 @@ public abstract class ProfessionsCommon {
 
     protected ActionLoad3 actionLoader;
     protected CategoryLoad3 categoryLoader;
+    protected PerkLoad3 perkLoader;
     protected CommonConfig config;
     protected final ProfessionCategoryManager categoryManager;
+    protected final PerkManager perkManager;
 
     protected final ProfessionEventBus eventBus;
 
@@ -54,8 +67,15 @@ public abstract class ProfessionsCommon {
         config.loadConfig();
         this.eventBus = new ProfessionEventBus();
 
-        this.eventBus.register(OccupationLevelEvent.KEY, EventPhase.RESOLVE, new LevelNotificationListener());
-        this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.AFTER_APPLY, ProfessionEventBus.LAST, new GainExpNotificationListener());
+        this.perkManager = new PerkManager();
+
+        this.eventBus.register(OccupationLevelEvent.KEY, EventPhase.RESOLVE, new NotificationLevelListener());
+        this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.APPLY, ProfessionEventBus.LAST, new NotificationGainExperienceListener());
+
+        this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.MODIFY_EFFECTS, new PerkGainExperienceListener());
+        this.eventBus.register(OccupationLevelEvent.KEY, EventPhase.RESOLVE, ProfessionEventBus.EARLY, new PerkLevelListener(getPerkManager()));
+        this.eventBus.register(PlayerJoinEvent.KEY, EventPhase.RESOLVE, new PerkPlayerJoinListener(getPerkManager()));
+        this.eventBus.register(PerkClaimedEvent.KEY, EventPhase.APPLY, new PerkClaimListener(getPerkManager()));
 
         this.categoryManager = new ProfessionCategoryManager();
     }
@@ -64,6 +84,11 @@ public abstract class ProfessionsCommon {
         Actions.bootstrap();
         Conditions.bootstrap();
         Rewards.bootstrap();
+        Perks.bootstrap();
+    }
+
+    public void registerAfterServerStarts() {
+
     }
 
 
@@ -87,8 +112,20 @@ public abstract class ProfessionsCommon {
         return categoryLoader;
     }
 
+    public PerkLoad3 getPerkLoader() {
+        return perkLoader;
+    }
+
     public void setCategoryLoader(CategoryLoad3 categoryLoader) {
         this.categoryLoader = categoryLoader;
+    }
+
+    public void setPerkLoader(PerkLoad3 perkLoader) {
+        this.perkLoader = perkLoader;
+    }
+
+    public PerkManager getPerkManager() {
+        return perkManager;
     }
 
     public abstract PlayerManager getPlayerManager();

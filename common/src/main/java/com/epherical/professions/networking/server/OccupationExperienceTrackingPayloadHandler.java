@@ -9,18 +9,13 @@ import net.minecraft.server.level.ServerPlayer;
 
 public final class OccupationExperienceTrackingPayloadHandler {
 
-    private OccupationExperienceTrackingPayloadHandler() {
-    }
-
     public static void handle(ServerPlayer serverPlayer, C2SOccupationExperienceTrackingPayload payload) {
         PlayerManager playerManager = ProfessionsCommon.INSTANCE.getPlayerManager();
         IProfessionalPlayer professionalPlayer = playerManager.getPlayer(serverPlayer.getUUID());
         if (professionalPlayer == null) {
-            playerManager.playerJoined(serverPlayer);
-            professionalPlayer = playerManager.getPlayer(serverPlayer.getUUID());
-            if (professionalPlayer == null) {
-                return;
-            }
+            ProfessionsCommon.LOG.error("Player {} tried to change exp tracking for {}, but they don't exist on the server. UHHHH",
+                    serverPlayer.getScoreboardName(), payload.professionId());
+            return;
         }
 
         Occupation occupation = professionalPlayer.getOccupation(payload.professionId());

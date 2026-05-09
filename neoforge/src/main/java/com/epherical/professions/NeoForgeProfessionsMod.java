@@ -8,31 +8,32 @@ import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.core.register.PlatformBootstrap;
 import com.epherical.professions.data.player.UuidOccupationDataLoader;
-import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.model.perks.PerkType;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
 import com.epherical.professions.networking.client.C2SOccupationExperienceTrackingPayload;
+import com.epherical.professions.networking.client.C2SOccupationPerkClaimPayload;
 import com.epherical.professions.networking.client.ExperienceOccupationSyncHandler;
 import com.epherical.professions.networking.client.ExperienceNotificationHandler;
 import com.epherical.professions.networking.client.PlayerDataSyncPayloadHandler;
 import com.epherical.professions.networking.client.ProfessionCategorySyncPayloadHandler;
 import com.epherical.professions.networking.server.CategorySelectionPayloadHandler;
 import com.epherical.professions.networking.server.OccupationExperienceTrackingPayloadHandler;
+import com.epherical.professions.networking.server.OccupationPerkClaimPayloadHandler;
 import com.epherical.professions.networking.server.S2CCategorySyncPayload;
 import com.epherical.professions.networking.server.S2CExperienceGainPayload;
 import com.epherical.professions.networking.server.S2CPlayerDataSyncPayload;
 import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
 import com.epherical.professions.registries.CategoryLoad3;
+import com.epherical.professions.registries.PerkLoad3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.commands.ReloadCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
@@ -92,6 +93,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
     public static Registry<ActionType> ACTIONS;
     public static Registry<ConditionType> CONDITIONS;
     public static Registry<RewardType> REWARDS;
+    public static Registry<PerkType> PERKS;
 
     public static final DeferredRegister<Profession> PROFESSION_REGISTER = DeferredRegister.create(PROFESSION_REGISTRY_KEY, ProfessionsCommon.MOD_ID);
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS_REGISTER = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, ProfessionsCommon.MOD_ID);
@@ -111,7 +113,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         NetworkPayloadDispatcher.setServerboundPayloadSender(PacketDistributor::sendToServer);
 
         actionManager = new ActionManager(null);
-        playerManager = new PlayerManager(actionManager, null, getEventBus(), getCategoryManager());
+        playerManager = new PlayerManager(actionManager, getPerkManager(), null, getEventBus(), getCategoryManager());
 
         mod = this;
         PlatformBootstrap.init(NEO_FORGE_REGISTRAR_BACKEND);
@@ -161,6 +163,11 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                     context.enqueueWork(() -> OccupationExperienceTrackingPayloadHandler.handle(serverPlayer, payload));
                 }
             });
+            registrar.playToServer(C2SOccupationPerkClaimPayload.TYPE, C2SOccupationPerkClaimPayload.STREAM_CODEC, (payload, context) -> {
+                if (context.player() instanceof ServerPlayer serverPlayer) {
+                    context.enqueueWork(() -> OccupationPerkClaimPayloadHandler.handle(serverPlayer, payload));
+                }
+            });
         }
 
 
@@ -186,7 +193,6 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         @SubscribeEvent
         public static void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
             if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-
                 mod.playerManager.playerJoined(serverPlayer);
             }
         }
@@ -229,7 +235,8 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                         player.getUUID(),
                         professionalPlayer.getAllOccupations(),
                         Optional.ofNullable(mod.playerManager.getCategoryIdFor(professionalPlayer)),
-                        mod.playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory())
+                        mod.playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory()),
+                        mod.playerManager.getAllPerks(professionalPlayer.getCategory())
                 );
                 NetworkPayloadDispatcher.sendToPlayer(player, payload);
             });
@@ -242,6 +249,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             event.register(ACTIONS = new RegistryBuilder<>(ACTION_REGISTRY_KEY).sync(true).create());
             event.register(CONDITIONS = new RegistryBuilder<>(CONDITION_REGISTRY_KEY).sync(true).create());
             event.register(REWARDS = new RegistryBuilder<>(REWARD_REGISTRY_KEY).sync(true).create());
+            event.register(PERKS = new RegistryBuilder<>(PERK_REGISTRY_KEY).sync(true).create());
             ProfessionsCommon.register();
         }
 
@@ -256,6 +264,8 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             event.addListener(new NeoForgeActionReloadListener(loader));
             CategoryLoad3 categoryLoader = new CategoryLoad3(mod.getCategoryManager());
             event.addListener(new NeoForgeCategoryReloadListener(categoryLoader));
+            PerkLoad3 perkLoader = new PerkLoad3(mod.getPerkManager());
+            event.addListener(new NeoForgePerkReloadListener(perkLoader));
 
             // MVP for NF release
             // todo; build a better notification system (chat, pop up, toast, announcements)
@@ -267,6 +277,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
             mod.setActionLoader(loader);
             mod.setCategoryLoader(categoryLoader);
+            mod.setPerkLoader(perkLoader);
             REGISTRY_ACCESS = event.getRegistryAccess();
         }
 

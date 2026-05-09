@@ -95,6 +95,12 @@ public class OccupationMenuButton extends Button {
         this.renderString(pGuiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
     }
 
+
+    @Override
+    public void setFocused(boolean pFocused) {
+        super.setFocused(pFocused);
+    }
+
     @Override
     public void renderString(GuiGraphics guiGraphics, Font font, int color) {
         if (!hasToggle()) {

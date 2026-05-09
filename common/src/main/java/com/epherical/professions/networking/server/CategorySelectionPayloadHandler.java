@@ -13,18 +13,13 @@ import java.util.Optional;
 
 public final class CategorySelectionPayloadHandler {
 
-    private CategorySelectionPayloadHandler() {
-    }
-
     public static void handle(ServerPlayer serverPlayer, C2SCategorySelectionPayload payload) {
         PlayerManager playerManager = ProfessionsCommon.INSTANCE.getPlayerManager();
         IProfessionalPlayer professionalPlayer = playerManager.getPlayer(serverPlayer.getUUID());
         if (professionalPlayer == null) {
-            playerManager.playerJoined(serverPlayer);
-            professionalPlayer = playerManager.getPlayer(serverPlayer.getUUID());
-            if (professionalPlayer == null) {
-                return;
-            }
+            ProfessionsCommon.LOG.error("Player {} tried to select a category, but they don't exist on the server. UHHHH",
+                    serverPlayer.getScoreboardName());
+            return;
         }
 
         if (professionalPlayer.getCategory() == null) {
@@ -33,13 +28,15 @@ public final class CategorySelectionPayloadHandler {
                 professionalPlayer.setCategory(category);
             }
         }
+        // todo; i think we need a way to update the perks if the player switches categories.
 
         ResourceLocation categoryId = playerManager.getCategoryIdFor(professionalPlayer);
         S2CPlayerDataSyncPayload syncPayload = new S2CPlayerDataSyncPayload(
                 serverPlayer.getUUID(),
                 professionalPlayer.getAllOccupations(),
                 Optional.ofNullable(categoryId),
-                playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory())
+                playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory()),
+                playerManager.getAllPerks(professionalPlayer.getCategory())
         );
         NetworkPayloadDispatcher.sendToPlayer(serverPlayer, syncPayload);
     }

@@ -3,6 +3,8 @@ package com.epherical.professions;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.runtime.ActionProcessingEvent;
 import com.epherical.professions.api.event.runtime.ActionValidEvent;
+import com.epherical.professions.api.event.runtime.PlayerJoinEvent;
+import com.epherical.professions.api.event.runtime.PlayerLeaveEvent;
 import com.epherical.professions.api.event.runtime.ProfessionEventBus;
 import com.epherical.professions.api.event.runtime.rewards.RewardEvent;
 import com.epherical.professions.core.Profession;
@@ -16,6 +18,8 @@ import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.ProfessionalPlayer;
 import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.model.actions.rewards.Reward;
+import com.epherical.professions.model.perks.Perk;
+import com.epherical.professions.model.perks.PerkType;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.logging.LogUtils;
@@ -25,7 +29,9 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.commands.DebugCommand;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.profiling.SingleTickProfiler;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -42,6 +48,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.epherical.professions.ProfessionsCommon.PROFESSION_REGISTRY_KEY;
 
@@ -59,13 +66,15 @@ public class PlayerManager {
     private MinecraftServer server;
 
     private final ActionManager actionManager;
+    private final PerkManager perkManager;
     private OccupationDataLoader occupationDataLoader;
     private final ProfessionCategoryManager categoryManager;
 
     private final ProfessionEventBus eventBus;
 
-    public PlayerManager(ActionManager actionManager, OccupationDataLoader loader, ProfessionEventBus eventBus, ProfessionCategoryManager categoryManager) {
+    public PlayerManager(ActionManager actionManager, PerkManager perkManager, OccupationDataLoader loader, ProfessionEventBus eventBus, ProfessionCategoryManager categoryManager) {
         this.actionManager = actionManager;
+        this.perkManager = perkManager;
         this.occupationDataLoader = loader;
         this.eventBus = eventBus;
         this.categoryManager = categoryManager;
@@ -124,8 +133,6 @@ public class PlayerManager {
     }
 
     public void playerJoined(ServerPlayer player) {
-        // todo; fire event for new players that joined.
-
         IProfessionalPlayer pPlayer = players.get(player.getUUID());
         if (pPlayer != null) {
             pPlayer.setPlayer(player);
@@ -139,12 +146,13 @@ public class PlayerManager {
             players.put(player.getUUID(), pPlayer);
             LOGGER.debug("New player joined! Assigned professions data {}", player.getUUID());
         }
+        eventBus.post(new PlayerJoinEvent(player, pPlayer));
     }
 
     public void playerQuit(ServerPlayer player) {
-        // todo; fire an event
         UUID uuid = player.getUUID();
         IProfessionalPlayer pPlayer = players.get(uuid);
+        eventBus.post(new PlayerLeaveEvent(player, pPlayer));
         CompletableFuture<Void> save = occupationDataLoader.save(uuid, pPlayer.getAllOccupations(), getCategoryId(pPlayer));
         save.thenAccept(a -> LOGGER.debug("Player {} saved their professions data", uuid));
         pPlayer.setPlayer(null);
@@ -239,8 +247,35 @@ public class PlayerManager {
         return List.copyOf(relevantActions);
     }
 
+    public List<Perk> getAllPerks(@Nullable ProfessionCategory category) {
+        if (category == null) {
+            return List.of();
+        }
+        List<Perk> relevantPerks = new ArrayList<>();
+
+        for (ResourceKey<Profession> professionKey : category.professions()) {
+            relevantPerks.addAll(perkManager.getPerksByProfession(professionKey));
+        }
+
+        return relevantPerks;
+    }
+
+    /**
+     * THIS IS ONLY CALLED ON THE CLIENT. there's probably a better way to do it but im dum
+     * Synchronizes client-side data for a player by applying the specified occupations, category data,
+     * actions, and perks.
+     *
+     * @param playerId        The unique identifier of the player.
+     * @param occupations     A list of occupations to associate with the player. Each occupation is resolved
+     *                        for its associated profession using the provided registry access, if available.
+     * @param categoryId      The identifier of the profession category, may be null.
+     * @param actions         A list of actions to reload and apply to the player.
+     * @param perks           A list of perks to reload and apply to the player.
+     * @param registryAccess  The access to the registry system for resolving professions or other necessary
+     *                        data, may be null.
+     */
     public void applyClientSync(UUID playerId, List<Occupation> occupations, @Nullable ResourceLocation categoryId,
-                                List<Action<?>> actions, @Nullable RegistryAccess registryAccess) {
+                                List<Action<?>> actions, List<Perk> perks, @Nullable RegistryAccess registryAccess) {
         for (Occupation occupation : occupations) {
             occupation.resolveProfession(registryAccess);
         }
@@ -253,6 +288,7 @@ public class PlayerManager {
             actionManager.setRegistryLookup(registryAccess);
         }
         actionManager.reloadActions(actions);
+        perkManager.reloadPerks(perks);
     }
 
     public void applyClientExperienceGain(UUID playerId, ResourceLocation professionId, double gainedExperience, @Nullable RegistryAccess registryAccess) {
@@ -297,6 +333,62 @@ public class PlayerManager {
             return null;
         }
         return categoryManager.getCategoryId(category);
+    }
+
+    public <T extends Perk> Collection<T> getUnlockedPerks(PerkType perkType, UUID uuid) {
+        IProfessionalPlayer player = getPlayer(uuid);
+        return getUnlockedPerks(perkType, player);
+    }
+
+    public <T extends Perk> Collection<T> getUnlockedPerks(PerkType perkType, IProfessionalPlayer player) {
+        Collection<T> perksByType = (Collection<T>) perkManager.getPerksByType(perkType);
+
+        if (player == null) {
+            return List.of();
+        }
+
+        return perksByType.stream().filter(t -> player.hasClaimedPerk(t.getId())).toList();
+    }
+
+    public Set<ResourceLocation> getUnlockedUnclaimedPerkIds(UUID uuid) {
+        return getUnlockedUnclaimedPerkIds(getPlayer(uuid));
+    }
+
+    public Set<ResourceLocation> getUnlockedUnclaimedPerkIds(@Nullable IProfessionalPlayer player) {
+        if (player == null || player.getCategory() == null) {
+            return Set.of();
+        }
+
+        return player.getUnlockedPerks();
+    }
+
+    public boolean claimUnlockedReward(UUID uuid, ResourceLocation perkId) {
+        return claimUnlockedReward(getPlayer(uuid), perkId);
+    }
+
+    public boolean claimUnlockedReward(@Nullable IProfessionalPlayer player, @Nullable ResourceLocation perkId) {
+        if (player == null || perkId == null) {
+            return false;
+        }
+
+        for (Occupation occupation : player.getAllOccupations()) {
+            if (occupation.hasClaimedPerk(perkId)) {
+                return false;
+            }
+
+            Optional<Holder<Profession>> professionHolder = occupation.getProfessionHolder();
+            if (professionHolder.isEmpty()) {
+                continue;
+            }
+
+            if (occupation.hasUnclaimedPerk(perkId)) {
+                occupation.addClaimedPerk(perkId);
+                player.markDirty(true);
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

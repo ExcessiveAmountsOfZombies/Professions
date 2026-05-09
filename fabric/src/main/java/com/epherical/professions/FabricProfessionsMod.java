@@ -10,17 +10,21 @@ import com.epherical.professions.data.player.UuidOccupationDataLoader;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.model.perks.PerkType;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
 import com.epherical.professions.networking.client.C2SOccupationExperienceTrackingPayload;
+import com.epherical.professions.networking.client.C2SOccupationPerkClaimPayload;
 import com.epherical.professions.networking.server.CategorySelectionPayloadHandler;
 import com.epherical.professions.networking.server.OccupationExperienceTrackingPayloadHandler;
+import com.epherical.professions.networking.server.OccupationPerkClaimPayloadHandler;
 import com.epherical.professions.networking.server.S2CCategorySyncPayload;
 import com.epherical.professions.networking.server.S2CExperienceGainPayload;
 import com.epherical.professions.networking.server.S2CPlayerDataSyncPayload;
 import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
 import com.epherical.professions.registries.CategoryLoad3;
+import com.epherical.professions.registries.PerkLoad3;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -57,6 +61,7 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
     public static Registry<ActionType> ACTIONS;
     public static Registry<ConditionType> CONDITIONS;
     public static Registry<RewardType> REWARDS;
+    public static Registry<PerkType> PERKS;
     public static RegistryAccess REGISTRY_ACCESS;
 
     public static FabricProfessionsMod mod;
@@ -67,7 +72,7 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
     public FabricProfessionsMod() {
         super();
         this.actionManager = new ActionManager(null);
-        this.playerManager = new PlayerManager(actionManager, null, getEventBus(), getCategoryManager());
+        this.playerManager = new PlayerManager(actionManager, getPerkManager(), null, getEventBus(), getCategoryManager());
     }
 
     @Override
@@ -82,6 +87,9 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
                 .attribute(RegistryAttribute.SYNCED)
                 .buildAndRegister();
         REWARDS = FabricRegistryBuilder.createSimple(REWARD_REGISTRY_KEY)
+                .attribute(RegistryAttribute.SYNCED)
+                .buildAndRegister();
+        PERKS = FabricRegistryBuilder.createSimple(PERK_REGISTRY_KEY)
                 .attribute(RegistryAttribute.SYNCED)
                 .buildAndRegister();
         DynamicRegistries.registerSynced(PROFESSION_REGISTRY_KEY, Profession.CODEC);
@@ -102,11 +110,14 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
         PayloadTypeRegistry.playS2C().register(S2CPlayerDataSyncPayload.TYPE, S2CPlayerDataSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(C2SCategorySelectionPayload.TYPE, C2SCategorySelectionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(C2SOccupationExperienceTrackingPayload.TYPE, C2SOccupationExperienceTrackingPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(C2SOccupationPerkClaimPayload.TYPE, C2SOccupationPerkClaimPayload.STREAM_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(C2SCategorySelectionPayload.TYPE,
                 (payload, context) -> CategorySelectionPayloadHandler.handle(context.player(), payload));
         ServerPlayNetworking.registerGlobalReceiver(C2SOccupationExperienceTrackingPayload.TYPE,
                 (payload, context) -> OccupationExperienceTrackingPayloadHandler.handle(context.player(), payload));
+        ServerPlayNetworking.registerGlobalReceiver(C2SOccupationPerkClaimPayload.TYPE,
+                (payload, context) -> OccupationPerkClaimPayloadHandler.handle(context.player(), payload));
     }
 
     private void registerReloadListeners() {
@@ -119,6 +130,11 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
             CategoryLoad3 loader = new CategoryLoad3(getCategoryManager());
             setCategoryLoader(loader);
             return new FabricCategoryReloadListener(loader, provider);
+        });
+        ResourceManagerHelper.get(net.minecraft.server.packs.PackType.SERVER_DATA).registerReloadListener(FabricPerkReloadListener.ID, provider -> {
+            PerkLoad3 loader = new PerkLoad3(getPerkManager());
+            setPerkLoader(loader);
+            return new FabricPerkReloadListener(loader, provider);
         });
     }
 
@@ -211,7 +227,8 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
                 player.getUUID(),
                 professionalPlayer.getAllOccupations(),
                 Optional.ofNullable(playerManager.getCategoryIdFor(professionalPlayer)),
-                playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory())
+                playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory()),
+                playerManager.getAllPerks(professionalPlayer.getCategory())
         );
         NetworkPayloadDispatcher.sendToPlayer(player, payload);
     }

@@ -2,6 +2,7 @@ package com.epherical.professions.presentation.client;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 
 public class RenderHelperUtil {
@@ -32,4 +33,13 @@ public class RenderHelperUtil {
         gfx.drawWordWrap(font, FormattedText.of(text), 0, 0, lineWidth, color);
         gfx.pose().popPose();
     }
+
+    public static void drawWrappedScaledString(GuiGraphics gfx, Font font, Component text, int x, int y, float scale, int lineWidth, int color) {
+        gfx.pose().pushPose();
+        gfx.pose().translate(x, y, 0);
+        gfx.pose().scale(scale, scale, 1.0f);
+        gfx.drawWordWrap(font, text, 0, 0, lineWidth, color);
+        gfx.pose().popPose();
+    }
+
 }

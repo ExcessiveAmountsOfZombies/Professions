@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,27 +15,26 @@ public class ProfessionCategoryManager {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final Map<ResourceLocation, ProfessionCategory> categoryMap = new LinkedHashMap<>();
+    private volatile Map<ResourceLocation, ProfessionCategory> categoryMap = Map.of();
 
-    public synchronized void reloadCategories(Map<ResourceLocation, ProfessionCategory> categories) {
-        categoryMap.clear();
-        categoryMap.putAll(categories);
+    public void reloadCategories(Map<ResourceLocation, ProfessionCategory> categories) {
+        categoryMap = Collections.unmodifiableMap(new LinkedHashMap<>(categories));
         LOGGER.info("Reloaded {} profession categories", categoryMap.size());
     }
 
-    public synchronized List<ProfessionCategory> getCategories() {
+    public List<ProfessionCategory> getCategories() {
         return List.copyOf(categoryMap.values());
     }
 
-    public synchronized Map<ResourceLocation, ProfessionCategory> getCategoryMap() {
-        return Map.copyOf(categoryMap);
+    public Map<ResourceLocation, ProfessionCategory> getCategoryMap() {
+        return categoryMap;
     }
 
-    public synchronized @Nullable ProfessionCategory getCategory(ResourceLocation id) {
+    public @Nullable ProfessionCategory getCategory(ResourceLocation id) {
         return categoryMap.get(id);
     }
 
-    public synchronized @Nullable ResourceLocation getCategoryId(ProfessionCategory category) {
+    public @Nullable ResourceLocation getCategoryId(ProfessionCategory category) {
         for (Map.Entry<ResourceLocation, ProfessionCategory> entry : categoryMap.entrySet()) {
             if (entry.getValue().equals(category)) {
                 return entry.getKey();

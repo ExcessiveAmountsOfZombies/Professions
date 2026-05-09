@@ -162,6 +162,7 @@ public final class ProfessionDataGeneration {
         event.getGenerator().addProvider(true, professionsProvider);
         event.getGenerator().addProvider(event.includeServer(), new CategoryDataProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new MinerActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new MiningPerkProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new LoggingActionProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new FarmingActionProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new FishingActionProvider(out, professionsProvider.getRegistryProvider()));
@@ -192,7 +193,7 @@ public final class ProfessionDataGeneration {
         private Item icon = Items.STONE_PICKAXE;
         private int maxLevel = 0;
         private ResourceLocation levelUpSound = ResourceLocation.parse("minecraft:entity.player.levelup");
-        private String expEquation = "1000*1.05^(lvl-1)";
+        private String expEquation = "1000+(lvl*50)";
         private final NavigableMap<Integer, Parser> expScalers = new TreeMap<>();
 
         public Builder(ResourceLocation id) {

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface IProfessionalPlayer {
@@ -40,8 +41,6 @@ public interface IProfessionalPlayer {
     @Nullable
     Occupation getOccupation(ResourceLocation profession);
 
-    void updateOccupationPerks();
-
     /**
      * @return Will return ALL occupations, regardless of them being active or not. Mainly to make sure they can be saved.
      */
@@ -52,6 +51,13 @@ public interface IProfessionalPlayer {
      * @return Only returns the active occupations
      */
     List<Occupation> getActiveOccupations();
+
+    boolean hasClaimedPerk(ResourceLocation perkId);
+
+    Set<ResourceLocation> getClaimedPerks();
+
+    Set<ResourceLocation> getUnlockedPerks();
+
 
 
 }

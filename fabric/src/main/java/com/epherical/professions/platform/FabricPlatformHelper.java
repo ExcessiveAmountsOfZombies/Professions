@@ -7,6 +7,7 @@ import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.model.perks.PerkType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -47,5 +48,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public Registry<RewardType> getRewardTypeRegistry() {
         return FabricProfessionsMod.REWARDS;
+    }
+
+    @Override
+    public Registry<PerkType> getPerkTypeRegistry() {
+        return FabricProfessionsMod.PERKS;
     }
 }

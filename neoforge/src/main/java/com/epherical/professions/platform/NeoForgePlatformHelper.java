@@ -5,6 +5,7 @@ import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.model.perks.PerkType;
 import com.epherical.professions.bootstrap.platform.IPlatformHelper;
 import net.minecraft.core.Registry;
 import net.neoforged.fml.ModList;
@@ -45,5 +46,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public Registry<RewardType> getRewardTypeRegistry() {
         return NeoForgeProfessionsMod.REWARDS;
+    }
+
+    @Override
+    public Registry<PerkType> getPerkTypeRegistry() {
+        return NeoForgeProfessionsMod.PERKS;
     }
 }

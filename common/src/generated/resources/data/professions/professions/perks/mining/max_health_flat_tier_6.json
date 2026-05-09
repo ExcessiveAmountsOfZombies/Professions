@@ -1,0 +1,11 @@
+{
+  "amount": 1.0,
+  "attribute": "minecraft:generic.max_health",
+  "description": "Gain additional max health. (1.0)",
+  "itemIcon": "minecraft:golden_apple",
+  "levelRequirement": 1500,
+  "modificationStage": "flat",
+  "perk": "professions:attribute",
+  "profession": "professions:mining",
+  "title": "Heart of Stone VI"
+}

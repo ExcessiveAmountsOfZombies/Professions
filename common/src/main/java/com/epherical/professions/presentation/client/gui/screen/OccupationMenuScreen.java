@@ -20,9 +20,6 @@ import java.util.List;
 import static com.epherical.professions.presentation.client.gui.components.OccupationList.Entry.PROGRESS_BAR_EMPTY;
 import static com.epherical.professions.presentation.client.gui.components.OccupationList.Entry.PROGRESS_BAR_FULL;
 import static com.epherical.professions.presentation.client.gui.screen.OccupationCategorySelectionScreen.SPRITES;
-import static com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton.NO_HIGHLIGHT_SPRITES;
-import static net.minecraft.client.gui.components.toasts.TutorialToast.PROGRESS_BAR_HEIGHT;
-import static net.minecraft.client.gui.components.toasts.TutorialToast.PROGRESS_BAR_WIDTH;
 
 public class OccupationMenuScreen extends Screen {
 
@@ -38,6 +35,7 @@ public class OccupationMenuScreen extends Screen {
     private OccupationMenuButton occupationMenuButton;
     private OccupationMenuButton closeButton;
     private OccupationMenuButton trackButton;
+    private OccupationMenuButton perkButton;
     private boolean trackEnabled;
     private ResourceLocation trackedProfessionId;
 
@@ -65,7 +63,7 @@ public class OccupationMenuScreen extends Screen {
         // todo; add translation
         occupationMenuButton = addRenderableWidget(OccupationMenuButton.omButton(Component.literal("Details"), button -> {
             minecraft.setScreen(new OccupationInfoScreen(occupationList.getSelected().getOccupation()));
-        }).pos(leftPos + 150, topPos + 104 + 80).size(74, 24).build());
+        }).pos(leftPos + 150, topPos + 177).size(74, 18).build());
         occupationMenuButton.visible = false;
 
         trackButton = addRenderableWidget(OccupationMenuButton.omToggleButton(Component.literal("Track"), pButton -> {
@@ -76,11 +74,17 @@ public class OccupationMenuScreen extends Screen {
             trackEnabled = !trackEnabled;
             selectedOccupation.setExperienceGainTrackingEnabled(trackEnabled);
             NetworkPayloadDispatcher.sendToServer(new C2SOccupationExperienceTrackingPayload(selectedOccupation.getProfessionKey(), trackEnabled));
-        }, () -> trackEnabled).pos(leftPos + 150 + 76, topPos + 104 + 80).size(74, 24)
+        }, () -> trackEnabled).pos(leftPos + 150 + 76, topPos + 104 + 80).size(74, 18)
                 .tooltip(Tooltip.create(Component.literal("Display XP gains as they happen. (Toggle)")))
                 .toggleTextOffset(20).build());
 
         trackButton.visible = false;
+
+        perkButton = addRenderableWidget(OccupationMenuButton.omButton(Component.literal("Perks"), pButton -> {
+            minecraft.setScreen(new OccupationPerkMenuScreen(occupationList.getSelected().getOccupation()));
+        }).pos(leftPos + 150, topPos + 196).size(74, 18).build());
+
+        perkButton.visible = false;
 
         closeButton = OccupationMenuButton.omButton(Component.literal(""), button -> {
                     minecraft.setScreen(null);
@@ -107,6 +111,7 @@ public class OccupationMenuScreen extends Screen {
             syncTrackStateFromSelection();
             occupationMenuButton.visible = true;
             trackButton.visible = true;
+            perkButton.visible = true;
 
             OccupationList.Entry selected = occupationList.getSelected();
 

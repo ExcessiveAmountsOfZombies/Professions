@@ -1,5 +1,6 @@
 package com.epherical.professions.model;
 
+import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.ProfessionCategory;
@@ -8,18 +9,27 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.epherical.professions.ProfessionsCommon.PROFESSION_REGISTRY_KEY;
 
 public class ProfessionalPlayer implements IProfessionalPlayer {
+
+    private static final ResourceLocation MAX_HEALTH_ADDITIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/max_health/additive");
+    private static final ResourceLocation MAX_HEALTH_MULTIPLICATIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/max_health/multiplicative");
+    private static final ResourceLocation ATTACK_DAMAGE_ADDITIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/attack_damage/additive");
+    private static final ResourceLocation ATTACK_DAMAGE_MULTIPLICATIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/attack_damage/multiplicative");
 
     private final Map<ResourceLocation, Occupation> occupationMap = new HashMap<>();
 
@@ -115,10 +125,6 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
         return occupationMap.get(profession);
     }
 
-    @Override
-    public void updateOccupationPerks() {
-
-    }
 
     @Override
     public List<Occupation> getAllOccupations() {
@@ -137,5 +143,40 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
             }
         }
         return activeOccupations;
+    }
+
+    @Override
+    public boolean hasClaimedPerk(ResourceLocation perkId) {
+        if (perkId == null) {
+            return false;
+        }
+
+        for (Occupation activeOccupation : getActiveOccupations()) {
+            if (activeOccupation.hasClaimedPerk(perkId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public Set<ResourceLocation> getClaimedPerks() {
+        Set<ResourceLocation> claimedPerks = new HashSet<>();
+        for (Occupation activeOccupation : getActiveOccupations()) {
+            claimedPerks.addAll(activeOccupation.getClaimedPerks());
+        }
+
+        return claimedPerks;
+    }
+
+
+    @Override
+    public Set<ResourceLocation> getUnlockedPerks() {
+        Set<ResourceLocation> unclaimedPerks = new HashSet<>();
+        for (Occupation activeOccupation : getActiveOccupations()) {
+            unclaimedPerks.addAll(activeOccupation.getUnclaimedPerks());
+        }
+        return unclaimedPerks;
     }
 }

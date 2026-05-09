@@ -1,4 +1,4 @@
-package com.epherical.professions.listener;
+package com.epherical.professions.listener.notification;
 
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.EventListener;
@@ -14,7 +14,7 @@ import net.minecraft.sounds.SoundSource;
 
 import java.util.Optional;
 
-public class LevelNotificationListener implements EventListener<OccupationLevelEvent> {
+public class NotificationLevelListener implements EventListener<OccupationLevelEvent> {
 
 
     @Override

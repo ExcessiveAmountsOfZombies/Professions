@@ -1,11 +1,14 @@
 package com.epherical.professions.presentation.commands;
 
 import com.epherical.professions.ActionManager;
+import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsCommon;
+import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.rewards.Reward;
+import com.epherical.professions.model.perks.Perk;
 import com.epherical.professions.data.config.ProfessionConfig;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
@@ -17,12 +20,15 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -32,6 +38,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -40,21 +47,97 @@ public class ProfessionsStandardCommands {
     private static final int MESSAGES_PER_PAGE = 12;
 
     private final ActionManager actionManager;
+    private final PlayerManager playerManager;
 
     public ProfessionsStandardCommands(ProfessionsCommon mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher,
                                        CommandBuildContext commandBuildContext, ActionManager actionManager) {
         this.actionManager = actionManager;
+        this.playerManager = mod.getPlayerManager();
         this.registerCommands(stackCommandDispatcher, commandBuildContext);
     }
 
     private void registerCommands(CommandDispatcher<CommandSourceStack> stack, CommandBuildContext buildContext) {
+
+        //todo; we should write a command that can remove the perkIDs from the player.
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("professions")
                 .then(Commands.literal("info")
                         .then(Commands.argument("occupation", ResourceOrTagArgument.resourceOrTag(buildContext, ProfessionsCommon.PROFESSION_REGISTRY_KEY))
                                 .executes(this::info)
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
-                                        .executes(this::info))));
+                                        .executes(this::info))))
+                .then(Commands.literal("unclaimedrewards")
+                        .executes(this::unclaimedRewards))
+                .then(Commands.literal("claimreward")
+                        .then(Commands.argument("reward_id", ResourceLocationArgument.id())
+                                .suggests((context, builder) -> {
+                                    List<ResourceLocation> rewardIds = ProfessionsCommon.INSTANCE.getPerkManager().getPerks().stream()
+                                            .map(Perk::getId)
+                                            .filter(Objects::nonNull)
+                                            .sorted()
+                                            .toList();
+                                    for (ResourceLocation rewardId : rewardIds) {
+                                        builder.suggest(rewardId.toString());
+                                    }
+                                    return builder.buildFuture();
+                                })
+                                .executes(this::claimReward)));
         stack.register(command);
+    }
+
+    private int unclaimedRewards(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+        ServerPlayer sourcePlayer = stack.getSource().getPlayerOrException();
+        IProfessionalPlayer player = playerManager.getPlayer(sourcePlayer.getUUID());
+        if (player == null) {
+            stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_player")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+
+        Set<ResourceLocation> unclaimedRewardIds = playerManager.getUnlockedUnclaimedPerkIds(player);
+        if (unclaimedRewardIds.isEmpty()) {
+            stack.getSource().sendSuccess(() -> border(Component.literal("Unclaimed Reward IDs")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))), false);
+            stack.getSource().sendSuccess(() -> Component.literal("None")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), false);
+            return 1;
+        }
+
+        List<ResourceLocation> sortedUnclaimedRewardIds = unclaimedRewardIds.stream()
+                .sorted()
+                .toList();
+
+        stack.getSource().sendSuccess(() -> border(Component.literal("Unclaimed Reward IDs")
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))), false);
+        for (ResourceLocation rewardId : sortedUnclaimedRewardIds) {
+            stack.getSource().sendSuccess(() -> Component.literal("- ")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
+                    .append(Component.literal(rewardId.toString())
+                            .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))), false);
+        }
+        return 1;
+    }
+
+    private int claimReward(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+        ServerPlayer sourcePlayer = stack.getSource().getPlayerOrException();
+        IProfessionalPlayer player = playerManager.getPlayer(sourcePlayer.getUUID());
+        if (player == null) {
+            stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_player")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+
+        ResourceLocation rewardId = ResourceLocationArgument.getId(stack, "reward_id");
+        if (!playerManager.claimUnlockedReward(player, rewardId)) {
+            stack.getSource().sendFailure(Component.literal("Could not claim reward id: " + rewardId)
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+
+        stack.getSource().sendSuccess(() -> Component.literal("Claimed reward id: ")
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.success))
+                .append(Component.literal(rewardId.toString())
+                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))), false);
+        return 1;
     }
 
     private int info(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {

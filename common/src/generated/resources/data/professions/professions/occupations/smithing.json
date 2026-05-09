@@ -1,6 +1,6 @@
 {
   "expScaling": {
-    "defaultExpScale": "1000*1.05^(lvl-1)",
+    "defaultExpScale": "1000+(lvl*50)",
     "expScalers": {}
   },
   "formatting": {

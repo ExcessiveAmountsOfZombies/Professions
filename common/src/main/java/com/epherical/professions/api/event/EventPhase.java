@@ -5,6 +5,5 @@ public enum EventPhase {
     RESOLVE,
     COMPUTE_EFFECTS,
     MODIFY_EFFECTS,
-    APPLY,
-    AFTER_APPLY
+    APPLY
 }

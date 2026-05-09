@@ -10,9 +10,6 @@ public final class NetworkPayloadDispatcher {
     private static PayloadSender payloadSender = (player, payload) -> {};
     private static ServerboundPayloadSender serverboundPayloadSender = payload -> {};
 
-    private NetworkPayloadDispatcher() {
-    }
-
     public static void setPayloadSender(PayloadSender payloadSender) {
         NetworkPayloadDispatcher.payloadSender = Objects.requireNonNull(payloadSender);
     }

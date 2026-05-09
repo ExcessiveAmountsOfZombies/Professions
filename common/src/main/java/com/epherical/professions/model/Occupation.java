@@ -1,5 +1,6 @@
 package com.epherical.professions.model;
 
+import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.progression.OccupationSlot;
@@ -10,14 +11,19 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.epherical.professions.ProfessionsCommon.PROFESSION_REGISTRY_KEY;
 
@@ -26,12 +32,16 @@ public class Occupation {
     public static final Codec<OccupationSlot> SLOT_CODEC =
             Codec.STRING.xmap(s -> OccupationSlot.valueOf(s.toUpperCase(Locale.ROOT)),
                     OccupationSlot::name);
+    private static final Codec<Set<ResourceLocation>> PERK_ID_SET_CODEC = ResourceLocation.CODEC.listOf()
+            .xmap(LinkedHashSet::new, List::copyOf);
 
     public static final Codec<Occupation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("profession").forGetter(Occupation::getProfessionKey),
             ExperienceData.CODEC.fieldOf("experience").forGetter(Occupation::getExperience),
             SLOT_CODEC.fieldOf("slot").forGetter(Occupation::getSlot),
-            Settings.CODEC.optionalFieldOf("settings", Settings.empty()).forGetter(Occupation::getSettings)
+            Settings.CODEC.optionalFieldOf("settings", Settings.empty()).forGetter(Occupation::getSettings),
+            PERK_ID_SET_CODEC.optionalFieldOf("unclaimedPerks", Set.of()).forGetter(Occupation::getUnclaimedPerks),
+            PERK_ID_SET_CODEC.optionalFieldOf("claimedPerks", Set.of()).forGetter(Occupation::getClaimedPerks)
     ).apply(instance, Occupation::new));
 
     public static final String TRACK_EXPERIENCE_GAINS_SETTING_KEY = "track_experience_gains";
@@ -39,6 +49,8 @@ public class Occupation {
     private final ResourceLocation professionKey;
     private final ExperienceData experience;
     private final Settings settings;
+    private Set<ResourceLocation> unclaimedPerks;
+    private Set<ResourceLocation> claimedPerks;
     private int receivedBenefitsUpToLevel;
     private OccupationSlot slot;
 
@@ -48,13 +60,21 @@ public class Occupation {
     private transient BigDecimal maxLevelExp = BigDecimal.valueOf(-1);
 
     public Occupation(ResourceLocation professionKey, ExperienceData experience, OccupationSlot slot) {
-        this(professionKey, experience, slot, Settings.empty());
+        this(professionKey, experience, slot, Settings.empty(), Set.of(), Set.of());
     }
 
     public Occupation(ResourceLocation professionKey, ExperienceData experience, OccupationSlot slot, Settings settings) {
+        this(professionKey, experience, slot, settings, Set.of(), Set.of());
+    }
+
+    public Occupation(ResourceLocation professionKey, ExperienceData experience, OccupationSlot slot, Settings settings,
+                      Set<ResourceLocation> unclaimedPerks, Set<ResourceLocation> claimedPerks) {
         this.professionKey = professionKey;
         this.experience = experience;
         this.settings = settings.copy();
+        this.unclaimedPerks = new LinkedHashSet<>(unclaimedPerks);
+        this.claimedPerks = new LinkedHashSet<>(claimedPerks);
+        this.unclaimedPerks.removeAll(this.claimedPerks);
         this.receivedBenefitsUpToLevel = experience.level;
         this.slot = slot;
         this.professionExists = false;
@@ -153,6 +173,7 @@ public class Occupation {
         String currentSignature = profession.value().getProgressionSignature();
         boolean shouldRecalculate = !Objects.equals(experience.progressionSignature, currentSignature);
         if (shouldRecalculate) {
+            ProfessionsCommon.LOG.info("Recalculating synchronization progression for {}", professionKey);
             recalculateFromTotal();
         } else if (maxLevelExp.signum() < 0) {
             resetMaxExperience();
@@ -211,6 +232,47 @@ public class Occupation {
         return profession.is(this.professionKey);
     }
 
+    public void setUnclaimedPerks(Set<ResourceLocation> unclaimedPerks) {
+        this.unclaimedPerks = unclaimedPerks;
+    }
+
+    public Set<ResourceLocation> getUnclaimedPerks() {
+        return unclaimedPerks;
+    }
+
+    public Set<ResourceLocation> getClaimedPerks() {
+        return claimedPerks;
+    }
+
+    public void addClaimedPerk(@NotNull ResourceLocation perkId) {
+        this.claimedPerks.add(perkId);
+        this.unclaimedPerks.remove(perkId);
+    }
+
+    public void addUnclaimedPerk(@NotNull ResourceLocation perkId) {
+        this.unclaimedPerks.add(perkId);
+    }
+
+    public boolean hasClaimedPerk(ResourceLocation perkId) {
+        return perkId != null && claimedPerks.contains(perkId);
+    }
+
+    public boolean hasUnclaimedPerk(ResourceLocation perkId) {
+        return perkId != null && unclaimedPerks.contains(perkId);
+    }
+
+    public void removeClaimedPerk(ResourceLocation perkId) {
+        this.claimedPerks.remove(perkId);
+    }
+
+    public void removeAllClaimedPerks(Collection<ResourceLocation> perkIds) {
+        this.claimedPerks.removeAll(perkIds);
+    }
+
+    public void removeUnclaimedPerk(ResourceLocation perkId) {
+        this.unclaimedPerks.remove(perkId);
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -222,6 +284,8 @@ public class Occupation {
                 Objects.equals(professionKey, that.professionKey) &&
                 Objects.equals(experience, that.experience) &&
                 Objects.equals(settings, that.settings) &&
+                Objects.equals(unclaimedPerks, that.unclaimedPerks) &&
+                Objects.equals(claimedPerks, that.claimedPerks) &&
                 slot == that.slot &&
                 Objects.equals(profession, that.profession) &&
                 Objects.equals(maxLevelExp, that.maxLevelExp);
@@ -229,7 +293,7 @@ public class Occupation {
 
     @Override
     public int hashCode() {
-        return Objects.hash(professionKey, professionExists, experience, settings, receivedBenefitsUpToLevel, slot, maxLevelExp);
+        return Objects.hash(professionKey, professionExists, experience, settings, unclaimedPerks, claimedPerks, receivedBenefitsUpToLevel, slot, maxLevelExp);
     }
 
     public Holder<Profession> getProfession() {

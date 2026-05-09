@@ -1,4 +1,4 @@
-package com.epherical.professions.listener;
+package com.epherical.professions.listener.notification;
 
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.EventListener;
@@ -9,7 +9,7 @@ import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.server.S2CExperienceGainPayload;
 import net.minecraft.server.level.ServerPlayer;
 
-public class GainExpNotificationListener implements EventListener<OccupationExperienceEvent> {
+public class NotificationGainExperienceListener implements EventListener<OccupationExperienceEvent> {
 
 
     @Override

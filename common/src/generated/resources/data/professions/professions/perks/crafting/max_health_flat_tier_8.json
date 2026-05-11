@@ -1,0 +1,11 @@
+{
+  "amount": 1.0,
+  "attribute": "minecraft:generic.max_health",
+  "description": "Gain additional max health. (1.0)",
+  "itemIcon": "minecraft:crafting_table",
+  "levelRequirement": 4000,
+  "modificationStage": "flat",
+  "perk": "professions:attribute",
+  "profession": "professions:crafting",
+  "title": "Crafter's Vitality VIII"
+}

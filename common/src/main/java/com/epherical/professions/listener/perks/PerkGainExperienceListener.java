@@ -28,7 +28,7 @@ public class PerkGainExperienceListener implements EventListener<OccupationExper
 
         double baseAmount = event.getNewAmount();
 
-        Collection<PerkProfessionGainEXP> unlockedPerks = ProfessionsCommon.INSTANCE.getPlayerManager().getUnlockedPerks(Perks.PROFESSION_EXP_GAIN, player.getUUID());
+        Collection<PerkProfessionGainEXP> unlockedPerks = ProfessionsCommon.INSTANCE.getPlayerManager().getUnlockedPerks(Perks.PROFESSION_EXP_GAIN, player, occupation);
 
         double flat = 0.0D;
         double additive = 0.0D;

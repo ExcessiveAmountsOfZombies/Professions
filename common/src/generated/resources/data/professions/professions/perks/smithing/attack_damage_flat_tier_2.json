@@ -1,0 +1,11 @@
+{
+  "amount": 1.0,
+  "attribute": "minecraft:generic.attack_damage",
+  "description": "Gain additional attack damage. (1.0)",
+  "itemIcon": "minecraft:anvil",
+  "levelRequirement": 200,
+  "modificationStage": "flat",
+  "perk": "professions:attribute",
+  "profession": "professions:smithing",
+  "title": "Forge Might II"
+}

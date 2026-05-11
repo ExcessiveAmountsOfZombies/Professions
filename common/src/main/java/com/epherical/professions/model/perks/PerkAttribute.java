@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 
 public class PerkAttribute extends Perk implements IStartupPerk {
 
@@ -93,7 +92,7 @@ public class PerkAttribute extends Perk implements IStartupPerk {
     @Override
     public void onDeactivate(Occupation occupation, IProfessionalPlayer player, ServerPlayer serverPlayer) {
         super.onDeactivate(occupation, player, serverPlayer);
-        AttributeInstance attribute = serverPlayer.getAttribute(Attributes.MAX_HEALTH);
+        AttributeInstance attribute = serverPlayer.getAttribute(getAttribute());
         if (attribute == null) {
             return;
         }
@@ -103,12 +102,7 @@ public class PerkAttribute extends Perk implements IStartupPerk {
 
     @Override
     public PerkStatus onRecalculate(Occupation occupation, IProfessionalPlayer player, ServerPlayer serverPlayer) {
-        if (occupation.getLevel() > this.getLevelRequirement()) {
-            return PerkStatus.VALID;
-        }
-
-        onDeactivate(occupation, player, serverPlayer);
-        return PerkStatus.INVALID;
+        return super.onRecalculate(occupation, player, serverPlayer);
     }
 
 }

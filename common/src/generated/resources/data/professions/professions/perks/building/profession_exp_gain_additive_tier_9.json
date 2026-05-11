@@ -1,0 +1,10 @@
+{
+  "amount": 0.02,
+  "description": "Increase profession experience gain by 2%.",
+  "itemIcon": "minecraft:experience_bottle",
+  "levelRequirement": 5000,
+  "modificationStage": "additive",
+  "perk": "professions:profession_exp_gain",
+  "profession": "professions:building",
+  "title": "Master Builder IX"
+}

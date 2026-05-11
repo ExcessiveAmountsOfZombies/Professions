@@ -1,0 +1,11 @@
+{
+  "amount": 0.5,
+  "attribute": "minecraft:generic.luck",
+  "description": "Gain additional luck. (0.5)",
+  "itemIcon": "minecraft:oak_sapling",
+  "levelRequirement": 4000,
+  "modificationStage": "flat",
+  "perk": "professions:attribute",
+  "profession": "professions:logging",
+  "title": "Logger's Fortune VIII"
+}

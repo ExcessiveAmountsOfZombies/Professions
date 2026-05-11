@@ -21,7 +21,7 @@ final class CategoryDataProvider implements DataProvider {
     private final PackOutput.PathProvider pathProvider;
     private final CompletableFuture<HolderLookup.Provider> lookupProvider;
 
-    CategoryDataProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+    public CategoryDataProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         this.pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, "professions/categories");
         this.lookupProvider = lookupProvider;
     }

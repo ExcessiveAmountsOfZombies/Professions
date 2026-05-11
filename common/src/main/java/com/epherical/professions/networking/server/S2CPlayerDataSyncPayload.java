@@ -27,7 +27,7 @@ public record S2CPlayerDataSyncPayload(UUID playerId, List<Occupation> occupatio
     private static final StreamCodec<RegistryFriendlyByteBuf, List<Action<?>>> ACTIONS_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(Action.TYPED_CODEC.listOf());
     private static final StreamCodec<RegistryFriendlyByteBuf, List<Perk>> PERKS_CODEC =
-            ByteBufCodecs.fromCodecWithRegistries(Perk.TYPED_CODEC.listOf());
+            ByteBufCodecs.fromCodecWithRegistries(Perk.TYPED_CODEC_WITH_ID.listOf());
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CPlayerDataSyncPayload> STREAM_CODEC =
             StreamCodec.composite(

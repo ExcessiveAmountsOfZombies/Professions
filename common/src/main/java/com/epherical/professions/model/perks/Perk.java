@@ -41,6 +41,13 @@ public abstract class Perk {
 
     public static final Codec<Perk> TYPED_CODEC = Services.PLATFORM.getPerkTypeRegistry().byNameCodec().dispatch(
             "perk", Perk::getType, PerkType::codec);
+    public static final Codec<Perk> TYPED_CODEC_WITH_ID = RecordCodecBuilder.create(instance -> instance.group(
+            ResourceLocation.CODEC.fieldOf("id").forGetter(Perk::getId),
+            TYPED_CODEC.fieldOf("perk").forGetter(perk -> perk)
+    ).apply(instance, (id, perk) -> {
+        perk.setId(id);
+        return perk;
+    }));
 
     public static final MapCodec<Common> COMMON = RecordCodecBuilder.mapCodec(
             i -> i.group(
@@ -112,7 +119,12 @@ public abstract class Perk {
      * @return The result of the recalculation, which is a {@link PerkStatus} indicating whether the perk is VALID or INVALID.
      */
     public PerkStatus onRecalculate(Occupation occupation, IProfessionalPlayer player, ServerPlayer serverPlayer) {
-        return PerkStatus.VALID;
+        if (occupation.getLevel() > this.getLevelRequirement()) {
+            return PerkStatus.VALID;
+        }
+
+        onDeactivate(occupation, player, serverPlayer);
+        return PerkStatus.INVALID;
     }
 
     public Holder<Profession> getProfession() {

@@ -1,0 +1,11 @@
+{
+  "amount": 0.01,
+  "attribute": "minecraft:player.sneaking_speed",
+  "description": "Gain additional sneaking speed. (0.01)",
+  "itemIcon": "minecraft:bow",
+  "levelRequirement": 10000,
+  "modificationStage": "flat",
+  "perk": "professions:attribute",
+  "profession": "professions:hunting",
+  "title": "Silent Hunter X"
+}

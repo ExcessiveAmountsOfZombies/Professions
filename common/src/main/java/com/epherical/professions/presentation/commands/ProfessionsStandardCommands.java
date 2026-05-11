@@ -5,10 +5,11 @@ import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.domain.exception.ProfessionNotActiveException;
+import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.rewards.Reward;
-import com.epherical.professions.model.perks.Perk;
 import com.epherical.professions.data.config.ProfessionConfig;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
@@ -65,26 +66,39 @@ public class ProfessionsStandardCommands {
                                 .executes(this::info)
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                         .executes(this::info))))
-                .then(Commands.literal("unclaimedrewards")
-                        .executes(this::unclaimedRewards))
-                .then(Commands.literal("claimreward")
-                        .then(Commands.argument("reward_id", ResourceLocationArgument.id())
+                .then(Commands.literal("setlevel")
+                        .requires(source -> source.hasPermission(2))
+                        .then(Commands.argument("occupation", ResourceOrTagArgument.resourceOrTag(buildContext, ProfessionsCommon.PROFESSION_REGISTRY_KEY))
+                                .then(Commands.argument("level", IntegerArgumentType.integer(0))
+                                        .executes(this::setLevel))))
+                .then(Commands.literal("unclaimedperks")
+                        .executes(this::unclaimedPerks))
+                .then(Commands.literal("claimperk")
+                        .then(Commands.argument("perk_id", ResourceLocationArgument.id())
                                 .suggests((context, builder) -> {
-                                    List<ResourceLocation> rewardIds = ProfessionsCommon.INSTANCE.getPerkManager().getPerks().stream()
-                                            .map(Perk::getId)
-                                            .filter(Objects::nonNull)
-                                            .sorted()
-                                            .toList();
-                                    for (ResourceLocation rewardId : rewardIds) {
-                                        builder.suggest(rewardId.toString());
+                                    ServerPlayer sourcePlayer;
+                                    try {
+                                        sourcePlayer = context.getSource().getPlayerOrException();
+                                    } catch (CommandSyntaxException exception) {
+                                        return builder.buildFuture();
+                                    }
+
+                                    IProfessionalPlayer player = playerManager.getPlayer(sourcePlayer.getUUID());
+                                    if (player == null) {
+                                        return builder.buildFuture();
+                                    }
+
+                                    Set<ResourceLocation> perkIds = playerManager.getUnlockedUnclaimedPerkIds(player);
+                                    for (ResourceLocation perkId : perkIds) {
+                                        builder.suggest(perkId.toString());
                                     }
                                     return builder.buildFuture();
                                 })
-                                .executes(this::claimReward)));
+                                .executes(this::claimPerk)));
         stack.register(command);
     }
 
-    private int unclaimedRewards(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+    private int setLevel(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
         ServerPlayer sourcePlayer = stack.getSource().getPlayerOrException();
         IProfessionalPlayer player = playerManager.getPlayer(sourcePlayer.getUUID());
         if (player == null) {
@@ -93,31 +107,76 @@ public class ProfessionsStandardCommands {
             return 0;
         }
 
-        Set<ResourceLocation> unclaimedRewardIds = playerManager.getUnlockedUnclaimedPerkIds(player);
-        if (unclaimedRewardIds.isEmpty()) {
-            stack.getSource().sendSuccess(() -> border(Component.literal("Unclaimed Reward IDs")
+        ResourceOrTagArgument.Result<Profession> potentialProfession = ResourceOrTagArgument.getResourceOrTag(stack, "occupation", ProfessionsCommon.PROFESSION_REGISTRY_KEY);
+        Optional<Holder.Reference<Profession>> professionResult = potentialProfession.unwrap().left();
+        if (professionResult.isEmpty()) {
+            stack.getSource().sendFailure(Component.translatable("professions.command.error.profession_does_not_exist")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+
+        Holder.Reference<Profession> professionHolder = professionResult.get();
+        Occupation occupation = player.getOccupation(professionHolder);
+        if (occupation == null) {
+            stack.getSource().sendFailure(Component.literal("Profession is not active: " + professionHolder.key().location())
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+
+        int level = IntegerArgumentType.getInteger(stack, "level");
+        try {
+            occupation.setLevel(level, player);
+        } catch (ProfessionNotActiveException exception) {
+            stack.getSource().sendFailure(Component.literal("Could not set level for profession: " + professionHolder.key().location())
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+
+        stack.getSource().sendSuccess(() -> Component.literal("Set ")
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.success))
+                .append(professionHolder.value().displayName().copy()
+                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
+                .append(Component.literal(" level to ")
+                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)))
+                .append(Component.literal(String.valueOf(level))
+                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))), false);
+        return 1;
+    }
+
+    private int unclaimedPerks(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+        ServerPlayer sourcePlayer = stack.getSource().getPlayerOrException();
+        IProfessionalPlayer player = playerManager.getPlayer(sourcePlayer.getUUID());
+        if (player == null) {
+            stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_player")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+
+        Set<ResourceLocation> unclaimedPerkIds = playerManager.getUnlockedUnclaimedPerkIds(player);
+        if (unclaimedPerkIds.isEmpty()) {
+            stack.getSource().sendSuccess(() -> border(Component.literal("Unclaimed Perk IDs")
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))), false);
             stack.getSource().sendSuccess(() -> Component.literal("None")
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), false);
             return 1;
         }
 
-        List<ResourceLocation> sortedUnclaimedRewardIds = unclaimedRewardIds.stream()
+        List<ResourceLocation> sortedUnclaimedPerkIds = unclaimedPerkIds.stream()
                 .sorted()
                 .toList();
 
-        stack.getSource().sendSuccess(() -> border(Component.literal("Unclaimed Reward IDs")
+        stack.getSource().sendSuccess(() -> border(Component.literal("Unclaimed Perk IDs")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))), false);
-        for (ResourceLocation rewardId : sortedUnclaimedRewardIds) {
+        for (ResourceLocation perkId : sortedUnclaimedPerkIds) {
             stack.getSource().sendSuccess(() -> Component.literal("- ")
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
-                    .append(Component.literal(rewardId.toString())
+                    .append(Component.literal(perkId.toString())
                             .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))), false);
         }
         return 1;
     }
 
-    private int claimReward(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
+    private int claimPerk(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {
         ServerPlayer sourcePlayer = stack.getSource().getPlayerOrException();
         IProfessionalPlayer player = playerManager.getPlayer(sourcePlayer.getUUID());
         if (player == null) {
@@ -126,16 +185,16 @@ public class ProfessionsStandardCommands {
             return 0;
         }
 
-        ResourceLocation rewardId = ResourceLocationArgument.getId(stack, "reward_id");
-        if (!playerManager.claimUnlockedReward(player, rewardId)) {
-            stack.getSource().sendFailure(Component.literal("Could not claim reward id: " + rewardId)
+        ResourceLocation perkId = ResourceLocationArgument.getId(stack, "perk_id");
+        if (!playerManager.claimUnlockedReward(player, perkId)) {
+            stack.getSource().sendFailure(Component.literal("Could not claim perk id: " + perkId)
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return 0;
         }
 
-        stack.getSource().sendSuccess(() -> Component.literal("Claimed reward id: ")
+        stack.getSource().sendSuccess(() -> Component.literal("Claimed perk id: ")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.success))
-                .append(Component.literal(rewardId.toString())
+                .append(Component.literal(perkId.toString())
                         .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))), false);
         return 1;
     }
@@ -235,26 +294,26 @@ public class ProfessionsStandardCommands {
                 .append(Component.literal(" |=-=-=").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
     }
 
-    private Component actionLine(Holder<?> value, List<Reward<?>> rewards) {
+    private Component actionLine(Holder<?> value, List<Reward<?>> perks) {
         MutableComponent component = Component.literal("")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
                 .append(readableValue(value).copy().setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)));
 
-        if (!rewards.isEmpty()) {
+        if (!perks.isEmpty()) {
             component.append(Component.literal(" | ").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
-            component.append(rewardSummary(rewards));
+            component.append(perkSummary(perks));
         }
 
         return component;
     }
 
-    private MutableComponent rewardSummary(List<Reward<?>> rewards) {
+    private MutableComponent perkSummary(List<Reward<?>> perks) {
         MutableComponent summary = Component.empty();
-        for (int i = 0; i < rewards.size(); i++) {
+        for (int i = 0; i < perks.size(); i++) {
             if (i > 0) {
                 summary.append(Component.literal(", ").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
             }
-            summary.append(rewards.get(i).getRewardName().copy());
+            summary.append(perks.get(i).getRewardName().copy());
         }
         return summary;
     }

@@ -335,19 +335,19 @@ public class PlayerManager {
         return categoryManager.getCategoryId(category);
     }
 
-    public <T extends Perk> Collection<T> getUnlockedPerks(PerkType perkType, UUID uuid) {
+    public <T extends Perk> Collection<T> getUnlockedPerks(PerkType perkType, UUID uuid, Occupation occupation) {
         IProfessionalPlayer player = getPlayer(uuid);
-        return getUnlockedPerks(perkType, player);
+        return getUnlockedPerks(perkType, player, occupation);
     }
 
-    public <T extends Perk> Collection<T> getUnlockedPerks(PerkType perkType, IProfessionalPlayer player) {
+    public <T extends Perk> Collection<T> getUnlockedPerks(PerkType perkType, IProfessionalPlayer player, Occupation occupation) {
         Collection<T> perksByType = (Collection<T>) perkManager.getPerksByType(perkType);
 
         if (player == null) {
             return List.of();
         }
 
-        return perksByType.stream().filter(t -> player.hasClaimedPerk(t.getId())).toList();
+        return perksByType.stream().filter(t -> t.getProfession().is(occupation.getProfession()) && occupation.hasClaimedPerk(t.getId())).toList();
     }
 
     public Set<ResourceLocation> getUnlockedUnclaimedPerkIds(UUID uuid) {

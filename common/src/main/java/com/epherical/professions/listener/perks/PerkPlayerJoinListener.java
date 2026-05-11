@@ -27,6 +27,6 @@ public class PerkPlayerJoinListener implements EventListener<PlayerJoinEvent> {
 
     @Override
     public void handle(PlayerJoinEvent event) {
-        perkManager.playerJoined(event);
+        perkManager.playerJoined(event.getPlayer(), event.getServerPlayer());
     }
 }

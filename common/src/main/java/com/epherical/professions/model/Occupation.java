@@ -2,6 +2,7 @@ package com.epherical.professions.model;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
+import com.epherical.professions.api.event.runtime.rewards.OccupationLevelEvent;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.progression.OccupationSlot;
 import com.epherical.professions.domain.exception.ProfessionNotActiveException;
@@ -125,6 +126,8 @@ public class Occupation {
             throw new ProfessionNotActiveException("Profession not active! " + professionKey);
         }
 
+        int oldLevel = this.experience.level;
+
         player.markDirty(true);
         this.experience.level = level;
         this.experience.expProgress = BigDecimal.ZERO;
@@ -137,6 +140,8 @@ public class Occupation {
 
         resetMaxExperience();
         this.experience.progressionSignature = getProfession().value().getProgressionSignature();
+
+        ProfessionsCommon.INSTANCE.getEventBus().post(new OccupationLevelEvent(this, oldLevel, this.getLevel(), player));
     }
 
     public boolean checkIfLevelUp(IProfessionalPlayer player) throws ProfessionNotActiveException {
@@ -360,7 +365,7 @@ public class Occupation {
     }
 
     public boolean isExperienceGainTrackingEnabled() {
-        return settings.getBoolean(TRACK_EXPERIENCE_GAINS_SETTING_KEY, false);
+        return settings.getBoolean(TRACK_EXPERIENCE_GAINS_SETTING_KEY, true);
     }
 
     public void setExperienceGainTrackingEnabled(boolean enabled) {

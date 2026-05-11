@@ -1,0 +1,11 @@
+{
+  "amount": 0.5,
+  "attribute": "minecraft:generic.luck",
+  "description": "Gain additional luck. (0.5)",
+  "itemIcon": "minecraft:fishing_rod",
+  "levelRequirement": 10000,
+  "modificationStage": "flat",
+  "perk": "professions:attribute",
+  "profession": "professions:fishing",
+  "title": "Angler's Fortune X"
+}

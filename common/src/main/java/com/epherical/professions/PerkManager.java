@@ -10,6 +10,7 @@ import com.epherical.professions.model.perks.PerkType;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -180,8 +181,7 @@ public class PerkManager {
         player.markDirty(true);
     }
 
-    public void playerJoined(PlayerJoinEvent event) {
-        IProfessionalPlayer player = event.getPlayer();
+    public void playerJoined(IProfessionalPlayer player, ServerPlayer serverPlayer) {
 
 
 
@@ -198,7 +198,7 @@ public class PerkManager {
 
                 // 1. Check if the perk is still valid, maybe it was removed after the player claimed it
                 // 2. Maybe perk isn't null, but it possibly changed, so let's recalculate that it's still valid. if it's not, remove it.
-                if (perk == null || Perk.PerkStatus.INVALID == perk.onRecalculate(activeOccupation, player, event.getServerPlayer())) {
+                if (perk == null || Perk.PerkStatus.INVALID == perk.onRecalculate(activeOccupation, player, serverPlayer)) {
                     disabledPerks.add(claimedPerk);
                 }
             }
@@ -220,7 +220,7 @@ public class PerkManager {
                 groupedStageValues.computeIfAbsent(perkGroup, s -> new EnumMap<>(Perk.ModificationStage.class))
                         .merge(stage, startupPerk.getValue(), Double::sum);
                 Perk.Applicator put = applicators.computeIfAbsent(perkGroup, s -> new EnumMap<>(Perk.ModificationStage.class))
-                        .put(stage, startupPerk.applicator(event.getServerPlayer()));
+                        .put(stage, startupPerk.applicator(serverPlayer));
                 ProfessionsCommon.LOG.debug("Overrode Previous Applicator: {}", put != null);
             }
         }

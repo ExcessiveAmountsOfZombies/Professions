@@ -3,8 +3,8 @@ package com.epherical.professions;
 import com.epherical.professions.api.event.EventPhase;
 import com.epherical.professions.api.event.runtime.PlayerJoinEvent;
 import com.epherical.professions.api.event.runtime.perks.PerkClaimedEvent;
-import com.epherical.professions.data.config.CommonConfig;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.data.config.ProfessionConfig;
 import com.epherical.professions.listener.perks.PerkClaimListener;
 import com.epherical.professions.listener.perks.PerkGainExperienceListener;
 import com.epherical.professions.listener.perks.PerkLevelListener;
@@ -54,7 +54,7 @@ public abstract class ProfessionsCommon {
     protected ActionLoad3 actionLoader;
     protected CategoryLoad3 categoryLoader;
     protected PerkLoad3 perkLoader;
-    protected CommonConfig config;
+    protected ProfessionConfig config;
     protected final ProfessionCategoryManager categoryManager;
     protected final PerkManager perkManager;
 
@@ -63,7 +63,7 @@ public abstract class ProfessionsCommon {
 
     public ProfessionsCommon() {
         INSTANCE = this;
-        config = new CommonConfig(false, "professions.conf", getModDir());
+        config = new ProfessionConfig(false, "professions.conf", getModDir());
         config.loadConfig();
         this.eventBus = new ProfessionEventBus();
 

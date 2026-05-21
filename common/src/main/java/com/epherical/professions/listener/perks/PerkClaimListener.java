@@ -16,6 +16,10 @@ public class PerkClaimListener implements EventListener<PerkClaimedEvent> {
     @Override
     public void handle(PerkClaimedEvent event) {
 
+        if (!perkManager.arePerksEnabled(event.getPlayer())) {
+            return;
+        }
+
         if (!event.getClaimedPerkIds().isEmpty()) {
             perkManager.playerJoined(event.getPlayer(), (ServerPlayer) event.getPlayer().getPlayer());
         }

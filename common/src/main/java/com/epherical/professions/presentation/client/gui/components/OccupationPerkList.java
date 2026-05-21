@@ -1,6 +1,8 @@
 package com.epherical.professions.presentation.client.gui.components;
 
+import com.epherical.professions.PerkManager;
 import com.epherical.professions.ProfessionsCommon;
+import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.data.config.ProfessionConfig;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.perks.Perk;
@@ -35,6 +37,7 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
     private static final Component CLAIMED_TEXT = Component.literal("✔ Claimed").setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
     private static final Component UNCLAIMED_TEXT = Component.literal("Unclaimed");
     private static final Component LOCKED_TEXT = Component.literal("✖ Locked").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors));
+    private static final Component DISABLED_TEXT = Component.literal("Disabled").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors));
 
     private final Occupation occupation;
 
@@ -51,10 +54,14 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
 
     public void addEntries() {
         clearEntries();
-        List<Perk> perksByProfession = ProfessionsCommon.INSTANCE.getPerkManager().getPerksByProfession(occupation.getProfession());
+        PerkManager perkManager = ProfessionsCommon.INSTANCE.getPerkManager();
+
+        List<Perk> perksByProfession = perkManager.getPerksByProfession(occupation.getProfession());
+        IProfessionalPlayer player = ProfessionsCommon.INSTANCE.getPlayerManager().getPlayer(Minecraft.getInstance().getUser().getProfileId());
+        boolean arePerksEnabled = player == null || perkManager.arePerksEnabled(player);
         List<EntryItem> items = new ArrayList<>(perksByProfession.size());
         for (Perk perk : perksByProfession) {
-            items.add(EntryItem.create(perk, occupation));
+            items.add(EntryItem.create(perk, occupation, arePerksEnabled));
         }
 
         for (int i = 0; i < items.size(); i += ITEMS_PER_ROW) {
@@ -98,7 +105,7 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
 
     public record EntryItem(Perk perk, ItemStack icon, Component claimStatus, boolean claimable, Component title, Component description) {
 
-        private static EntryItem create(Perk perk, Occupation occupation) {
+        private static EntryItem create(Perk perk, Occupation occupation, boolean perksEnabled) {
             ResourceLocation perkId = perk.getId();
             boolean claimable = occupation.hasClaimedPerk(perkId);
             Component status;
@@ -115,6 +122,12 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
                 status = CLAIMED_TEXT;
                 claimable = false;
             }
+
+            if (!perksEnabled) {
+                status = DISABLED_TEXT;
+                claimable = false;
+            }
+
             return new EntryItem(perk, new ItemStack(perk.getItemIcon()), status, claimable,
                     Component.translatable(perk.getTitle()),
                     Component.translatable(perk.getDescription()));

@@ -10,7 +10,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public record S2CCategorySyncPayload(Map<ResourceLocation, ProfessionCategory> categories) implements CustomPacketPayload {
@@ -19,7 +18,7 @@ public record S2CCategorySyncPayload(Map<ResourceLocation, ProfessionCategory> c
             new Type<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "category_sync"));
 
     private static final Codec<Map<ResourceLocation, ProfessionCategory>> CATEGORY_MAP_CODEC =
-            Codec.unboundedMap(ResourceLocation.CODEC, ProfessionCategory.CODEC);
+            Codec.unboundedMap(ResourceLocation.CODEC, ProfessionCategory.NETWORK_CODEC);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CCategorySyncPayload> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CATEGORY_MAP_CODEC).map(S2CCategorySyncPayload::new, S2CCategorySyncPayload::categories);

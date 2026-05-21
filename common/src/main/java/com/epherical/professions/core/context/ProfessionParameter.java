@@ -3,6 +3,7 @@ package com.epherical.professions.core.context;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.model.actions.ActionType;
+import com.epherical.professions.model.gating.GateType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +22,7 @@ public record ProfessionParameter<T>(ResourceLocation name) {
     public static final ProfessionParameter<BlockPos> BLOCKPOS = of("blockpos");
     public static final ProfessionParameter<ItemStack> TOOL = of("tool_used");
     public static final ProfessionParameter<ActionType> ACTION_TYPE = of("action");
+    public static final ProfessionParameter<GateType> GATE_TYPE = of("gate");
     public static final ProfessionParameter<Entity> ENTITY = of("entity");
     public static final ProfessionParameter<ItemStack> ITEM_INVOLVED = of("item_involved");
     public static final ProfessionParameter<Recipe<?>> RECIPE_CRAFTED = of("recipe");

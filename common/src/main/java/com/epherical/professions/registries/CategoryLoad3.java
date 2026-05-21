@@ -1,6 +1,7 @@
 package com.epherical.professions.registries;
 
 import com.epherical.professions.ProfessionCategoryManager;
+import com.epherical.professions.PlayerManager;
 import com.epherical.professions.core.ProfessionCategory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -33,9 +34,11 @@ public class CategoryLoad3 {
     private static final String PATH = "professions/categories";
 
     private final ProfessionCategoryManager categoryManager;
+    private final PlayerManager playerManager;
 
-    public CategoryLoad3(ProfessionCategoryManager categoryManager) {
+    public CategoryLoad3(ProfessionCategoryManager categoryManager, PlayerManager playerManager) {
         this.categoryManager = categoryManager;
+        this.playerManager = playerManager;
     }
 
     public CompletableFuture<Void> reload(HolderLookup.Provider registryLookup,
@@ -48,13 +51,21 @@ public class CategoryLoad3 {
         return CompletableFuture
                 .supplyAsync(() -> decodeAll(resourceManager), background)
                 .thenCompose(barrier::wait)
-                .thenAcceptAsync(categoryManager::reloadCategories, gameThread);
+                .thenApplyAsync(categoryManager::reloadCategories, gameThread)
+                .thenAcceptAsync(playerManager::refreshProfessionCategories, gameThread);
     }
 
     private Map<ResourceLocation, ProfessionCategory> decodeAll(ResourceManager manager) {
         Map<ResourceLocation, ProfessionCategory> categories = new LinkedHashMap<>();
         FileToIdConverter fileToIdConverter = FileToIdConverter.json(PATH);
         Map<ResourceLocation, List<Resource>> resources = fileToIdConverter.listMatchingResourceStacks(manager);
+
+        // todo; we need to write a system for merging the categories together now
+        //  it can either merge the professions and the features
+        //  or myabe just something else. not sure.
+        //  either way, needs merging capability.
+        //  priority/full replace functionality?
+
 
         for (Map.Entry<ResourceLocation, List<Resource>> stackEntry : resources.entrySet()) {
             for (Resource entry : stackEntry.getValue()) {
@@ -68,6 +79,7 @@ public class CategoryLoad3 {
                             .orElse(null);
 
                     if (category != null) {
+                        category.setId(id);
                         if (categories.put(id, category) != null) {
                             LOGGER.debug("Overrode profession category {} from resource {}", id, fileId);
                         } else {

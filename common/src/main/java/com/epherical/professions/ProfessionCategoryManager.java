@@ -6,9 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ProfessionCategoryManager {
@@ -17,13 +17,14 @@ public class ProfessionCategoryManager {
 
     private volatile Map<ResourceLocation, ProfessionCategory> categoryMap = Map.of();
 
-    public void reloadCategories(Map<ResourceLocation, ProfessionCategory> categories) {
-        categoryMap = Collections.unmodifiableMap(new LinkedHashMap<>(categories));
+    public Map<ResourceLocation,ProfessionCategory> reloadCategories(Map<ResourceLocation, ProfessionCategory> categories) {
+        categoryMap = categories;
         LOGGER.info("Reloaded {} profession categories", categoryMap.size());
+        return categoryMap;
     }
 
-    public List<ProfessionCategory> getCategories() {
-        return List.copyOf(categoryMap.values());
+    public Collection<ProfessionCategory> getCategories() {
+        return categoryMap.values();
     }
 
     public Map<ResourceLocation, ProfessionCategory> getCategoryMap() {

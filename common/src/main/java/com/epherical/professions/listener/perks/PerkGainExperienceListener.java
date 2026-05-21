@@ -1,5 +1,6 @@
 package com.epherical.professions.listener.perks;
 
+import com.epherical.professions.PerkManager;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.EventListener;
@@ -14,6 +15,14 @@ import java.util.Collection;
 
 public class PerkGainExperienceListener implements EventListener<OccupationExperienceEvent> {
 
+
+    private final PerkManager perkManager;
+
+    public PerkGainExperienceListener(PerkManager perkManager) {
+        this.perkManager = perkManager;
+    }
+
+
     @Override
     public void handle(OccupationExperienceEvent event) {
         IProfessionalPlayer player = event.getContext().getPossibleParameter(ProfessionParameter.THIS_PLAYER);
@@ -25,6 +34,11 @@ public class PerkGainExperienceListener implements EventListener<OccupationExper
         if (!player.getCategory().hasProfession(occupation.getProfession())) {
             return; // Meh
         }
+
+        if (!perkManager.arePerksEnabled(player)) {
+            return;
+        }
+
 
         double baseAmount = event.getNewAmount();
 

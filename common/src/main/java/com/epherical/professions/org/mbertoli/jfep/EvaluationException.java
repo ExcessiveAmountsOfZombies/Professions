@@ -13,48 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mbertoli.jfep;
+package com.epherical.professions.org.mbertoli.jfep;
 
 /**
- * <p><b>Name:</b> ParseError</p>
+ * <p><b>Name:</b> EvaluationException</p>
  * <p><b>Description:</b>
- * Thrown if the parser encountres an irrecoverable error.
+ * This exception is thrown when a variable was not initialized and
+ * function was evaluated.
  * </p>
  * <p><b>Date:</b> 08/dic/06
- * <b>Time:</b> 14:12:25</p>
+ * <b>Time:</b> 19:45:36</p>
  * @author Bertoli Marco
  * @version 1.0
  */
-public class ParseError extends RuntimeException {
-    private int position;
-
-    /**
-     * Basic constructor
-     * @param str Error description
-     * @param position Position that generated error in input string
-     */
-    public ParseError(String str, int position) {
-        super(str);
-        this.position = position;
+public class EvaluationException extends RuntimeException {
+    public EvaluationException() {
     }
 
-    /**
-     * Get position that generated error in input string
-     * @return position
-     */
-    public int getPosition() {
-        return position;
-    }
-
-    public ParseError(String message) {
+    public EvaluationException(String message) {
         super(message);
     }
 
-    public ParseError(Throwable cause) {
+    public EvaluationException(Throwable cause) {
         super(cause);
     }
 
-    public ParseError(String message, Throwable cause) {
+    public EvaluationException(String message, Throwable cause) {
         super(message, cause);
     }
 

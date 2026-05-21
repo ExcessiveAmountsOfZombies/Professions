@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
     private ProfessionCategory professionCategory;
 
 
-    public OccupationCategoryList(Minecraft mc, int width, int top, int bottom, int height, List<ProfessionCategory> categories) {
+    public OccupationCategoryList(Minecraft mc, int width, int top, int bottom, int height, Collection<ProfessionCategory> categories) {
         super(mc, width, top, bottom, height);
 
         for (ProfessionCategory category : categories) {
@@ -100,7 +101,7 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
 
 
             drawScaled(gfx, x + 7, y + 4, 2.5f, () -> {
-                gfx.renderItem(new ItemStack(Items.BOOK), 0, 0); // todo; add something for scaling idk
+                gfx.renderItem(new ItemStack(Items.BOOK), 0, 0);
             });
 
 

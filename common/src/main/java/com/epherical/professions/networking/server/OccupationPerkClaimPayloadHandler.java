@@ -1,29 +1,32 @@
 package com.epherical.professions.networking.server;
 
+import com.epherical.professions.PerkManager;
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.runtime.perks.PerkClaimedEvent;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.client.C2SOccupationPerkClaimPayload;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 
 public final class OccupationPerkClaimPayloadHandler {
 
     public static void handle(ServerPlayer serverPlayer, C2SOccupationPerkClaimPayload payload) {
         PlayerManager playerManager = ProfessionsCommon.INSTANCE.getPlayerManager();
+        PerkManager perkManager = ProfessionsCommon.INSTANCE.getPerkManager();
         IProfessionalPlayer professionalPlayer = playerManager.getPlayer(serverPlayer.getUUID());
         if (professionalPlayer == null) {
             ProfessionsCommon.LOG.error("Player {} tried to claim some perks for {}, but they don't exist on the server. UHHHH",
                     serverPlayer.getScoreboardName(), payload.professionId());
             return;
+        }
+
+        if (!perkManager.arePerksEnabled(professionalPlayer)) {
+            return; // an extra precaution
         }
 
         Occupation occupation = professionalPlayer.getOccupation(payload.professionId());
@@ -49,13 +52,6 @@ public final class OccupationPerkClaimPayloadHandler {
             ProfessionsCommon.INSTANCE.getEventBus().post(new PerkClaimedEvent(occupation, professionalPlayer, build));
         }
 
-        S2CPlayerDataSyncPayload syncPayload = new S2CPlayerDataSyncPayload(
-                serverPlayer.getUUID(),
-                professionalPlayer.getAllOccupations(),
-                Optional.ofNullable(playerManager.getCategoryIdFor(professionalPlayer)),
-                playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory()),
-                playerManager.getAllPerks(professionalPlayer.getCategory())
-        );
-        NetworkPayloadDispatcher.sendToPlayer(serverPlayer, syncPayload);
+        PlayerDataSyncUtil.syncAll(serverPlayer, professionalPlayer, playerManager);
     }
 }

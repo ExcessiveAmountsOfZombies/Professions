@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Collection;
 import java.util.List;
 
 public class OccupationCategorySelectionScreen extends Screen {
@@ -38,12 +39,12 @@ public class OccupationCategorySelectionScreen extends Screen {
 
 
     private OccupationCategoryList occupationInfoList;
-    private final List<ProfessionCategory> categories;
+    private final Collection<ProfessionCategory> categories;
     private OccupationMenuButton closeButton;
     private OccupationMenuButton confirmSelection;
 
 
-    public OccupationCategorySelectionScreen(List<ProfessionCategory> categories) {
+    public OccupationCategorySelectionScreen(Collection<ProfessionCategory> categories) {
         super(Component.literal("Occupation Category Selection"));
         this.categories = categories;
     }

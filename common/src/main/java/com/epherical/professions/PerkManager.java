@@ -1,22 +1,23 @@
 package com.epherical.professions;
 
 import com.epherical.professions.api.IProfessionalPlayer;
-import com.epherical.professions.api.event.runtime.PlayerJoinEvent;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.perks.IStartupPerk;
 import com.epherical.professions.model.perks.Perk;
 import com.epherical.professions.model.perks.PerkType;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class PerkManager {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final String FEATURE_PERKS_ENABLED = "perksEnabled";
 
     private volatile Map<ResourceLocation, Perk> perksById = Map.of();
     private volatile Map<ResourceLocation, NavigableMap<Integer, List<Perk>>> perksByProfessionAndLevel = Map.of();
@@ -172,6 +174,11 @@ public class PerkManager {
     }
 
     public void setUnclaimedPerks(Occupation occupation, int level, IProfessionalPlayer player) {
+        if (!arePerksEnabled(player)) {
+            occupation.setUnclaimedPerks(Set.of());
+            return;
+        }
+
         Set<Perk> perksForLevel = this.getPerksByProfession(occupation.getProfession(), level);
         perksForLevel.removeIf(perk -> occupation.hasClaimedPerk(perk.getId()));
 
@@ -183,6 +190,7 @@ public class PerkManager {
 
     public void playerJoined(IProfessionalPlayer player, ServerPlayer serverPlayer) {
 
+        boolean perksEnabled = arePerksEnabled(player);
 
 
         Map<String, EnumMap<Perk.ModificationStage, Double>> groupedStageValues = new HashMap<>();
@@ -207,6 +215,10 @@ public class PerkManager {
             // 3. The player logs in, new perks have been added, we need to add these to the unclaimed ones.
             this.setUnclaimedPerks(activeOccupation, activeOccupation.getLevel(), player);
 
+        }
+
+        if (!perksEnabled) {
+            return;
         }
 
         for (IStartupPerk startupPerk : this.getPerksByType(IStartupPerk.class)) {
@@ -253,6 +265,17 @@ public class PerkManager {
             }
         }
 
+    }
+
+    public boolean arePerksEnabled(@NotNull IProfessionalPlayer player) {
+        ProfessionCategory category = player.getCategory();
+        if (category == null) {
+            return false;
+        }
+
+        return category.getFeatureValueOrDefault(Codec.BOOL, FEATURE_PERKS_ENABLED, true)
+                .result()
+                .orElse(true);
     }
 
     private static String getLogicalGroupId(IStartupPerk startupPerk) {

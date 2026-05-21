@@ -18,6 +18,7 @@ import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.ProfessionalPlayer;
 import com.epherical.professions.model.actions.Action;
 import com.epherical.professions.model.actions.rewards.Reward;
+import com.epherical.professions.model.gating.Gate;
 import com.epherical.professions.model.perks.Perk;
 import com.epherical.professions.model.perks.PerkType;
 import com.google.common.collect.Maps;
@@ -29,10 +30,9 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.commands.DebugCommand;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.profiling.SingleTickProfiler;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -48,7 +48,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static com.epherical.professions.ProfessionsCommon.PROFESSION_REGISTRY_KEY;
 
@@ -66,14 +65,17 @@ public class PlayerManager {
     private MinecraftServer server;
 
     private final ActionManager actionManager;
+    private final GateManager gateManager;
     private final PerkManager perkManager;
     private OccupationDataLoader occupationDataLoader;
     private final ProfessionCategoryManager categoryManager;
 
     private final ProfessionEventBus eventBus;
 
-    public PlayerManager(ActionManager actionManager, PerkManager perkManager, OccupationDataLoader loader, ProfessionEventBus eventBus, ProfessionCategoryManager categoryManager) {
+    public PlayerManager(ActionManager actionManager, GateManager gateManager, PerkManager perkManager, OccupationDataLoader loader,
+                         ProfessionEventBus eventBus, ProfessionCategoryManager categoryManager) {
         this.actionManager = actionManager;
+        this.gateManager = gateManager;
         this.perkManager = perkManager;
         this.occupationDataLoader = loader;
         this.eventBus = eventBus;
@@ -247,7 +249,7 @@ public class PlayerManager {
         return List.copyOf(relevantActions);
     }
 
-    public List<Perk> getAllPerks(@Nullable ProfessionCategory category) {
+    private List<Perk> getAllPerks(@Nullable ProfessionCategory category) {
         if (category == null) {
             return List.of();
         }
@@ -260,22 +262,48 @@ public class PlayerManager {
         return relevantPerks;
     }
 
+    public List<Perk> getAllPerksForPlayer(@Nullable IProfessionalPlayer player) {
+        if (player == null || !perkManager.arePerksEnabled(player)) {
+            return List.of();
+        }
+
+        return getAllPerks(player.getCategory());
+    }
+
+    public List<Gate<?>> getRelevantGatesForCategory(@Nullable ProfessionCategory category) {
+        if (category == null || server == null) {
+            return List.of();
+        }
+
+        Optional<HolderLookup.RegistryLookup<Profession>> lookupOptional = server.registryAccess().lookup(PROFESSION_REGISTRY_KEY);
+        if (lookupOptional.isEmpty()) {
+            return List.of();
+        }
+
+        HolderLookup.RegistryLookup<Profession> lookup = lookupOptional.get();
+        Set<Gate<?>> relevantGates = new LinkedHashSet<>();
+
+        for (ResourceKey<Profession> professionKey : category.professions()) {
+            lookup.get(professionKey).ifPresent(holder -> relevantGates.addAll(gateManager.getGatesByProfession(holder)));
+        }
+
+        return List.copyOf(relevantGates);
+    }
+
+    public List<Gate<?>> getRelevantGatesForPlayer(@NotNull IProfessionalPlayer player) {
+        if (!gateManager.areGatesEnabled(player)) {
+            return List.of();
+        }
+
+        return getRelevantGatesForCategory(player.getCategory());
+    }
+
     /**
      * THIS IS ONLY CALLED ON THE CLIENT. there's probably a better way to do it but im dum
-     * Synchronizes client-side data for a player by applying the specified occupations, category data,
-     * actions, and perks.
-     *
-     * @param playerId        The unique identifier of the player.
-     * @param occupations     A list of occupations to associate with the player. Each occupation is resolved
-     *                        for its associated profession using the provided registry access, if available.
-     * @param categoryId      The identifier of the profession category, may be null.
-     * @param actions         A list of actions to reload and apply to the player.
-     * @param perks           A list of perks to reload and apply to the player.
-     * @param registryAccess  The access to the registry system for resolving professions or other necessary
-     *                        data, may be null.
+     * Synchronizes client-side occupation + category state for a player.
      */
-    public void applyClientSync(UUID playerId, List<Occupation> occupations, @Nullable ResourceLocation categoryId,
-                                List<Action<?>> actions, List<Perk> perks, @Nullable RegistryAccess registryAccess) {
+    public void applyClientOccupationSync(UUID playerId, List<Occupation> occupations, @Nullable ResourceLocation categoryId,
+                                          @Nullable RegistryAccess registryAccess) {
         for (Occupation occupation : occupations) {
             occupation.resolveProfession(registryAccess);
         }
@@ -283,12 +311,26 @@ public class PlayerManager {
         ProfessionalPlayer player = new ProfessionalPlayer(playerId, occupations);
         applyCategoryData(player, categoryId, playerId);
         players.put(playerId, player);
+    }
 
+    public void applyClientActionSync(List<Action<?>> actions, @Nullable RegistryAccess registryAccess) {
         if (registryAccess != null) {
             actionManager.setRegistryLookup(registryAccess);
         }
+
         actionManager.reloadActions(actions);
+    }
+
+    public void applyClientPerkSync(List<Perk> perks) {
         perkManager.reloadPerks(perks);
+    }
+
+    public void applyClientGateSync(List<Gate<?>> gates, @Nullable RegistryAccess registryAccess) {
+        if (registryAccess != null) {
+            gateManager.setRegistryLookup(registryAccess);
+        }
+
+        gateManager.reloadGates(gates);
     }
 
     public void applyClientExperienceGain(UUID playerId, ResourceLocation professionId, double gainedExperience, @Nullable RegistryAccess registryAccess) {
@@ -327,6 +369,26 @@ public class PlayerManager {
         player.setCategory(category);
     }
 
+
+    public void refreshProfessionCategories(Map<ResourceLocation, ProfessionCategory> categories) {
+        for (IProfessionalPlayer player : players.values()) {
+            ProfessionCategory oldCategory = player.getCategory();
+            if (oldCategory == null) {
+                continue;
+            }
+
+            ProfessionCategory newCategory = categories.get(oldCategory.getFileId());
+            if (newCategory == null) {
+                ProfessionsCommon.LOG.debug("Deleted old category for player {}", player.getUUID());
+                player.setCategory(null); // means we deleted the category.
+            } else {
+                ProfessionsCommon.LOG.debug("Updating profession category for {}. {}", player.getUUID(), newCategory.getFileId());
+                player.setCategory(newCategory);
+                player.markDirty(true);
+            }
+        }
+    }
+
     private @Nullable ResourceLocation getCategoryId(IProfessionalPlayer player) {
         ProfessionCategory category = player.getCategory();
         if (category == null) {
@@ -343,7 +405,7 @@ public class PlayerManager {
     public <T extends Perk> Collection<T> getUnlockedPerks(PerkType perkType, IProfessionalPlayer player, Occupation occupation) {
         Collection<T> perksByType = (Collection<T>) perkManager.getPerksByType(perkType);
 
-        if (player == null) {
+        if (player == null || !perkManager.arePerksEnabled(player)) {
             return List.of();
         }
 
@@ -355,7 +417,7 @@ public class PlayerManager {
     }
 
     public Set<ResourceLocation> getUnlockedUnclaimedPerkIds(@Nullable IProfessionalPlayer player) {
-        if (player == null || player.getCategory() == null) {
+        if (player == null || !perkManager.arePerksEnabled(player)) {
             return Set.of();
         }
 
@@ -367,7 +429,7 @@ public class PlayerManager {
     }
 
     public boolean claimUnlockedReward(@Nullable IProfessionalPlayer player, @Nullable ResourceLocation perkId) {
-        if (player == null || perkId == null) {
+        if (player == null || perkId == null || !perkManager.arePerksEnabled(player)) {
             return false;
         }
 

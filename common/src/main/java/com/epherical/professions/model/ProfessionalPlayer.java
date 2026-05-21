@@ -90,7 +90,7 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     }
 
     @Override
-    public void setCategory(ProfessionCategory category) {
+    public void setCategory(@Nullable ProfessionCategory category) {
         this.professionCategory = category;
         this.dirty = true;
     }

@@ -7,11 +7,8 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.api.event.EventListener;
 import com.epherical.professions.api.event.runtime.rewards.OccupationLevelEvent;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.networking.NetworkPayloadDispatcher;
-import com.epherical.professions.networking.server.S2CPlayerDataSyncPayload;
+import com.epherical.professions.networking.server.PlayerDataSyncUtil;
 import net.minecraft.server.level.ServerPlayer;
-
-import java.util.Optional;
 
 public class PerkLevelListener implements EventListener<OccupationLevelEvent> {
 
@@ -33,19 +30,11 @@ public class PerkLevelListener implements EventListener<OccupationLevelEvent> {
         // if they relog they'll be removed.
 
 
-        if (player != null) {
+        if (player != null && perkManager.arePerksEnabled(player)) {
             perkManager.setUnclaimedPerks(occupation, level, player);
 
             PlayerManager playerManager = ProfessionsCommon.INSTANCE.getPlayerManager();
-
-            S2CPlayerDataSyncPayload syncPayload = new S2CPlayerDataSyncPayload(
-                    event.getPlayer().getPlayer().getUUID(),
-                    player.getAllOccupations(),
-                    Optional.ofNullable(playerManager.getCategoryIdFor(player)),
-                    playerManager.getRelevantActionsForCategory(player.getCategory()),
-                    playerManager.getAllPerks(player.getCategory())
-            );
-            NetworkPayloadDispatcher.sendToPlayer((ServerPlayer) event.getPlayer().getPlayer(), syncPayload);
+            PlayerDataSyncUtil.syncAll((ServerPlayer) event.getPlayer().getPlayer(), player, playerManager);
 
         }
     }

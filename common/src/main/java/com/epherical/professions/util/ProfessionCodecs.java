@@ -2,14 +2,14 @@ package com.epherical.professions.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import org.mbertoli.jfep.Parser;
+import com.epherical.professions.org.mbertoli.jfep.Parser;
 
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
 
 public class ProfessionCodecs {
-    
+
     public static final Codec<NavigableMap<Integer, Parser>> EXP_SCALERS_CODEC =
             Codec.unboundedMap(Codec.STRING, Codec.STRING)
                     .comapFlatMap(map -> {

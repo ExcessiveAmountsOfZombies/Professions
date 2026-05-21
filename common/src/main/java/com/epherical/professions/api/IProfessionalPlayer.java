@@ -24,7 +24,7 @@ public interface IProfessionalPlayer {
 
     void markDirty(boolean dirty);
 
-    void setCategory(ProfessionCategory category);
+    void setCategory(@Nullable ProfessionCategory category);
 
     @Nullable
     ProfessionCategory getCategory();

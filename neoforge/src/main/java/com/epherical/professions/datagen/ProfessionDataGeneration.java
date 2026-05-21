@@ -12,6 +12,7 @@ import com.epherical.professions.datagen.action.HuntingActionProvider;
 import com.epherical.professions.datagen.action.LoggingActionProvider;
 import com.epherical.professions.datagen.action.MinerActionProvider;
 import com.epherical.professions.datagen.action.SmithingActionProvider;
+import com.epherical.professions.datagen.gate.MiningGateProvider;
 import com.epherical.professions.datagen.perks.BuildingPerkProvider;
 import com.epherical.professions.datagen.perks.CraftingPerkProvider;
 import com.epherical.professions.datagen.perks.EnchantingPerkProvider;
@@ -33,7 +34,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import org.mbertoli.jfep.Parser;
+import com.epherical.professions.org.mbertoli.jfep.Parser;
 
 import java.util.List;
 import java.util.NavigableMap;
@@ -180,6 +181,7 @@ public final class ProfessionDataGeneration {
         event.getGenerator().addProvider(true, professionsProvider);
         event.getGenerator().addProvider(event.includeServer(), new CategoryDataProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new MinerActionProvider(out, professionsProvider.getRegistryProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new MiningGateProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new MiningPerkProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new LoggingPerkProvider(out, professionsProvider.getRegistryProvider()));
         event.getGenerator().addProvider(event.includeServer(), new FarmingPerkProvider(out, professionsProvider.getRegistryProvider()));

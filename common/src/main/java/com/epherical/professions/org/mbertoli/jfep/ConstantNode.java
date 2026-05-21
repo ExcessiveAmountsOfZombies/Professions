@@ -13,38 +13,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mbertoli.jfep;
+package com.epherical.professions.org.mbertoli.jfep;
 
 /**
- * <p><b>Name:</b> VariableNode</p>
+ * <p><b>Name:</b> ConstantNode</p>
  * <p><b>Description:</b>
- * A node holding a double variable.
+ * A constant value node
  * </p>
  * <p><b>Date:</b> 08/dic/06
- * <b>Time:</b> 15:56:59</p>
+ * <b>Time:</b> 15:35:24</p>
  * @author Bertoli Marco
  * @version 1.0
  */
-public class VariableNode implements ExpressionNode {
-    /** Value of the variable */
-    protected double value;
-    /** True if variable was not initialized */
-    protected boolean error;
-    /** Name of the variable */
+public class ConstantNode implements ExpressionNode {
+    /** List of built-in constant names */
+    public static final String[] CONSTANTS = new String[]{"pi", "e"};
+    /** List of built-in constant values */
+    public static final double[] VALUES = new double[]{Math.PI, Math.E};
+    /** Value of the constant */
+    protected double constant;
+    /** Name of the constant. Only if it's built-in */
     protected String name;
     /** An empty array with children */
     protected ExpressionNode[] children = new ExpressionNode[0];
 
     /**
-     * Creates a new variable node with given name.
-     * @param name name of the variable
-     * @param error throws an exception if value is get but variable
-     * is not initialized. Otherwise 0.0 is returned.
+     * Builds a constant node
+     * @param constant constant to be put in node
      */
-    public VariableNode(String name, boolean error) {
+    public ConstantNode(double constant) {
+        this.constant = constant;
+        name = null;
+    }
+
+    /**
+     * Builds a constant node, with an unique constant
+     * @param name name of the constant in the CONSTANTS array
+     */
+    public ConstantNode(String name) {
         this.name = name;
-        value = 0.0;
-        this.error = error;
+        for (int i = 0; i < CONSTANTS.length; i++)
+            if (CONSTANTS[i].equals(name)) {
+                constant = VALUES[i];
+                return;
+            }
+        throw new IllegalArgumentException("Unrecognized constant");
+    }
+
+    /**
+     * Builds a constant node, with an unique constant
+     * @param pos position of the constant in the CONSTANTS array
+     * @see ConstantNode#CONSTANTS
+     */
+    public ConstantNode(int pos) {
+        this.name = CONSTANTS[pos];
+        this.constant = VALUES[pos];
     }
 
     /* (non-Javadoc)
@@ -65,38 +88,36 @@ public class VariableNode implements ExpressionNode {
      * @see jmt.engine.math.parser.ExpressionNode#getSubtype()
      */
     public String getSubtype() {
-        return name;
+        // Checks if this is integer or double
+        if (Math.floor(constant) == constant)
+            return Long.toString(Math.round(constant));
+        else
+            return Double.toString(constant);
     }
 
     /* (non-Javadoc)
      * @see jmt.engine.math.parser.ExpressionNode#getType()
      */
     public int getType() {
-        return VARIABLE_NODE;
+        return CONSTANT_NODE;
     }
 
     /* (non-Javadoc)
      * @see jmt.engine.math.parser.ExpressionNode#getValue()
      */
     public double getValue() {
-        if (!error)
-            return value;
-        else
-            throw new EvaluationException("Variable '" + name + "' was not initialized.");
+        return constant;
     }
 
     /* (non-Javadoc)
      * @see jmt.engine.math.parser.ExpressionNode#setVariable(java.lang.String, double)
      */
     public void setVariable(String name, double value) {
-        if (this.name.equals(name)) {
-            this.value = value;
-            error = false;
-        }
+        // Nothing to be done here...
     }
 
     /* (non-Javadoc)
-     * @see org.mbertoli.jfep.ExpressionNode#getChildrenNodes()
+     * @see ExpressionNode#getChildrenNodes()
      */
     public ExpressionNode[] getChildrenNodes() {
         return children;
@@ -106,15 +127,16 @@ public class VariableNode implements ExpressionNode {
      * @see java.lang.Object#clone()
      */
     public Object clone() {
-        VariableNode node = new VariableNode(name, error);
-        node.value = value;
-        return node;
+        return new ConstantNode(constant);
     }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return getSubtype();
+        if (name == null)
+            return getSubtype();
+        else
+            return name;
     }
 }

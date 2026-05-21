@@ -11,6 +11,8 @@ import com.epherical.professions.data.player.UuidOccupationDataLoader;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.model.gating.requirements.GateRequirementType;
+import com.epherical.professions.model.gating.GateType;
 import com.epherical.professions.model.perks.PerkType;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
@@ -18,17 +20,25 @@ import com.epherical.professions.networking.client.C2SOccupationExperienceTracki
 import com.epherical.professions.networking.client.C2SOccupationPerkClaimPayload;
 import com.epherical.professions.networking.client.ExperienceOccupationSyncHandler;
 import com.epherical.professions.networking.client.ExperienceNotificationHandler;
+import com.epherical.professions.networking.client.PlayerActionsSyncPayloadHandler;
 import com.epherical.professions.networking.client.PlayerDataSyncPayloadHandler;
+import com.epherical.professions.networking.client.PlayerGatesSyncPayloadHandler;
+import com.epherical.professions.networking.client.PlayerPerksSyncPayloadHandler;
 import com.epherical.professions.networking.client.ProfessionCategorySyncPayloadHandler;
 import com.epherical.professions.networking.server.CategorySelectionPayloadHandler;
 import com.epherical.professions.networking.server.OccupationExperienceTrackingPayloadHandler;
 import com.epherical.professions.networking.server.OccupationPerkClaimPayloadHandler;
+import com.epherical.professions.networking.server.PlayerDataSyncUtil;
 import com.epherical.professions.networking.server.S2CCategorySyncPayload;
 import com.epherical.professions.networking.server.S2CExperienceGainPayload;
+import com.epherical.professions.networking.server.S2CPlayerActionsSyncPayload;
 import com.epherical.professions.networking.server.S2CPlayerDataSyncPayload;
+import com.epherical.professions.networking.server.S2CPlayerGatesSyncPayload;
+import com.epherical.professions.networking.server.S2CPlayerPerksSyncPayload;
 import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
 import com.epherical.professions.registries.CategoryLoad3;
+import com.epherical.professions.registries.GateLoad3;
 import com.epherical.professions.registries.PerkLoad3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -53,6 +63,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -82,7 +93,6 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 
 
 @Mod(ProfessionsCommon.MOD_ID)
@@ -91,6 +101,8 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
     private static final NeoForgeRegistrarBackend NEO_FORGE_REGISTRAR_BACKEND = new NeoForgeRegistrarBackend();
 
     public static Registry<ActionType> ACTIONS;
+    public static Registry<GateType> GATES;
+    public static Registry<GateRequirementType> REQUIREMENTS;
     public static Registry<ConditionType> CONDITIONS;
     public static Registry<RewardType> REWARDS;
     public static Registry<PerkType> PERKS;
@@ -101,6 +113,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
     public static RegistryAccess REGISTRY_ACCESS = null;
 
     private final ActionManager actionManager;
+    private final GateManager gateManager;
     private final PlayerManager playerManager;
 
     public static NeoForgeProfessionsMod mod;
@@ -113,7 +126,8 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         NetworkPayloadDispatcher.setServerboundPayloadSender(PacketDistributor::sendToServer);
 
         actionManager = new ActionManager(null);
-        playerManager = new PlayerManager(actionManager, getPerkManager(), null, getEventBus(), getCategoryManager());
+        gateManager = new GateManager(null);
+        playerManager = new PlayerManager(actionManager, gateManager, getPerkManager(), null, getEventBus(), getCategoryManager());
 
         mod = this;
         PlatformBootstrap.init(NEO_FORGE_REGISTRAR_BACKEND);
@@ -137,6 +151,10 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         return actionManager;
     }
 
+    @Override
+    public GateManager getGateManager() {
+        return gateManager;
+    }
 
     @EventBusSubscriber(modid = ProfessionsCommon.MOD_ID)
     public static class EventHandler {
@@ -153,6 +171,12 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                     (payload, context) -> ProfessionCategorySyncPayloadHandler.handle(payload));
             registrar.playToClient(S2CPlayerDataSyncPayload.TYPE, S2CPlayerDataSyncPayload.STREAM_CODEC,
                     (payload, context) -> PlayerDataSyncPayloadHandler.handle(payload));
+            registrar.playToClient(S2CPlayerActionsSyncPayload.TYPE, S2CPlayerActionsSyncPayload.STREAM_CODEC,
+                    (payload, context) -> PlayerActionsSyncPayloadHandler.handle(payload));
+            registrar.playToClient(S2CPlayerPerksSyncPayload.TYPE, S2CPlayerPerksSyncPayload.STREAM_CODEC,
+                    (payload, context) -> PlayerPerksSyncPayloadHandler.handle(payload));
+            registrar.playToClient(S2CPlayerGatesSyncPayload.TYPE, S2CPlayerGatesSyncPayload.STREAM_CODEC,
+                    (payload, context) -> PlayerGatesSyncPayloadHandler.handle(payload));
             registrar.playToServer(C2SCategorySelectionPayload.TYPE, C2SCategorySelectionPayload.STREAM_CODEC, (payload, context) -> {
                 if (context.player() instanceof ServerPlayer serverPlayer) {
                     context.enqueueWork(() -> CategorySelectionPayloadHandler.handle(serverPlayer, payload));
@@ -230,15 +254,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                 }
 
                 NetworkPayloadDispatcher.sendToPlayer(player, new S2CCategorySyncPayload(mod.getCategoryManager().getCategoryMap()));
-
-                S2CPlayerDataSyncPayload payload = new S2CPlayerDataSyncPayload(
-                        player.getUUID(),
-                        professionalPlayer.getAllOccupations(),
-                        Optional.ofNullable(mod.playerManager.getCategoryIdFor(professionalPlayer)),
-                        mod.playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory()),
-                        mod.playerManager.getAllPerks(professionalPlayer.getCategory())
-                );
-                NetworkPayloadDispatcher.sendToPlayer(player, payload);
+                PlayerDataSyncUtil.syncAll(player, professionalPlayer, mod.playerManager);
             });
         }
 
@@ -247,9 +263,14 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         @SubscribeEvent
         public static void onRegistryCreate(NewRegistryEvent event) {
             event.register(ACTIONS = new RegistryBuilder<>(ACTION_REGISTRY_KEY).sync(true).create());
+            event.register(GATES = new RegistryBuilder<>(GATE_REGISTRY_KEY).sync(true).create());
+            event.register(REQUIREMENTS = new RegistryBuilder<>(REQUIREMENT_REGISTRY_KEY).sync(true).create());
             event.register(CONDITIONS = new RegistryBuilder<>(CONDITION_REGISTRY_KEY).sync(true).create());
             event.register(REWARDS = new RegistryBuilder<>(REWARD_REGISTRY_KEY).sync(true).create());
             event.register(PERKS = new RegistryBuilder<>(PERK_REGISTRY_KEY).sync(true).create());
+
+
+
             ProfessionsCommon.register();
         }
 
@@ -262,7 +283,9 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         public static void onDataReload(AddReloadListenerEvent event) {
             ActionLoad3 loader = new ActionLoad3(mod.actionManager);
             event.addListener(new NeoForgeActionReloadListener(loader));
-            CategoryLoad3 categoryLoader = new CategoryLoad3(mod.getCategoryManager());
+            GateLoad3 gateLoader = new GateLoad3(mod.gateManager);
+            event.addListener(new NeoForgeGateReloadListener(gateLoader));
+            CategoryLoad3 categoryLoader = new CategoryLoad3(mod.getCategoryManager(), mod.playerManager);
             event.addListener(new NeoForgeCategoryReloadListener(categoryLoader));
             PerkLoad3 perkLoader = new PerkLoad3(mod.getPerkManager());
             event.addListener(new NeoForgePerkReloadListener(perkLoader));
@@ -272,10 +295,10 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             // todo; we need a separate playerManager for the client code... yuck it works but I'll improve it.
 
             // todo; we should improve the config next
-            // todo; back buttons in the UI
             // todo; add commands back
 
             mod.setActionLoader(loader);
+            mod.setGateLoader(gateLoader);
             mod.setCategoryLoader(categoryLoader);
             mod.setPerkLoader(perkLoader);
             REGISTRY_ACCESS = event.getRegistryAccess();

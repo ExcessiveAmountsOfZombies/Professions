@@ -9,7 +9,7 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import org.mbertoli.jfep.Parser;
+import com.epherical.professions.org.mbertoli.jfep.Parser;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

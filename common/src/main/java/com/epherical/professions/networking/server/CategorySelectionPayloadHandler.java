@@ -4,12 +4,8 @@ import com.epherical.professions.PlayerManager;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.ProfessionCategory;
-import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-
-import java.util.Optional;
 
 public final class CategorySelectionPayloadHandler {
 
@@ -30,14 +26,6 @@ public final class CategorySelectionPayloadHandler {
         }
         // todo; i think we need a way to update the perks if the player switches categories.
 
-        ResourceLocation categoryId = playerManager.getCategoryIdFor(professionalPlayer);
-        S2CPlayerDataSyncPayload syncPayload = new S2CPlayerDataSyncPayload(
-                serverPlayer.getUUID(),
-                professionalPlayer.getAllOccupations(),
-                Optional.ofNullable(categoryId),
-                playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory()),
-                playerManager.getAllPerks(professionalPlayer.getCategory())
-        );
-        NetworkPayloadDispatcher.sendToPlayer(serverPlayer, syncPayload);
+        PlayerDataSyncUtil.syncAll(serverPlayer, professionalPlayer, playerManager);
     }
 }

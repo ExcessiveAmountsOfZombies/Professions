@@ -12,15 +12,20 @@ import com.epherical.professions.listener.notification.NotificationGainExperienc
 import com.epherical.professions.listener.notification.NotificationLevelListener;
 import com.epherical.professions.listener.perks.PerkPlayerJoinListener;
 import com.epherical.professions.registries.CategoryLoad3;
+import com.epherical.professions.model.gating.requirements.GateRequirementType;
+import com.epherical.professions.model.gating.GateType;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.bootstrap.Conditions;
+import com.epherical.professions.bootstrap.Gates;
 import com.epherical.professions.bootstrap.Perks;
+import com.epherical.professions.bootstrap.Requirements;
 import com.epherical.professions.bootstrap.Rewards;
 import com.epherical.professions.model.actions.rewards.RewardType;
 import com.epherical.professions.model.perks.PerkType;
 import com.epherical.professions.registries.ActionLoad3;
+import com.epherical.professions.registries.GateLoad3;
 import com.epherical.professions.registries.PerkLoad3;
 import com.epherical.professions.api.event.runtime.ProfessionEventBus;
 import com.epherical.professions.api.event.runtime.rewards.OccupationExperienceEvent;
@@ -39,6 +44,10 @@ public abstract class ProfessionsCommon {
     public static final Logger LOG = LoggerFactory.getLogger(MOD_ID);
     public static final ResourceKey<Registry<ActionType>> ACTION_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/actions"));
+    public static final ResourceKey<Registry<GateType>> GATE_REGISTRY_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/gates"));
+    public static final ResourceKey<Registry<GateRequirementType>> REQUIREMENT_REGISTRY_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/requirements"));
     public static final ResourceKey<Registry<ConditionType>> CONDITION_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/conditions"));
     public static final ResourceKey<Registry<RewardType>> REWARD_REGISTRY_KEY =
@@ -52,6 +61,7 @@ public abstract class ProfessionsCommon {
 
 
     protected ActionLoad3 actionLoader;
+    protected GateLoad3 gateLoader;
     protected CategoryLoad3 categoryLoader;
     protected PerkLoad3 perkLoader;
     protected ProfessionConfig config;
@@ -72,7 +82,7 @@ public abstract class ProfessionsCommon {
         this.eventBus.register(OccupationLevelEvent.KEY, EventPhase.RESOLVE, new NotificationLevelListener());
         this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.APPLY, ProfessionEventBus.LAST, new NotificationGainExperienceListener());
 
-        this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.MODIFY_EFFECTS, new PerkGainExperienceListener());
+        this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.MODIFY_EFFECTS, new PerkGainExperienceListener(getPerkManager()));
         this.eventBus.register(OccupationLevelEvent.KEY, EventPhase.RESOLVE, ProfessionEventBus.EARLY, new PerkLevelListener(getPerkManager()));
         this.eventBus.register(PlayerJoinEvent.KEY, EventPhase.RESOLVE, new PerkPlayerJoinListener(getPerkManager()));
         this.eventBus.register(PerkClaimedEvent.KEY, EventPhase.APPLY, new PerkClaimListener(getPerkManager()));
@@ -82,6 +92,8 @@ public abstract class ProfessionsCommon {
 
     public static void register() {
         Actions.bootstrap();
+        Gates.bootstrap();
+        Requirements.bootstrap();
         Conditions.bootstrap();
         Rewards.bootstrap();
         Perks.bootstrap();
@@ -112,12 +124,20 @@ public abstract class ProfessionsCommon {
         return categoryLoader;
     }
 
+    public GateLoad3 getGateLoader() {
+        return gateLoader;
+    }
+
     public PerkLoad3 getPerkLoader() {
         return perkLoader;
     }
 
     public void setCategoryLoader(CategoryLoad3 categoryLoader) {
         this.categoryLoader = categoryLoader;
+    }
+
+    public void setGateLoader(GateLoad3 gateLoader) {
+        this.gateLoader = gateLoader;
     }
 
     public void setPerkLoader(PerkLoad3 perkLoader) {
@@ -131,4 +151,5 @@ public abstract class ProfessionsCommon {
     public abstract PlayerManager getPlayerManager();
     public abstract File getModDir();
     public abstract ActionManager getActionManager();
+    public abstract GateManager getGateManager();
 }

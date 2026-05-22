@@ -9,7 +9,9 @@
       "by farming."
     ],
     "descriptionColor": "#FFFFFF",
-    "display": "Farming",
+    "display": {
+      "translate": "professions.profession.farming"
+    },
     "icon": "minecraft:wheat",
     "nameColor": "#107D0E"
   },

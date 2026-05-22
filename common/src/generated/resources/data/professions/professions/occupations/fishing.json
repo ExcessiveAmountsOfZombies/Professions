@@ -9,7 +9,9 @@
       "by fishing."
     ],
     "descriptionColor": "#FFFFFF",
-    "display": "Fishing",
+    "display": {
+      "translate": "professions.profession.fishing"
+    },
     "icon": "minecraft:fishing_rod",
     "nameColor": "#0A91C7"
   },

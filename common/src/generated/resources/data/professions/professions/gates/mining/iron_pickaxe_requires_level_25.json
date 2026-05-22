@@ -1,0 +1,13 @@
+{
+  "gate": "professions:tool",
+  "items": [
+    "minecraft:iron_pickaxe"
+  ],
+  "profession": "professions:mining",
+  "requirements": [
+    {
+      "level": 25,
+      "requirement": "professions:level"
+    }
+  ]
+}

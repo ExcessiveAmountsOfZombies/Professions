@@ -9,7 +9,9 @@
       "by enchanting."
     ],
     "descriptionColor": "#FFFFFF",
-    "display": "Enchanting",
+    "display": {
+      "translate": "professions.profession.enchanting"
+    },
     "icon": "minecraft:enchanting_table",
     "nameColor": "#C9008D"
   },

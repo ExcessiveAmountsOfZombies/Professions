@@ -1,0 +1,19 @@
+{
+  "blocks": [
+    "minecraft:ancient_debris"
+  ],
+  "gate": "professions:block_break",
+  "profession": "professions:mining",
+  "requirements": [
+    {
+      "advancements": [
+        "minecraft:end/root"
+      ],
+      "requirement": "professions:advancement"
+    },
+    {
+      "level": 50,
+      "requirement": "professions:level"
+    }
+  ]
+}

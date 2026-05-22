@@ -9,7 +9,9 @@
       "by hunting animals, killing monsters, and exploring"
     ],
     "descriptionColor": "#FFFFFF",
-    "display": "Hunting",
+    "display": {
+      "translate": "professions.profession.hunting"
+    },
     "icon": "minecraft:bow",
     "nameColor": "#A6542E"
   },

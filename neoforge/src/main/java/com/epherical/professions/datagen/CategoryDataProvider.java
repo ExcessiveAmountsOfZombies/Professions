@@ -43,7 +43,7 @@ final class CategoryDataProvider implements DataProvider {
                     .sorted(Comparator.comparing(key -> key.location().toString()))
                     .toList();
 
-            ProfessionCategory category = new ProfessionCategory(
+            ProfessionCategory defaultCategory = new ProfessionCategory(
                     "Built-in Professions",
                     "Contains the default experience that comes with the Professions mod.",
                     TextColor.parseColor("#55FFFF").getOrThrow(),
@@ -54,13 +54,34 @@ final class CategoryDataProvider implements DataProvider {
                     )
             );
 
-            return DataProvider.saveStable(
+            ProfessionCategory hardcoreCategory = new ProfessionCategory(
+                    "Hardcore Professions",
+                    "Contains the default professions with progression gates enabled.",
+                    TextColor.parseColor("#FF5555").getOrThrow(),
+                    professions,
+                    features(
+                            FEATURE_PERKS_ENABLED, true,
+                            FEATURE_GATES_ENABLED, true
+                    )
+            );
+
+            CompletableFuture<?> defaultWrite = DataProvider.saveStable(
                     output,
                     registries,
                     ProfessionCategory.CODEC,
-                    category,
+                    defaultCategory,
                     pathProvider.json(rl("all_professions"))
             );
+
+            CompletableFuture<?> hardcoreWrite = DataProvider.saveStable(
+                    output,
+                    registries,
+                    ProfessionCategory.CODEC,
+                    hardcoreCategory,
+                    pathProvider.json(rl("hardcore"))
+            );
+
+            return CompletableFuture.allOf(defaultWrite, hardcoreWrite);
         });
     }
 

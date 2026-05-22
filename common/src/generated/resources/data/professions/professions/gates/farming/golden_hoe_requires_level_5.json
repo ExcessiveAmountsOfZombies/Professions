@@ -1,12 +1,12 @@
 {
   "gate": "professions:tool",
   "items": [
-    "minecraft:iron_pickaxe"
+    "minecraft:golden_hoe"
   ],
-  "profession": "professions:mining",
+  "profession": "professions:farming",
   "requirements": [
     {
-      "level": 10,
+      "level": 5,
       "requirement": "professions:level"
     }
   ]

@@ -1,0 +1,20 @@
+{
+  "chatColor": "#FF5555",
+  "description": "Contains the default professions with progression gates enabled.",
+  "features": {
+    "gatesEnabled": true,
+    "perksEnabled": true
+  },
+  "name": "Hardcore Professions",
+  "professions": [
+    "professions:building",
+    "professions:crafting",
+    "professions:enchanting",
+    "professions:farming",
+    "professions:fishing",
+    "professions:hunting",
+    "professions:logging",
+    "professions:mining",
+    "professions:smithing"
+  ]
+}

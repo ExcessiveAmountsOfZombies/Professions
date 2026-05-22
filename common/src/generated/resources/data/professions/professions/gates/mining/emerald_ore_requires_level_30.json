@@ -1,0 +1,13 @@
+{
+  "blocks": [
+    "#minecraft:emerald_ores"
+  ],
+  "gate": "professions:block_break",
+  "profession": "professions:mining",
+  "requirements": [
+    {
+      "level": 30,
+      "requirement": "professions:level"
+    }
+  ]
+}

@@ -7,9 +7,13 @@
   "requirements": [
     {
       "advancements": [
-        "minecraft:end/kill_dragon"
+        "minecraft:end/root"
       ],
       "requirement": "professions:advancement"
+    },
+    {
+      "level": 50,
+      "requirement": "professions:level"
     }
   ]
 }

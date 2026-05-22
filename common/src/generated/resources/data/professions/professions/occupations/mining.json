@@ -9,7 +9,9 @@
       "by mining ores and minerals."
     ],
     "descriptionColor": "#FFFFFF",
-    "display": "Mining",
+    "display": {
+      "translate": "professions.profession.mining"
+    },
     "icon": "minecraft:diamond_pickaxe",
     "nameColor": "#666E63"
   },

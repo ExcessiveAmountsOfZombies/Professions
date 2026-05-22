@@ -1,0 +1,13 @@
+{
+  "blocks": [
+    "minecraft:beacon"
+  ],
+  "gate": "professions:place",
+  "profession": "professions:crafting",
+  "requirements": [
+    {
+      "level": 20,
+      "requirement": "professions:level"
+    }
+  ]
+}

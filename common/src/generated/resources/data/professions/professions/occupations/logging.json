@@ -9,7 +9,9 @@
       "by farming trees."
     ],
     "descriptionColor": "#FFFFFF",
-    "display": "Logging",
+    "display": {
+      "translate": "professions.profession.logging"
+    },
     "icon": "minecraft:oak_sapling",
     "nameColor": "#9E3011"
   },

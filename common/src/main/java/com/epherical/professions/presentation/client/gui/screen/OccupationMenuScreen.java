@@ -61,6 +61,7 @@ public class OccupationMenuScreen extends Screen {
 
         occupationList = new OccupationList(this.minecraft, 117, topPos + 28, 214 + topPos, 32, occupations);
         occupationList.setX(leftPos + 6);
+        occupationList.setSelected(occupationList.getFirstElement());
         addRenderableWidget(occupationList);
         occupationMenuButton = addRenderableWidget(OccupationMenuButton.omButton(Component.translatable("professions.screen.occupation_menu.details"), button -> {
             minecraft.setScreen(new OccupationInfoScreen(occupationList.getSelected().getOccupation()));

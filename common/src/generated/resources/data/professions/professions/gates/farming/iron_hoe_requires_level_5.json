@@ -1,0 +1,13 @@
+{
+  "gate": "professions:tool",
+  "items": [
+    "minecraft:iron_hoe"
+  ],
+  "profession": "professions:farming",
+  "requirements": [
+    {
+      "level": 5,
+      "requirement": "professions:level"
+    }
+  ]
+}

@@ -9,7 +9,9 @@
       "by crafting."
     ],
     "descriptionColor": "#FFFFFF",
-    "display": "Crafting",
+    "display": {
+      "translate": "professions.profession.crafting"
+    },
     "icon": "minecraft:crafting_table",
     "nameColor": "#F2A100"
   },

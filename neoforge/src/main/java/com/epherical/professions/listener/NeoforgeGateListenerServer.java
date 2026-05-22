@@ -10,6 +10,10 @@ import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.gating.Gate;
 import com.epherical.professions.model.gating.GateReport;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -60,6 +64,66 @@ public class NeoforgeGateListenerServer {
 
         passesGateCheck(event, gateManager, player, context);
 
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
+        if (event.isCanceled() || event.getLevel().isClientSide()) {
+            return;
+        }
+
+        if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+
+        GateManager gateManager = ProfessionsCommon.INSTANCE.getGateManager();
+        PlayerManager playerManager = ProfessionsCommon.INSTANCE.getPlayerManager();
+        IProfessionalPlayer player = playerManager.getPlayer(serverPlayer.getUUID());
+        if (player == null) {
+            return;
+        }
+
+        ProfessionContext context = ProfessionContext.gateBuilder(serverPlayer.serverLevel(), Gates.PLACE, player)
+                .addParameter(ProfessionParameter.ITEM_INVOLVED, serverPlayer.getMainHandItem())
+                .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
+                .addParameter(ProfessionParameter.THIS_BLOCK, event.getState())
+                .build();
+
+        if (!checkGate(gateManager.getGatesByType(Gates.PLACE), player, context)) {
+            event.setCanceled(true);
+        }
+    }
+
+    /**
+     * Event to handle block placement, it's not specific to the client so we can just do one method.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void placeBlockInteraction(PlayerInteractEvent.RightClickBlock event) {
+        handleBlockPlacement(event.getItemStack(), event, event.getEntity());
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void placeBlockInteraction(PlayerInteractEvent.RightClickItem event) {
+        handleBlockPlacement(event.getItemStack(), event, event.getEntity());
+    }
+
+    private static void handleBlockPlacement(ItemStack itemStack, ICancellableEvent event, Player mcPlayer) {
+        if (event.isCanceled()) {
+            return;
+        }
+
+        GateManager gateManager = ProfessionsCommon.INSTANCE.getGateManager();
+        PlayerManager playerManager = ProfessionsCommon.INSTANCE.getPlayerManager();
+        IProfessionalPlayer player = playerManager.getPlayer(mcPlayer.getUUID());
+        if (player == null || !(itemStack.getItem() instanceof BlockItem)) {
+            return;
+        }
+
+        ProfessionContext context = ProfessionContext.gateBuilder(mcPlayer.level(), Gates.PLACE, player)
+                .addParameter(ProfessionParameter.ITEM_INVOLVED, itemStack)
+                .build();
+
+        event.setCanceled(!checkGate(gateManager.getGatesByType(Gates.PLACE), player, context));
     }
 
     public static void passesGateCheck(ICancellableEvent event, GateManager gateManager, IProfessionalPlayer player, ProfessionContext context) {

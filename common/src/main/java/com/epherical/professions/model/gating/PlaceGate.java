@@ -12,6 +12,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -48,15 +50,23 @@ public class PlaceGate extends Gate<Block> {
     @Override
     public boolean test(ProfessionContext context) {
         BlockState blockState = context.getPossibleParameter(ProfessionParameter.THIS_BLOCK);
+        Block block = null;
         if (blockState == null) {
-            return false;
+            ItemStack stack = context.getPossibleParameter(ProfessionParameter.ITEM_INVOLVED);
+            if (stack != null && stack.getItem() instanceof BlockItem blockItem) {
+                block = blockItem.getBlock();
+            } else {
+                return false;
+            }
+        } else {
+            block = blockState.getBlock();
         }
 
         for (Either<TagKey<Block>, ResourceKey<Block>> value : getValues()) {
-            if (value.left().isPresent() && blockState.getBlockHolder().is(value.left().get())) {
+            if (value.left().isPresent() && block.builtInRegistryHolder().is(value.left().get())) {
                 return true;
             }
-            if (value.right().isPresent() && blockState.getBlockHolder().is(value.right().get())) {
+            if (value.right().isPresent() && block.builtInRegistryHolder().is(value.right().get())) {
                 return true;
             }
         }

@@ -1,0 +1,13 @@
+{
+  "gate": "professions:tool",
+  "items": [
+    "minecraft:golden_axe"
+  ],
+  "profession": "professions:logging",
+  "requirements": [
+    {
+      "level": 25,
+      "requirement": "professions:level"
+    }
+  ]
+}

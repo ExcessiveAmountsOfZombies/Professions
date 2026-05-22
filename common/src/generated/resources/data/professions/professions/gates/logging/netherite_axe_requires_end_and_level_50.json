@@ -1,0 +1,19 @@
+{
+  "gate": "professions:tool",
+  "items": [
+    "minecraft:netherite_axe"
+  ],
+  "profession": "professions:logging",
+  "requirements": [
+    {
+      "advancements": [
+        "minecraft:end/root"
+      ],
+      "requirement": "professions:advancement"
+    },
+    {
+      "level": 50,
+      "requirement": "professions:level"
+    }
+  ]
+}

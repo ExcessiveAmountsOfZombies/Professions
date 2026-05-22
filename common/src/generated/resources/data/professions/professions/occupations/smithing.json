@@ -9,7 +9,9 @@
       "by smithing items."
     ],
     "descriptionColor": "#FFFFFF",
-    "display": "Smithing",
+    "display": {
+      "translate": "professions.profession.smithing"
+    },
     "icon": "minecraft:anvil",
     "nameColor": "#84ABAD"
   },

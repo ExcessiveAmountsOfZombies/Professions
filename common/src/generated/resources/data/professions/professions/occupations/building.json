@@ -9,7 +9,9 @@
       "by placing structural blocks."
     ],
     "descriptionColor": "#FFFFFF",
-    "display": "Building",
+    "display": {
+      "translate": "professions.profession.building"
+    },
     "icon": "minecraft:oak_planks",
     "nameColor": "#F2DE00"
   },

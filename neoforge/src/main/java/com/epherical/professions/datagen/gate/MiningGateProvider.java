@@ -4,12 +4,14 @@ import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.gating.Gate;
 import com.epherical.professions.model.gating.ToolGate;
+import com.epherical.professions.model.gating.requirements.AdvancementRequirement;
 import com.epherical.professions.model.gating.requirements.LevelRequirement;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -35,10 +37,17 @@ public final class MiningGateProvider implements DataProvider {
                     .get(id("mining"))
                     .orElseThrow(() -> new IllegalStateException("Missing mining profession for mining gate datagen"));
 
-            return gate("iron_pickaxe_requires_level_10", miningProfession)
+            CompletableFuture<?> ironPickaxeGate = gate("iron_pickaxe_requires_level_10", miningProfession)
                     .requirementLevel(10)
                     .target(Items.IRON_PICKAXE)
                     .save(output, registries);
+
+            CompletableFuture<?> netheritePickaxeGate = gate("netherite_pickaxe_requires_kill_dragon", miningProfession)
+                    .requirementAdvancement(ResourceLocation.parse("minecraft:end/kill_dragon"))
+                    .target(Items.NETHERITE_PICKAXE)
+                    .save(output, registries);
+
+            return CompletableFuture.allOf(ironPickaxeGate, netheritePickaxeGate);
         });
     }
 
@@ -64,6 +73,11 @@ public final class MiningGateProvider implements DataProvider {
 
         private MiningToolGateBuilder requirementLevel(int level) {
             builder.requirement(new LevelRequirement.Builder().level(level));
+            return this;
+        }
+
+        private MiningToolGateBuilder requirementAdvancement(ResourceLocation advancement) {
+            builder.requirement(new AdvancementRequirement.Builder().advancement(advancement));
             return this;
         }
 

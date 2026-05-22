@@ -118,7 +118,7 @@ public class ProfessionsStandardCommands {
         Holder.Reference<Profession> professionHolder = professionResult.get();
         Occupation occupation = player.getOccupation(professionHolder);
         if (occupation == null) {
-            stack.getSource().sendFailure(Component.literal("Profession is not active: " + professionHolder.key().location())
+            stack.getSource().sendFailure(Component.translatable("professions.command.setlevel.error.not_active", professionHolder.key().location())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return 0;
         }
@@ -127,19 +127,16 @@ public class ProfessionsStandardCommands {
         try {
             occupation.setLevel(level, player);
         } catch (ProfessionNotActiveException exception) {
-            stack.getSource().sendFailure(Component.literal("Could not set level for profession: " + professionHolder.key().location())
+            stack.getSource().sendFailure(Component.translatable("professions.command.setlevel.error.could_not_set", professionHolder.key().location())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return 0;
         }
 
-        stack.getSource().sendSuccess(() -> Component.literal("Set ")
-                .setStyle(Style.EMPTY.withColor(ProfessionConfig.success))
-                .append(professionHolder.value().displayName().copy()
-                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                .append(Component.literal(" level to ")
-                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)))
-                .append(Component.literal(String.valueOf(level))
-                        .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))), false);
+        stack.getSource().sendSuccess(() -> Component.translatable(
+                "professions.command.setlevel.self.success",
+                professionHolder.value().displayName().copy().setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)),
+                Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))
+        ).setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), false);
         return 1;
     }
 
@@ -154,9 +151,9 @@ public class ProfessionsStandardCommands {
 
         Set<ResourceLocation> unclaimedPerkIds = playerManager.getUnlockedUnclaimedPerkIds(player);
         if (unclaimedPerkIds.isEmpty()) {
-            stack.getSource().sendSuccess(() -> border(Component.literal("Unclaimed Perk IDs")
+            stack.getSource().sendSuccess(() -> border(Component.translatable("professions.command.unclaimed_perks.header")
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))), false);
-            stack.getSource().sendSuccess(() -> Component.literal("None")
+            stack.getSource().sendSuccess(() -> Component.translatable("professions.command.unclaimed_perks.none")
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)), false);
             return 1;
         }
@@ -165,7 +162,7 @@ public class ProfessionsStandardCommands {
                 .sorted()
                 .toList();
 
-        stack.getSource().sendSuccess(() -> border(Component.literal("Unclaimed Perk IDs")
+        stack.getSource().sendSuccess(() -> border(Component.translatable("professions.command.unclaimed_perks.header")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))), false);
         for (ResourceLocation perkId : sortedUnclaimedPerkIds) {
             stack.getSource().sendSuccess(() -> Component.literal("- ")
@@ -187,12 +184,12 @@ public class ProfessionsStandardCommands {
 
         ResourceLocation perkId = ResourceLocationArgument.getId(stack, "perk_id");
         if (!playerManager.claimUnlockedReward(player, perkId)) {
-            stack.getSource().sendFailure(Component.literal("Could not claim perk id: " + perkId)
+            stack.getSource().sendFailure(Component.translatable("professions.command.claimperk.error", perkId)
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return 0;
         }
 
-        stack.getSource().sendSuccess(() -> Component.literal("Claimed perk id: ")
+        stack.getSource().sendSuccess(() -> Component.translatable("professions.command.claimperk.success")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.success))
                 .append(Component.literal(perkId.toString())
                         .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables))), false);
@@ -234,7 +231,7 @@ public class ProfessionsStandardCommands {
 
         if (components.isEmpty()) {
             stack.getSource().sendSuccess(() -> professionHeader(profession), false);
-            stack.getSource().sendFailure(Component.literal("No actions are configured for this profession.")
+            stack.getSource().sendFailure(Component.translatable("professions.command.info.error.no_actions")
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return 0;
         }
@@ -295,7 +292,7 @@ public class ProfessionsStandardCommands {
     }
 
     private Component actionLine(Holder<?> value, List<Reward<?>> perks) {
-        MutableComponent component = Component.literal("")
+        MutableComponent component = Component.empty()
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
                 .append(readableValue(value).copy().setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)));
 

@@ -103,9 +103,12 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
         Profession profession;
         Occupation occupation;
 
+        private Component professionName;
+
         public Entry(Occupation occupation) {
             this.occupation = occupation;
             this.profession = occupation.getProfession().value();
+            this.professionName = Component.literal(profession.displayNameRaw()).withStyle(Style.EMPTY.withColor(profession.professionColor()));
         }
 
         public Profession getProfession() {
@@ -136,8 +139,7 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
                 gfx.blitSprite(BACKGROUND_BUTTON, x, y, rowWidth -2, rowHeight + 3);
             }
 
-            // todo; cache the literal
-            gfx.drawString(minecraft.font, Component.literal(profession.displayNameRaw()).withStyle(Style.EMPTY.withColor(profession.professionColor())), x + 4, y + 3, 0xFFFFFF);
+            gfx.drawString(minecraft.font, professionName, x + 4, y + 3, 0xFFFFFF);
 
             float scale = 0.5f;
             int translationX = x + 4;
@@ -146,7 +148,9 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
             gfx.pose().translate(translationX, translationY, 0);
             gfx.pose().scale(scale, scale, 1);
             gfx.pose().translate(-translationX, -translationY, 0);
-            gfx.drawString(minecraft.font, String.format("LvL %s", occupation.getLevel()), translationX, translationY, 0xFFFFFF);
+            gfx.drawString(minecraft.font,
+                    Component.translatable("professions.screen.occupation_list.level_short", occupation.getLevel()),
+                    translationX, translationY, 0xFFFFFF);
             gfx.pose().popPose();
 
             int barX = x + 42;
@@ -164,7 +168,9 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
                 gfx.setColor(1f, 1f, 1f, 1.2f);
             }
 
-            gfx.drawString(minecraft.font, percentageText + "%", barX + PROGRESS_BAR_WIDTH + 4, barY - 2, rgb);
+            gfx.drawString(minecraft.font,
+                    Component.translatable("professions.screen.occupation_list.percent", percentageText),
+                    barX + PROGRESS_BAR_WIDTH + 4, barY - 2, rgb);
         }
 
         @Override

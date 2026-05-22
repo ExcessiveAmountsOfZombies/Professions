@@ -107,7 +107,7 @@ public class NeoforgeGateListenerServer {
         passesGateCheck(event, gateManager, player, context);
 
         if (event.isCanceled()) {
-            event.getEntity().sendSystemMessage(Component.literal("You cannot use this tool until you level up more."));
+            event.getEntity().sendSystemMessage(Component.translatable("professions.gate.error.tool_level"));
         }
     }
 

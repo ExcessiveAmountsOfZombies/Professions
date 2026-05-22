@@ -46,7 +46,6 @@ public class PerkAttribute extends Perk implements IStartupPerk {
 
     @Override
     public ResourceLocation getGroupId() {
-        // todo; we should probably add some error handling here...
         return ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID,
                 attribute.unwrapKey().get().location().toDebugFileName() + "_" + getModificationStage().getSerializedName());
     }

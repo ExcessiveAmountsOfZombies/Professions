@@ -2,7 +2,7 @@
   "chatColor": "#55FFFF",
   "description": "Contains the default experience that comes with the Professions mod.",
   "features": {
-    "gatesEnabled": false,
+    "gatesEnabled": true,
     "perksEnabled": true
   },
   "name": "Built-in Professions",

@@ -14,8 +14,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.epherical.professions.presentation.client.gui.components.OccupationList.Entry.PROGRESS_BAR_EMPTY;
 import static com.epherical.professions.presentation.client.gui.components.OccupationList.Entry.PROGRESS_BAR_FULL;
@@ -45,7 +47,7 @@ public class OccupationMenuScreen extends Screen {
     private final List<Occupation> occupations;
 
     public OccupationMenuScreen(List<Occupation> occupations) {
-        super(Component.literal("Occupation Menu"));
+        super(Component.translatable("professions.screen.occupation_menu.title"));
         this.occupations = occupations;
     }
 
@@ -60,13 +62,12 @@ public class OccupationMenuScreen extends Screen {
         occupationList = new OccupationList(this.minecraft, 117, topPos + 28, 214 + topPos, 32, occupations);
         occupationList.setX(leftPos + 6);
         addRenderableWidget(occupationList);
-        // todo; add translation
-        occupationMenuButton = addRenderableWidget(OccupationMenuButton.omButton(Component.literal("Details"), button -> {
+        occupationMenuButton = addRenderableWidget(OccupationMenuButton.omButton(Component.translatable("professions.screen.occupation_menu.details"), button -> {
             minecraft.setScreen(new OccupationInfoScreen(occupationList.getSelected().getOccupation()));
         }).pos(leftPos + 150, topPos + 177).size(74, 18).build());
         occupationMenuButton.visible = false;
 
-        trackButton = addRenderableWidget(OccupationMenuButton.omToggleButton(Component.literal("Track"), pButton -> {
+        trackButton = addRenderableWidget(OccupationMenuButton.omToggleButton(Component.translatable("professions.screen.occupation_menu.track"), pButton -> {
             Occupation selectedOccupation = getSelectedOccupation();
             if (selectedOccupation == null) {
                 return;
@@ -75,23 +76,23 @@ public class OccupationMenuScreen extends Screen {
             selectedOccupation.setExperienceGainTrackingEnabled(trackEnabled);
             NetworkPayloadDispatcher.sendToServer(new C2SOccupationExperienceTrackingPayload(selectedOccupation.getProfessionKey(), trackEnabled));
         }, () -> trackEnabled).pos(leftPos + 150 + 76, topPos + 104 + 80).size(74, 18)
-                .tooltip(Tooltip.create(Component.literal("Display XP gains as they happen. (Toggle)")))
+                .tooltip(Tooltip.create(Component.translatable("professions.screen.occupation_menu.track.tooltip")))
                 .toggleTextOffset(20).build());
 
         trackButton.visible = false;
 
-        perkButton = addRenderableWidget(OccupationMenuButton.omButton(Component.literal("Perks"), pButton -> {
+        perkButton = addRenderableWidget(OccupationMenuButton.omButton(Component.translatable("professions.screen.occupation_menu.perks"), pButton -> {
             minecraft.setScreen(new OccupationPerkMenuScreen(occupationList.getSelected().getOccupation()));
         }).pos(leftPos + 150, topPos + 196).size(74, 18).build());
 
         perkButton.visible = false;
 
-        closeButton = OccupationMenuButton.omButton(Component.literal(""), button -> {
+        closeButton = OccupationMenuButton.omButton(Component.empty(), button -> {
                     minecraft.setScreen(null);
                 }).pos(leftPos + 296, topPos + 2).size(18, 18)
                 .background(SPRITES)
                 .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
-                .tooltip(Tooltip.create(Component.literal("Close Menu")))
+                .tooltip(Tooltip.create(Component.translatable("professions.screen.common.close_menu")))
                 .build();
 
         addRenderableWidget(closeButton);
@@ -101,10 +102,12 @@ public class OccupationMenuScreen extends Screen {
 
 
     @Override
-    public void render(GuiGraphics gfx, int pMouseX, int pMouseY, float pPartialTick) {
+    public void render(@NotNull GuiGraphics gfx, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(gfx, pMouseX, pMouseY, pPartialTick);
 
-        RenderHelperUtil.drawScaledString(gfx, font, "Profession Tracker", leftPos + 5, topPos + 5, 1.5f, 0xd5af47, false);
+        RenderHelperUtil.drawScaledString(gfx, font,
+                Component.translatable("professions.screen.occupation_menu.header"),
+                leftPos + 5, topPos + 5, 1.5f, 0xd5af47, false);
 
 
         if (occupationList.getSelected() != null) {
@@ -115,7 +118,9 @@ public class OccupationMenuScreen extends Screen {
 
             OccupationList.Entry selected = occupationList.getSelected();
 
-            RenderHelperUtil.drawScaledString(gfx, minecraft.font, "Selected Overview", leftPos + 150, topPos + 32, 1.5f, 0x6f4d15, false);
+            RenderHelperUtil.drawScaledString(gfx, minecraft.font,
+                    Component.translatable("professions.screen.occupation_menu.selected_overview"),
+                    leftPos + 150, topPos + 32, 1.5f, 0x6f4d15, false);
 
             RenderHelperUtil.drawScaled(gfx, leftPos + 156, topPos + 50, 2f, () -> {
                 gfx.renderItem(occupationList.getProfessionIcon(), 0, 0);
@@ -137,10 +142,13 @@ public class OccupationMenuScreen extends Screen {
 
             int rgb = selected.getProfession().professionColor().getValue();
 
-            RenderHelperUtil.drawScaledString(gfx, minecraft.font, "Progress", leftPos + 150, topPos + 90, 0.75f, 0x6f4d15, false);
+            RenderHelperUtil.drawScaledString(gfx, minecraft.font, Component.translatable("professions.screen.occupation_menu.progress"),
+                    leftPos + 150, topPos + 90, 0.75f, 0x6f4d15, false);
 
 
-            gfx.drawString(minecraft.font, String.format("Level %s", occupationList.getSelected().getOccupation().getLevel()), leftPos + 150, topPos + 99, rgb, true);
+            gfx.drawString(minecraft.font,
+                    Component.translatable("professions.screen.occupation_menu.level", occupationList.getSelected().getOccupation().getLevel()),
+                    leftPos + 150, topPos + 99, rgb, true);
 
 
             double placeholderPercentage = getSelectedOccupation().getExpProgress() / getSelectedOccupation().getMaxExperience();
@@ -163,12 +171,23 @@ public class OccupationMenuScreen extends Screen {
                 gfx.setColor(1f, 1f, 1f, 1.2f);
             }
 
-            RenderHelperUtil.drawScaledString(gfx, minecraft.font, String.format(" %.2f / %.2f XP", getSelectedOccupation().getExpProgress(), getSelectedOccupation().getMaxExperience()), leftPos + 190, topPos + 120, 0.75f, 0x6f4d15, false);
+            RenderHelperUtil.drawScaledString(gfx, minecraft.font,
+                    Component.translatable(
+                            "professions.screen.occupation_menu.xp_progress",
+                            String.format(Locale.ROOT, "%.2f", getSelectedOccupation().getExpProgress()),
+                            String.format(Locale.ROOT, "%.2f", getSelectedOccupation().getMaxExperience())
+                    ),
+                    leftPos + 190, topPos + 120, 0.75f, 0x6f4d15, false);
 
 
-            RenderHelperUtil.drawScaledString(gfx, minecraft.font, "Base Rewards (WIP) (exp, abilities etc)", leftPos + 150, topPos + 130, 0.66f, 0x6f4d15, false);
+            RenderHelperUtil.drawScaledString(gfx, minecraft.font,
+                    Component.translatable("professions.screen.occupation_menu.base_rewards"),
+                    leftPos + 150, topPos + 130, 0.66f, 0x6f4d15, false
+            );
 
-            RenderHelperUtil.drawScaledString(gfx, minecraft.font, "Extras", leftPos + 150, topPos + 170, 0.75f, 0x6f4d15, false);
+            RenderHelperUtil.drawScaledString(gfx, minecraft.font,
+                    Component.translatable("professions.screen.occupation_menu.extras"),
+                    leftPos + 150, topPos + 170, 0.75f, 0x6f4d15, false);
 
 
         } else {

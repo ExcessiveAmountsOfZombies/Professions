@@ -5,6 +5,7 @@ import com.epherical.professions.bootstrap.Requirements;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
+import com.epherical.professions.util.ClientAdvancementUtil;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.AdvancementHolder;
@@ -32,25 +33,35 @@ public record AdvancementRequirement(List<ResourceLocation> advancements) implem
 
     @Override
     public boolean test(ProfessionContext context, Occupation occupation) {
-        if (advancements.isEmpty()) {
+        if (advancements().isEmpty()) {
             return true;
         }
 
-
         IProfessionalPlayer professionalPlayer = context.getParameter(ProfessionParameter.THIS_PLAYER);
-
         Player player = professionalPlayer.getPlayer();
-        // todo; ehhh not sure here, we might be able to check both sides?
+
+        // If it's just single player we'll do the hasServerAdvancements check because the result would be the same.
+        if (context.isClientSide() && !ClientAdvancementUtil.isSingleplayer()) {
+            return ClientAdvancementUtil.hasAdvancements(advancements());
+        }
+
+        return hasServerAdvancements(player);
+    }
+
+    private boolean hasServerAdvancements(Player player) {
         if (!(player instanceof ServerPlayer serverPlayer) || serverPlayer.getServer() == null) {
             return false;
         }
+        return hasServerAdvancements(serverPlayer, advancements());
+    }
 
-        for (ResourceLocation advancement : advancements) {
-            if (!hasAdvancement(serverPlayer, serverPlayer.getAdvancements(), advancement)) {
+    private boolean hasServerAdvancements(ServerPlayer serverPlayer, List<ResourceLocation> advancementKeys) {
+        PlayerAdvancements playerAdvancements = serverPlayer.getAdvancements();
+        for (ResourceLocation advancementKey : advancementKeys) {
+            if (!hasAdvancement(serverPlayer, playerAdvancements, advancementKey)) {
                 return false;
             }
         }
-
         return true;
     }
 

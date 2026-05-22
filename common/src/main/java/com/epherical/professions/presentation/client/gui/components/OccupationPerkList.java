@@ -34,10 +34,13 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
     private static final int PERK_BUTTON_SPACING = 1;
     private static final int PERK_ICON_OFFSET_X = 3;
     private static final int PERK_ICON_OFFSET_Y = 12;
-    private static final Component CLAIMED_TEXT = Component.literal("✔ Claimed").setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
-    private static final Component UNCLAIMED_TEXT = Component.literal("Unclaimed");
-    private static final Component LOCKED_TEXT = Component.literal("✖ Locked").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors));
-    private static final Component DISABLED_TEXT = Component.literal("Disabled").setStyle(Style.EMPTY.withColor(ProfessionConfig.errors));
+    private static final Component CLAIMED_TEXT = Component.translatable("professions.screen.occupation_perk_list.claimed")
+            .setStyle(Style.EMPTY.withColor(ProfessionConfig.success));
+    private static final Component UNCLAIMED_TEXT = Component.translatable("professions.screen.occupation_perk_list.unclaimed");
+    private static final Component LOCKED_TEXT = Component.translatable("professions.screen.occupation_perk_list.locked")
+            .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors));
+    private static final Component DISABLED_TEXT = Component.translatable("professions.screen.occupation_perk_list.disabled")
+            .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors));
 
     private final Occupation occupation;
 
@@ -144,7 +147,7 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
             this.perkButtons = new ArrayList<>(items.size());
 
             for (EntryItem item : items) {
-                OccupationMenuButton button = OccupationMenuButton.omButton(Component.literal(""), pressed -> {
+                OccupationMenuButton button = OccupationMenuButton.omButton(Component.empty(), pressed -> {
                     if (activatedButtons.contains(pressed)) {
                         ids.remove(item.perk().getId());
                         activatedButtons.remove(pressed);
@@ -205,7 +208,11 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
 
         private Component buildTooltip(EntryItem item) {
             Perk perk = item.perk();
-            return Component.literal("Level " + perk.getLevelRequirement() + ": " + perk.getDescription() + "\nStatus: " + item.claimStatus().getString());
+            return Component.translatable(
+                    "professions.screen.occupation_perk_list.tooltip",
+                    perk.getLevelRequirement(),
+                    Component.translatable(perk.getDescription()),
+                    item.claimStatus());
         }
 
         @Override

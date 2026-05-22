@@ -42,7 +42,7 @@ public class OccupationInfoScreen extends Screen {
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/occupation_info");
 
     public OccupationInfoScreen(Occupation occupation) {
-        super(Component.literal("Occupation Info"));
+        super(Component.translatable("professions.screen.occupation_info.title"));
         this.occupation = occupation;
     }
 
@@ -61,27 +61,27 @@ public class OccupationInfoScreen extends Screen {
         addRenderableWidget(occupationInfoList);
         addRenderableOnly(createXpBar());
 
-        closeButton = OccupationMenuButton.omButton(Component.literal(""), button -> {
+        closeButton = OccupationMenuButton.omButton(Component.empty(), button -> {
                     minecraft.setScreen(null);
                 }).pos(leftPos + 193, topPos + 1).size(18, 18)
                 .background(SPRITES)
                 .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
-                .tooltip(Tooltip.create(Component.literal("Close Menu")))
+                .tooltip(Tooltip.create(Component.translatable("professions.screen.common.close_menu")))
                 .build();
 
         addRenderableWidget(closeButton);
 
-        addRenderableWidget(OccupationMenuButton.omButton(Component.literal(""), pButton -> {
+        addRenderableWidget(OccupationMenuButton.omButton(Component.empty(), pButton -> {
                             List<Occupation> activeOccupations = ProfessionsCommon.INSTANCE.getPlayerManager()
                                     .getPlayer(minecraft.getUser().getProfileId()).getActiveOccupations();
                             minecraft.setScreen(new OccupationMenuScreen(activeOccupations));
                         }).pos(leftPos + 193 - 18, topPos + 1).size(18, 18)
                         .background(SPRITES)
                         .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/grey_back"))
-                        .tooltip(Tooltip.create(Component.literal("Back"))).build()
+                        .tooltip(Tooltip.create(Component.translatable("professions.screen.common.back"))).build()
         );
 
-        editBox = new EditBox(minecraft.font, leftPos + 10, topPos + 26, 94, 16, Component.literal("Filter actions"));
+        editBox = new EditBox(minecraft.font, leftPos + 10, topPos + 26, 94, 16, Component.translatable("professions.screen.occupation_info.filter_actions"));
         editBox.setEditable(true);
         editBox.setSuggestion("Filter...");
         editBox.setBordered(false);
@@ -112,7 +112,7 @@ public class OccupationInfoScreen extends Screen {
             pGuiGraphics.pose().translate(-paintX, -paintY, 0);
             pGuiGraphics.drawString(
                     minecraft.font,
-                    "Activated by Action(s)",
+                    Component.translatable("professions.screen.occupation_info.activated_by_actions"),
                     paintX, paintY,
                     0xFF025E66, false);
             pGuiGraphics.pose().popPose();
@@ -168,7 +168,7 @@ public class OccupationInfoScreen extends Screen {
             paintY += 16;
 
             pGuiGraphics.drawString(minecraft.font,
-                    "Rewards", paintX, paintY, 0xFF025E66, false);
+                    Component.translatable("professions.screen.occupation_info.rewards"), paintX, paintY, 0xFF025E66, false);
 
 
             paintX = leftPos + 112;

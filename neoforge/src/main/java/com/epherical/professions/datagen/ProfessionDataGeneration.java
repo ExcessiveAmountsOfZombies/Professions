@@ -55,7 +55,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by brewing potions."
                             })
-                            .display(Component.literal("Alchemy"))
+                            .display(Component.translatable("professions.profession.alchemy"))
                             .build());*/
 
                     ctx.register(id("building"), new Builder(rl("building"))
@@ -66,7 +66,7 @@ public final class ProfessionDataGeneration {
                                     "by placing structural blocks."
                             })
                             .icon(Items.OAK_PLANKS)
-                            .display(Component.literal("Building"))
+                            .display(Component.translatable("professions.profession.building"))
                             .build());
 
 
@@ -78,7 +78,7 @@ public final class ProfessionDataGeneration {
                                     "by crafting."
                             })
                             .icon(Items.CRAFTING_TABLE)
-                            .display(Component.literal("Crafting"))
+                            .display(Component.translatable("professions.profession.crafting"))
                             .build());
 
                     ctx.register(id("enchanting"), new Builder(rl("enchanting"))
@@ -89,7 +89,7 @@ public final class ProfessionDataGeneration {
                                     "by enchanting."
                             })
                             .icon(Items.ENCHANTING_TABLE)
-                            .display(Component.literal("Enchanting"))
+                            .display(Component.translatable("professions.profession.enchanting"))
                             .build());
 
                     ctx.register(id("farming"), new Builder(rl("farming"))
@@ -100,7 +100,7 @@ public final class ProfessionDataGeneration {
                                     "by farming."
                             })
                             .icon(Items.WHEAT)
-                            .display(Component.literal("Farming"))
+                            .display(Component.translatable("professions.profession.farming"))
                             .build());
 
                     ctx.register(id("fishing"), new Builder(rl("fishing"))
@@ -111,7 +111,7 @@ public final class ProfessionDataGeneration {
                                     "by fishing."
                             })
                             .icon(Items.FISHING_ROD)
-                            .display(Component.literal("Fishing"))
+                            .display(Component.translatable("professions.profession.fishing"))
                             .build());
 
                     ctx.register(id("hunting"), new Builder(rl("hunting"))
@@ -122,7 +122,7 @@ public final class ProfessionDataGeneration {
                                     "by hunting animals, killing monsters, and exploring"
                             })
                             .icon(Items.BOW)
-                            .display(Component.literal("Hunting"))
+                            .display(Component.translatable("professions.profession.hunting"))
                             .build());
 
                     ctx.register(id("logging"), new Builder(rl("logging"))
@@ -133,7 +133,7 @@ public final class ProfessionDataGeneration {
                                     "by farming trees."
                             })
                             .icon(Items.OAK_SAPLING)
-                            .display(Component.literal("Logging"))
+                            .display(Component.translatable("professions.profession.logging"))
                             .build());
 
                     ctx.register(id("mining"), new Builder(rl("mining"))
@@ -144,7 +144,7 @@ public final class ProfessionDataGeneration {
                                     "by mining ores and minerals."
                             })
                             .icon(Items.DIAMOND_PICKAXE)
-                            .display(Component.literal("Mining"))
+                            .display(Component.translatable("professions.profession.mining"))
                             .build());
 
                     ctx.register(id("smithing"), new Builder(rl("smithing"))
@@ -155,7 +155,7 @@ public final class ProfessionDataGeneration {
                                     "by smithing items."
                             })
                             .icon(Items.ANVIL)
-                            .display(Component.literal("Smithing"))
+                            .display(Component.translatable("professions.profession.smithing"))
                             .build());
 
                     /*ctx.register(id("trading"), new Builder(rl("trading"))
@@ -165,7 +165,7 @@ public final class ProfessionDataGeneration {
                                     "Earn money and experience",
                                     "by trading items to villagers."
                             })
-                            .display(Component.literal("Trading"))
+                            .display(Component.translatable("professions.profession.trading"))
                             .build());*/
                 });
 

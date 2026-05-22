@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epherical.professions.presentation.client.RenderHelperUtil.*;
+
 public class OccupationCategoryList extends AbstractOccupationSelector<OccupationCategoryList.Entry> {
 
 
@@ -84,7 +86,7 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
             this.icon = new ItemStack(Items.BOOK);
 
 
-            occupationMenuButton = OccupationMenuButton.omButton(Component.literal("Select"), button -> {
+            occupationMenuButton = OccupationMenuButton.omButton(Component.translatable("professions.screen.occupation_category_list.select"), button -> {
                 setProfessionCategory(category);
             }).pos(0, 0).size(47, 18).build();
         }
@@ -118,7 +120,9 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
             gfx.drawString(minecraft.font, category.name(), x + 54, y + 5, 0xFFFFFF);
 
             final float scale = 0.5f;
-            drawScaledString(gfx, minecraft.font, String.format("Professions: (%s)", category.professions().size()), x + 54, y + 17, scale, 0x777777, false);
+            drawScaledString(gfx, minecraft.font,
+                    Component.translatable("professions.screen.occupation_category_list.profession_count", category.professions().size()),
+                    x + 54, y + 17, scale, 0x777777, false);
             renderProfessionColumns(gfx, x + 54, y + 22, scale);
             drawWrappedScaledString(gfx, minecraft.font, category.description(), x + 215, y + 3, scale, 172, 0xFFFFFFFF);
 
@@ -146,7 +150,10 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
                 if (professionReference.isPresent()) {
                     Holder.Reference<Profession> professionReference1 = professionReference.get();
                     Profession value = professionReference1.value();
-                    drawScaledString(gfx, minecraft.font, value.displayNameRaw(), drawX + 9, drawY + 1, scale, value.professionColor().getValue(), true);
+                    drawScaledString(gfx, minecraft.font,
+                            Component.literal(value.displayNameRaw()),
+                            drawX + 9, drawY + 1, scale, value.professionColor().getValue(), true);
+
                     drawScaled(gfx, drawX, drawY - 1, scale, () -> {
                         gfx.renderFakeItem(new ItemStack(value.formatting().icon()), 0, 0);
                     });
@@ -171,31 +178,5 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
         public List<? extends GuiEventListener> children() {
             return List.of(occupationMenuButton);
         }
-    }
-
-
-    private void drawScaled(GuiGraphics gfx, int x, int y, float scale, Runnable voidConsumer) {
-        gfx.pose().pushPose();
-        gfx.pose().translate(x, y, 0);
-        gfx.pose().scale(scale, scale, 1.0f);
-        voidConsumer.run();
-        gfx.pose().popPose();
-    }
-
-    private void drawScaledString(GuiGraphics gfx, Font font, String text, int x, int y, float scale,
-                                  int color, boolean dropShadow) {
-        gfx.pose().pushPose();
-        gfx.pose().translate(x, y, 0);
-        gfx.pose().scale(scale, scale, 1.0f);
-        gfx.drawString(font, text, 0, 0, color, dropShadow);
-        gfx.pose().popPose();
-    }
-
-    private void drawWrappedScaledString(GuiGraphics gfx, Font font, String text, int x, int y, float scale, int lineWidth, int color) {
-        gfx.pose().pushPose();
-        gfx.pose().translate(x, y, 0);
-        gfx.pose().scale(scale, scale, 1.0f);
-        gfx.drawWordWrap(font, FormattedText.of(text), 0, 0, lineWidth, color);
-        gfx.pose().popPose();
     }
 }

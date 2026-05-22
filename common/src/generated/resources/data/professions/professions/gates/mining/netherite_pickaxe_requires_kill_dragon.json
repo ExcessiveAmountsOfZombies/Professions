@@ -1,0 +1,15 @@
+{
+  "gate": "professions:tool",
+  "items": [
+    "minecraft:netherite_pickaxe"
+  ],
+  "profession": "professions:mining",
+  "requirements": [
+    {
+      "advancements": [
+        "minecraft:end/kill_dragon"
+      ],
+      "requirement": "professions:advancement"
+    }
+  ]
+}

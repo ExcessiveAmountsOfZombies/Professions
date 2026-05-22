@@ -1,5 +1,6 @@
 package com.epherical.professions.core;
 
+import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.util.ProfessionCodecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -69,7 +70,7 @@ public record Profession(
             } else {
                 entry = expScaling.expScalers().ceilingEntry(level);
                 if (entry == null || entry.getValue() == null) {
-                    // todo; add logging here
+                    ProfessionsCommon.LOG.error("Something went wrong here while calculating the ceilingEntry for {}. Using Double.MAX_VALUE for experience requirement.", this.displayNameRaw());
                     return Double.MAX_VALUE;
                 } else {
                     Parser value = entry.getValue();

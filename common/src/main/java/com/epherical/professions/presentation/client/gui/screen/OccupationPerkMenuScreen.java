@@ -20,6 +20,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 import java.util.Set;
 
+import static com.epherical.professions.presentation.client.RenderHelperUtil.*;
+
 
 public class OccupationPerkMenuScreen extends Screen {
 
@@ -48,7 +50,7 @@ public class OccupationPerkMenuScreen extends Screen {
 
 
     public OccupationPerkMenuScreen(Occupation occupation) {
-        super(Component.literal("Profession Perks"));
+        super(Component.translatable("professions.screen.occupation_perk_menu.title"));
         this.occupation = occupation;
     }
 
@@ -60,15 +62,15 @@ public class OccupationPerkMenuScreen extends Screen {
         this.topPos = (this.height - this.imageHeight) / 2;
 
 
-        closeButton = OccupationMenuButton.omButton(Component.literal(""), button -> {
+        closeButton = OccupationMenuButton.omButton(Component.empty(), button -> {
                     minecraft.setScreen(null);
                 }).pos(leftPos + 296, topPos + 2).size(18, 18)
                 .background(OccupationCategorySelectionScreen.SPRITES)
                 .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
-                .tooltip(Tooltip.create(Component.literal("Close Menu")))
+                .tooltip(Tooltip.create(Component.translatable("professions.screen.common.close_menu")))
                 .build();
 
-        confirmButton = OccupationMenuButton.omButton(Component.literal("Confirm Selection"), pButton -> {
+        confirmButton = OccupationMenuButton.omButton(Component.translatable("professions.screen.occupation_perk_menu.confirm_selection"), pButton -> {
             Set<ResourceLocation> highlightedPerks = perkList.getIds();
             if (!highlightedPerks.isEmpty()) {
                 NetworkPayloadDispatcher.sendToServer(new C2SOccupationPerkClaimPayload(occupation.getProfessionKey(), highlightedPerks));
@@ -76,14 +78,14 @@ public class OccupationPerkMenuScreen extends Screen {
             }
         }).pos(leftPos + 204, topPos + 219).size(100, 13).build();
 
-        addRenderableWidget(OccupationMenuButton.omButton(Component.literal(""), pButton -> {
+        addRenderableWidget(OccupationMenuButton.omButton(Component.empty(), pButton -> {
                             List<Occupation> activeOccupations = ProfessionsCommon.INSTANCE.getPlayerManager()
                                     .getPlayer(minecraft.getUser().getProfileId()).getActiveOccupations();
                             minecraft.setScreen(new OccupationMenuScreen(activeOccupations));
                         }).pos(leftPos + 296 - 20, topPos + 2).size(18, 18)
                         .background(OccupationCategorySelectionScreen.SPRITES)
                         .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/grey_back"))
-                        .tooltip(Tooltip.create(Component.literal("Back"))).build()
+                        .tooltip(Tooltip.create(Component.translatable("professions.screen.common.back"))).build()
         );
 
 
@@ -114,9 +116,9 @@ public class OccupationPerkMenuScreen extends Screen {
             button.setFocused(true);
         }
 
-        drawScaledString(gfx, font, "Profession Perks", leftPos + 5, topPos + 5, 1.5f, 0xd5af47, false);
-        // todo; translation
-        drawScaledString(gfx, font, "Claim perks to activate the ones you've unlocked.", leftPos + 8, topPos + 30, 1f, 0x777777, false);
+        drawScaledString(gfx, font, Component.translatable("professions.screen.occupation_perk_menu.header"), leftPos + 5, topPos + 5, 1.5f, 0xd5af47, false);
+        drawScaledString(gfx, font,
+                Component.translatable("professions.screen.occupation_perk_menu.subtitle"), leftPos + 8, topPos + 30, 1f, 0x777777, false);
 
 
         drawScaled(gfx, leftPos + 8, topPos + 217, 0.75f, () -> {
@@ -124,21 +126,9 @@ public class OccupationPerkMenuScreen extends Screen {
         });
 
 
-        // todo; translation
-        drawWrappedScaledString(gfx, font, "Earn Perks by leveling your profession. Click on them to select!", leftPos + 23, topPos + 219, 0.75f, 200, 0x777777);
-    }
-
-    private void drawScaled(GuiGraphics gfx, int x, int y, float scale, Runnable voidConsumer) {
-        RenderHelperUtil.drawScaled(gfx, x, y, scale, voidConsumer);
-    }
-
-    private void drawScaledString(GuiGraphics gfx, Font font, String text, int x, int y, float scale,
-                                  int color, boolean dropShadow) {
-        RenderHelperUtil.drawScaledString(gfx, font, text, x, y, scale, color, dropShadow);
-    }
-
-    private void drawWrappedScaledString(GuiGraphics gfx, Font font, String text, int x, int y, float scale, int lineWidth, int color) {
-        RenderHelperUtil.drawWrappedScaledString(gfx, font, text, x, y, scale, lineWidth, color);
+        drawWrappedScaledString(gfx, font,
+                Component.translatable("professions.screen.occupation_perk_menu.info"),
+                leftPos + 23, topPos + 219, 0.75f, 200, 0x777777);
     }
 
     @Override

@@ -19,6 +19,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Collection;
 import java.util.List;
 
+import static com.epherical.professions.presentation.client.RenderHelperUtil.*;
+
 public class OccupationCategorySelectionScreen extends Screen {
 
     private final int imageWidth = 320;
@@ -45,7 +47,7 @@ public class OccupationCategorySelectionScreen extends Screen {
 
 
     public OccupationCategorySelectionScreen(Collection<ProfessionCategory> categories) {
-        super(Component.literal("Occupation Category Selection"));
+        super(Component.translatable("professions.screen.occupation_category_selection.title"));
         this.categories = categories;
     }
 
@@ -57,15 +59,15 @@ public class OccupationCategorySelectionScreen extends Screen {
         this.topPos = (this.height - this.imageHeight) / 2;
 
 
-        closeButton = OccupationMenuButton.omButton(Component.literal(""), button -> {
+        closeButton = OccupationMenuButton.omButton(Component.empty(), button -> {
             minecraft.setScreen(null);
         }).pos(leftPos + 296, topPos + 2).size(18, 18)
                 .background(SPRITES)
                 .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
-                .tooltip(Tooltip.create(Component.literal("Close Menu")))
+                .tooltip(Tooltip.create(Component.translatable("professions.screen.common.close_menu")))
                 .build();
 
-        confirmSelection = OccupationMenuButton.omButton(Component.literal("Confirm Selection"), pButton -> {
+        confirmSelection = OccupationMenuButton.omButton(Component.translatable("professions.screen.occupation_category_selection.confirm_selection"), pButton -> {
             ProfessionCategory selectedCategory = occupationInfoList.getProfessionCategory();
             if (selectedCategory != null) {
                 ResourceLocation categoryId = ProfessionsCommon.INSTANCE.getCategoryManager().getCategoryId(selectedCategory);
@@ -85,7 +87,7 @@ public class OccupationCategorySelectionScreen extends Screen {
         addRenderableWidget(occupationInfoList);
         addRenderableWidget(closeButton);
         addRenderableWidget(confirmSelection);
-       /* occupationMenuButton = addRenderableWidget(OccupationMenuButton.omButton(Component.literal("Details"), button -> {
+       /* occupationMenuButton = addRenderableWidget(OccupationMenuButton.omButton(Component.translatable("professions.screen.occupation_menu.details"), button -> {
             minecraft.setScreen(new OccupationInfoScreen(occupationList.getSelected().getOccupation()));
         }).pos(leftPos + 112, topPos + 108).size(94, 24).build());
         occupationMenuButton.visible = false;*/
@@ -97,9 +99,10 @@ public class OccupationCategorySelectionScreen extends Screen {
         super.render(gfx, pMouseX, pMouseY, pPartialTick);
 
 
-        drawScaledString(gfx, font, "Profession Progression Picker", leftPos + 5, topPos + 5, 1.5f, 0xd5af47, false);
-        // todo; translation
-        drawScaledString(gfx, font, "Select the progression system you'll use for your world.", leftPos + 8, topPos + 29, 0.75f, 0x777777, false);
+        drawScaledString(gfx, font, Component.translatable("professions.screen.occupation_category_selection.header"),
+                leftPos + 5, topPos + 5, 1.5f, 0xd5af47, false);
+        drawScaledString(gfx, font, Component.translatable("professions.screen.occupation_category_selection.subtitle"),
+                leftPos + 8, topPos + 29, 0.75f, 0x777777, false);
 
 
 
@@ -112,21 +115,9 @@ public class OccupationCategorySelectionScreen extends Screen {
             confirmSelection.active = true;
         }
 
-        // todo; translation
-        drawWrappedScaledString(gfx, font, "You can only have one progression system per world. You can only change this with a command later!!", leftPos + 23, topPos + 210, 0.5f, 400, 0x777777);
-    }
-
-    private void drawScaled(GuiGraphics gfx, int x, int y, float scale, Runnable voidConsumer) {
-        RenderHelperUtil.drawScaled(gfx, x, y, scale, voidConsumer);
-    }
-
-    private void drawScaledString(GuiGraphics gfx, Font font, String text, int x, int y, float scale,
-                                  int color, boolean dropShadow) {
-        RenderHelperUtil.drawScaledString(gfx, font, text, x, y, scale, color, dropShadow);
-    }
-
-    private void drawWrappedScaledString(GuiGraphics gfx, Font font, String text, int x, int y, float scale, int lineWidth, int color) {
-        RenderHelperUtil.drawWrappedScaledString(gfx, font, text, x, y, scale, lineWidth, color);
+        drawWrappedScaledString(gfx, font, Component.translatable("professions.screen.occupation_category_selection.warning"),
+                leftPos + 23, topPos + 210, 0.5f, 400, 0x777777
+        );
     }
 
     @Override

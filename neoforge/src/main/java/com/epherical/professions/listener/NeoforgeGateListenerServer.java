@@ -9,7 +9,7 @@ import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.gating.Gate;
-import net.minecraft.network.chat.Component;
+import com.epherical.professions.model.gating.GateReport;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -76,17 +76,21 @@ public class NeoforgeGateListenerServer {
 
     public static boolean checkGate(Collection<Gate<?>> gates, IProfessionalPlayer player, ProfessionContext context) {
         GateManager gateManager = ProfessionsCommon.INSTANCE.getGateManager();
-        if (!gateManager.areGatesEnabled(player)) {
-            return true;
+        if (!gateManager.areGatesEnabled(player) || player.getCategory() == null) {
+            return true; // good
         }
+        GateReport gateReport = new GateReport();
         for (Gate<?> gate : gates) {
             Occupation occupation = player.getOccupation(gate.getProfession());
             if (occupation == null || !occupation.isActive() || !player.getCategory().hasProfession(gate.getProfession())) continue;
-            if (!gate.meetsRequirements(occupation, context)) {
-                return false;
-            }
+            gate.meetsRequirements(occupation, context, gateReport);
         }
-        return true;
+
+        if (!gateReport.isAllowed()) {
+            gateReport.sendFailureMessage(player.getPlayer());
+        }
+
+        return gateReport.isAllowed(); // good
     }
 
     public static void handleBlockBreakGateManagement(PlayerInteractEvent.LeftClickBlock event) {
@@ -98,6 +102,7 @@ public class NeoforgeGateListenerServer {
             return;
         }
 
+        // todo; maybe we want the ability to add multiple gate checks...
         ProfessionContext context = ProfessionContext.gateBuilder(event.getLevel(), Gates.BLOCK_BREAK, player)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getItemStack())
                 .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
@@ -106,9 +111,9 @@ public class NeoforgeGateListenerServer {
 
         passesGateCheck(event, gateManager, player, context);
 
-        if (event.isCanceled()) {
+        /*if (event.isCanceled()) {
             event.getEntity().sendSystemMessage(Component.translatable("professions.gate.error.tool_level"));
-        }
+        }*/
     }
 
 

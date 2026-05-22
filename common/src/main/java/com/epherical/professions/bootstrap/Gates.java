@@ -7,10 +7,10 @@ import com.epherical.professions.model.gating.GateType;
 import com.epherical.professions.model.gating.LootDropGate;
 import com.epherical.professions.model.gating.PlaceGate;
 import com.epherical.professions.model.gating.ToolGate;
+import com.epherical.professions.util.GateReportPredicate;
 
 import java.util.List;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 public class Gates {
 
@@ -38,6 +38,20 @@ public class Gates {
                     }
                 }
                 return true;
+            };
+        };
+    }
+
+
+    public static <U, T> GateReportPredicate<U, T> andAllGateConditions(List<GateReportPredicate<U, T>> conditions) {
+        return switch (conditions.size()) {
+            case 0 -> (t, u, gr, g) -> {};
+            case 1 -> conditions.getFirst();
+            case 2 -> conditions.getFirst().and(conditions.getLast());
+            default -> (t, u, gr, g) -> {
+                for (GateReportPredicate<U, T> condition : conditions) {
+                    condition.test(t, u, gr, g);
+                }
             };
         };
     }

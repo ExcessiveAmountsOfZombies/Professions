@@ -5,9 +5,9 @@ import com.epherical.professions.bootstrap.Gates;
 import com.epherical.professions.bootstrap.platform.Services;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.context.ProfessionContext;
-import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.gating.requirements.GateRequirement;
+import com.epherical.professions.util.GateReportPredicate;
 import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
@@ -60,7 +60,9 @@ public abstract class Gate<T> implements Predicate<ProfessionContext> {
     private final Holder<Profession> profession;
     private final List<GateRequirement> requirements;
     private @Nullable ResourceLocation fileId;
+    @Deprecated(since = "eh, probably don't use this for anything anymore, i'll leave it in case i find a use for it though.")
     private final BiPredicate<ProfessionContext, Occupation> predicate;
+    private final GateReportPredicate<ProfessionContext, Occupation> gatePredicate;
 
     protected Gate(Common common, List<Either<TagKey<T>, ResourceKey<T>>> values) {
         this(common.profession, common.requirements, values);
@@ -71,6 +73,7 @@ public abstract class Gate<T> implements Predicate<ProfessionContext> {
         this.requirements = requirements;
         this.values = values;
         this.predicate = Gates.andAllConditions(new ArrayList<>(requirements));
+        this.gatePredicate = Gates.andAllGateConditions(new ArrayList<>(requirements));
     }
 
     public abstract Common buildCommon();
@@ -94,6 +97,18 @@ public abstract class Gate<T> implements Predicate<ProfessionContext> {
     public boolean meetsRequirements(Occupation occupation, ProfessionContext context) {
         if (!test(context)) return true; // I think this is correct. If the thing being tested is not in the map, it's not locked.
         return predicate.test(context, occupation); // if it is, then we need to see if we've met the requirements to use it.
+    }
+
+    /**
+     * This method is for building a report of failures that can be sent to the player that will contain all the requirements that they
+     *  did not meet.
+     * @param occupation The occupation involved in the requirement check
+     * @param context the context involved
+     * @param gateReport A way to build out a report to let the player know which requirements they failed for this gate.
+     */
+    public void meetsRequirements(Occupation occupation, ProfessionContext context, GateReport gateReport) {
+        if (!test(context)) return; // It's in the map, so we'll continue to evaluate.
+        gatePredicate.test(context, occupation, gateReport, this);
     }
 
     public void getExtraValues(Multimap<Holder<?>, Gate<?>> valueToGatesMap, Multimap<Gate<?>, Holder<?>> gateToValueMap, HolderLookup.Provider provider) {}

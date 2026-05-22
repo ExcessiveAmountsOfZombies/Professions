@@ -5,10 +5,14 @@ import com.epherical.professions.bootstrap.Requirements;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
+import com.epherical.professions.model.gating.Gate;
+import com.epherical.professions.model.gating.GateReport;
 import com.epherical.professions.util.ClientAdvancementUtil;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,6 +33,13 @@ public record AdvancementRequirement(List<ResourceLocation> advancements) implem
     @Override
     public GateRequirementType getRequirementType() {
         return Requirements.ADVANCEMENT_REQUIREMENT;
+    }
+
+    @Override
+    public Component failureMessage(Occupation occupation, ProfessionContext context) {
+        return Component.translatable("professions.gate.requirement.advancement.failureMessage",
+                Component.literal(occupation.getProfession().value().displayNameRaw())
+                        .setStyle(Style.EMPTY.withColor(occupation.getProfession().value().professionColor())));
     }
 
     @Override
@@ -71,6 +82,13 @@ public record AdvancementRequirement(List<ResourceLocation> advancements) implem
             return false;
         }
         return advancements.getOrStartProgress(holder).isDone();
+    }
+
+    @Override
+    public void test(ProfessionContext context, Occupation occupation, GateReport gateReport, Gate<?> gate) {
+        if (!test(context, occupation)) {
+            gateReport.failed(this, gate, occupation, context);
+        }
     }
 
     public static class Builder implements GateRequirement.Builder {

@@ -2,10 +2,16 @@ package com.epherical.professions.model.gating.requirements;
 
 import com.epherical.professions.bootstrap.Requirements;
 import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.data.config.ProfessionConfig;
 import com.epherical.professions.model.Occupation;
+import com.epherical.professions.model.gating.Gate;
+import com.epherical.professions.model.gating.GateReport;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 public record LevelRequirement(int level) implements GateRequirement {
 
@@ -21,8 +27,23 @@ public record LevelRequirement(int level) implements GateRequirement {
     }
 
     @Override
+    public Component failureMessage(Occupation occupation, ProfessionContext context) {
+        return Component.translatable("professions.gate.requirement.level.failureMessage",
+                Component.literal(String.valueOf(level)).setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors)),
+                Component.literal(occupation.getProfession().value().displayNameRaw())
+                        .setStyle(Style.EMPTY.withColor(occupation.getProfession().value().professionColor())));
+    }
+
+    @Override
     public boolean test(ProfessionContext context, Occupation occupation) {
         return occupation.getLevel() >= level;
+    }
+
+    @Override
+    public void test(ProfessionContext context, Occupation occupation, GateReport gateReport, Gate<?> gate) {
+        if (!test(context, occupation)) {
+            gateReport.failed(this, gate, occupation, context);
+        }
     }
 
     public static class Builder implements GateRequirement.Builder {

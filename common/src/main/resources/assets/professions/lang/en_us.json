@@ -15,6 +15,15 @@
   "professions.action.type.explore_biome": "Explore",
   "professions.action.type.explore_structure": "Explore Structure",
 
+  "professions.gate.type.block_break": "Break Block",
+  "professions.gate.type.place": "Place Block",
+  "professions.gate.type.tool": "Use Tool",
+  "professions.gate.type.loot_drop": "Drop Loot",
+
+  "professions.gate.requirement.start.failureMessage": "You cannot perform (%s). Failed Requirement(s): \n",
+  "professions.gate.requirement.level.failureMessage": "Not Level %s in %s",
+  "professions.gate.requirement.advancement.failureMessage": "Missing advancement(s) for %s",
+
   "professions.command.join.error.does_not_exist": "Profession does not exist.",
   "professions.command.join.error.no_permission": "You do not have permission to join this profession.",
   "professions.command.join.error.already_joined": "You have already joined this profession.",

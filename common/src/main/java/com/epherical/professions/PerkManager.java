@@ -9,6 +9,7 @@ import com.epherical.professions.model.perks.Perk;
 import com.epherical.professions.model.perks.PerkType;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -174,10 +175,10 @@ public class PerkManager {
     }
 
     public void setUnclaimedPerks(Occupation occupation, int level, IProfessionalPlayer player) {
-        if (!arePerksEnabled(player)) {
+       /* if (!arePerksEnabled(player)) {
             occupation.setUnclaimedPerks(Set.of());
             return;
-        }
+        }*/
 
         Set<Perk> perksForLevel = this.getPerksByProfession(occupation.getProfession(), level);
         perksForLevel.removeIf(perk -> occupation.hasClaimedPerk(perk.getId()));
@@ -196,9 +197,9 @@ public class PerkManager {
         Map<String, EnumMap<Perk.ModificationStage, Double>> groupedStageValues = new HashMap<>();
         Map<String, EnumMap<Perk.ModificationStage, Perk.Applicator>> applicators = new HashMap<>();
 
+        boolean perksRemoved = false;
 
         for (Occupation activeOccupation : player.getActiveOccupations()) {
-
             List<ResourceLocation> disabledPerks = new ArrayList<>();
 
             for (ResourceLocation claimedPerk : activeOccupation.getClaimedPerks()) {
@@ -208,17 +209,20 @@ public class PerkManager {
                 // 2. Maybe perk isn't null, but it possibly changed, so let's recalculate that it's still valid. if it's not, remove it.
                 if (perk == null || Perk.PerkStatus.INVALID == perk.onRecalculate(activeOccupation, player, serverPlayer)) {
                     disabledPerks.add(claimedPerk);
+                    perksRemoved = true;
                 }
             }
 
             activeOccupation.removeAllClaimedPerks(disabledPerks);
             // 3. The player logs in, new perks have been added, we need to add these to the unclaimed ones.
             this.setUnclaimedPerks(activeOccupation, activeOccupation.getLevel(), player);
-
+        }
+        if (perksRemoved) {
+            serverPlayer.sendSystemMessage(Component.translatable("professions.perk.removed"));
         }
 
         if (!perksEnabled) {
-            return;
+            ProfessionsCommon.LOG.debug("Perks are not enabled!");
         }
 
         for (IStartupPerk startupPerk : this.getPerksByType(IStartupPerk.class)) {

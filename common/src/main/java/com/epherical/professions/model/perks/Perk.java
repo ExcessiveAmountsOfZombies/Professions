@@ -119,7 +119,7 @@ public abstract class Perk {
      * @return The result of the recalculation, which is a {@link PerkStatus} indicating whether the perk is VALID or INVALID.
      */
     public PerkStatus onRecalculate(Occupation occupation, IProfessionalPlayer player, ServerPlayer serverPlayer) {
-        if (occupation.getLevel() > this.getLevelRequirement()) {
+        if (occupation.getLevel() > this.getLevelRequirement() && ProfessionsCommon.INSTANCE.getPerkManager().arePerksEnabled(player)) {
             return PerkStatus.VALID;
         }
 

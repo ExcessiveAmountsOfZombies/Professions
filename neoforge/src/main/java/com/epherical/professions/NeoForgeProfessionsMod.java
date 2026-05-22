@@ -255,6 +255,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
                 NetworkPayloadDispatcher.sendToPlayer(player, new S2CCategorySyncPayload(mod.getCategoryManager().getCategoryMap()));
                 PlayerDataSyncUtil.syncAll(player, professionalPlayer, mod.playerManager);
+                mod.getPerkManager().playerJoined(professionalPlayer, player);
             });
         }
 
@@ -340,8 +341,6 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             if (event.isCanceled()) {
                 return;
             }
-
-            // todo; re-add the cache for preventing gaming the system with xp gains.
 
             if (entity instanceof ServerPlayer serverPlayer && !serverPlayer.isCreative()) {
                 ProfessionContext.Builder builder = ProfessionContext.builder((ServerLevel) event.getLevel(),

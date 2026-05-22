@@ -142,6 +142,8 @@
   "professions.profession.smithing": "Smithing",
   "professions.profession.trading": "Trading",
 
+  "professions.perk.removed": "You had claimed perks that were removed.",
+
   "key.professions.open_occupation_menu": "Open Profession Menu",
   "key.professions.show_info": "Show Unlock Information",
   "key.professions.datapack_menu": "Open Datapack Creator",

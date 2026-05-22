@@ -263,9 +263,9 @@ public class PlayerManager {
     }
 
     public List<Perk> getAllPerksForPlayer(@Nullable IProfessionalPlayer player) {
-        if (player == null || !perkManager.arePerksEnabled(player)) {
+        /*if (player == null || !perkManager.arePerksEnabled(player)) {
             return List.of();
-        }
+        }*/
 
         return getAllPerks(player.getCategory());
     }
@@ -405,7 +405,7 @@ public class PlayerManager {
     public <T extends Perk> Collection<T> getUnlockedPerks(PerkType perkType, IProfessionalPlayer player, Occupation occupation) {
         Collection<T> perksByType = (Collection<T>) perkManager.getPerksByType(perkType);
 
-        if (player == null || !perkManager.arePerksEnabled(player)) {
+        if (player == null) {
             return List.of();
         }
 
@@ -417,7 +417,7 @@ public class PlayerManager {
     }
 
     public Set<ResourceLocation> getUnlockedUnclaimedPerkIds(@Nullable IProfessionalPlayer player) {
-        if (player == null || !perkManager.arePerksEnabled(player)) {
+        if (player == null) {
             return Set.of();
         }
 

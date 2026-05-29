@@ -161,7 +161,10 @@ public class PlayerManager {
     }
 
     public void processAction(Player player, ProfessionContext professionContext) {
-        IProfessionalPlayer iProfessionalPlayer = professionContext.getParameter(ProfessionParameter.THIS_PLAYER);
+        IProfessionalPlayer iProfessionalPlayer = professionContext.getPossibleParameter(ProfessionParameter.THIS_PLAYER);
+        if (iProfessionalPlayer == null) {
+            return;
+        }
         Collection<Action<?>> actions = actionManager.getActionsByType(professionContext.getParameter(ProfessionParameter.ACTION_TYPE));
 
         if (iProfessionalPlayer.getCategory() == null) {

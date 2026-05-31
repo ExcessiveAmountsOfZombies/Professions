@@ -1,20 +1,27 @@
 package com.epherical.professions.model.gating;
 
+import com.epherical.professions.api.actions.Gate;
 import com.epherical.professions.bootstrap.Gates;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.presentation.model.GateDisplay;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ToolGate extends Gate<Item> {
@@ -44,6 +51,32 @@ public class ToolGate extends Gate<Item> {
     @Override
     public ResourceKey<? extends Registry<Item>> getRegistryKey() {
         return Registries.ITEM;
+    }
+
+    @Override
+    public List<GateDisplay<Item>> getDisplays(@Nullable RegistryAccess registryAccess) {
+        if (registryAccess == null) {
+            return List.of();
+        }
+        HolderLookup.RegistryLookup<Item> registryLookUp = registryAccess.lookupOrThrow(getRegistryKey());
+
+        List<GateDisplay<Item>> displays = new ArrayList<>();
+        for (Either<TagKey<Item>, ResourceKey<Item>> value : getValues()) {
+            value.ifLeft(tagKey -> registryLookUp.get(tagKey).ifPresent(namedItems -> {
+                        for (Holder<Item> itemHolder : namedItems) {
+                            Item item1 = itemHolder.value();
+                            displays.add(new GateDisplay<>(itemHolder, new ItemStack(item1), Component.translatable(item1.getDescriptionId())));
+                        }
+                    }))
+                    .ifRight(resourceKey -> {
+                        registryLookUp.get(resourceKey).ifPresent(holder -> {
+                            Item item = holder.value();
+                            displays.add(new GateDisplay<>(holder, new ItemStack(item), Component.translatable(item.getDescriptionId())));
+                        });
+                    });
+        }
+
+        return displays;
     }
 
     @Override

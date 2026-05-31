@@ -1,7 +1,7 @@
 package com.epherical.professions.registries;
 
 import com.epherical.professions.PerkManager;
-import com.epherical.professions.model.perks.Perk;
+import com.epherical.professions.api.perks.Perk;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

@@ -1,15 +1,15 @@
 package com.epherical.professions.model.gating.requirements;
 
+import com.epherical.professions.api.actions.GateRequirement;
 import com.epherical.professions.bootstrap.Requirements;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.data.config.ProfessionConfig;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.model.gating.Gate;
+import com.epherical.professions.api.actions.Gate;
 import com.epherical.professions.model.gating.GateReport;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 
@@ -43,6 +43,8 @@ public record LevelRequirement(int level) implements GateRequirement {
     public void test(ProfessionContext context, Occupation occupation, GateReport gateReport, Gate<?> gate) {
         if (!test(context, occupation)) {
             gateReport.failed(this, gate, occupation, context);
+        } else {
+            gateReport.success(this, gate, occupation, context);
         }
     }
 

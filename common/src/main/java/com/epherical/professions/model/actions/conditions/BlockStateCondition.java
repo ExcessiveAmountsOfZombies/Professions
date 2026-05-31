@@ -1,5 +1,6 @@
 package com.epherical.professions.model.actions.conditions;
 
+import com.epherical.professions.api.actions.Condition;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.bootstrap.Conditions;
@@ -32,7 +33,7 @@ public record BlockStateCondition(LootItemBlockStatePropertyCondition block) imp
 
     @Override
     public boolean test(ProfessionContext context) {
-        BlockState state = context.getPossibleParameter(ProfessionParameter.THIS_BLOCK);
+        BlockState state = context.getPossibleParameter(ProfessionParameter.THIS_BLOCK_STATE);
         return state != null && state.is(this.block.block()) && (this.block.properties().isEmpty() || this.block.properties().get().matches(state));
     }
 }

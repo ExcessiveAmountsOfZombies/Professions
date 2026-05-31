@@ -1,10 +1,9 @@
 package com.epherical.professions.model.perks;
 
+import com.epherical.professions.api.perks.Perk;
 import com.epherical.professions.bootstrap.Perks;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 
 public class PerkProfessionGainEXP extends Perk {
 

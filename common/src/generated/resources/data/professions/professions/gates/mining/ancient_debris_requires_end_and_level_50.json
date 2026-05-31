@@ -6,9 +6,7 @@
   "profession": "professions:mining",
   "requirements": [
     {
-      "advancements": [
-        "minecraft:end/root"
-      ],
+      "advancement": "minecraft:end/root",
       "requirement": "professions:advancement"
     },
     {

@@ -1,6 +1,6 @@
 package com.epherical.professions.util;
 
-import com.epherical.professions.model.gating.Gate;
+import com.epherical.professions.api.actions.Gate;
 import com.epherical.professions.model.gating.GateReport;
 
 import java.util.Objects;

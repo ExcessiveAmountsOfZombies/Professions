@@ -8,7 +8,7 @@ import com.epherical.professions.bootstrap.Gates;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.model.gating.Gate;
+import com.epherical.professions.api.actions.Gate;
 import com.epherical.professions.model.gating.GateReport;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -59,7 +59,7 @@ public class NeoforgeGateListenerServer {
         ProfessionContext context = ProfessionContext.gateBuilder(event.getPlayer().level(), Gates.BLOCK_BREAK, player)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getPlayer().getMainHandItem())
                 .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
-                .addParameter(ProfessionParameter.THIS_BLOCK, event.getLevel().getBlockState(event.getPos()))
+                .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getLevel().getBlockState(event.getPos()))
                 .build();
 
         passesGateCheck(event, gateManager, player, context);
@@ -86,7 +86,7 @@ public class NeoforgeGateListenerServer {
         ProfessionContext context = ProfessionContext.gateBuilder(serverPlayer.serverLevel(), Gates.PLACE, player)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, serverPlayer.getMainHandItem())
                 .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
-                .addParameter(ProfessionParameter.THIS_BLOCK, event.getState())
+                .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getState())
                 .build();
 
         if (!checkGate(gateManager.getGatesByType(Gates.PLACE), player, context)) {
@@ -120,7 +120,7 @@ public class NeoforgeGateListenerServer {
         }
 
         ProfessionContext context = ProfessionContext.gateBuilder(mcPlayer.level(), Gates.PLACE, player)
-                .addParameter(ProfessionParameter.ITEM_INVOLVED, itemStack)
+                .addParameter(ProfessionParameter.ITEM_INVOLVED, itemStack) // todo; this might be a problem
                 .build();
 
         event.setCanceled(!checkGate(gateManager.getGatesByType(Gates.PLACE), player, context));
@@ -150,7 +150,7 @@ public class NeoforgeGateListenerServer {
             gate.meetsRequirements(occupation, context, gateReport);
         }
 
-        if (!gateReport.isAllowed()) {
+        if (!gateReport.isAllowed() && player.getPlayer() != null) {
             gateReport.sendFailureMessage(player.getPlayer());
         }
 
@@ -165,12 +165,13 @@ public class NeoforgeGateListenerServer {
         if (player == null) {
             return;
         }
+        player.setPlayer(event.getEntity());
 
         // todo; maybe we want the ability to add multiple gate checks...
         ProfessionContext context = ProfessionContext.gateBuilder(event.getLevel(), Gates.BLOCK_BREAK, player)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getItemStack())
                 .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
-                .addParameter(ProfessionParameter.THIS_BLOCK, event.getLevel().getBlockState(event.getPos()))
+                .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getLevel().getBlockState(event.getPos()))
                 .build();
 
         passesGateCheck(event, gateManager, player, context);

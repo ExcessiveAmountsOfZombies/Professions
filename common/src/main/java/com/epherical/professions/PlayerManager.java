@@ -16,10 +16,10 @@ import com.epherical.professions.data.player.PlayerOccupationData;
 import com.epherical.professions.domain.exception.ProfessionNotActiveException;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.ProfessionalPlayer;
-import com.epherical.professions.model.actions.Action;
-import com.epherical.professions.model.actions.rewards.Reward;
-import com.epherical.professions.model.gating.Gate;
-import com.epherical.professions.model.perks.Perk;
+import com.epherical.professions.api.actions.Action;
+import com.epherical.professions.api.actions.Reward;
+import com.epherical.professions.api.actions.Gate;
+import com.epherical.professions.api.perks.Perk;
 import com.epherical.professions.model.perks.PerkType;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
@@ -306,13 +306,18 @@ public class PlayerManager {
      * Synchronizes client-side occupation + category state for a player.
      */
     public void applyClientOccupationSync(UUID playerId, List<Occupation> occupations, @Nullable ResourceLocation categoryId,
-                                          @Nullable RegistryAccess registryAccess) {
+                                          @Nullable RegistryAccess registryAccess, @Nullable Player localPlayer) {
         for (Occupation occupation : occupations) {
             occupation.resolveProfession(registryAccess);
         }
 
         ProfessionalPlayer player = new ProfessionalPlayer(playerId, occupations);
         applyCategoryData(player, categoryId, playerId);
+
+        if (localPlayer != null) {
+            player.setPlayer(localPlayer);
+        }
+
         players.put(playerId, player);
     }
 

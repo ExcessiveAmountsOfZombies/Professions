@@ -1,6 +1,6 @@
 package com.epherical.professions.model.actions.block;
 
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.google.common.cache.Cache;
@@ -39,7 +39,7 @@ public abstract class AbstractBlockAction extends Action<Block> {
 
     @Override
     public boolean test(ProfessionContext context) {
-        BlockState blockState = context.getPossibleParameter(ProfessionParameter.THIS_BLOCK);
+        BlockState blockState = context.getPossibleParameter(ProfessionParameter.THIS_BLOCK_STATE);
         if (blockState == null) {
             return false;
         }

@@ -1,17 +1,21 @@
 package com.epherical.professions.model.gating;
 
+import com.epherical.professions.api.actions.Gate;
 import com.epherical.professions.bootstrap.Gates;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.context.ProfessionContext;
+import com.epherical.professions.presentation.model.GateDisplay;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -47,6 +51,11 @@ public class LootDropGate extends Gate<Item> {
     @Override
     public ResourceKey<? extends Registry<Item>> getRegistryKey() {
         return Registries.ITEM;
+    }
+
+    @Override
+    public List<GateDisplay<Item>> getDisplays(@Nullable RegistryAccess registryAccess) {
+        return List.of();
     }
 
     @Override

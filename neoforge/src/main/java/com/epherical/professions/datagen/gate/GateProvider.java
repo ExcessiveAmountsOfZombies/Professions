@@ -3,7 +3,7 @@ package com.epherical.professions.datagen.gate;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.gating.BlockBreakGate;
-import com.epherical.professions.model.gating.Gate;
+import com.epherical.professions.api.actions.Gate;
 import com.epherical.professions.model.gating.PlaceGate;
 import com.epherical.professions.model.gating.ToolGate;
 import com.epherical.professions.model.gating.requirements.AdvancementRequirement;

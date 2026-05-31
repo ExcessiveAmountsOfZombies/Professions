@@ -43,7 +43,7 @@ public class BlockItemPlacementMixin {
         }
 
         ProfessionContext.Builder builder = ProfessionContext.builder(serverLevel, Actions.BLOCK_PLACE, professionalPlayer)
-                .addParameter(ProfessionParameter.THIS_BLOCK, blockState)
+                .addParameter(ProfessionParameter.THIS_BLOCK_STATE, blockState)
                 .addParameter(ProfessionParameter.BLOCKPOS, pos)
                 .addParameter(ProfessionParameter.THIS_HOLDER, blockState.getBlockHolder());
         mod.getPlayerManager().processAction(player, builder.build());

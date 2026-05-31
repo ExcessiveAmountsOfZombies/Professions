@@ -173,7 +173,7 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
 
             Holder<Block> blockHolder = state.getBlockHolder();
             ProfessionContext.Builder builder = ProfessionContext.builder(serverLevel, Actions.BLOCK_BREAK, professionalPlayer)
-                    .addParameter(ProfessionParameter.THIS_BLOCK, state)
+                    .addParameter(ProfessionParameter.THIS_BLOCK_STATE, state)
                     .addParameter(ProfessionParameter.BLOCKPOS, pos)
                     .addParameter(ProfessionParameter.TOOL, serverPlayer.getMainHandItem())
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, serverPlayer.getWeaponItem())

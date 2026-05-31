@@ -1,12 +1,11 @@
-package com.epherical.professions.model.actions;
+package com.epherical.professions.api.actions;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.bootstrap.platform.Services;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.context.ProfessionContext;
-import com.epherical.professions.model.actions.conditions.Condition;
-import com.epherical.professions.model.actions.rewards.Reward;
+import com.epherical.professions.model.actions.ActionType;
 import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;

@@ -17,8 +17,8 @@ public final class PlayerDataSyncPayloadHandler {
             if (!minecraft.isSingleplayer()) {
                 RegistryAccess registryAccess = minecraft.level != null ? minecraft.level.registryAccess() : null;
                 ResourceLocation categoryId = payload.categoryId().orElse(null);
-                ProfessionsCommon.INSTANCE.getPlayerManager().applyClientOccupationSync(
-                        payload.playerId(), payload.occupations(), categoryId, registryAccess);
+                ProfessionsCommon.INSTANCE.getPlayerManager().applyClientOccupationSync(payload.playerId(), payload.occupations(),
+                        categoryId, registryAccess, minecraft.player);
             }
         });
     }

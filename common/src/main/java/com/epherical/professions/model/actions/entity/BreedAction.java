@@ -2,7 +2,7 @@ package com.epherical.professions.model.actions.entity;
 
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.ActionType;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
@@ -13,9 +13,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SpawnEggItem;
 
 import java.util.List;
 

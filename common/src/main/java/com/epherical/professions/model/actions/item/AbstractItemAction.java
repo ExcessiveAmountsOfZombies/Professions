@@ -1,6 +1,6 @@
 package com.epherical.professions.model.actions.item;
 
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.mojang.datafixers.util.Either;

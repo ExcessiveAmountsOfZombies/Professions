@@ -5,7 +5,7 @@ import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.data.config.ProfessionConfig;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.model.perks.Perk;
+import com.epherical.professions.api.perks.Perk;
 import com.epherical.professions.presentation.client.RenderHelperUtil;
 import com.epherical.professions.presentation.client.gui.screen.OccupationPerkMenuScreen;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;

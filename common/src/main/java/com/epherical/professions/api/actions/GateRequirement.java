@@ -1,8 +1,9 @@
-package com.epherical.professions.model.gating.requirements;
+package com.epherical.professions.api.actions;
 
 import com.epherical.professions.bootstrap.platform.Services;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.Occupation;
+import com.epherical.professions.model.gating.requirements.GateRequirementType;
 import com.epherical.professions.util.GateReportPredicate;
 import com.mojang.serialization.Codec;
 import net.minecraft.network.chat.Component;

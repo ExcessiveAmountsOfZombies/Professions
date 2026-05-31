@@ -1,5 +1,6 @@
 package com.epherical.professions.model.actions.conditions;
 
+import com.epherical.professions.api.actions.Condition;
 import com.epherical.professions.bootstrap.Conditions;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
@@ -19,7 +20,7 @@ public class FullyGrownCropCondition implements Condition {
 
     @Override
     public boolean test(ProfessionContext context) {
-        BlockState state = context.getPossibleParameter(ProfessionParameter.THIS_BLOCK);
+        BlockState state = context.getPossibleParameter(ProfessionParameter.THIS_BLOCK_STATE);
         return state != null && state.getBlock() instanceof CropBlock crop && crop.isMaxAge(state);
     }
 

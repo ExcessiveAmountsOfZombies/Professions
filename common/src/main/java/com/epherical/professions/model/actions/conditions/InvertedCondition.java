@@ -1,5 +1,6 @@
 package com.epherical.professions.model.actions.conditions;
 
+import com.epherical.professions.api.actions.Condition;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.bootstrap.Conditions;
 import com.mojang.serialization.MapCodec;

@@ -1,7 +1,7 @@
 package com.epherical.professions.model.actions.block;
 
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.bootstrap.Actions;
 import com.mojang.datafixers.util.Either;

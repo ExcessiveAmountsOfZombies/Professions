@@ -2,15 +2,18 @@ package com.epherical.professions.presentation.commands;
 
 import com.epherical.professions.ActionManager;
 import com.epherical.professions.PlayerManager;
+import com.epherical.professions.ProfessionCategoryManager;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.core.Profession;
+import com.epherical.professions.core.ProfessionCategory;
 import com.epherical.professions.domain.exception.ProfessionNotActiveException;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.ActionType;
-import com.epherical.professions.model.actions.rewards.Reward;
+import com.epherical.professions.api.actions.Reward;
 import com.epherical.professions.data.config.ProfessionConfig;
+import com.epherical.professions.networking.server.PlayerDataSyncUtil;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.mojang.brigadier.CommandDispatcher;
@@ -23,6 +26,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
+import net.minecraft.commands.arguments.UuidArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -39,9 +43,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 public class ProfessionsStandardCommands {
 
@@ -49,11 +53,13 @@ public class ProfessionsStandardCommands {
 
     private final ActionManager actionManager;
     private final PlayerManager playerManager;
+    private final ProfessionCategoryManager categoryManager;
 
     public ProfessionsStandardCommands(ProfessionsCommon mod, CommandDispatcher<CommandSourceStack> stackCommandDispatcher,
                                        CommandBuildContext commandBuildContext, ActionManager actionManager) {
         this.actionManager = actionManager;
         this.playerManager = mod.getPlayerManager();
+        this.categoryManager = mod.getCategoryManager();
         this.registerCommands(stackCommandDispatcher, commandBuildContext);
     }
 
@@ -71,6 +77,26 @@ public class ProfessionsStandardCommands {
                         .then(Commands.argument("occupation", ResourceOrTagArgument.resourceOrTag(buildContext, ProfessionsCommon.PROFESSION_REGISTRY_KEY))
                                 .then(Commands.argument("level", IntegerArgumentType.integer(0))
                                         .executes(this::setLevel))))
+                .then(Commands.literal("setCategory")
+                        .requires(source -> source.hasPermission(4))
+                        .then(Commands.argument("uuid", UuidArgument.uuid())
+                                .suggests((context, builder) -> {
+                                    for (IProfessionalPlayer loadedPlayer : playerManager.getPlayers()) {
+                                        UUID uuid = loadedPlayer.getUUID();
+                                        if (uuid != null) {
+                                            builder.suggest(uuid.toString());
+                                        }
+                                    }
+                                    return builder.buildFuture();
+                                })
+                                .then(Commands.argument("category", ResourceLocationArgument.id())
+                                        .suggests((context, builder) -> {
+                                            for (ResourceLocation categoryId : categoryManager.getCategoryMap().keySet()) {
+                                                builder.suggest(categoryId.toString());
+                                            }
+                                            return builder.buildFuture();
+                                        })
+                                        .executes(this::setCategory))))
                 .then(Commands.literal("unclaimedperks")
                         .executes(this::unclaimedPerks))
                 .then(Commands.literal("claimperk")
@@ -96,6 +122,44 @@ public class ProfessionsStandardCommands {
                                 })
                                 .executes(this::claimPerk)));
         stack.register(command);
+    }
+
+    private int setCategory(CommandContext<CommandSourceStack> stack) {
+        UUID uuid = UuidArgument.getUuid(stack, "uuid");
+        IProfessionalPlayer player = playerManager.getPlayer(uuid);
+        if (player == null) {
+            stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_player")
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+
+        ResourceLocation categoryId = ResourceLocationArgument.getId(stack, "category");
+        ProfessionCategory category = categoryManager.getCategory(categoryId);
+        if (category == null) {
+            stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_category", categoryId)
+                    .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
+            return 0;
+        }
+        // todo; in the future we should probably resynchronize the gates to the player. I don't think we're going to always sync them if they aren't enabled.
+        //
+
+        player.setCategory(category);
+        player.markDirty(true);
+
+        String playerName = playerManager.getPlayerNameFromUUID(uuid);
+        Component targetPlayer = Component.literal(playerName != null ? playerName : uuid.toString())
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+        Component targetCategory = Component.literal(categoryId.toString())
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.variables));
+
+        ServerPlayer player1 = stack.getSource().getServer().getPlayerList().getPlayer(uuid);
+        if (player1 != null) {
+            PlayerDataSyncUtil.syncAll(player1, player, playerManager);
+        }
+
+        stack.getSource().sendSuccess(() -> Component.translatable("professions.command.setcategory.success", targetPlayer, targetCategory)
+                .setStyle(Style.EMPTY.withColor(ProfessionConfig.success)), false);
+        return 1;
     }
 
     private int setLevel(CommandContext<CommandSourceStack> stack) throws CommandSyntaxException {

@@ -2,6 +2,8 @@ package com.epherical.professions.model.perks;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
+import com.epherical.professions.api.perks.IStartupPerk;
+import com.epherical.professions.api.perks.Perk;
 import com.epherical.professions.bootstrap.Perks;
 import com.epherical.professions.model.Occupation;
 import com.mojang.serialization.MapCodec;

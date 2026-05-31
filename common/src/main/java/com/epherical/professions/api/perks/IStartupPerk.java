@@ -1,4 +1,4 @@
-package com.epherical.professions.model.perks;
+package com.epherical.professions.api.perks;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

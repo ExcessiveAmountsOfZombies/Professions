@@ -1,4 +1,4 @@
-package com.epherical.professions.model.gating;
+package com.epherical.professions.api.actions;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.bootstrap.Gates;
@@ -6,7 +6,9 @@ import com.epherical.professions.bootstrap.platform.Services;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.model.gating.requirements.GateRequirement;
+import com.epherical.professions.model.gating.GateReport;
+import com.epherical.professions.model.gating.GateType;
+import com.epherical.professions.presentation.model.GateDisplay;
 import com.epherical.professions.util.GateReportPredicate;
 import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Either;
@@ -19,6 +21,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -82,12 +85,19 @@ public abstract class Gate<T> implements Predicate<ProfessionContext> {
 
     public abstract ResourceKey<? extends Registry<T>> getRegistryKey();
 
+    public abstract List<GateDisplay<T>> getDisplays(@Nullable RegistryAccess registryAccess);
+
     public Holder<Profession> getProfession() {
         return profession;
     }
 
     public List<GateRequirement> getRequirements() {
         return requirements;
+    }
+
+
+    public GateReportPredicate<ProfessionContext, Occupation> getGatePredicate() {
+        return gatePredicate;
     }
 
     public List<Either<TagKey<T>, ResourceKey<T>>> getValues() {

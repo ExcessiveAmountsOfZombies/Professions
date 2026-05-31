@@ -8,7 +8,7 @@ import com.epherical.professions.api.event.runtime.rewards.OccupationExperienceE
 import com.epherical.professions.bootstrap.Perks;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.model.perks.Perk;
+import com.epherical.professions.api.perks.Perk;
 import com.epherical.professions.model.perks.PerkProfessionGainEXP;
 
 import java.util.Collection;

@@ -1,7 +1,7 @@
 package com.epherical.professions.registries;
 
 import com.epherical.professions.GateManager;
-import com.epherical.professions.model.gating.Gate;
+import com.epherical.professions.api.actions.Gate;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

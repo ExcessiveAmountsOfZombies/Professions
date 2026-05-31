@@ -1,7 +1,7 @@
 package com.epherical.professions.networking.server;
 
 import com.epherical.professions.ProfessionsCommon;
-import com.epherical.professions.model.gating.Gate;
+import com.epherical.professions.api.actions.Gate;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

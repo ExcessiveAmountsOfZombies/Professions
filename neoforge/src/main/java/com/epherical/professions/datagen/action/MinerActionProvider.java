@@ -2,9 +2,9 @@ package com.epherical.professions.datagen.action;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.block.BlockBreakAction;
-import com.epherical.professions.model.actions.conditions.Condition;
+import com.epherical.professions.api.actions.Condition;
 import com.epherical.professions.model.actions.conditions.InvertedCondition;
 import com.epherical.professions.model.actions.conditions.ToolMatcher;
 import com.epherical.professions.model.actions.rewards.OccupationExperience;

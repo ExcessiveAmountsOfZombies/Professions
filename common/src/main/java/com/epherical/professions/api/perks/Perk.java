@@ -1,10 +1,11 @@
-package com.epherical.professions.model.perks;
+package com.epherical.professions.api.perks;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.bootstrap.platform.Services;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.Occupation;
+import com.epherical.professions.model.perks.PerkType;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;

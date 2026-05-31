@@ -2,7 +2,7 @@ package com.epherical.professions.datagen.perks;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.model.perks.Perk;
+import com.epherical.professions.api.perks.Perk;
 import com.epherical.professions.model.perks.PerkAttribute;
 import com.epherical.professions.model.perks.PerkProfessionGainEXP;
 import net.minecraft.core.Holder;

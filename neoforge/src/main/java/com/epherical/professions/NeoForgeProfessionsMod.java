@@ -63,7 +63,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -323,7 +322,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             if (!player.isCreative() && player instanceof ServerPlayer) {
                 ProfessionContext.Builder builder = ProfessionContext.builder((ServerLevel) event.getLevel(),
                         Actions.BLOCK_BREAK, mod.playerManager.getPlayer(player.getUUID()))
-                        .addParameter(ProfessionParameter.THIS_BLOCK, event.getState())
+                        .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getState())
                         .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
                         .addParameter(ProfessionParameter.TOOL, player.getMainHandItem())
                         .addParameter(ProfessionParameter.ITEM_INVOLVED, event.getPlayer().getWeaponItem())
@@ -345,7 +344,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             if (entity instanceof ServerPlayer serverPlayer && !serverPlayer.isCreative()) {
                 ProfessionContext.Builder builder = ProfessionContext.builder((ServerLevel) event.getLevel(),
                                 Actions.BLOCK_PLACE, mod.playerManager.getPlayer(serverPlayer.getUUID()))
-                        .addParameter(ProfessionParameter.THIS_BLOCK, event.getState())
+                        .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getState())
                         .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
                         .addParameter(ProfessionParameter.THIS_HOLDER, blockHolder);
 
@@ -362,7 +361,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                     ProfessionContext.Builder builder = ProfessionContext.builder(level,
                                     Actions.BLOCK_EXPLODE, mod.playerManager.getPlayer(player.getUUID()))
                             .addParameter(ProfessionParameter.BLOCKPOS, affectedBlock)
-                            .addParameter(ProfessionParameter.THIS_BLOCK, blockState)
+                            .addParameter(ProfessionParameter.THIS_BLOCK_STATE, blockState)
                             .addParameter(ProfessionParameter.THIS_HOLDER, blockState.getBlockHolder());
                     mod.playerManager.processAction(player, builder.build());
                 }
@@ -414,6 +413,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
+
             Player player = event.getEntity();
             if (player.level().isClientSide) {
                 return;

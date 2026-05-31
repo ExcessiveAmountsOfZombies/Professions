@@ -1,7 +1,7 @@
 package com.epherical.professions.registries;
 
 import com.epherical.professions.ActionManager;
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Action;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

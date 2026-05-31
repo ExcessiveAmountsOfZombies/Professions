@@ -1,11 +1,12 @@
 package com.epherical.professions.model.gating.requirements;
 
 import com.epherical.professions.api.IProfessionalPlayer;
+import com.epherical.professions.api.actions.Gate;
+import com.epherical.professions.api.actions.GateRequirement;
 import com.epherical.professions.bootstrap.Requirements;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.model.gating.Gate;
 import com.epherical.professions.model.gating.GateReport;
 import com.epherical.professions.util.ClientAdvancementUtil;
 import com.mojang.serialization.MapCodec;
@@ -18,15 +19,11 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-public record AdvancementRequirement(List<ResourceLocation> advancements) implements GateRequirement {
+public record AdvancementRequirement(ResourceLocation advancement) implements GateRequirement {
 
     public static final MapCodec<AdvancementRequirement> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    ResourceLocation.CODEC.listOf().fieldOf("advancements").forGetter(AdvancementRequirement::advancements)
+                    ResourceLocation.CODEC.fieldOf("advancement").forGetter(AdvancementRequirement::advancement)
             ).apply(i, AdvancementRequirement::new)
     );
 
@@ -44,7 +41,7 @@ public record AdvancementRequirement(List<ResourceLocation> advancements) implem
 
     @Override
     public boolean test(ProfessionContext context, Occupation occupation) {
-        if (advancements().isEmpty()) {
+        if (advancement() == null) {
             return true;
         }
 
@@ -53,7 +50,7 @@ public record AdvancementRequirement(List<ResourceLocation> advancements) implem
 
         // If it's just single player we'll do the hasServerAdvancements check because the result would be the same.
         if (context.isClientSide() && !ClientAdvancementUtil.isSingleplayer()) {
-            return ClientAdvancementUtil.hasAdvancements(advancements());
+            return ClientAdvancementUtil.hasAdvancements(advancement());
         }
 
         return hasServerAdvancements(player);
@@ -63,21 +60,16 @@ public record AdvancementRequirement(List<ResourceLocation> advancements) implem
         if (!(player instanceof ServerPlayer serverPlayer) || serverPlayer.getServer() == null) {
             return false;
         }
-        return hasServerAdvancements(serverPlayer, advancements());
+        return hasServerAdvancements(serverPlayer, advancement());
     }
 
-    private boolean hasServerAdvancements(ServerPlayer serverPlayer, List<ResourceLocation> advancementKeys) {
+    private boolean hasServerAdvancements(ServerPlayer serverPlayer, ResourceLocation advancementKeys) {
         PlayerAdvancements playerAdvancements = serverPlayer.getAdvancements();
-        for (ResourceLocation advancementKey : advancementKeys) {
-            if (!hasAdvancement(serverPlayer, playerAdvancements, advancementKey)) {
-                return false;
-            }
-        }
-        return true;
+        return hasAdvancement(serverPlayer, playerAdvancements, advancementKeys);
     }
 
     private static boolean hasAdvancement(ServerPlayer player, PlayerAdvancements advancements, ResourceLocation key) {
-        AdvancementHolder holder = player.getServer().getAdvancements().get(key);
+        AdvancementHolder holder = player.getServer().getAdvancements().get(key); // todo; null check maybe
         if (holder == null) {
             return false;
         }
@@ -88,25 +80,22 @@ public record AdvancementRequirement(List<ResourceLocation> advancements) implem
     public void test(ProfessionContext context, Occupation occupation, GateReport gateReport, Gate<?> gate) {
         if (!test(context, occupation)) {
             gateReport.failed(this, gate, occupation, context);
+        } else {
+            gateReport.success(this, gate, occupation, context);
         }
     }
 
     public static class Builder implements GateRequirement.Builder {
-        private final List<ResourceLocation> advancements = new ArrayList<>();
+        private ResourceLocation advancements = null;
 
         public Builder advancement(ResourceLocation advancement) {
-            advancements.add(advancement);
-            return this;
-        }
-
-        public Builder advancements(Collection<ResourceLocation> advancements) {
-            this.advancements.addAll(advancements);
+            advancements = advancement;
             return this;
         }
 
         @Override
         public GateRequirement build() {
-            return new AdvancementRequirement(List.copyOf(advancements));
+            return new AdvancementRequirement((advancements));
         }
     }
 }

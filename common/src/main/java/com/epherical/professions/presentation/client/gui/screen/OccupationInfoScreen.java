@@ -2,7 +2,7 @@ package com.epherical.professions.presentation.client.gui.screen;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.model.Occupation;
-import com.epherical.professions.model.actions.rewards.Reward;
+import com.epherical.professions.api.actions.Reward;
 import com.epherical.professions.presentation.client.gui.components.OccupationInfoList;
 import com.epherical.professions.presentation.client.gui.components.OccupationXpBar;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;

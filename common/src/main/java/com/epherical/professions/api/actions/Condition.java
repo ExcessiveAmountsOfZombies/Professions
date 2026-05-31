@@ -1,7 +1,8 @@
-package com.epherical.professions.model.actions.conditions;
+package com.epherical.professions.api.actions;
 
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.bootstrap.platform.Services;
+import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.mojang.serialization.Codec;
 
 import java.util.function.Predicate;

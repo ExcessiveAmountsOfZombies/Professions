@@ -5,11 +5,9 @@ import com.epherical.professions.core.Profession;
 import com.epherical.professions.model.Occupation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -18,16 +16,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OccupationList extends AbstractOccupationSelector<OccupationList.Entry> {
+public class OccupationProfessionList extends AbstractOccupationSelector<OccupationProfessionList.Entry> {
 
 
-    public OccupationList(Minecraft mc, int width, int top, int bottom, int height, List<Occupation> occupations) {
+    public OccupationProfessionList(Minecraft mc, int width, int top, int bottom, int height, List<Occupation> occupations) {
         super(mc, width, top, bottom, height);
 
 
@@ -44,7 +41,7 @@ public class OccupationList extends AbstractOccupationSelector<OccupationList.En
     private List<FormattedCharSequence> orderedDescription;
 
     @Override
-    public void setSelected(@Nullable OccupationList.Entry pSelected) {
+    public void setSelected(@Nullable OccupationProfessionList.Entry pSelected) {
         super.setSelected(pSelected);
         professionIcon = new ItemStack(pSelected.profession.formatting().icon());
         professionName = Component.literal(pSelected.profession.displayNameRaw()).withStyle(Style.EMPTY.withColor(pSelected.profession.professionColor()));

@@ -15,25 +15,22 @@ import java.util.List;
 
 public class ClientAdvancementUtil {
 
-    public static boolean hasAdvancements(List<ResourceLocation> advancementKeys) {
+    public static boolean hasAdvancements(ResourceLocation advancementKeys) {
         Minecraft minecraft = Minecraft.getInstance();
         ClientPacketListener connection = minecraft.getConnection();
         if (connection == null) {
             return false;
         }
-        
+
         ClientAdvancements clientAdvancements = connection.getAdvancements();
 
-        for (ResourceLocation advancementKey : advancementKeys) {
-            AdvancementHolder advancement = clientAdvancements.get(advancementKey);
-            if (advancement == null) {
-                return false;
-            }
-
-            AdvancementProgress progress = ((ClientAdvancementsAccessor) clientAdvancements).professionsGetProgress().get(advancement);
-            return progress != null && progress.isDone();
+        AdvancementHolder advancement = clientAdvancements.get(advancementKeys);
+        if (advancement == null) {
+            return false;
         }
-        return true;
+
+        AdvancementProgress progress = ((ClientAdvancementsAccessor) clientAdvancements).professionsGetProgress().get(advancement);
+        return progress != null && progress.isDone();
     }
 
     public static boolean isSingleplayer() {

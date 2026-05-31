@@ -2,7 +2,7 @@ package com.epherical.professions.datagen.action;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.item.EnchantAction;
 import com.epherical.professions.model.actions.rewards.OccupationExperience;
 import net.minecraft.core.Holder;

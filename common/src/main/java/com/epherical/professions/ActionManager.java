@@ -1,7 +1,7 @@
 package com.epherical.professions;
 
 import com.epherical.professions.core.Profession;
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.ActionType;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
@@ -17,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public class ActionManager {
 

@@ -2,7 +2,8 @@ package com.epherical.professions.model.actions.rewards;
 
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
-import com.epherical.professions.model.actions.Action;
+import com.epherical.professions.api.actions.Reward;
+import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import com.epherical.professions.model.Occupation;

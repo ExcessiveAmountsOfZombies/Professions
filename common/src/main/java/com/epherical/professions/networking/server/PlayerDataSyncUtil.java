@@ -9,6 +9,8 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.Optional;
 
 public final class PlayerDataSyncUtil {
+    // todo; when we run this command, we should check if the items are enabled.
+    //  this applies for Perks and Gates.
 
     public static void syncAll(ServerPlayer player, IProfessionalPlayer professionalPlayer, PlayerManager playerManager) {
         syncOccupations(player, professionalPlayer, playerManager);

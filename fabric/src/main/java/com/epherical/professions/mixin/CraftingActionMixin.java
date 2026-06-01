@@ -39,7 +39,7 @@ public class CraftingActionMixin {
             return;
         }
 
-        ProfessionContext.Builder builder = ProfessionContext.builder(serverPlayer.serverLevel(), Actions.CRAFTING_ACTION, professionalPlayer)
+        ProfessionContext.Builder builder = ProfessionContext.builder(serverPlayer.level(), Actions.CRAFTING_ACTION, professionalPlayer)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, stack);
         mod.getPlayerManager().processAction(serverPlayer, builder.build());
     }

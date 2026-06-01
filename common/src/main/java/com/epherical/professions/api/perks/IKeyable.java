@@ -1,8 +1,8 @@
 package com.epherical.professions.api.perks;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface IKeyable {
 
-    ResourceLocation getId();
+    Identifier getId();
 }

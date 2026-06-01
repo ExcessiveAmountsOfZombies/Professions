@@ -7,7 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.UUID;
 public record S2CPlayerActionsSyncPayload(UUID playerId, List<Action<?>> actions) implements CustomPacketPayload {
 
     public static final Type<S2CPlayerActionsSyncPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "player_actions_sync"));
+            new Type<>(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "player_actions_sync"));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, List<Action<?>>> ACTIONS_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(Action.TYPED_CODEC.listOf());

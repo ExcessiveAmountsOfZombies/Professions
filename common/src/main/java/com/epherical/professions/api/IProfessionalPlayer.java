@@ -52,11 +52,11 @@ public interface IProfessionalPlayer {
      */
     List<Occupation> getActiveOccupations();
 
-    boolean hasClaimedPerk(ResourceLocation perkId);
+    boolean hasClaimedPerk(Identifier perkId);
 
-    Set<ResourceLocation> getClaimedPerks();
+    Set<Identifier> getClaimedPerks();
 
-    Set<ResourceLocation> getUnlockedPerks();
+    Set<Identifier> getUnlockedPerks();
 
 
 

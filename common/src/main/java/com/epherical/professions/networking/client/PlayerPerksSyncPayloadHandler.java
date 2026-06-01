@@ -10,7 +10,7 @@ public final class PlayerPerksSyncPayloadHandler {
     }
 
     public static void handle(S2CPlayerPerksSyncPayload payload) {
-        Minecraft.getInstance().doRunTask(() -> {
+        Minecraft.getInstance().execute(() -> {
             Minecraft minecraft = Minecraft.getInstance();
             if (!minecraft.isSingleplayer()) {
                 ProfessionsCommon.INSTANCE.getPlayerManager().applyClientPerkSync(payload.perks());

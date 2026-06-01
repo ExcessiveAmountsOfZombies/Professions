@@ -1,6 +1,6 @@
 {
   "amount": 0.001,
-  "attribute": "minecraft:generic.movement_speed",
+  "attribute": "minecraft:movement_speed",
   "description": "Gain additional movement speed. (0.001)",
   "itemIcon": "minecraft:enchanting_table",
   "levelRequirement": 800,

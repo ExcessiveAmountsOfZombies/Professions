@@ -11,7 +11,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,18 +36,18 @@ public class PerkManager {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String FEATURE_PERKS_ENABLED = "perksEnabled";
 
-    private volatile Map<ResourceLocation, Perk> perksById = Map.of();
-    private volatile Map<ResourceLocation, NavigableMap<Integer, List<Perk>>> perksByProfessionAndLevel = Map.of();
+    private volatile Map<Identifier, Perk> perksById = Map.of();
+    private volatile Map<Identifier, NavigableMap<Integer, List<Perk>>> perksByProfessionAndLevel = Map.of();
     private volatile Map<PerkType, List<Perk>> perksByType = Map.of();
 
     public void reloadPerks(List<Perk> perks) {
-        Map<ResourceLocation, Perk> nextPerksById = new LinkedHashMap<>();
-        Map<ResourceLocation, NavigableMap<Integer, List<Perk>>> nextPerksByProfessionAndLevel = new HashMap<>();
+        Map<Identifier, Perk> nextPerksById = new LinkedHashMap<>();
+        Map<Identifier, NavigableMap<Integer, List<Perk>>> nextPerksByProfessionAndLevel = new HashMap<>();
         Map<PerkType, List<Perk>> nextPerksByType = new HashMap<>();
 
 
         for (Perk perk : perks) {
-            ResourceLocation id = perk.getId();
+            Identifier id = perk.getId();
             if (id == null) {
                 LOGGER.error("Skipping perk without resolved id: {}", perk);
                 continue;
@@ -76,13 +76,13 @@ public class PerkManager {
     }
 
     @Nullable
-    public Perk getPerk(ResourceLocation id) {
+    public Perk getPerk(Identifier id) {
         return perksById.get(id);
     }
 
     public List<Perk> getPerksByProfession(Holder<Profession> profession) {
         return profession.unwrapKey()
-                .map(ResourceKey::location)
+                .map(ResourceKey::identifier)
                 .map(this::flattenPerksByLevel)
                 .orElseGet(List::of);
     }
@@ -99,7 +99,7 @@ public class PerkManager {
     }
 
     public List<Perk> getPerksByProfession(ResourceKey<Profession> profession) {
-        return flattenPerksByLevel(profession.location());
+        return flattenPerksByLevel(profession.identifier());
     }
 
     public Set<Perk> getPerksByProfession(Holder<Profession> profession, int level) {
@@ -109,14 +109,14 @@ public class PerkManager {
     }
 
     public Set<Perk> getPerksByProfession(ResourceKey<Profession> profession, int level) {
-        NavigableMap<Integer, List<Perk>> perksByLevel = perksByProfessionAndLevel.get(profession.location());
+        NavigableMap<Integer, List<Perk>> perksByLevel = perksByProfessionAndLevel.get(profession.identifier());
         if (perksByLevel == null) {
             return new HashSet<>();
         }
         return perksByLevel.headMap(level, true).values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
     }
 
-    private List<Perk> flattenPerksByLevel(ResourceLocation professionKey) {
+    private List<Perk> flattenPerksByLevel(Identifier professionKey) {
         NavigableMap<Integer, List<Perk>> perksByLevel = perksByProfessionAndLevel.get(professionKey);
         if (perksByLevel == null) {
             return List.of();
@@ -126,18 +126,18 @@ public class PerkManager {
                 .toList();
     }
 
-    private static void addToNavigableMap(Map<ResourceLocation, NavigableMap<Integer, List<Perk>>> index, Perk perk) {
+    private static void addToNavigableMap(Map<Identifier, NavigableMap<Integer, List<Perk>>> index, Perk perk) {
         perk.getProfession().unwrapKey()
-                .map(ResourceKey::location)
+                .map(ResourceKey::identifier)
                 .ifPresent(key -> index
                         .computeIfAbsent(key, ignored -> new TreeMap<>())
                         .computeIfAbsent(perk.getLevelRequirement(), ignored -> new ArrayList<>())
                         .add(perk));
     }
 
-    private static void removeOverriddenValueFromNavigableMap(Map<ResourceLocation, NavigableMap<Integer, List<Perk>>> index, Perk perk) {
+    private static void removeOverriddenValueFromNavigableMap(Map<Identifier, NavigableMap<Integer, List<Perk>>> index, Perk perk) {
         perk.getProfession().unwrapKey()
-                .map(ResourceKey::location)
+                .map(ResourceKey::identifier)
                 .ifPresent(key -> {
                     NavigableMap<Integer, List<Perk>> byLevel = index.get(key);
                     if (byLevel == null) {
@@ -184,7 +184,7 @@ public class PerkManager {
         perksForLevel.removeIf(perk -> occupation.hasClaimedPerk(perk.getId()));
 
         // todo; add an event here before we map it. then we map it and it gets set to the player
-        Set<ResourceLocation> unclaimedPerksIds = perksForLevel.stream().map(Perk::getId).collect(Collectors.toSet());
+        Set<Identifier> unclaimedPerksIds = perksForLevel.stream().map(Perk::getId).collect(Collectors.toSet());
         occupation.setUnclaimedPerks(unclaimedPerksIds);
         player.markDirty(true);
     }
@@ -200,9 +200,9 @@ public class PerkManager {
         boolean perksRemoved = false;
 
         for (Occupation activeOccupation : player.getActiveOccupations()) {
-            List<ResourceLocation> disabledPerks = new ArrayList<>();
+            List<Identifier> disabledPerks = new ArrayList<>();
 
-            for (ResourceLocation claimedPerk : activeOccupation.getClaimedPerks()) {
+            for (Identifier claimedPerk : activeOccupation.getClaimedPerks()) {
                 Perk perk = this.getPerk(claimedPerk);
 
                 // 1. Check if the perk is still valid, maybe it was removed after the player claimed it
@@ -226,7 +226,7 @@ public class PerkManager {
         }
 
         for (IStartupPerk startupPerk : this.getPerksByType(IStartupPerk.class)) {
-            ResourceLocation id = startupPerk.getId();
+            Identifier id = startupPerk.getId();
             Perk.ModificationStage stage = startupPerk.getModificationStage();
             String perkGroup = getLogicalGroupId(startupPerk);
             ProfessionsCommon.LOG.debug("Perk We're Checking: {}, {}", id, perkGroup);
@@ -283,12 +283,12 @@ public class PerkManager {
     }
 
     private static String getLogicalGroupId(IStartupPerk startupPerk) {
-        ResourceLocation groupId = startupPerk.getGroupId();
+        Identifier groupId = startupPerk.getGroupId();
         String stageSuffix = "_" + startupPerk.getModificationStage().getSerializedName();
         String path = groupId.getPath();
         if (path.endsWith(stageSuffix)) {
             path = path.substring(0, path.length() - stageSuffix.length());
         }
-        return ResourceLocation.fromNamespaceAndPath(groupId.getNamespace(), path).toString();
+        return Identifier.fromNamespaceAndPath(groupId.getNamespace(), path).toString();
     }
 }

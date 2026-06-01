@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
@@ -64,8 +65,9 @@ public class OccupationMenuScreen extends Screen {
 
         occupationProfessionList = new OccupationProfessionList(this.minecraft, 117, topPos + 28, 214 + topPos, 32, occupations);
         occupationProfessionList.setX(leftPos + 6);
+        occupationProfessionList.setScrollAmount(0.0d);
         try {
-            occupationProfessionList.setSelected(occupationProfessionList.getFirstElement());
+            occupationProfessionList.setSelected(occupationProfessionList.children().getFirst());
         } catch (IndexOutOfBoundsException ignored) {}
 
         addRenderableWidget(occupationProfessionList);
@@ -153,12 +155,12 @@ public class OccupationMenuScreen extends Screen {
             RenderHelperUtil.drawScaled(gfx, pX, pY, 0.8f, () -> {
                 int translateY = 0;
                 for(FormattedCharSequence seq : occupationProfessionList.getOrderedDescription()) {
-                    gfx.text(minecraft.font, seq, 0, translateY, 0x6f4d15, false);
+                    gfx.text(minecraft.font, seq, 0, translateY, 0xFF6f4d15, false);
                     translateY += 10;
                 }
             });
 
-            int rgb = selected.getProfession().professionColor().getValue();
+            int rgb = ARGB.color(0xFF, selected.getProfession().professionColor().getValue());
 
             RenderHelperUtil.drawScaledString(gfx, minecraft.font, Component.translatable("professions.screen.occupation_menu.progress"),
                     leftPos + 150, topPos + 90, 0.75f, 0xFF6f4d15, false);

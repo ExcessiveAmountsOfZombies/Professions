@@ -1,6 +1,6 @@
 {
   "amount": 1.0,
-  "attribute": "minecraft:generic.max_health",
+  "attribute": "minecraft:max_health",
   "description": "Gain additional max health. (1.0)",
   "itemIcon": "minecraft:golden_apple",
   "levelRequirement": 400,

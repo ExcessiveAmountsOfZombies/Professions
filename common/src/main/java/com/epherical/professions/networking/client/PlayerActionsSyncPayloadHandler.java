@@ -11,7 +11,7 @@ public final class PlayerActionsSyncPayloadHandler {
     }
 
     public static void handle(S2CPlayerActionsSyncPayload payload) {
-        Minecraft.getInstance().doRunTask(() -> {
+        Minecraft.getInstance().execute(() -> {
             Minecraft minecraft = Minecraft.getInstance();
             if (!minecraft.isSingleplayer()) {
                 RegistryAccess registryAccess = minecraft.level != null ? minecraft.level.registryAccess() : null;

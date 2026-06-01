@@ -6,7 +6,7 @@ import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.advancements.critereon.EnchantedItemTrigger;
+import net.minecraft.advancements.criterion.EnchantedItemTrigger;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -35,12 +35,12 @@ public class EnchantActionMixin {
 
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : EnchantmentHelper.getEnchantmentsForCrafting(item).entrySet()) {
             EnchantmentInstance enchantmentInstance = new EnchantmentInstance(entry.getKey(), entry.getIntValue());
-            ProfessionContext.Builder enchantBuilder = ProfessionContext.builder(player.serverLevel(), Actions.ENCHANT_ACTION, professionalPlayer)
+            ProfessionContext.Builder enchantBuilder = ProfessionContext.builder(player.level(), Actions.ENCHANT_ACTION, professionalPlayer)
                     .addParameter(ProfessionParameter.ENCHANTMENT_INSTANCE, enchantmentInstance);
             mod.getPlayerManager().processAction(player, enchantBuilder.build());
         }
 
-        ProfessionContext.Builder itemBuilder = ProfessionContext.builder(player.serverLevel(), Actions.ENCHANT_ACTION, professionalPlayer)
+        ProfessionContext.Builder itemBuilder = ProfessionContext.builder(player.level(), Actions.ENCHANT_ACTION, professionalPlayer)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, item);
         mod.getPlayerManager().processAction(player, itemBuilder.build());
     }

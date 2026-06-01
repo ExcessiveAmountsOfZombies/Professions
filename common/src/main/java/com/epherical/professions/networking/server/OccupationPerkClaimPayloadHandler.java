@@ -8,7 +8,7 @@ import com.epherical.professions.api.event.runtime.perks.PerkClaimedEvent;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.networking.client.C2SOccupationPerkClaimPayload;
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Set;
@@ -34,8 +34,8 @@ public final class OccupationPerkClaimPayloadHandler {
             return;
         }
 
-        ImmutableSet.Builder<ResourceLocation> claimedPerkIds = new ImmutableSet.Builder<>();
-        for (ResourceLocation perkId : payload.claimedPerks()) {
+        ImmutableSet.Builder<Identifier> claimedPerkIds = new ImmutableSet.Builder<>();
+        for (Identifier perkId : payload.claimedPerks()) {
             if (!occupation.hasUnclaimedPerk(perkId)) {
                 ProfessionsCommon.LOG.warn("Player {} attempted to claim invalid perk {} for occupation {}",
                         serverPlayer.getScoreboardName(), perkId, payload.professionId());
@@ -45,7 +45,7 @@ public final class OccupationPerkClaimPayloadHandler {
             occupation.addClaimedPerk(perkId);
             claimedPerkIds.add(perkId);
         }
-        Set<ResourceLocation> build = claimedPerkIds.build();
+        Set<Identifier> build = claimedPerkIds.build();
 
         if (!build.isEmpty()) {
             professionalPlayer.markDirty(true);

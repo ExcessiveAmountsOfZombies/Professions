@@ -24,7 +24,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.commands.arguments.UuidArgument;
 import net.minecraft.core.Holder;
@@ -32,7 +32,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
@@ -46,6 +46,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
+import static net.minecraft.server.permissions.LevelBasedPermissionSet.ADMIN;
 
 public class ProfessionsStandardCommands {
 
@@ -73,12 +75,12 @@ public class ProfessionsStandardCommands {
                                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                                         .executes(this::info))))
                 .then(Commands.literal("setlevel")
-                        .requires(source -> source.hasPermission(2))
+                        .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
                         .then(Commands.argument("occupation", ResourceOrTagArgument.resourceOrTag(buildContext, ProfessionsCommon.PROFESSION_REGISTRY_KEY))
                                 .then(Commands.argument("level", IntegerArgumentType.integer(0))
                                         .executes(this::setLevel))))
                 .then(Commands.literal("setCategory")
-                        .requires(source -> source.hasPermission(4))
+                        .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
                         .then(Commands.argument("uuid", UuidArgument.uuid())
                                 .suggests((context, builder) -> {
                                     for (IProfessionalPlayer loadedPlayer : playerManager.getPlayers()) {
@@ -89,9 +91,9 @@ public class ProfessionsStandardCommands {
                                     }
                                     return builder.buildFuture();
                                 })
-                                .then(Commands.argument("category", ResourceLocationArgument.id())
+                                .then(Commands.argument("category", IdentifierArgument.id())
                                         .suggests((context, builder) -> {
-                                            for (ResourceLocation categoryId : categoryManager.getCategoryMap().keySet()) {
+                                            for (Identifier categoryId : categoryManager.getCategoryMap().keySet()) {
                                                 builder.suggest(categoryId.toString());
                                             }
                                             return builder.buildFuture();
@@ -100,7 +102,7 @@ public class ProfessionsStandardCommands {
                 .then(Commands.literal("unclaimedperks")
                         .executes(this::unclaimedPerks))
                 .then(Commands.literal("claimperk")
-                        .then(Commands.argument("perk_id", ResourceLocationArgument.id())
+                        .then(Commands.argument("perk_id", IdentifierArgument.id())
                                 .suggests((context, builder) -> {
                                     ServerPlayer sourcePlayer;
                                     try {
@@ -114,14 +116,14 @@ public class ProfessionsStandardCommands {
                                         return builder.buildFuture();
                                     }
 
-                                    Set<ResourceLocation> perkIds = playerManager.getUnlockedUnclaimedPerkIds(player);
-                                    for (ResourceLocation perkId : perkIds) {
+                                    Set<Identifier> perkIds = playerManager.getUnlockedUnclaimedPerkIds(player);
+                                    for (Identifier perkId : perkIds) {
                                         builder.suggest(perkId.toString());
                                     }
                                     return builder.buildFuture();
                                 })
                                 .executes(this::claimPerk)));
-        stack.register(command);*/
+        stack.register(command);
     }
 
     private int setCategory(CommandContext<CommandSourceStack> stack) {
@@ -133,7 +135,7 @@ public class ProfessionsStandardCommands {
             return 0;
         }
 
-        ResourceLocation categoryId = ResourceLocationArgument.getId(stack, "category");
+        Identifier categoryId = IdentifierArgument.getId(stack, "category");
         ProfessionCategory category = categoryManager.getCategory(categoryId);
         if (category == null) {
             stack.getSource().sendFailure(Component.translatable("professions.command.error.missing_category", categoryId)
@@ -182,7 +184,7 @@ public class ProfessionsStandardCommands {
         Holder.Reference<Profession> professionHolder = professionResult.get();
         Occupation occupation = player.getOccupation(professionHolder);
         if (occupation == null) {
-            stack.getSource().sendFailure(Component.translatable("professions.command.setlevel.error.not_active", professionHolder.key().location())
+            stack.getSource().sendFailure(Component.translatable("professions.command.setlevel.error.not_active", professionHolder.key().identifier())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return 0;
         }
@@ -191,7 +193,7 @@ public class ProfessionsStandardCommands {
         try {
             occupation.setLevel(level, player);
         } catch (ProfessionNotActiveException exception) {
-            stack.getSource().sendFailure(Component.translatable("professions.command.setlevel.error.could_not_set", professionHolder.key().location())
+            stack.getSource().sendFailure(Component.translatable("professions.command.setlevel.error.could_not_set", professionHolder.key().identifier())
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
             return 0;
         }
@@ -213,7 +215,7 @@ public class ProfessionsStandardCommands {
             return 0;
         }
 
-        Set<ResourceLocation> unclaimedPerkIds = playerManager.getUnlockedUnclaimedPerkIds(player);
+        Set<Identifier> unclaimedPerkIds = playerManager.getUnlockedUnclaimedPerkIds(player);
         if (unclaimedPerkIds.isEmpty()) {
             stack.getSource().sendSuccess(() -> border(Component.translatable("professions.command.unclaimed_perks.header")
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))), false);
@@ -222,13 +224,13 @@ public class ProfessionsStandardCommands {
             return 1;
         }
 
-        List<ResourceLocation> sortedUnclaimedPerkIds = unclaimedPerkIds.stream()
+        List<Identifier> sortedUnclaimedPerkIds = unclaimedPerkIds.stream()
                 .sorted()
                 .toList();
 
         stack.getSource().sendSuccess(() -> border(Component.translatable("professions.command.unclaimed_perks.header")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.descriptors))), false);
-        for (ResourceLocation perkId : sortedUnclaimedPerkIds) {
+        for (Identifier perkId : sortedUnclaimedPerkIds) {
             stack.getSource().sendSuccess(() -> Component.literal("- ")
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
                     .append(Component.literal(perkId.toString())
@@ -246,7 +248,7 @@ public class ProfessionsStandardCommands {
             return 0;
         }
 
-        ResourceLocation perkId = ResourceLocationArgument.getId(stack, "perk_id");
+        Identifier perkId = IdentifierArgument.getId(stack, "perk_id");
         if (!playerManager.claimUnlockedReward(player, perkId)) {
             stack.getSource().sendFailure(Component.translatable("professions.command.claimperk.error", perkId)
                     .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors)));
@@ -383,8 +385,8 @@ public class ProfessionsStandardCommands {
         Object rawValue = value.value();
         return switch (rawValue) {
             case Block block -> block.getName();
-            case Item item -> item.getDescription();
-            case ItemLike itemLike -> itemLike.asItem().getDescription();
+            case Item item -> Component.translatable(item.getDescriptionId());
+            case ItemLike itemLike -> Component.translatable(itemLike.asItem().getDescriptionId());
             default -> Component.literal(value.getRegisteredName());
         };
     }
@@ -396,11 +398,11 @@ public class ProfessionsStandardCommands {
     private Component pageFooter(Holder.Reference<Profession> profession, int page, int maxPage) {
         int previousPage = Math.max(1, page - 1);
         int nextPage = Math.min(maxPage, page + 1);
-        String commandBase = "/professions info " + profession.key().location();
+        String commandBase = "/professions info " + profession.key().identifier();
 
         MutableComponent previous = Component.translatable("professions.command.prev")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.errors));
-        if (page > 1) {
+        /*if (page > 1) {
             previous = previous.copy().setStyle(previous.getStyle()
                     .withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandBase + " " + previousPage)));
@@ -412,13 +414,13 @@ public class ProfessionsStandardCommands {
             next = next.copy().setStyle(next.getStyle()
                     .withUnderlined(true)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandBase + " " + nextPage)));
-        }
+        }*/
 
         return Component.literal("=-=-=| ")
                 .setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders))
                 .append(previous)
                 .append(Component.literal(" " + page + "/" + maxPage + " ").setStyle(Style.EMPTY.withColor(ProfessionConfig.variables)))
-                .append(next)
+                //.append(next)
                 .append(Component.literal(" |=-=-=").setStyle(Style.EMPTY.withColor(ProfessionConfig.headerBorders)));
     }
 }

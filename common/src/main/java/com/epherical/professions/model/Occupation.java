@@ -33,7 +33,7 @@ public class Occupation {
     public static final Codec<OccupationSlot> SLOT_CODEC =
             Codec.STRING.xmap(s -> OccupationSlot.valueOf(s.toUpperCase(Locale.ROOT)),
                     OccupationSlot::name);
-    private static final Codec<Set<ResourceLocation>> PERK_ID_SET_CODEC = ResourceLocation.CODEC.listOf()
+    private static final Codec<Set<Identifier>> PERK_ID_SET_CODEC = Identifier.CODEC.listOf()
             .xmap(LinkedHashSet::new, List::copyOf);
 
     public static final Codec<Occupation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -50,8 +50,8 @@ public class Occupation {
     private final Identifier professionKey;
     private final ExperienceData experience;
     private final Settings settings;
-    private Set<ResourceLocation> unclaimedPerks;
-    private Set<ResourceLocation> claimedPerks;
+    private Set<Identifier> unclaimedPerks;
+    private Set<Identifier> claimedPerks;
     private int receivedBenefitsUpToLevel;
     private OccupationSlot slot;
 
@@ -68,8 +68,8 @@ public class Occupation {
         this(professionKey, experience, slot, settings, Set.of(), Set.of());
     }
 
-    public Occupation(ResourceLocation professionKey, ExperienceData experience, OccupationSlot slot, Settings settings,
-                      Set<ResourceLocation> unclaimedPerks, Set<ResourceLocation> claimedPerks) {
+    public Occupation(Identifier professionKey, ExperienceData experience, OccupationSlot slot, Settings settings,
+                      Set<Identifier> unclaimedPerks, Set<Identifier> claimedPerks) {
         this.professionKey = professionKey;
         this.experience = experience;
         this.settings = settings.copy();
@@ -237,44 +237,44 @@ public class Occupation {
         return profession.is(this.professionKey);
     }
 
-    public void setUnclaimedPerks(Set<ResourceLocation> unclaimedPerks) {
+    public void setUnclaimedPerks(Set<Identifier> unclaimedPerks) {
         this.unclaimedPerks = unclaimedPerks;
     }
 
-    public Set<ResourceLocation> getUnclaimedPerks() {
+    public Set<Identifier> getUnclaimedPerks() {
         return unclaimedPerks;
     }
 
-    public Set<ResourceLocation> getClaimedPerks() {
+    public Set<Identifier> getClaimedPerks() {
         return claimedPerks;
     }
 
-    public void addClaimedPerk(@NotNull ResourceLocation perkId) {
+    public void addClaimedPerk(@NotNull Identifier perkId) {
         this.claimedPerks.add(perkId);
         this.unclaimedPerks.remove(perkId);
     }
 
-    public void addUnclaimedPerk(@NotNull ResourceLocation perkId) {
+    public void addUnclaimedPerk(@NotNull Identifier perkId) {
         this.unclaimedPerks.add(perkId);
     }
 
-    public boolean hasClaimedPerk(ResourceLocation perkId) {
+    public boolean hasClaimedPerk(Identifier perkId) {
         return perkId != null && claimedPerks.contains(perkId);
     }
 
-    public boolean hasUnclaimedPerk(ResourceLocation perkId) {
+    public boolean hasUnclaimedPerk(Identifier perkId) {
         return perkId != null && unclaimedPerks.contains(perkId);
     }
 
-    public void removeClaimedPerk(ResourceLocation perkId) {
+    public void removeClaimedPerk(Identifier perkId) {
         this.claimedPerks.remove(perkId);
     }
 
-    public void removeAllClaimedPerks(Collection<ResourceLocation> perkIds) {
+    public void removeAllClaimedPerks(Collection<Identifier> perkIds) {
         this.claimedPerks.removeAll(perkIds);
     }
 
-    public void removeUnclaimedPerk(ResourceLocation perkId) {
+    public void removeUnclaimedPerk(Identifier perkId) {
         this.unclaimedPerks.remove(perkId);
     }
 

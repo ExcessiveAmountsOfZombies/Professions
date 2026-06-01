@@ -120,7 +120,7 @@ public class OccupationCategorySelectionScreen extends Screen {
         }
 
         drawWrappedScaledString(gfx, font, Component.translatable("professions.screen.occupation_category_selection.warning"),
-                leftPos + 23, topPos + 210, 0.5f, 400, 0x777777
+                leftPos + 23, topPos + 210, 0.5f, 400, 0xFF777777
         );
     }
 

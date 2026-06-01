@@ -79,6 +79,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.TradeWithVillagerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -287,11 +288,11 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
             ActionLoad3 loader = new ActionLoad3(mod.actionManager);
             event.addListener(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "action_reloader"), new NeoForgeActionReloadListener(loader));
             GateLoad3 gateLoader = new GateLoad3(mod.gateManager);
-            event.addListener(new NeoForgeGateReloadListener(gateLoader));
+            event.addListener(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "gate_reloader"), new NeoForgeGateReloadListener(gateLoader));
             CategoryLoad3 categoryLoader = new CategoryLoad3(mod.getCategoryManager(), mod.playerManager);
             event.addListener(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "category_reloader"), new NeoForgeCategoryReloadListener(categoryLoader));
             PerkLoad3 perkLoader = new PerkLoad3(mod.getPerkManager());
-            event.addListener(new NeoForgePerkReloadListener(perkLoader));
+            event.addListener(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk_reloader"), new NeoForgePerkReloadListener(perkLoader));
 
             // MVP for NF release
             // todo; build a better notification system (chat, pop up, toast, announcements)
@@ -314,7 +315,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
 
 
         @SubscribeEvent(priority = EventPriority.LOW)
-        public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        public static void onBlockBreak(BreakBlockEvent event) {
             Holder<Block> blockHolder = event.getState().typeHolder();
             Player player = event.getPlayer();
 

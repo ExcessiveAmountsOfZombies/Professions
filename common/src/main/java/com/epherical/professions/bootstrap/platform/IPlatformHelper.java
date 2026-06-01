@@ -43,8 +43,6 @@ public interface IPlatformHelper {
     }
 
 
-    Registry<Profession> getProfessionRegistry();
-
     Registry<ActionType> getActionTypeRegistry();
 
     Registry<GateType> getGateTypeRegistry();

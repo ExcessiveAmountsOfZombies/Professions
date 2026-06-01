@@ -31,11 +31,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public Registry<Profession> getProfessionRegistry() {
-        return NeoForgeProfessionsMod.PROFESSION_REGISTER.getRegistry().get();
-    }
-
-    @Override
     public Registry<ActionType> getActionTypeRegistry() {
         return NeoForgeProfessionsMod.ACTIONS;
     }

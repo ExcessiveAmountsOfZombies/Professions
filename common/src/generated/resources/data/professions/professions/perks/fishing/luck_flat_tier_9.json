@@ -1,6 +1,6 @@
 {
   "amount": 0.5,
-  "attribute": "minecraft:generic.luck",
+  "attribute": "minecraft:luck",
   "description": "Gain additional luck. (0.5)",
   "itemIcon": "minecraft:fishing_rod",
   "levelRequirement": 5000,

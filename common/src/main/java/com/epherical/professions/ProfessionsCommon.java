@@ -45,15 +45,15 @@ public abstract class ProfessionsCommon {
     public static final ResourceKey<Registry<ActionType>> ACTION_REGISTRY_KEY =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "professions/actions"));
     public static final ResourceKey<Registry<GateType>> GATE_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/gates"));
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "professions/gates"));
     public static final ResourceKey<Registry<GateRequirementType>> REQUIREMENT_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/requirements"));
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "professions/requirements"));
     public static final ResourceKey<Registry<ConditionType>> CONDITION_REGISTRY_KEY =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "professions/conditions"));
     public static final ResourceKey<Registry<RewardType>> REWARD_REGISTRY_KEY =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "professions/rewards"));
     public static final ResourceKey<Registry<PerkType>> PERK_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "professions/perks"));
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "professions/perks"));
     public static final ResourceKey<Registry<Profession>> PROFESSION_REGISTRY_KEY =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(MOD_ID, "occupations"));
 

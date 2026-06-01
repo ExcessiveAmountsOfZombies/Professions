@@ -23,11 +23,13 @@ import com.epherical.professions.presentation.client.gui.screen.OccupationMenuSc
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -35,6 +37,8 @@ import java.util.List;
 public class FabricClientInitializer implements ClientModInitializer {
 
     private static KeyMapping occupationMenu;
+    private static final Identifier PROFESSION_XP =
+            Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "profession_xp");
 
     @Override
     public void onInitializeClient() {
@@ -56,11 +60,16 @@ public class FabricClientInitializer implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(S2CPlayerGatesSyncPayload.TYPE,
                 (payload, context) -> PlayerGatesSyncPayloadHandler.handle(payload));
 
-        occupationMenu = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+
+        KeyMapping.Category category = KeyMapping.Category.register(
+                Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "category")
+        );
+
+        occupationMenu = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.professions.open_occupation_menu",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_R,
-                "category.professions.occupation"
+                category
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -69,7 +78,11 @@ public class FabricClientInitializer implements ClientModInitializer {
             }
         });
 
-        HudRenderCallback.EVENT.register(ExperienceNotificationHandler::render);
+        HudElementRegistry.attachElementAfter(
+                VanillaHudElements.HOTBAR,
+                PROFESSION_XP,
+                ExperienceNotificationHandler::render
+        );
     }
 
     private static void openMenu(Minecraft minecraft) {

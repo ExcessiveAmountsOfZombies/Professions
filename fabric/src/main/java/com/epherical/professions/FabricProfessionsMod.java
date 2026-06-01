@@ -44,11 +44,12 @@ import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.v1.DataResourceLoader;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
@@ -60,6 +61,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FabricProfessionsMod extends ProfessionsCommon implements ModInitializer {
 
@@ -72,6 +75,7 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
     public static Registry<RewardType> REWARDS;
     public static Registry<PerkType> PERKS;
     public static RegistryAccess REGISTRY_ACCESS;
+    private static final Map<ResourceKey<?>, Registry<?>> NON_DYNAMIC_REGISTRIES = new HashMap<>();
 
     public static FabricProfessionsMod mod;
 
@@ -92,24 +96,24 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
         mod = this;
         PlatformBootstrap.init(FABRIC_REGISTRAR_BACKEND);
 
-        ACTIONS = FabricRegistryBuilder.createSimple(ACTION_REGISTRY_KEY)
+        ACTIONS = addRegistry(ACTION_REGISTRY_KEY, FabricRegistryBuilder.create(ACTION_REGISTRY_KEY)
                 .attribute(RegistryAttribute.SYNCED)
-                .buildAndRegister();
-        GATES = FabricRegistryBuilder.createSimple(GATE_REGISTRY_KEY)
+                .buildAndRegister());
+        GATES = addRegistry(GATE_REGISTRY_KEY, FabricRegistryBuilder.create(GATE_REGISTRY_KEY)
                 .attribute(RegistryAttribute.SYNCED)
-                .buildAndRegister();
-        REQUIREMENTS = FabricRegistryBuilder.createSimple(REQUIREMENT_REGISTRY_KEY)
+                .buildAndRegister());
+        REQUIREMENTS = addRegistry(REQUIREMENT_REGISTRY_KEY, FabricRegistryBuilder.create(REQUIREMENT_REGISTRY_KEY)
                 .attribute(RegistryAttribute.SYNCED)
-                .buildAndRegister();
-        CONDITIONS = FabricRegistryBuilder.createSimple(CONDITION_REGISTRY_KEY)
+                .buildAndRegister());
+        CONDITIONS = addRegistry(CONDITION_REGISTRY_KEY, FabricRegistryBuilder.create(CONDITION_REGISTRY_KEY)
                 .attribute(RegistryAttribute.SYNCED)
-                .buildAndRegister();
-        REWARDS = FabricRegistryBuilder.createSimple(REWARD_REGISTRY_KEY)
+                .buildAndRegister());
+        REWARDS = addRegistry(REWARD_REGISTRY_KEY, FabricRegistryBuilder.create(REWARD_REGISTRY_KEY)
                 .attribute(RegistryAttribute.SYNCED)
-                .buildAndRegister();
-        PERKS = FabricRegistryBuilder.createSimple(PERK_REGISTRY_KEY)
+                .buildAndRegister());
+        PERKS = addRegistry(PERK_REGISTRY_KEY, FabricRegistryBuilder.create(PERK_REGISTRY_KEY)
                 .attribute(RegistryAttribute.SYNCED)
-                .buildAndRegister();
+                .buildAndRegister());
         DynamicRegistries.registerSynced(PROFESSION_REGISTRY_KEY, Profession.CODEC);
 
         ProfessionsCommon.register();
@@ -123,15 +127,15 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
     }
 
     private void registerNetworking() {
-        PayloadTypeRegistry.playS2C().register(S2CExperienceGainPayload.TYPE, S2CExperienceGainPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(S2CCategorySyncPayload.TYPE, S2CCategorySyncPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(S2CPlayerDataSyncPayload.TYPE, S2CPlayerDataSyncPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(S2CPlayerActionsSyncPayload.TYPE, S2CPlayerActionsSyncPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(S2CPlayerPerksSyncPayload.TYPE, S2CPlayerPerksSyncPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(S2CPlayerGatesSyncPayload.TYPE, S2CPlayerGatesSyncPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(C2SCategorySelectionPayload.TYPE, C2SCategorySelectionPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(C2SOccupationExperienceTrackingPayload.TYPE, C2SOccupationExperienceTrackingPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(C2SOccupationPerkClaimPayload.TYPE, C2SOccupationPerkClaimPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(S2CExperienceGainPayload.TYPE, S2CExperienceGainPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(S2CCategorySyncPayload.TYPE, S2CCategorySyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(S2CPlayerDataSyncPayload.TYPE, S2CPlayerDataSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(S2CPlayerActionsSyncPayload.TYPE, S2CPlayerActionsSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(S2CPlayerPerksSyncPayload.TYPE, S2CPlayerPerksSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(S2CPlayerGatesSyncPayload.TYPE, S2CPlayerGatesSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(C2SCategorySelectionPayload.TYPE, C2SCategorySelectionPayload.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(C2SOccupationExperienceTrackingPayload.TYPE, C2SOccupationExperienceTrackingPayload.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(C2SOccupationPerkClaimPayload.TYPE, C2SOccupationPerkClaimPayload.STREAM_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(C2SCategorySelectionPayload.TYPE,
                 (payload, context) -> CategorySelectionPayloadHandler.handle(context.player(), payload));
@@ -142,22 +146,22 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
     }
 
     private void registerReloadListeners() {
-        ResourceManagerHelper.get(net.minecraft.server.packs.PackType.SERVER_DATA).registerReloadListener(FabricActionReloadListener.ID, provider -> {
+        DataResourceLoader.get().registerReloadListener(FabricActionReloadListener.ID, provider -> {
             ActionLoad3 loader = new ActionLoad3(actionManager);
             setActionLoader(loader);
             return new FabricActionReloadListener(loader, provider);
         });
-        ResourceManagerHelper.get(net.minecraft.server.packs.PackType.SERVER_DATA).registerReloadListener(FabricGateReloadListener.ID, provider -> {
+        DataResourceLoader.get().registerReloadListener(FabricGateReloadListener.ID, provider -> {
             GateLoad3 loader = new GateLoad3(gateManager);
             setGateLoader(loader);
             return new FabricGateReloadListener(loader, provider);
         });
-        ResourceManagerHelper.get(net.minecraft.server.packs.PackType.SERVER_DATA).registerReloadListener(FabricCategoryReloadListener.ID, provider -> {
+        DataResourceLoader.get().registerReloadListener(FabricCategoryReloadListener.ID, provider -> {
             CategoryLoad3 loader = new CategoryLoad3(getCategoryManager(), playerManager);
             setCategoryLoader(loader);
             return new FabricCategoryReloadListener(loader, provider);
         });
-        ResourceManagerHelper.get(net.minecraft.server.packs.PackType.SERVER_DATA).registerReloadListener(FabricPerkReloadListener.ID, provider -> {
+        DataResourceLoader.get().registerReloadListener(FabricPerkReloadListener.ID, provider -> {
             PerkLoad3 loader = new PerkLoad3(getPerkManager());
             setPerkLoader(loader);
             return new FabricPerkReloadListener(loader, provider);
@@ -198,7 +202,7 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
                 return;
             }
 
-            Holder<Block> blockHolder = state.getBlockHolder();
+            Holder<Block> blockHolder = state.typeHolder();
             ProfessionContext.Builder builder = ProfessionContext.builder(serverLevel, Actions.BLOCK_BREAK, professionalPlayer)
                     .addParameter(ProfessionParameter.THIS_BLOCK_STATE, state)
                     .addParameter(ProfessionParameter.BLOCKPOS, pos)
@@ -261,6 +265,20 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
             professionalPlayer = playerManager.getPlayer(player.getUUID());
         }
         return professionalPlayer;
+    }
+
+    private static <T> Registry<T> addRegistry(ResourceKey<Registry<T>> key, Registry<T> registry) {
+        NON_DYNAMIC_REGISTRIES.put(key, registry);
+        return registry;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Registry<T> getRegistry(ResourceKey<Registry<T>> key) {
+        Registry<?> registry = NON_DYNAMIC_REGISTRIES.get(key);
+        if (registry == null) {
+            throw new IllegalStateException("Unable to find non-dynamic registry " + key.identifier());
+        }
+        return (Registry<T>) registry;
     }
 
     @Override

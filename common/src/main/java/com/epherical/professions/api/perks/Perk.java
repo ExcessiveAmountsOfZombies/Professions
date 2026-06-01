@@ -15,7 +15,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.RegistryFixedCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
@@ -43,7 +43,7 @@ public abstract class Perk {
     public static final Codec<Perk> TYPED_CODEC = Services.PLATFORM.getPerkTypeRegistry().byNameCodec().dispatch(
             "perk", Perk::getType, PerkType::codec);
     public static final Codec<Perk> TYPED_CODEC_WITH_ID = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("id").forGetter(Perk::getId),
+            Identifier.CODEC.fieldOf("id").forGetter(Perk::getId),
             TYPED_CODEC.fieldOf("perk").forGetter(perk -> perk)
     ).apply(instance, (id, perk) -> {
         perk.setId(id);
@@ -57,7 +57,7 @@ public abstract class Perk {
                     ModificationStage.CODEC.fieldOf("modificationStage").forGetter(Common::modificationStage),
                     Codec.STRING.fieldOf("description").forGetter(Common::description),
                     Codec.STRING.fieldOf("title").forGetter(Common::title),
-                    ResourceLocation.CODEC.optionalFieldOf("textureIcon").forGetter(Common::textureIcon),
+                    Identifier.CODEC.optionalFieldOf("textureIcon").forGetter(Common::textureIcon),
                     BuiltInRegistries.ITEM.byNameCodec().fieldOf("itemIcon").forGetter(Common::itemIcon),
                     Codec.INT.fieldOf("levelRequirement").forGetter(Common::levelRequirement)
             ).apply(i, Common::new)
@@ -68,10 +68,10 @@ public abstract class Perk {
     private final ModificationStage modificationStage;
     private final String description;
     private final String title;
-    private final Optional<ResourceLocation> textureIcon;
+    private final Optional<Identifier> textureIcon;
     private final Item itemIcon;
     private final int levelRequirement;
-    private @Nullable ResourceLocation fileId;
+    private @Nullable Identifier fileId;
 
     protected Perk(Common common) {
         this.profession = common.profession;
@@ -136,7 +136,7 @@ public abstract class Perk {
         return description;
     }
 
-    public  Optional<ResourceLocation> getTextureIcon() {
+    public  Optional<Identifier> getTextureIcon() {
         return textureIcon;
     }
 
@@ -148,7 +148,7 @@ public abstract class Perk {
         return levelRequirement;
     }
 
-    public @Nullable ResourceLocation getId() {
+    public @Nullable Identifier getId() {
         return fileId;
     }
 
@@ -156,7 +156,7 @@ public abstract class Perk {
         return title;
     }
 
-    public void setId(ResourceLocation fileId) {
+    public void setId(Identifier fileId) {
         if (this.fileId != null && !this.fileId.equals(fileId)) {
             throw new IllegalStateException("Perk file id already set to " + this.fileId + ", cannot reset to " + fileId);
         }
@@ -164,7 +164,7 @@ public abstract class Perk {
     }
 
     public record Common(Holder<Profession> profession, double amount, ModificationStage modificationStage, String description, String title,
-                         Optional<ResourceLocation> textureIcon, Item itemIcon, int levelRequirement) {
+                         Optional<Identifier> textureIcon, Item itemIcon, int levelRequirement) {
         public static Common build(Perk perk) {
             return new Common(perk.getProfession(), perk.getValue(), perk.getModificationStage(), perk.getDescription(), perk.getTitle(),
                     perk.getTextureIcon(), perk.getItemIcon(), perk.getLevelRequirement());

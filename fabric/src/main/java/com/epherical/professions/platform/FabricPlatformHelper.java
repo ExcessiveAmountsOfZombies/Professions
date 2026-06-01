@@ -32,12 +32,6 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Registry<Profession> getProfessionRegistry() {
-        return (Registry<Profession>) BuiltInRegistries.REGISTRY.get(ProfessionsCommon.PROFESSION_REGISTRY_KEY.location());
-    }
-
-    @Override
     public Registry<ActionType> getActionTypeRegistry() {
         return FabricProfessionsMod.ACTIONS;
     }

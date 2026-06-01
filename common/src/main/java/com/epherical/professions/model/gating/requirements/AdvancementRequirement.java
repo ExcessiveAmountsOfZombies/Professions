@@ -14,16 +14,16 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public record AdvancementRequirement(ResourceLocation advancement) implements GateRequirement {
+public record AdvancementRequirement(Identifier advancement) implements GateRequirement {
 
     public static final MapCodec<AdvancementRequirement> CODEC = RecordCodecBuilder.mapCodec(
             i -> i.group(
-                    ResourceLocation.CODEC.fieldOf("advancement").forGetter(AdvancementRequirement::advancement)
+                    Identifier.CODEC.fieldOf("advancement").forGetter(AdvancementRequirement::advancement)
             ).apply(i, AdvancementRequirement::new)
     );
 
@@ -57,19 +57,19 @@ public record AdvancementRequirement(ResourceLocation advancement) implements Ga
     }
 
     private boolean hasServerAdvancements(Player player) {
-        if (!(player instanceof ServerPlayer serverPlayer) || serverPlayer.getServer() == null) {
+        if (!(player instanceof ServerPlayer serverPlayer) || serverPlayer.level().getServer() == null) {
             return false;
         }
         return hasServerAdvancements(serverPlayer, advancement());
     }
 
-    private boolean hasServerAdvancements(ServerPlayer serverPlayer, ResourceLocation advancementKeys) {
+    private boolean hasServerAdvancements(ServerPlayer serverPlayer, Identifier advancementKeys) {
         PlayerAdvancements playerAdvancements = serverPlayer.getAdvancements();
         return hasAdvancement(serverPlayer, playerAdvancements, advancementKeys);
     }
 
-    private static boolean hasAdvancement(ServerPlayer player, PlayerAdvancements advancements, ResourceLocation key) {
-        AdvancementHolder holder = player.getServer().getAdvancements().get(key); // todo; null check maybe
+    private static boolean hasAdvancement(ServerPlayer player, PlayerAdvancements advancements, Identifier key) {
+        AdvancementHolder holder = player.level().getServer().getAdvancements().get(key); // todo; null check maybe
         if (holder == null) {
             return false;
         }
@@ -86,9 +86,9 @@ public record AdvancementRequirement(ResourceLocation advancement) implements Ga
     }
 
     public static class Builder implements GateRequirement.Builder {
-        private ResourceLocation advancements = null;
+        private Identifier advancements = null;
 
-        public Builder advancement(ResourceLocation advancement) {
+        public Builder advancement(Identifier advancement) {
             advancements = advancement;
             return this;
         }

@@ -18,6 +18,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 @EventBusSubscriber(modid = ProfessionsCommon.MOD_ID)
 public class NeoforgeGateListenerServer {
@@ -43,7 +44,7 @@ public class NeoforgeGateListenerServer {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+    public static void onBlockBreak(BreakBlockEvent event) {
         if (event.isCanceled()) {
             return;
         }
@@ -93,7 +94,7 @@ public class NeoforgeGateListenerServer {
             return;
         }
 
-        ProfessionContext context = ProfessionContext.gateBuilder(serverPlayer.serverLevel(), Gates.PLACE, player)
+        ProfessionContext context = ProfessionContext.gateBuilder(serverPlayer.level(), Gates.PLACE, player)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, serverPlayer.getMainHandItem())
                 .addParameter(ProfessionParameter.BLOCKPOS, event.getPos())
                 .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getState())

@@ -1,6 +1,6 @@
 {
   "amount": 0.01,
-  "attribute": "minecraft:player.sneaking_speed",
+  "attribute": "minecraft:sneaking_speed",
   "description": "Gain additional sneaking speed. (0.01)",
   "itemIcon": "minecraft:bow",
   "levelRequirement": 400,

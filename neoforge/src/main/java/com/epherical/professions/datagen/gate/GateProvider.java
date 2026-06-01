@@ -13,7 +13,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -30,7 +30,7 @@ import static com.epherical.professions.datagen.ProfessionDataGeneration.rl;
 
 public final class GateProvider implements DataProvider {
 
-    private static final ResourceLocation END_ROOT_ADVANCEMENT = ResourceLocation.parse("minecraft:end/root");
+    private static final Identifier END_ROOT_ADVANCEMENT = Identifier.parse("minecraft:end/root");
     private final PackOutput.PathProvider pathProvider;
     private final CompletableFuture<HolderLookup.Provider> lookupProvider;
 
@@ -169,7 +169,7 @@ public final class GateProvider implements DataProvider {
             return this;
         }
 
-        private ToolGateDataBuilder requirementAdvancement(ResourceLocation advancement) {
+        private ToolGateDataBuilder requirementAdvancement(Identifier advancement) {
             builder.requirement(new AdvancementRequirement.Builder().advancement(advancement));
             return this;
         }
@@ -201,7 +201,7 @@ public final class GateProvider implements DataProvider {
             return this;
         }
 
-        private BlockBreakGateDataBuilder requirementAdvancement(ResourceLocation advancement) {
+        private BlockBreakGateDataBuilder requirementAdvancement(Identifier advancement) {
             builder.requirement(new AdvancementRequirement.Builder().advancement(advancement));
             return this;
         }

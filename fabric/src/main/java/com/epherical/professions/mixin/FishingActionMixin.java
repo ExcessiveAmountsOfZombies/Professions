@@ -5,7 +5,7 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
-import net.minecraft.advancements.critereon.FishingRodHookedTrigger;
+import net.minecraft.advancements.criterion.FishingRodHookedTrigger;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +36,7 @@ public class FishingActionMixin {
         }
 
         for (ItemStack drop : stacks) {
-            ProfessionContext.Builder builder = ProfessionContext.builder(player.serverLevel(), Actions.FISHING_ACTION, professionalPlayer)
+            ProfessionContext.Builder builder = ProfessionContext.builder(player.level(), Actions.FISHING_ACTION, professionalPlayer)
                     .addParameter(ProfessionParameter.ITEM_INVOLVED, drop);
             mod.getPlayerManager().processAction(player, builder.build());
         }

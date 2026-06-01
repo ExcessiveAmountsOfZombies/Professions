@@ -1,6 +1,6 @@
 package com.epherical.professions.api.perks;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 public interface IStartupPerk extends IKeyable {
@@ -9,7 +9,7 @@ public interface IStartupPerk extends IKeyable {
 
     double getValue();
 
-    ResourceLocation getGroupId();
+    Identifier getGroupId();
 
     Perk.Applicator applicator(ServerPlayer serverPlayer);
 

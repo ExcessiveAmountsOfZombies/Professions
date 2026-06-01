@@ -161,5 +161,6 @@
   "key.professions.open_occupation_menu": "Open Profession Menu",
   "key.professions.show_info": "Show Unlock Information",
   "key.professions.datapack_menu": "Open Datapack Creator",
-  "category.professions.occupation": "Professions"
+  "category.professions.occupation": "Professions",
+  "key.category.professions.category": "Category"
 }

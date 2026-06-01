@@ -19,12 +19,10 @@ public final class NeoForgeGateReloadListener extends ContextAwareReloadListener
     }
 
     @Override
-    public CompletableFuture<Void> reload(@NotNull PreparableReloadListener.PreparationBarrier barrier,
-                                          @NotNull ResourceManager resourceManager,
-                                          @NotNull ProfilerFiller prepProfiler,
-                                          @NotNull ProfilerFiller applyProfiler,
-                                          @NotNull Executor background,
-                                          @NotNull Executor gameThread) {
-        return delegate.reload(getRegistryLookup(), barrier, resourceManager, prepProfiler, applyProfiler, background, gameThread);
+    public CompletableFuture<Void> reload(@NotNull SharedState sharedState,
+                                          @NotNull Executor taskExecutor,
+                                          @NotNull PreparationBarrier preparationBarrier,
+                                          @NotNull Executor reloadExecutor) {
+        return delegate.reload(getRegistryLookup(), sharedState, taskExecutor, preparationBarrier, reloadExecutor);
     }
 }

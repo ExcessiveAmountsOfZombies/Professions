@@ -10,15 +10,16 @@ import com.epherical.professions.presentation.client.RenderHelperUtil;
 import com.epherical.professions.presentation.client.gui.screen.OccupationPerkMenuScreen;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
     private final Occupation occupation;
 
     private final Set<Button> activatedButtons = new HashSet<>();
-    private final Set<ResourceLocation> ids = new HashSet<>();
+    private final Set<Identifier> ids = new HashSet<>();
     private final Set<Button> allButtons = new HashSet<>();
 
     public OccupationPerkList(Minecraft mc, int width, int top, int bottom, int height, Occupation occupation) {
@@ -81,11 +82,11 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
     }
 
     @Override
-    protected void renderListSeparators(GuiGraphics pGuiGraphics) {
+    protected void extractListSeparators(GuiGraphicsExtractor pGuiGraphics) {
     }
 
     @Override
-    protected int getRowTop(int pIndex) {
+    public int getRowTop(int pIndex) {
         return super.getRowTop(pIndex);
     }
 
@@ -94,7 +95,7 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
         return super.getBottom();
     }
 
-    protected int getRowBottom(int pIndex) {
+    public int getRowBottom(int pIndex) {
         return super.getRowBottom(pIndex);
     }
 
@@ -102,14 +103,14 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
         return occupation;
     }
 
-    public Set<ResourceLocation> getIds() {
+    public Set<Identifier> getIds() {
         return ids;
     }
 
     public record EntryItem(Perk perk, ItemStack icon, Component claimStatus, boolean claimable, Component title, Component description) {
 
         private static EntryItem create(Perk perk, Occupation occupation, boolean perksEnabled) {
-            ResourceLocation perkId = perk.getId();
+            Identifier perkId = perk.getId();
             boolean claimable = occupation.hasClaimedPerk(perkId);
             Component status;
             if (!claimable) { // It has not been claimed
@@ -170,12 +171,10 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
         }
 
         @Override
-        public void render(GuiGraphics gfx,
-                           int index, int y, int x, int rowWidth, int rowHeight,
-                           int mouseX, int mouseY, boolean hovering, float partialTick) {
-
-
-           // gfx.fill(x, y, rowWidth, rowHeight, 0xFFFFFFFF);
+        public void extractContent(GuiGraphicsExtractor gfx, int mouseX, int mouseY, boolean hovering, float partialTick) {
+            int y = this.getY();
+            int x = this.getX();
+            int rowHeight = this.getHeight();
 
             for (int i = 0; i < items.size(); i++) {
                 EntryItem item = items.get(i);
@@ -183,25 +182,26 @@ public class OccupationPerkList extends AbstractOccupationSelector<OccupationPer
                 int buttonX = x + i * (PERK_BUTTON_WIDTH + PERK_BUTTON_SPACING);
                 int buttonY = y + (rowHeight - PERK_BUTTON_HEIGHT) / 2;
                 button.setPosition(buttonX, buttonY);
-                button.render(gfx, mouseX, mouseY, partialTick);
+                button.extractRenderState(gfx, mouseX, mouseY, partialTick);
 
 
                 RenderHelperUtil.drawScaled(gfx, buttonX + (button.getWidth() / 2), buttonY + 4, 0.66f, () -> {
-                    gfx.drawCenteredString(minecraft.font, item.title(), 0, 0, 0xFFFFFF);
+                    gfx.centeredText(minecraft.font, item.title(), 0, 0, 0xFFFFFFFF);
                 });
 
-                RenderHelperUtil.drawWrappedScaledString(gfx, minecraft.font, item.description(), buttonX + PERK_ICON_OFFSET_X + 20, buttonY +  12, 0.66f, 110, 0xFFFFFF);
+                RenderHelperUtil.drawWrappedScaledString(gfx, minecraft.font, item.description(), buttonX + PERK_ICON_OFFSET_X + 20, buttonY +  12, 0.66f, 110, 0xFFFFFFFF);
 
                 RenderHelperUtil.drawScaled(gfx, buttonX + (button.getWidth() / 2), buttonY + rowHeight - 9, 0.75f, () -> {
-                    gfx.drawCenteredString(minecraft.font, item.claimStatus(), 0, 0, 0xFFFFFF);
+                    gfx.centeredText(minecraft.font, item.claimStatus(), 0, 0, 0xFFFFFFFF);
                 });
 
 
 
                 if (item.perk().getTextureIcon().isPresent()) {
-                    gfx.blitSprite(item.perk().getTextureIcon().get(),  buttonX + PERK_ICON_OFFSET_X, buttonY + PERK_ICON_OFFSET_Y, 16, 16);
+                    gfx.blitSprite(RenderPipelines.GUI_TEXTURED, item.perk().getTextureIcon().get(),
+                            buttonX + PERK_ICON_OFFSET_X, buttonY + PERK_ICON_OFFSET_Y, 16, 16);
                 } else {
-                    gfx.renderFakeItem(item.icon(), buttonX + PERK_ICON_OFFSET_X, buttonY + PERK_ICON_OFFSET_Y);
+                    gfx.item(item.icon(), buttonX + PERK_ICON_OFFSET_X, buttonY + PERK_ICON_OFFSET_Y);
                 }
             }
         }

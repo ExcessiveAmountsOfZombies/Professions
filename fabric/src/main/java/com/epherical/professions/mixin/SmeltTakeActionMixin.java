@@ -33,7 +33,7 @@ public class SmeltTakeActionMixin {
             return;
         }
 
-        ProfessionContext.Builder builder = ProfessionContext.builder(serverPlayer.serverLevel(), Actions.SMELT_TAKE_ACTION, professionalPlayer)
+        ProfessionContext.Builder builder = ProfessionContext.builder(serverPlayer.level(), Actions.SMELT_TAKE_ACTION, professionalPlayer)
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, stack);
         mod.getPlayerManager().processAction(serverPlayer, builder.build());
     }

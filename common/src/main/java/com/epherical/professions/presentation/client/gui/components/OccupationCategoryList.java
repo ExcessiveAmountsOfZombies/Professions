@@ -17,6 +17,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
@@ -145,9 +146,10 @@ public class OccupationCategoryList extends AbstractOccupationSelector<Occupatio
                 if (professionReference.isPresent()) {
                     Holder.Reference<Profession> professionReference1 = professionReference.get();
                     Profession value = professionReference1.value();
+
                     drawScaledString(gfx, minecraft.font,
                             Component.literal(value.displayNameRaw()),
-                            drawX + 9, drawY + 1, scale, value.professionColor().getValue(), true);
+                            drawX + 9, drawY + 1, scale,  ARGB.color(0xFF, value.professionColor().getValue()), true);
 
                     drawScaled(gfx, drawX, drawY - 1, scale, () -> {
                         gfx.fakeItem(new ItemStack(value.formatting().icon()), 0, 0);

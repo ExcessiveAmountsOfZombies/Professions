@@ -9,7 +9,7 @@ import com.epherical.professions.model.Occupation;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -47,9 +47,9 @@ public class PerkAttribute extends Perk implements IStartupPerk {
     }
 
     @Override
-    public ResourceLocation getGroupId() {
-        return ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID,
-                attribute.unwrapKey().get().location().toDebugFileName() + "_" + getModificationStage().getSerializedName());
+    public Identifier getGroupId() {
+        return Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID,
+                attribute.unwrapKey().get().identifier().toDebugFileName() + "_" + getModificationStage().getSerializedName());
     }
 
     @Override
@@ -60,7 +60,7 @@ public class PerkAttribute extends Perk implements IStartupPerk {
                 return 0.0d;
             }
 
-            ResourceLocation key = getGroupId();
+            Identifier key = getGroupId();
 
             AttributeModifier modifier = attribute.getModifier(key);
             double newValue = startingValue;

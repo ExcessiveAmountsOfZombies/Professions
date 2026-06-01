@@ -27,13 +27,13 @@ public class RenderHelperUtil {
         gfx.pose().popMatrix();
     }
 
-    public static void drawScaledString(GuiGraphics gfx, Font font, Component text, int x, int y, float scale,
+    public static void drawScaledString(GuiGraphicsExtractor gfx, Font font, Component text, int x, int y, float scale,
                                         int color, boolean dropShadow) {
-        gfx.pose().pushPose();
-        gfx.pose().translate(x, y, 0);
-        gfx.pose().scale(scale, scale, 1.0f);
-        gfx.drawString(font, text, 0, 0, color, dropShadow);
-        gfx.pose().popPose();
+        gfx.pose().pushMatrix();
+        gfx.pose().translate(x, y);
+        gfx.pose().scale(scale, scale);
+        gfx.text(font, text, 0, 0, color, dropShadow);
+        gfx.pose().popMatrix();
     }
 
     public static void drawWrappedScaledString(GuiGraphicsExtractor gfx, Font font, String text, int x, int y, float scale, int lineWidth, int color) {
@@ -44,12 +44,12 @@ public class RenderHelperUtil {
         gfx.pose().popMatrix();
     }
 
-    public static void drawWrappedScaledString(GuiGraphics gfx, Font font, Component text, int x, int y, float scale, int lineWidth, int color) {
-        gfx.pose().pushPose();
-        gfx.pose().translate(x, y, 0);
-        gfx.pose().scale(scale, scale, 1.0f);
-        gfx.drawWordWrap(font, text, 0, 0, lineWidth, color);
-        gfx.pose().popPose();
+    public static void drawWrappedScaledString(GuiGraphicsExtractor gfx, Font font, Component text, int x, int y, float scale, int lineWidth, int color) {
+        gfx.pose().pushMatrix();
+        gfx.pose().translate(x, y);
+        gfx.pose().scale(scale, scale);
+        gfx.textWithWordWrap(font, text, 0, 0, lineWidth, color, false);
+        gfx.pose().popMatrix();
     }
 
 }

@@ -24,7 +24,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.Nullable;
@@ -62,7 +62,7 @@ public abstract class Gate<T> implements Predicate<ProfessionContext> {
     protected final List<Either<TagKey<T>, ResourceKey<T>>> values;
     private final Holder<Profession> profession;
     private final List<GateRequirement> requirements;
-    private @Nullable ResourceLocation fileId;
+    private @Nullable Identifier fileId;
     @Deprecated(since = "eh, probably don't use this for anything anymore, i'll leave it in case i find a use for it though.")
     private final BiPredicate<ProfessionContext, Occupation> predicate;
     private final GateReportPredicate<ProfessionContext, Occupation> gatePredicate;
@@ -123,11 +123,11 @@ public abstract class Gate<T> implements Predicate<ProfessionContext> {
 
     public void getExtraValues(Multimap<Holder<?>, Gate<?>> valueToGatesMap, Multimap<Gate<?>, Holder<?>> gateToValueMap, HolderLookup.Provider provider) {}
 
-    public @Nullable ResourceLocation getId() {
+    public @Nullable Identifier getId() {
         return fileId;
     }
 
-    public void setId(ResourceLocation fileId) {
+    public void setId(Identifier fileId) {
         if (this.fileId != null && !this.fileId.equals(fileId)) {
             throw new IllegalStateException("Gate file id already set to " + this.fileId + ", cannot reset to " + fileId);
         }
@@ -198,7 +198,7 @@ public abstract class Gate<T> implements Predicate<ProfessionContext> {
                         : Either.right(ResourceKey.create(registryKey, rl.id())),
                 either -> either.map(
                         tagKey -> new ExtraCodecs.TagOrElementLocation(tagKey.location(), true),
-                        resourceKey -> new ExtraCodecs.TagOrElementLocation(resourceKey.location(), false)
+                        resourceKey -> new ExtraCodecs.TagOrElementLocation(resourceKey.identifier(), false)
                 )
         );
         return single.listOf();

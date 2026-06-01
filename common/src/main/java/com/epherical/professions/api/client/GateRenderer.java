@@ -10,7 +10,7 @@ import com.epherical.professions.model.gating.requirements.GateRequirementType;
 import com.epherical.professions.model.gating.requirements.LevelRequirement;
 import com.epherical.professions.presentation.client.RenderHelperUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -28,10 +28,10 @@ public interface GateRenderer<T extends GateRequirement> {
             GateRenderer.register(Requirements.ADVANCEMENT_REQUIREMENT, (gfx, mc, meetsRequirement, x, y, width, height,
                                                                          player, currentOccupation,
                                                                          context, type) -> {
-                int color = meetsRequirement ? 0x316e15 : 0xb52222;
+                int color = meetsRequirement ? 0xFF316e15 : 0xFFb52222;
 
-                gfx.vLine(x + 20, y + 2, y + height - 4, 0xFF6f4d15);
-                gfx.renderFakeItem(new ItemStack(Items.BOOK), x + 2, y + 1);
+                gfx.verticalLine(x + 20, y + 2, y + height - 4, 0xFF6f4d15);
+                gfx.item(new ItemStack(Items.BOOK), x + 2, y + 1);
 
                 // todo; if we can put the name of the advancement in here that would be good
                 RenderHelperUtil.drawWrappedScaledString(gfx, mc.font, Component.translatable("Advancement: %s", type.advancement().toString()), x + 24, y + 2, 0.8f, width - 24, color);
@@ -44,10 +44,10 @@ public interface GateRenderer<T extends GateRequirement> {
             GateRenderer.register(Requirements.LEVEL_REQUIREMENT, (gfx, mc, meetsRequirement,  x, y, width, height,
                                                                    player, currentOccupation,
                                                                    context, type) -> {
-                int color = meetsRequirement ? 0x316e15 : 0x6e1515;
+                int color = meetsRequirement ? 0xFF316e15 : 0xFF6e1515;
 
-                gfx.vLine(x + 20, y + 2, y + height - 4, 0xFF6f4d15);
-                gfx.renderFakeItem(new ItemStack(currentOccupation.getProfession().value().formatting().icon()), x + 2, y + 1);
+                gfx.verticalLine(x + 20, y + 2, y + height - 4, 0xFF6f4d15);
+                gfx.item(new ItemStack(currentOccupation.getProfession().value().formatting().icon()), x + 2, y + 1);
                 RenderHelperUtil.drawScaledString(gfx, mc.font, Component.translatable("%s Level %s", currentOccupation.getProfession().value().displayNameRaw(), type.level()), x + 24, y + 2, 0.8f, color, false);
 
 
@@ -62,7 +62,7 @@ public interface GateRenderer<T extends GateRequirement> {
 
 
 
-    void render(GuiGraphics gfx, Minecraft mc, boolean meetsRequirement, int x, int y, int width, int height,
+    void render(GuiGraphicsExtractor gfx, Minecraft mc, boolean meetsRequirement, int x, int y, int width, int height,
                 IProfessionalPlayer player, Occupation currentOccupation,
                 ProfessionContext context, T type);
 

@@ -1,21 +1,20 @@
 package com.epherical.professions.presentation.client.gui.screen;
 
 import com.epherical.professions.ProfessionsCommon;
-import com.epherical.professions.api.actions.GateRequirement;
 import com.epherical.professions.api.client.GateRenderer;
 import com.epherical.professions.model.Occupation;
 import com.epherical.professions.model.gating.GateReportData;
 import com.epherical.professions.model.gating.GateType;
-import com.epherical.professions.model.gating.requirements.GateRequirementType;
 import com.epherical.professions.presentation.client.RenderHelperUtil;
 import com.epherical.professions.presentation.client.gui.components.OccupationGateList;
 import com.epherical.professions.presentation.client.gui.widget.OccupationMenuButton;
 import com.google.common.collect.Multimap;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.epherical.professions.presentation.client.RenderHelperUtil.drawScaled;
 import static com.epherical.professions.presentation.client.RenderHelperUtil.drawWrappedScaledString;
@@ -23,7 +22,7 @@ import static com.epherical.professions.presentation.client.gui.screen.Occupatio
 
 public class OccupationGateScreen extends Screen  {
 
-    public static final ResourceLocation MENU_TEXTURE = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/gates/menu");
+    public static final Identifier MENU_TEXTURE = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/gates/menu");
 
 
     private final int imageWidth = 320;
@@ -61,7 +60,7 @@ public class OccupationGateScreen extends Screen  {
                     minecraft.setScreen(null);
                 }).pos(leftPos + 296, topPos + 2).size(18, 18)
                 .background(OccupationCategorySelectionScreen.SPRITES)
-                .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
+                .icon(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/red_x"))
                 .tooltip(Tooltip.create(Component.translatable("professions.screen.common.close_menu")))
                 .build();
 
@@ -69,38 +68,41 @@ public class OccupationGateScreen extends Screen  {
                             minecraft.setScreen(parent);
                         }).pos(leftPos + 296 - 20, topPos + 2).size(18, 18)
                         .background(OccupationCategorySelectionScreen.SPRITES)
-                        .icon(ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/grey_back"))
+                        .icon(Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/icons/grey_back"))
                         .tooltip(Tooltip.create(Component.translatable("professions.screen.common.back"))).build()
         );
 
+        addRenderableWidget(closeButton);
+
 
         gateList = new OccupationGateList(this.minecraft, 130, topPos + 26, 214 + topPos, 32, occupation);
-        gateList.setX(leftPos + 5);
+        gateList.setX(leftPos + 7);
+        gateList.setScrollAmount(0.0d);
+        addRenderableWidget(gateList);
         try {
-            gateList.setSelected(gateList.getFirstElement());
+            gateList.setSelected(gateList.children().getFirst());
         } catch (IndexOutOfBoundsException ignored) {}
 
-        addRenderableWidget(gateList);
-        addRenderableWidget(closeButton);
+
     }
 
 
     @Override
-    public void render(GuiGraphics gfx, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(gfx, pMouseX, pMouseY, pPartialTick);
+    public void extractRenderState(GuiGraphicsExtractor gfx, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractRenderState(gfx, pMouseX, pMouseY, pPartialTick);
 
         RenderHelperUtil.drawScaledString(gfx, font,
                 Component.translatable("professions.screen.occupation_gate_menu.header"),
-                leftPos + 5, topPos + 5, 1.5f, 0xd5af47, false);
+                leftPos + 5, topPos + 5, 1.5f, 0xFFd5af47, false);
 
         if (gateList.getSelected() != null) {
             RenderHelperUtil.drawScaledString(gfx, minecraft.font,
                     Component.translatable("professions.screen.occupation_gate_menu.selected_overview"),
-                    leftPos + 155, topPos + 34, 1.25f, 0x6f4d15, false);
+                    leftPos + 155, topPos + 34, 1.25f, 0xFF6f4d15, false);
 
 
-            ResourceLocation background = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/gates/selected_background_icon");
-            gfx.blitSprite(background, leftPos + 155, topPos + 50, 32, 32);
+            Identifier background = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/gates/selected_background_icon");
+            gfx.blitSprite(RenderPipelines.GUI_TEXTURED, background, leftPos + 155, topPos + 50, 32, 32);
 
             Component hoverName = gateList.getSelected().getCurrentTargetDisplay().icon().getHoverName();
 
@@ -115,26 +117,26 @@ public class OccupationGateScreen extends Screen  {
             }
 
 
-            RenderHelperUtil.drawWrappedScaledString(gfx, minecraft.font, msg, leftPos + 155 + 34, topPos + 50, 0.8f, 150, 0x6f4d15);
+            RenderHelperUtil.drawWrappedScaledString(gfx, minecraft.font, msg, leftPos + 155 + 34, topPos + 50, 0.8f, 150, 0xFF6f4d15);
 
 
             RenderHelperUtil.drawScaled(gfx, leftPos + 155, topPos + 50, 2f, () -> {
-                gfx.renderFakeItem(gateList.getSelected().getCurrentTargetDisplay().icon(), 0, 0);
+                gfx.item(gateList.getSelected().getCurrentTargetDisplay().icon(), 0, 0);
             });
 
-            ResourceLocation menuButton = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button");
-            gfx.blitSprite(menuButton, leftPos + 155, topPos + 84, 75, 20);
-            RenderHelperUtil.drawScaledString(gfx, minecraft.font, "Type", leftPos + 160, topPos + 87, 0.75f, 0xFFFFFF, false);
-            RenderHelperUtil.drawScaledString(gfx, minecraft.font, gateList.getSelected().getGateTypeLine(), leftPos + 160, topPos + 94, 0.8f, 0x6f4d15, false);
+            Identifier menuButton = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "occupation/widget/occupation_menu_button");
+            gfx.blitSprite(RenderPipelines.GUI_TEXTURED, menuButton, leftPos + 155, topPos + 84, 75, 20);
+            RenderHelperUtil.drawScaledString(gfx, minecraft.font, "Type", leftPos + 160, topPos + 87, 0.75f, 0xFFFFFFFF, false);
+            RenderHelperUtil.drawScaledString(gfx, minecraft.font, gateList.getSelected().getGateTypeLine(), leftPos + 160, topPos + 94, 0.8f, 0xFF6f4d15, false);
 
 
-            gfx.blitSprite(menuButton, leftPos + 155 + 77, topPos + 84, 75, 20);
+            gfx.blitSprite(RenderPipelines.GUI_TEXTURED, menuButton, leftPos + 155 + 77, topPos + 84, 75, 20);
             RenderHelperUtil.drawScaledString(gfx, minecraft.font, "Status", leftPos + 160 + 77, topPos + 87, 0.75f, 0xFFFFFF, false);
             boolean allowed = gateList.getSelected().getGateReport().isAllowed();
-            RenderHelperUtil.drawScaledString(gfx, minecraft.font, allowed ? "Unlocked" : "Locked", leftPos + 160 + 77, topPos + 94, 0.8f, allowed ? 0x00FF00 : 0xFF0000, false);
+            RenderHelperUtil.drawScaledString(gfx, minecraft.font, allowed ? "Unlocked" : "Locked", leftPos + 160 + 77, topPos + 94, 0.8f, allowed ? 0xFF00FF00 : 0xFFFF0000, false);
 
             RenderHelperUtil.drawScaledString(gfx, minecraft.font, Component.translatable("Requirements"),
-                    leftPos + 155, topPos + 84 + 22, 1f, 0x6f4d15, false);
+                    leftPos + 155, topPos + 84 + 22, 1f, 0xFF6f4d15, false);
 
 
             Multimap<GateType, GateReportData> failuresMap = gateList.getSelected().getGateReport().getFailuresMap();
@@ -146,42 +148,42 @@ public class OccupationGateScreen extends Screen  {
             int width = 152;
             int height = 20;
             for (GateReportData value : successMap.values()) {
-                gfx.blitSprite(menuButton, x, y, width, height);
+                gfx.blitSprite(RenderPipelines.GUI_TEXTURED, menuButton, x, y, width, height);
                 GateRenderer renderer = GateRenderer.getRenderer(value.gateRequirement().getRequirementType());
                 if (renderer != null) {
                     renderer.render(gfx, minecraft, true, x, y, width, height, gateList.getSelected().getPlayer(), occupation, gateList.getSelected().getContext(), value.gateRequirement());
                 } else {
-                    gfx.drawString(minecraft.font, "Missing renderer for: " + value.gateRequirement().getClass().getName(), x + 4, y + 2, 0xFF0000);
+                    gfx.text(minecraft.font, "Missing renderer for: " + value.gateRequirement().getClass().getName(), x + 4, y + 2, 0xFFFF0000);
                 }
                 y += height + 2;
             }
 
             for (GateReportData value : failuresMap.values()) {
-                gfx.blitSprite(menuButton, x, y, width, height);
+                gfx.blitSprite(RenderPipelines.GUI_TEXTURED, menuButton, x, y, width, height);
                 GateRenderer renderer = GateRenderer.getRenderer(value.gateRequirement().getRequirementType());
                 if (renderer != null) {
                     renderer.render(gfx, minecraft, false, x, y, width, height, gateList.getSelected().getPlayer(), occupation, gateList.getSelected().getContext(), value.gateRequirement());
                 } else {
-                    gfx.drawString(minecraft.font, "Missing renderer for: " + value.gateRequirement().getClass().getName(), x + 4, y + 2, 0xFF0000);
+                    gfx.text(minecraft.font, "Missing renderer for: " + value.gateRequirement().getClass().getName(), x + 4, y + 2, 0xFFFF0000);
                 }
                 y += height + 2;
             }
 
             drawScaled(gfx, leftPos + 8, topPos + 217, 0.75f, () -> {
-                gfx.blitSprite(INFO_ICON, 0, 0, 18, 18);
+                gfx.blitSprite(RenderPipelines.GUI_TEXTURED, INFO_ICON, 0, 0, 18, 18);
             });
 
 
             drawWrappedScaledString(gfx, font,
                     Component.translatable("The progression locker restricts particular actions until all requirements are met."),
-                    leftPos + 23, topPos + 219, 0.75f, 320 - 20, 0x777777);
+                    leftPos + 23, topPos + 219, 0.75f, 320 - 20, 0xFF777777);
         }
 
     }
 
     @Override
-    public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-        pGuiGraphics.blitSprite(MENU_TEXTURE, leftPos, topPos, imageWidth, imageHeight);
+    public void extractBackground(GuiGraphicsExtractor pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.extractBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        pGuiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, MENU_TEXTURE, leftPos, topPos, imageWidth, imageHeight);
     }
 }

@@ -16,7 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -88,14 +87,14 @@ public final class FabricGateListenerServer {
         return allowed ? InteractionResult.PASS : InteractionResult.FAIL;
     }
 
-    private static InteractionResultHolder<ItemStack> placeItemInteraction(Player player, Level world, InteractionHand hand) {
+    private static InteractionResult placeItemInteraction(Player player, Level world, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (world.isClientSide() || player.isSpectator()) {
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
         }
 
         boolean allowed = handleBlockPlacement(player, stack);
-        return allowed ? InteractionResultHolder.pass(stack) : InteractionResultHolder.fail(stack);
+        return allowed ? InteractionResult.PASS : InteractionResult.FAIL;
     }
 
     public static boolean handleBlockBreakGateManagement(Level level, Player player, ItemStack itemStack, BlockPos pos,

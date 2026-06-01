@@ -5,7 +5,7 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
-import net.minecraft.advancements.critereon.BredAnimalsTrigger;
+import net.minecraft.advancements.criterion.BredAnimalsTrigger;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.animal.Animal;
@@ -34,7 +34,7 @@ public class BreedActionMixin {
             return;
         }
 
-        ProfessionContext.Builder builder = ProfessionContext.builder(player.serverLevel(), Actions.BREED_ACTION, professionalPlayer)
+        ProfessionContext.Builder builder = ProfessionContext.builder(player.level(), Actions.BREED_ACTION, professionalPlayer)
                 .addParameter(ProfessionParameter.ENTITY, child);
         mod.getPlayerManager().processAction(player, builder.build());
     }

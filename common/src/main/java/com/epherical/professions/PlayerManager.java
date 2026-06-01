@@ -282,7 +282,7 @@ public class PlayerManager {
             return List.of();
         }
 
-        Optional<HolderLookup.RegistryLookup<Profession>> lookupOptional = server.registryAccess().lookup(PROFESSION_REGISTRY_KEY);
+        Optional<Registry<Profession>> lookupOptional = server.registryAccess().lookup(PROFESSION_REGISTRY_KEY);
         if (lookupOptional.isEmpty()) {
             return List.of();
         }
@@ -382,7 +382,7 @@ public class PlayerManager {
     }
 
 
-    public void refreshProfessionCategories(Map<ResourceLocation, ProfessionCategory> categories) {
+    public void refreshProfessionCategories(Map<Identifier, ProfessionCategory> categories) {
         for (IProfessionalPlayer player : players.values()) {
             ProfessionCategory oldCategory = player.getCategory();
             if (oldCategory == null) {
@@ -424,11 +424,11 @@ public class PlayerManager {
         return perksByType.stream().filter(t -> t.getProfession().is(occupation.getProfession()) && occupation.hasClaimedPerk(t.getId())).toList();
     }
 
-    public Set<ResourceLocation> getUnlockedUnclaimedPerkIds(UUID uuid) {
+    public Set<Identifier> getUnlockedUnclaimedPerkIds(UUID uuid) {
         return getUnlockedUnclaimedPerkIds(getPlayer(uuid));
     }
 
-    public Set<ResourceLocation> getUnlockedUnclaimedPerkIds(@Nullable IProfessionalPlayer player) {
+    public Set<Identifier> getUnlockedUnclaimedPerkIds(@Nullable IProfessionalPlayer player) {
         if (player == null) {
             return Set.of();
         }
@@ -436,11 +436,11 @@ public class PlayerManager {
         return player.getUnlockedPerks();
     }
 
-    public boolean claimUnlockedReward(UUID uuid, ResourceLocation perkId) {
+    public boolean claimUnlockedReward(UUID uuid, Identifier perkId) {
         return claimUnlockedReward(getPlayer(uuid), perkId);
     }
 
-    public boolean claimUnlockedReward(@Nullable IProfessionalPlayer player, @Nullable ResourceLocation perkId) {
+    public boolean claimUnlockedReward(@Nullable IProfessionalPlayer player, @Nullable Identifier perkId) {
         if (player == null || perkId == null || !perkManager.arePerksEnabled(player)) {
             return false;
         }

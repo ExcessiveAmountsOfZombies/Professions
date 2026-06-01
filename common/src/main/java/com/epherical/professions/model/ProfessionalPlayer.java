@@ -24,10 +24,10 @@ import static com.epherical.professions.ProfessionsCommon.PROFESSION_REGISTRY_KE
 
 public class ProfessionalPlayer implements IProfessionalPlayer {
 
-    private static final ResourceLocation MAX_HEALTH_ADDITIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/max_health/additive");
-    private static final ResourceLocation MAX_HEALTH_MULTIPLICATIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/max_health/multiplicative");
-    private static final ResourceLocation ATTACK_DAMAGE_ADDITIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/attack_damage/additive");
-    private static final ResourceLocation ATTACK_DAMAGE_MULTIPLICATIVE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/attack_damage/multiplicative");
+    private static final Identifier MAX_HEALTH_ADDITIVE_MODIFIER_ID = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/max_health/additive");
+    private static final Identifier MAX_HEALTH_MULTIPLICATIVE_MODIFIER_ID = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/max_health/multiplicative");
+    private static final Identifier ATTACK_DAMAGE_ADDITIVE_MODIFIER_ID = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/attack_damage/additive");
+    private static final Identifier ATTACK_DAMAGE_MULTIPLICATIVE_MODIFIER_ID = Identifier.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "perk/attack_damage/multiplicative");
 
     private final Map<Identifier, Occupation> occupationMap = new HashMap<>();
 
@@ -144,7 +144,7 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     }
 
     @Override
-    public boolean hasClaimedPerk(ResourceLocation perkId) {
+    public boolean hasClaimedPerk(Identifier perkId) {
         if (perkId == null) {
             return false;
         }
@@ -159,8 +159,8 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
     }
 
     @Override
-    public Set<ResourceLocation> getClaimedPerks() {
-        Set<ResourceLocation> claimedPerks = new HashSet<>();
+    public Set<Identifier> getClaimedPerks() {
+        Set<Identifier> claimedPerks = new HashSet<>();
         for (Occupation activeOccupation : getActiveOccupations()) {
             claimedPerks.addAll(activeOccupation.getClaimedPerks());
         }
@@ -170,8 +170,8 @@ public class ProfessionalPlayer implements IProfessionalPlayer {
 
 
     @Override
-    public Set<ResourceLocation> getUnlockedPerks() {
-        Set<ResourceLocation> unclaimedPerks = new HashSet<>();
+    public Set<Identifier> getUnlockedPerks() {
+        Set<Identifier> unclaimedPerks = new HashSet<>();
         for (Occupation activeOccupation : getActiveOccupations()) {
             unclaimedPerks.addAll(activeOccupation.getUnclaimedPerks());
         }

@@ -13,7 +13,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -94,7 +94,7 @@ public class GateManager {
         }
 
         ProfessionCategoryManager categoryManager = ProfessionsCommon.INSTANCE.getCategoryManager();
-        ResourceLocation categoryId = categoryManager.getCategoryId(category);
+        Identifier categoryId = categoryManager.getCategoryId(category);
         if (categoryId == null) {
             return false;
         }
@@ -119,7 +119,7 @@ public class GateManager {
             HolderLookup.RegistryLookup<T> lookup = registryLookup.lookup(registryKey).orElse(null);
             if (lookup == null) {
                 LOGGER.warn("Could not find registry lookup for {} while finishing gates. Gate {} will not be value-indexed.",
-                        registryKey.location(), gate.getId());
+                        registryKey.identifier(), gate.getId());
                 continue;
             }
 

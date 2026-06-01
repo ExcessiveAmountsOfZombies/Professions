@@ -3,7 +3,7 @@ package com.epherical.professions.networking.server;
 import com.epherical.professions.PlayerManager;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Optional;
@@ -20,7 +20,7 @@ public final class PlayerDataSyncUtil {
     }
 
     public static void syncOccupations(ServerPlayer player, IProfessionalPlayer professionalPlayer, PlayerManager playerManager) {
-        ResourceLocation categoryId = playerManager.getCategoryIdFor(professionalPlayer);
+        Identifier categoryId = playerManager.getCategoryIdFor(professionalPlayer);
         S2CPlayerDataSyncPayload payload = new S2CPlayerDataSyncPayload(
                 player.getUUID(),
                 professionalPlayer.getAllOccupations(),

@@ -1,6 +1,6 @@
 {
   "amount": 0.5,
-  "attribute": "minecraft:generic.max_health",
+  "attribute": "minecraft:max_health",
   "description": "Gain additional max health. (0.5)",
   "itemIcon": "minecraft:crafting_table",
   "levelRequirement": 200,

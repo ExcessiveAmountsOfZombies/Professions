@@ -27,10 +27,10 @@ public class ProfessionCategory {
     private final TextColor chatColor;
     private final List<ResourceKey<Profession>> professions;
     private final Map<String, Dynamic<?>> features;
-    private @Nullable ResourceLocation fileId;
+    private @Nullable Identifier fileId;
 
     private static final Codec<ResourceKey<Profession>> PROFESSION_KEY_CODEC = Identifier.CODEC.xmap(
-            resourceLocation -> ResourceKey.create(ProfessionsCommon.PROFESSION_REGISTRY_KEY, resourceLocation),
+            Identifier -> ResourceKey.create(ProfessionsCommon.PROFESSION_REGISTRY_KEY, Identifier),
             ResourceKey::identifier
     );
     private static final Codec<Map<String, Dynamic<?>>> FEATURES_CODEC = Codec.unboundedMap(Codec.STRING, Codec.PASSTHROUGH);
@@ -47,7 +47,7 @@ public class ProfessionCategory {
 
     public static final Codec<ProfessionCategory> NETWORK_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             BASE_FIELDS_CODEC.forGetter(category -> category),
-            ResourceLocation.CODEC.optionalFieldOf("fileId").forGetter(category -> Optional.ofNullable(category.getFileId()))
+            Identifier.CODEC.optionalFieldOf("fileId").forGetter(category -> Optional.ofNullable(category.getFileId()))
     ).apply(instance, (category, fileId) -> {
         fileId.ifPresent(category::setId);
         return category;
@@ -109,11 +109,11 @@ public class ProfessionCategory {
     }
 
     // todo; i'd like to find a better way to handle this.
-    public @Nullable ResourceLocation getFileId() {
+    public @Nullable Identifier getFileId() {
         return fileId;
     }
 
-    public void setId(ResourceLocation fileId) {
+    public void setId(Identifier fileId) {
         if (this.fileId != null && !this.fileId.equals(fileId)) {
             throw new IllegalStateException("Category file id already set to " + this.fileId + ", cannot reset to " + fileId);
         }

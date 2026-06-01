@@ -17,7 +17,7 @@ public class ProfessionCategoryManager {
 
     private volatile Map<Identifier, ProfessionCategory> categoryMap = Map.of();
 
-    public Map<ResourceLocation,ProfessionCategory> reloadCategories(Map<Identifier, ProfessionCategory> categories) {
+    public Map<Identifier,ProfessionCategory> reloadCategories(Map<Identifier, ProfessionCategory> categories) {
         categoryMap = categories;
         LOGGER.info("Reloaded {} profession categories", categoryMap.size());
         return categoryMap;

@@ -10,13 +10,15 @@ import com.epherical.professions.model.gating.GateReport;
 import com.epherical.professions.presentation.client.RenderHelperUtil;
 import com.epherical.professions.presentation.model.GateDisplay;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,13 +28,13 @@ import java.util.List;
 
 public class OccupationGateList extends AbstractOccupationSelector<OccupationGateList.Entry> {
 
-    private static final ResourceLocation GATE_BUTTON_ENABLED = ResourceLocation.fromNamespaceAndPath(
+    private static final Identifier GATE_BUTTON_ENABLED = Identifier.fromNamespaceAndPath(
             ProfessionsCommon.MOD_ID, "occupation/gates/gate_button_enabled");
-    private static final ResourceLocation GATE_BUTTON_HOVERED = ResourceLocation.fromNamespaceAndPath(
+    private static final Identifier GATE_BUTTON_HOVERED = Identifier.fromNamespaceAndPath(
             ProfessionsCommon.MOD_ID, "occupation/gates/gate_button_hovered");
-    private static final ResourceLocation GATE_ROW_ICON_HIGHLIGHT = ResourceLocation.fromNamespaceAndPath(
+    private static final Identifier GATE_ROW_ICON_HIGHLIGHT = Identifier.fromNamespaceAndPath(
             ProfessionsCommon.MOD_ID, "occupation/gates/gate_row_icon_highlight");
-    private static final ResourceLocation GREY_LOCK_ICON = ResourceLocation.fromNamespaceAndPath(
+    private static final Identifier GREY_LOCK_ICON = Identifier.fromNamespaceAndPath(
             ProfessionsCommon.MOD_ID, "occupation/icons/grey_lock");
 
     private final Occupation occupation;
@@ -59,7 +61,7 @@ public class OccupationGateList extends AbstractOccupationSelector<OccupationGat
     }
 
     @Override
-    protected void renderListSeparators(@NotNull GuiGraphics pGuiGraphics) {
+    protected void extractListSeparators(@NotNull GuiGraphicsExtractor pGuiGraphics) {
     }
 
     public class Entry extends ContainerObjectSelectionList.Entry<Entry> {
@@ -115,12 +117,14 @@ public class OccupationGateList extends AbstractOccupationSelector<OccupationGat
         }
 
         @Override
-        public void render(GuiGraphics gfx,
-                           int index, int y, int x, int rowWidth, int rowHeight,
-                           int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor gfx, int mouseX, int mouseY, boolean hovering, float partialTick) {
+            int y = this.getY();
+            int x = this.getX();
+            int rowWidth = this.getWidth();
+            int rowHeight = this.getHeight();
 
-            ResourceLocation backgroundSprite = hovering || this.equals(getSelected()) ? GATE_BUTTON_HOVERED : GATE_BUTTON_ENABLED;
-            gfx.blitSprite(backgroundSprite, x, y, rowWidth - 2, rowHeight + 3);
+            Identifier backgroundSprite = hovering || this.equals(getSelected()) ? GATE_BUTTON_HOVERED : GATE_BUTTON_ENABLED;
+            gfx.blitSprite(RenderPipelines.GUI_TEXTURED, backgroundSprite, x, y, rowWidth - 2, rowHeight - 1);
 
             GateDisplay<?> display = getCurrentTargetDisplay();
             ItemStack icon = display.icon();
@@ -130,9 +134,9 @@ public class OccupationGateList extends AbstractOccupationSelector<OccupationGat
 
             int iconX = x + 2;
             int iconY = y + 2;
-            gfx.blitSprite(GATE_ROW_ICON_HIGHLIGHT, iconX, iconY, 26, 26);
+            gfx.blitSprite(RenderPipelines.GUI_TEXTURED, GATE_ROW_ICON_HIGHLIGHT, iconX, iconY, 26, 26);
             if (!icon.isEmpty()) {
-                RenderHelperUtil.drawScaled(gfx, iconX, iconY + 1, 1.5f, () -> gfx.renderFakeItem(icon, 0, 0));
+                RenderHelperUtil.drawScaled(gfx, iconX, iconY + 1, 1.5f, () -> gfx.item(icon, 0, 0));
             }
 
             int lockX = x + rowWidth - 18 - 5;
@@ -140,27 +144,23 @@ public class OccupationGateList extends AbstractOccupationSelector<OccupationGat
 
 
             if (!gateReport.isAllowed()) {
-                gfx.setColor(1.5f, 0f, 0f, 1f);
-                gfx.blitSprite(GREY_LOCK_ICON, lockX, lockY, 18, 18);
-                gfx.setColor(1f, 1f, 1f, 1f);
+                gfx.blitSprite(RenderPipelines.GUI_TEXTURED, GREY_LOCK_ICON, lockX, lockY, 18, 18, 0xFFFF0000);
             } else {
-                gfx.setColor(0f, 1.5f, 0f, 1f);
-                gfx.blitSprite(GREY_LOCK_ICON, lockX, lockY, 18, 18);
-                gfx.setColor(1f, 1f, 1f, 1f);
+                gfx.blitSprite(RenderPipelines.GUI_TEXTURED, GREY_LOCK_ICON, lockX, lockY, 18, 18, 0xFF00FF00);
             }
 
 
             int textX = iconX + ROW_ICON_SIZE + ICON_TEXT_SPACING + 7;
             int maxTextWidth = Math.max(10, lockX - textX - 2);
             RenderHelperUtil.drawScaledString(gfx, minecraft.font, minecraft.font.plainSubstrByWidth(name,
-                    (int) (maxTextWidth / 0.65f)), textX, y + 5, 0.65f, 0xFFFFFF, false);
+                    (int) (maxTextWidth / 0.65f)), textX, y + 5, 0.65f, 0xFFFFFFFF, false);
             RenderHelperUtil.drawScaledString(gfx, minecraft.font, minecraft.font.plainSubstrByWidth(gateTypeLine,
-                    (int) (maxTextWidth / 0.5f)), textX, y + 20, 0.5f, 0xDDB56A, false);
+                    (int) (maxTextWidth / 0.5f)), textX, y + 20, 0.5f, 0xFFDDB56A, false);
         }
 
         @Override
-        public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
-            boolean clicked = super.mouseClicked(pMouseX, pMouseY, pButton);
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            boolean clicked = super.mouseClicked(event, doubleClick);
             setSelected(this);
             playDownSound(Minecraft.getInstance().getSoundManager());
             return clicked;

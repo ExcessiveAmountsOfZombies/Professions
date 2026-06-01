@@ -5,11 +5,11 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
-import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
+import net.minecraft.advancements.criterion.ItemUsedOnLocationTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,8 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class BlockItemPlacementMixin {
 
     @Inject(method = "trigger", at = @At("HEAD"))
-    private void onPlace(ServerPlayer player, BlockPos pos, ItemStack stack, CallbackInfo ci) {
-        ServerLevel serverLevel = player.serverLevel();
+    private void onPlace(ServerPlayer player, BlockPos pos, ItemInstance tool, CallbackInfo ci) {
+        ServerLevel serverLevel = player.level();
         FabricProfessionsMod mod = FabricProfessionsMod.mod;
 
         if (player.isCreative()) {
@@ -45,7 +45,7 @@ public class BlockItemPlacementMixin {
         ProfessionContext.Builder builder = ProfessionContext.builder(serverLevel, Actions.BLOCK_PLACE, professionalPlayer)
                 .addParameter(ProfessionParameter.THIS_BLOCK_STATE, blockState)
                 .addParameter(ProfessionParameter.BLOCKPOS, pos)
-                .addParameter(ProfessionParameter.THIS_HOLDER, blockState.getBlockHolder());
+                .addParameter(ProfessionParameter.THIS_HOLDER, blockState.typeHolder());
         mod.getPlayerManager().processAction(player, builder.build());
     }
 }

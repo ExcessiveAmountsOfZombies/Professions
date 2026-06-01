@@ -2,8 +2,8 @@ package com.epherical.professions.core.register;
 
 import com.epherical.professions.ProfessionsCommon;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 
 public final class PlatformBootstrap {
 

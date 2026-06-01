@@ -25,6 +25,10 @@ public class NeoForgeGateListenerClient {
             return;
         }
 
+        if (event.getEntity().isSpectator()) {
+            return;
+        }
+
         handleBlockBreakGateManagement(event);
     }
 

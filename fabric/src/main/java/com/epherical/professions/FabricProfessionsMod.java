@@ -10,20 +10,28 @@ import com.epherical.professions.data.player.UuidOccupationDataLoader;
 import com.epherical.professions.model.actions.ActionType;
 import com.epherical.professions.model.actions.conditions.ConditionType;
 import com.epherical.professions.model.actions.rewards.RewardType;
+import com.epherical.professions.model.gating.GateType;
+import com.epherical.professions.model.gating.requirements.GateRequirementType;
 import com.epherical.professions.model.perks.PerkType;
+import com.epherical.professions.listener.FabricGateListenerServer;
 import com.epherical.professions.networking.NetworkPayloadDispatcher;
 import com.epherical.professions.networking.client.C2SCategorySelectionPayload;
 import com.epherical.professions.networking.client.C2SOccupationExperienceTrackingPayload;
 import com.epherical.professions.networking.client.C2SOccupationPerkClaimPayload;
+import com.epherical.professions.networking.server.PlayerDataSyncUtil;
 import com.epherical.professions.networking.server.CategorySelectionPayloadHandler;
 import com.epherical.professions.networking.server.OccupationExperienceTrackingPayloadHandler;
 import com.epherical.professions.networking.server.OccupationPerkClaimPayloadHandler;
 import com.epherical.professions.networking.server.S2CCategorySyncPayload;
 import com.epherical.professions.networking.server.S2CExperienceGainPayload;
+import com.epherical.professions.networking.server.S2CPlayerActionsSyncPayload;
 import com.epherical.professions.networking.server.S2CPlayerDataSyncPayload;
+import com.epherical.professions.networking.server.S2CPlayerGatesSyncPayload;
+import com.epherical.professions.networking.server.S2CPlayerPerksSyncPayload;
 import com.epherical.professions.presentation.commands.ProfessionsStandardCommands;
 import com.epherical.professions.registries.ActionLoad3;
 import com.epherical.professions.registries.CategoryLoad3;
+import com.epherical.professions.registries.GateLoad3;
 import com.epherical.professions.registries.PerkLoad3;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -52,13 +60,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Optional;
 
 public class FabricProfessionsMod extends ProfessionsCommon implements ModInitializer {
 
     private static final FabricRegistrarBackend FABRIC_REGISTRAR_BACKEND = new FabricRegistrarBackend();
 
     public static Registry<ActionType> ACTIONS;
+    public static Registry<GateType> GATES;
+    public static Registry<GateRequirementType> REQUIREMENTS;
     public static Registry<ConditionType> CONDITIONS;
     public static Registry<RewardType> REWARDS;
     public static Registry<PerkType> PERKS;
@@ -67,12 +76,15 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
     public static FabricProfessionsMod mod;
 
     private final ActionManager actionManager;
+    private final GateManager gateManager;
     private final PlayerManager playerManager;
 
     public FabricProfessionsMod() {
         super();
         this.actionManager = new ActionManager(null);
-        this.playerManager = new PlayerManager(actionManager, getPerkManager(), null, getEventBus(), getCategoryManager());
+        this.gateManager = new GateManager(null);
+        this.playerManager = new PlayerManager(actionManager, gateManager, getPerkManager(), null, getEventBus(),
+                getCategoryManager());
     }
 
     @Override
@@ -81,6 +93,12 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
         PlatformBootstrap.init(FABRIC_REGISTRAR_BACKEND);
 
         ACTIONS = FabricRegistryBuilder.createSimple(ACTION_REGISTRY_KEY)
+                .attribute(RegistryAttribute.SYNCED)
+                .buildAndRegister();
+        GATES = FabricRegistryBuilder.createSimple(GATE_REGISTRY_KEY)
+                .attribute(RegistryAttribute.SYNCED)
+                .buildAndRegister();
+        REQUIREMENTS = FabricRegistryBuilder.createSimple(REQUIREMENT_REGISTRY_KEY)
                 .attribute(RegistryAttribute.SYNCED)
                 .buildAndRegister();
         CONDITIONS = FabricRegistryBuilder.createSimple(CONDITION_REGISTRY_KEY)
@@ -108,6 +126,9 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
         PayloadTypeRegistry.playS2C().register(S2CExperienceGainPayload.TYPE, S2CExperienceGainPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(S2CCategorySyncPayload.TYPE, S2CCategorySyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(S2CPlayerDataSyncPayload.TYPE, S2CPlayerDataSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(S2CPlayerActionsSyncPayload.TYPE, S2CPlayerActionsSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(S2CPlayerPerksSyncPayload.TYPE, S2CPlayerPerksSyncPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(S2CPlayerGatesSyncPayload.TYPE, S2CPlayerGatesSyncPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(C2SCategorySelectionPayload.TYPE, C2SCategorySelectionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(C2SOccupationExperienceTrackingPayload.TYPE, C2SOccupationExperienceTrackingPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(C2SOccupationPerkClaimPayload.TYPE, C2SOccupationPerkClaimPayload.STREAM_CODEC);
@@ -126,8 +147,13 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
             setActionLoader(loader);
             return new FabricActionReloadListener(loader, provider);
         });
+        ResourceManagerHelper.get(net.minecraft.server.packs.PackType.SERVER_DATA).registerReloadListener(FabricGateReloadListener.ID, provider -> {
+            GateLoad3 loader = new GateLoad3(gateManager);
+            setGateLoader(loader);
+            return new FabricGateReloadListener(loader, provider);
+        });
         ResourceManagerHelper.get(net.minecraft.server.packs.PackType.SERVER_DATA).registerReloadListener(FabricCategoryReloadListener.ID, provider -> {
-            CategoryLoad3 loader = new CategoryLoad3(getCategoryManager());
+            CategoryLoad3 loader = new CategoryLoad3(getCategoryManager(), playerManager);
             setCategoryLoader(loader);
             return new FabricCategoryReloadListener(loader, provider);
         });
@@ -158,6 +184,7 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
     }
 
     private void registerGameplayEvents() {
+        FabricGateListenerServer.register();
         ServerPlayerEvents.JOIN.register(playerManager::playerJoined);
         ServerPlayerEvents.LEAVE.register(playerManager::playerQuit);
 
@@ -223,14 +250,8 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
         }
 
         NetworkPayloadDispatcher.sendToPlayer(player, new S2CCategorySyncPayload(getCategoryManager().getCategoryMap()));
-        S2CPlayerDataSyncPayload payload = new S2CPlayerDataSyncPayload(
-                player.getUUID(),
-                professionalPlayer.getAllOccupations(),
-                Optional.ofNullable(playerManager.getCategoryIdFor(professionalPlayer)),
-                playerManager.getRelevantActionsForCategory(professionalPlayer.getCategory()),
-                playerManager.getAllPerks(professionalPlayer.getCategory())
-        );
-        NetworkPayloadDispatcher.sendToPlayer(player, payload);
+        PlayerDataSyncUtil.syncAll(player, professionalPlayer, playerManager);
+        getPerkManager().playerJoined(professionalPlayer, player);
     }
 
     private @Nullable IProfessionalPlayer ensureProfessionalPlayer(ServerPlayer player) {
@@ -255,6 +276,11 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
     @Override
     public ActionManager getActionManager() {
         return actionManager;
+    }
+
+    @Override
+    public GateManager getGateManager() {
+        return gateManager;
     }
 
     public static @Nullable IProfessionalPlayer ensureProfessionalPlayer(FabricProfessionsMod mod, ServerPlayer player) {

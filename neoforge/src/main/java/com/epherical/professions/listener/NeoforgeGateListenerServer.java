@@ -7,9 +7,7 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.bootstrap.Gates;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
-import com.epherical.professions.model.Occupation;
-import com.epherical.professions.api.actions.Gate;
-import com.epherical.professions.model.gating.GateReport;
+import com.epherical.professions.util.GateUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -20,8 +18,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-
-import java.util.Collection;
 
 @EventBusSubscriber(modid = ProfessionsCommon.MOD_ID)
 public class NeoforgeGateListenerServer {
@@ -39,12 +35,20 @@ public class NeoforgeGateListenerServer {
             return;
         }
 
+        if (event.getEntity().isSpectator()) {
+            return;
+        }
+
         handleBlockBreakGateManagement(event);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if (event.isCanceled()) {
+            return;
+        }
+
+        if (event.getPlayer().isSpectator()) {
             return;
         }
 
@@ -62,7 +66,9 @@ public class NeoforgeGateListenerServer {
                 .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getLevel().getBlockState(event.getPos()))
                 .build();
 
-        passesGateCheck(event, gateManager, player, context);
+        if (!GateUtil.passesBlockBreakGateChecks(gateManager, player, context)) {
+            event.setCanceled(true);
+        }
 
     }
 
@@ -73,6 +79,10 @@ public class NeoforgeGateListenerServer {
         }
 
         if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+
+        if (serverPlayer.isSpectator()) {
             return;
         }
 
@@ -89,7 +99,7 @@ public class NeoforgeGateListenerServer {
                 .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getState())
                 .build();
 
-        if (!checkGate(gateManager.getGatesByType(Gates.PLACE), player, context)) {
+        if (!GateUtil.checkGate(gateManager, gateManager.getGatesByType(Gates.PLACE), player, context)) {
             event.setCanceled(true);
         }
     }
@@ -112,6 +122,10 @@ public class NeoforgeGateListenerServer {
             return;
         }
 
+        if (mcPlayer.isSpectator()) {
+            return;
+        }
+
         GateManager gateManager = ProfessionsCommon.INSTANCE.getGateManager();
         PlayerManager playerManager = ProfessionsCommon.INSTANCE.getPlayerManager();
         IProfessionalPlayer player = playerManager.getPlayer(mcPlayer.getUUID());
@@ -123,38 +137,7 @@ public class NeoforgeGateListenerServer {
                 .addParameter(ProfessionParameter.ITEM_INVOLVED, itemStack) // todo; this might be a problem
                 .build();
 
-        event.setCanceled(!checkGate(gateManager.getGatesByType(Gates.PLACE), player, context));
-    }
-
-    public static void passesGateCheck(ICancellableEvent event, GateManager gateManager, IProfessionalPlayer player, ProfessionContext context) {
-        boolean passedGate = checkGate(gateManager.getGatesByType(Gates.BLOCK_BREAK), player, context);
-        if (!passedGate) {
-            event.setCanceled(true);
-        } else {
-            passedGate = checkGate(gateManager.getGatesByType(Gates.TOOL), player, context);
-            if (!passedGate) {
-                event.setCanceled(true);
-            }
-        }
-    }
-
-    public static boolean checkGate(Collection<Gate<?>> gates, IProfessionalPlayer player, ProfessionContext context) {
-        GateManager gateManager = ProfessionsCommon.INSTANCE.getGateManager();
-        if (!gateManager.areGatesEnabled(player) || player.getCategory() == null) {
-            return true; // good
-        }
-        GateReport gateReport = new GateReport();
-        for (Gate<?> gate : gates) {
-            Occupation occupation = player.getOccupation(gate.getProfession());
-            if (occupation == null || !occupation.isActive() || !player.getCategory().hasProfession(gate.getProfession())) continue;
-            gate.meetsRequirements(occupation, context, gateReport);
-        }
-
-        if (!gateReport.isAllowed() && player.getPlayer() != null) {
-            gateReport.sendFailureMessage(player.getPlayer());
-        }
-
-        return gateReport.isAllowed(); // good
+        event.setCanceled(!GateUtil.checkGate(gateManager, gateManager.getGatesByType(Gates.PLACE), player, context));
     }
 
     public static void handleBlockBreakGateManagement(PlayerInteractEvent.LeftClickBlock event) {
@@ -174,7 +157,9 @@ public class NeoforgeGateListenerServer {
                 .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getLevel().getBlockState(event.getPos()))
                 .build();
 
-        passesGateCheck(event, gateManager, player, context);
+        if (!GateUtil.passesBlockBreakGateChecks(gateManager, player, context)) {
+            event.setCanceled(true);
+        }
 
         /*if (event.isCanceled()) {
             event.getEntity().sendSystemMessage(Component.translatable("professions.gate.error.tool_level"));

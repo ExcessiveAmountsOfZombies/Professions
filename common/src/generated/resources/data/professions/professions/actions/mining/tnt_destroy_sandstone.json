@@ -1,0 +1,19 @@
+{
+  "action": "professions:block_explode",
+  "blocks": [
+    "minecraft:sandstone",
+    "minecraft:red_sandstone",
+    "minecraft:chiseled_sandstone",
+    "minecraft:cut_sandstone",
+    "minecraft:chiseled_red_sandstone",
+    "minecraft:smooth_red_sandstone"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 10.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

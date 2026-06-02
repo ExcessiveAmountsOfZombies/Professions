@@ -4,6 +4,7 @@ import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.item.CraftingAction;
+import com.epherical.professions.model.actions.item.TakeSmeltAction;
 import com.epherical.professions.model.actions.rewards.OccupationExperience;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -55,6 +56,21 @@ public final class SmithingActionProvider implements DataProvider {
             new SmithingCraftAction("craft_ranged_crossbow", List.of(Items.CROSSBOW), 140)
     );
 
+    private static final List<SmithingSmeltAction> SMELTED_ITEM_ACTIONS = List.of(
+            new SmithingSmeltAction("take_smelted_copper_ingot", Items.COPPER_INGOT, 35),
+            new SmithingSmeltAction("take_smelted_iron_ingot", Items.IRON_INGOT, 55),
+            new SmithingSmeltAction("take_smelted_gold_ingot", Items.GOLD_INGOT, 70),
+            new SmithingSmeltAction("take_smelted_diamond", Items.DIAMOND, 140),
+            new SmithingSmeltAction("take_smelted_lapis_lazuli", Items.LAPIS_LAZULI, 80),
+            new SmithingSmeltAction("take_smelted_emerald", Items.EMERALD, 160),
+            new SmithingSmeltAction("take_smelted_netherite_scrap", Items.NETHERITE_SCRAP, 250),
+            new SmithingSmeltAction("take_smelted_coal", Items.COAL, 25),
+            new SmithingSmeltAction("take_smelted_quartz", Items.QUARTZ, 45),
+            new SmithingSmeltAction("take_smelted_redstone", Items.REDSTONE, 40),
+            new SmithingSmeltAction("take_smelted_gold_nugget", Items.GOLD_NUGGET, 20),
+            new SmithingSmeltAction("take_smelted_iron_nugget", Items.IRON_NUGGET, 20)
+    );
+
     private final PackOutput.PathProvider pathProvider;
     private final CompletableFuture<HolderLookup.Provider> lookupProvider;
 
@@ -75,6 +91,7 @@ public final class SmithingActionProvider implements DataProvider {
             addCraftActions(writes, ARMOR_ACTIONS, smithingProfession, output, registries);
             addCraftActions(writes, WEAPON_ACTIONS, smithingProfession, output, registries);
             addCraftActions(writes, RANGED_ACTIONS, smithingProfession, output, registries);
+            addTakeSmeltActions(writes, SMELTED_ITEM_ACTIONS, smithingProfession, output, registries);
             return CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new));
         });
     }
@@ -90,14 +107,57 @@ public final class SmithingActionProvider implements DataProvider {
                         .rewardExp(craftAction.experience())
                         .items(craftAction.items())
                         .save(output, registries))
-                .forEach(writes::add);
+                .forEach(write -> writes.add(write));
+    }
+
+    private void addTakeSmeltActions(List<CompletableFuture<?>> writes, List<SmithingSmeltAction> actions, Holder<Profession> profession, CachedOutput output, HolderLookup.Provider registries) {
+        actions.stream()
+                .map(smeltAction -> takeSmeltAction(smeltAction.name(), profession)
+                        .rewardExp(smeltAction.experience())
+                        .item(smeltAction.item())
+                        .save(output, registries))
+                .forEach(write -> writes.add(write));
     }
 
     private SmithingCraftingActionBuilder action(String path, Holder<Profession> profession) {
         return new SmithingCraftingActionBuilder(path, profession, pathProvider);
     }
 
+    private TakeSmeltActionBuilder takeSmeltAction(String path, Holder<Profession> profession) {
+        return new TakeSmeltActionBuilder(path, profession, pathProvider);
+    }
+
     private record SmithingCraftAction(String name, List<Item> items, double experience) {
+    }
+
+    private record SmithingSmeltAction(String name, Item item, double experience) {
+    }
+
+    private static final class TakeSmeltActionBuilder {
+        private final String path;
+        private final PackOutput.PathProvider pathProvider;
+        private final TakeSmeltAction.Builder builder;
+
+        private TakeSmeltActionBuilder(String path, Holder<Profession> profession, PackOutput.PathProvider pathProvider) {
+            this.path = path;
+            this.pathProvider = pathProvider;
+            this.builder = new TakeSmeltAction.Builder(profession);
+        }
+
+        private TakeSmeltActionBuilder rewardExp(double exp) {
+            builder.reward(new OccupationExperience.Builder().exp(exp));
+            return this;
+        }
+
+        private TakeSmeltActionBuilder item(Item item) {
+            builder.target(item.builtInRegistryHolder().key());
+            return this;
+        }
+
+        private CompletableFuture<?> save(CachedOutput output, HolderLookup.Provider registries) {
+            Action<?> action = builder.build();
+            return DataProvider.saveStable(output, registries, Action.TYPED_CODEC, action, pathProvider.json(rl(path)));
+        }
     }
 
     private static final class SmithingCraftingActionBuilder {

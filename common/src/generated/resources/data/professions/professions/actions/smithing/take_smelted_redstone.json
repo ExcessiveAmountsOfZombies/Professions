@@ -1,0 +1,14 @@
+{
+  "action": "professions:take_smelted",
+  "conditions": [],
+  "items": [
+    "minecraft:redstone"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 40.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

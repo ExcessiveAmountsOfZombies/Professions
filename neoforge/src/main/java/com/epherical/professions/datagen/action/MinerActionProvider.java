@@ -4,6 +4,7 @@ import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.block.BlockBreakAction;
+import com.epherical.professions.model.actions.block.TNTDestroyAction;
 import com.epherical.professions.api.actions.Condition;
 import com.epherical.professions.model.actions.conditions.InvertedCondition;
 import com.epherical.professions.model.actions.conditions.ToolMatcher;
@@ -29,6 +30,8 @@ import static com.epherical.professions.datagen.ProfessionDataGeneration.id;
 import static com.epherical.professions.datagen.ProfessionDataGeneration.rl;
 
 public final class MinerActionProvider implements DataProvider {
+
+    private static final double TNT_EXP_MULTIPLIER = 0.2;
 
     private static final List<OreAction> ORE_ACTIONS = List.of(
             new OreAction("coal", BlockTags.COAL_ORES, 200),
@@ -62,14 +65,34 @@ public final class MinerActionProvider implements DataProvider {
                     .blocks(List.of(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER))
                     .block(List.of(Blocks.MOSSY_COBBLESTONE))
                     .save(output, registries));
+            writes.add(tntAction("tnt_destroy_stone", miningProfession)
+                    .rewardExp(50.0 * TNT_EXP_MULTIPLIER)
+                    .blocks(List.of(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER))
+                    .block(List.of(Blocks.MOSSY_COBBLESTONE))
+                    .save(output, registries));
 
             writes.add(action("mine_terracotta", miningProfession)
                     .rewardExp(50.0)
                     .block(BlockTags.TERRACOTTA)
                     .save(output, registries));
+            writes.add(tntAction("tnt_destroy_terracotta", miningProfession)
+                    .rewardExp(50.0 * TNT_EXP_MULTIPLIER)
+                    .block(BlockTags.TERRACOTTA)
+                    .save(output, registries));
 
             writes.add(action("mine_sandstone", miningProfession)
                     .rewardExp(50)
+                    .block(List.of(
+                            Blocks.SANDSTONE,
+                            Blocks.RED_SANDSTONE,
+                            Blocks.CHISELED_SANDSTONE,
+                            Blocks.CUT_SANDSTONE,
+                            Blocks.CHISELED_RED_SANDSTONE,
+                            Blocks.SMOOTH_RED_SANDSTONE
+                    ))
+                    .save(output, registries));
+            writes.add(tntAction("tnt_destroy_sandstone", miningProfession)
+                    .rewardExp(50 * TNT_EXP_MULTIPLIER)
                     .block(List.of(
                             Blocks.SANDSTONE,
                             Blocks.RED_SANDSTONE,
@@ -94,9 +117,29 @@ public final class MinerActionProvider implements DataProvider {
                             Blocks.PRISMARINE_SLAB
                     ))
                     .save(output, registries));
+            writes.add(tntAction("tnt_destroy_prismarine", miningProfession)
+                    .rewardExp(60 * TNT_EXP_MULTIPLIER)
+                    .block(List.of(
+                            Blocks.PRISMARINE,
+                            Blocks.DARK_PRISMARINE,
+                            Blocks.PRISMARINE_BRICKS,
+                            Blocks.PRISMARINE_SLAB
+                    ))
+                    .save(output, registries));
 
             writes.add(action("mine_nether_bricks", miningProfession)
                     .rewardExp(75)
+                    .block(List.of(
+                            Blocks.NETHER_BRICKS,
+                            Blocks.CRACKED_NETHER_BRICKS,
+                            Blocks.NETHER_BRICK_STAIRS,
+                            Blocks.NETHER_BRICK_SLAB,
+                            Blocks.NETHER_BRICK_FENCE,
+                            Blocks.NETHER_BRICK_WALL
+                    ))
+                    .save(output, registries));
+            writes.add(tntAction("tnt_destroy_nether_bricks", miningProfession)
+                    .rewardExp(75 * TNT_EXP_MULTIPLIER)
                     .block(List.of(
                             Blocks.NETHER_BRICKS,
                             Blocks.CRACKED_NETHER_BRICKS,
@@ -119,9 +162,28 @@ public final class MinerActionProvider implements DataProvider {
                             Blocks.POLISHED_BASALT
                     ))
                     .save(output, registries));
+            writes.add(tntAction("tnt_destroy_nether_terrain", miningProfession)
+                    .rewardExp(80 * TNT_EXP_MULTIPLIER)
+                    .block(List.of(
+                            Blocks.CRIMSON_NYLIUM,
+                            Blocks.WARPED_NYLIUM,
+                            Blocks.MAGMA_BLOCK,
+                            Blocks.GILDED_BLACKSTONE,
+                            Blocks.POLISHED_BLACKSTONE_BRICKS,
+                            Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS,
+                            Blocks.POLISHED_BASALT
+                    ))
+                    .save(output, registries));
 
             writes.add(action("mine_end_blocks", miningProfession)
                     .rewardExp(70)
+                    .block(List.of(
+                            Blocks.END_STONE,
+                            Blocks.PURPUR_BLOCK
+                    ))
+                    .save(output, registries));
+            writes.add(tntAction("tnt_destroy_end_blocks", miningProfession)
+                    .rewardExp(70 * TNT_EXP_MULTIPLIER)
                     .block(List.of(
                             Blocks.END_STONE,
                             Blocks.PURPUR_BLOCK
@@ -139,10 +201,25 @@ public final class MinerActionProvider implements DataProvider {
                             Blocks.AMETHYST_CLUSTER
                     ))
                     .save(output, registries));
+            writes.add(tntAction("tnt_destroy_geode", miningProfession)
+                    .rewardExp(90 * TNT_EXP_MULTIPLIER)
+                    .block(List.of(
+                            Blocks.SMOOTH_BASALT,
+                            Blocks.CALCITE,
+                            Blocks.DRIPSTONE_BLOCK,
+                            Blocks.POINTED_DRIPSTONE,
+                            Blocks.AMETHYST_BLOCK,
+                            Blocks.AMETHYST_CLUSTER
+                    ))
+                    .save(output, registries));
 
             writes.add(action("mine_nether_quartz_ore", miningProfession)
                     .rewardExp(650)
                     .unlessSilkTouchPickaxe(registries)
+                    .block(List.of(Blocks.NETHER_QUARTZ_ORE))
+                    .save(output, registries));
+            writes.add(tntAction("tnt_destroy_nether_quartz_ore", miningProfession)
+                    .rewardExp(650 * TNT_EXP_MULTIPLIER)
                     .block(List.of(Blocks.NETHER_QUARTZ_ORE))
                     .save(output, registries));
 
@@ -155,6 +232,10 @@ public final class MinerActionProvider implements DataProvider {
                     .rewardExp(8000)
                     .block(List.of(Blocks.SPAWNER))
                     .save(output, registries));
+            writes.add(tntAction("tnt_destroy_spawner", miningProfession)
+                    .rewardExp(8000 * TNT_EXP_MULTIPLIER)
+                    .block(List.of(Blocks.SPAWNER))
+                    .save(output, registries));
 
             ORE_ACTIONS.stream()
                     .map(ore -> action("mine_ore_" + ore.name(), miningProfession)
@@ -162,7 +243,13 @@ public final class MinerActionProvider implements DataProvider {
                             .unlessSilkTouchPickaxe(registries)
                             .block(ore.tag())
                             .save(output, registries))
-                    .forEach(writes::add);
+                    .forEach(write -> writes.add(write));
+            ORE_ACTIONS.stream()
+                    .map(ore -> tntAction("tnt_destroy_ore_" + ore.name(), miningProfession)
+                            .rewardExp(ore.experience() * TNT_EXP_MULTIPLIER)
+                            .block(ore.tag())
+                            .save(output, registries))
+                    .forEach(write -> writes.add(write));
 
             return CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new));
         });
@@ -177,7 +264,57 @@ public final class MinerActionProvider implements DataProvider {
         return new MinerBlockBreakActionBuilder(path, profession, pathProvider);
     }
 
+    private MinerTntDestroyActionBuilder tntAction(String path, Holder<Profession> profession) {
+        return new MinerTntDestroyActionBuilder(path, profession, pathProvider);
+    }
+
     private record OreAction(String name, TagKey<Block> tag, double experience) {
+    }
+
+    private static final class MinerTntDestroyActionBuilder {
+        private final String path;
+        private final PackOutput.PathProvider pathProvider;
+        private final TNTDestroyAction.Builder builder;
+
+        private MinerTntDestroyActionBuilder(String path, Holder<Profession> profession, PackOutput.PathProvider pathProvider) {
+            this.path = path;
+            this.pathProvider = pathProvider;
+            this.builder = new TNTDestroyAction.Builder(profession);
+        }
+
+        private MinerTntDestroyActionBuilder rewardExp(double exp) {
+            builder.reward(new OccupationExperience.Builder().exp(exp));
+            return this;
+        }
+
+        private MinerTntDestroyActionBuilder block(Block block) {
+            builder.target(block.builtInRegistryHolder().key());
+            return this;
+        }
+
+        private MinerTntDestroyActionBuilder block(List<Block> blocks) {
+            for (Block block : blocks) {
+                builder.target(block.builtInRegistryHolder().key());
+            }
+            return this;
+        }
+
+        private MinerTntDestroyActionBuilder block(TagKey<Block> block) {
+            builder.target(block);
+            return this;
+        }
+
+        private MinerTntDestroyActionBuilder blocks(List<TagKey<Block>> blocks) {
+            for (TagKey<Block> block : blocks) {
+                builder.target(block);
+            }
+            return this;
+        }
+
+        private CompletableFuture<?> save(CachedOutput output, HolderLookup.Provider registries) {
+            Action<?> action = builder.build();
+            return DataProvider.saveStable(output, registries, Action.TYPED_CODEC, action, pathProvider.json(rl(path)));
+        }
     }
 
     private static final class MinerBlockBreakActionBuilder {

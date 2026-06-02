@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_explode",
+  "blocks": [
+    "#minecraft:lapis_ores"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 140.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

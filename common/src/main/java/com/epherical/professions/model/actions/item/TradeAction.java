@@ -12,6 +12,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.util.List;
 
@@ -33,6 +34,11 @@ public class TradeAction extends AbstractItemAction {
         return Common.build(this);
     }
 
+
+    @Override
+    public Item getIcon() {
+        return Items.EMERALD;
+    }
 
     @Override
     public ActionType getType() {

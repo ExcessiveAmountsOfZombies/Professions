@@ -1,0 +1,14 @@
+{
+  "action": "professions:take_smelted",
+  "conditions": [],
+  "items": [
+    "minecraft:gold_ingot"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 70.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

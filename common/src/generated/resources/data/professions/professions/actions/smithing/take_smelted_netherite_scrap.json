@@ -1,0 +1,14 @@
+{
+  "action": "professions:take_smelted",
+  "conditions": [],
+  "items": [
+    "minecraft:netherite_scrap"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 250.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

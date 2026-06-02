@@ -11,6 +11,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
@@ -33,6 +35,11 @@ public class TNTDestroyAction extends AbstractBlockAction {
         return Common.build(this);
     }
 
+
+    @Override
+    public Item getIcon() {
+        return Items.TNT;
+    }
 
     @Override
     public ActionType getType() {

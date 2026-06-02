@@ -1,0 +1,17 @@
+{
+  "action": "professions:take_smelted",
+  "conditions": [],
+  "items": [
+    "minecraft:deepslate",
+    "minecraft:glass",
+    "minecraft:stone",
+    "minecraft:terracotta"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 1.5,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

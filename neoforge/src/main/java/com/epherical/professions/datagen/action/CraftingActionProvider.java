@@ -4,6 +4,7 @@ import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.item.CraftingAction;
+import com.epherical.professions.model.actions.item.TakeSmeltAction;
 import com.epherical.professions.model.actions.rewards.OccupationExperience;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -156,6 +157,52 @@ public final class CraftingActionProvider implements DataProvider {
             )
     );
 
+    private static final List<CraftingTakeSmeltDefinition> TAKE_SMELT_ACTIONS = List.of(
+            new CraftingTakeSmeltDefinition(
+                    "take_smelted_basic_blocks",
+                    1.5,
+                    List.of(Items.DEEPSLATE, Items.GLASS, Items.STONE, Items.TERRACOTTA)),
+            new CraftingTakeSmeltDefinition(
+                    "take_smelted_masonry_blocks",
+                    2.0,
+                    List.of(
+                            Items.BRICK,
+                            Items.CRACKED_DEEPSLATE_BRICKS,
+                            Items.CRACKED_DEEPSLATE_TILES,
+                            Items.CRACKED_NETHER_BRICKS,
+                            Items.CRACKED_POLISHED_BLACKSTONE_BRICKS,
+                            Items.CRACKED_STONE_BRICKS,
+                            Items.NETHER_BRICK,
+                            Items.SMOOTH_BASALT,
+                            Items.SMOOTH_RED_SANDSTONE,
+                            Items.SMOOTH_SANDSTONE,
+                            Items.SMOOTH_STONE)),
+            new CraftingTakeSmeltDefinition(
+                    "take_smelted_refined_decorative_items",
+                    2.5,
+                    List.of(Items.GREEN_DYE, Items.LIME_DYE, Items.POPPED_CHORUS_FRUIT, Items.SMOOTH_QUARTZ)),
+            new CraftingTakeSmeltDefinition(
+                    "take_smelted_glazed_terracotta",
+                    3.0,
+                    List.of(
+                            Items.BLACK_GLAZED_TERRACOTTA,
+                            Items.BLUE_GLAZED_TERRACOTTA,
+                            Items.BROWN_GLAZED_TERRACOTTA,
+                            Items.CYAN_GLAZED_TERRACOTTA,
+                            Items.GRAY_GLAZED_TERRACOTTA,
+                            Items.GREEN_GLAZED_TERRACOTTA,
+                            Items.LIGHT_BLUE_GLAZED_TERRACOTTA,
+                            Items.LIGHT_GRAY_GLAZED_TERRACOTTA,
+                            Items.LIME_GLAZED_TERRACOTTA,
+                            Items.MAGENTA_GLAZED_TERRACOTTA,
+                            Items.ORANGE_GLAZED_TERRACOTTA,
+                            Items.PINK_GLAZED_TERRACOTTA,
+                            Items.PURPLE_GLAZED_TERRACOTTA,
+                            Items.RED_GLAZED_TERRACOTTA,
+                            Items.WHITE_GLAZED_TERRACOTTA,
+                            Items.YELLOW_GLAZED_TERRACOTTA))
+    );
+
     private final PackOutput.PathProvider pathProvider;
     private final CompletableFuture<HolderLookup.Provider> lookupProvider;
 
@@ -173,6 +220,7 @@ public final class CraftingActionProvider implements DataProvider {
 
             List<CompletableFuture<?>> writes = new ArrayList<>();
             addCraftActions(writes, CRAFTING_ACTIONS, craftingProfession, output, registries);
+            addTakeSmeltActions(writes, TAKE_SMELT_ACTIONS, craftingProfession, output, registries);
             return CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new));
         });
     }
@@ -195,14 +243,36 @@ public final class CraftingActionProvider implements DataProvider {
                         .tags(definition.tags())
                         .items(definition.items())
                         .save(output, registries))
-                .forEach(writes::add);
+                .forEach(write -> writes.add(write));
     }
 
     private CraftingDataActionBuilder action(String path, Holder<Profession> profession) {
         return new CraftingDataActionBuilder(path, profession, pathProvider);
     }
 
+    private void addTakeSmeltActions(
+            List<CompletableFuture<?>> writes,
+            List<CraftingTakeSmeltDefinition> definitions,
+            Holder<Profession> profession,
+            CachedOutput output,
+            HolderLookup.Provider registries
+    ) {
+        definitions.stream()
+                .map(definition -> takeSmeltAction(definition.name(), profession)
+                        .rewardExp(definition.experience())
+                        .items(definition.items())
+                        .save(output, registries))
+                .forEach(write -> writes.add(write));
+    }
+
+    private CraftingTakeSmeltActionBuilder takeSmeltAction(String path, Holder<Profession> profession) {
+        return new CraftingTakeSmeltActionBuilder(path, profession, pathProvider);
+    }
+
     private record CraftingActionDefinition(String name, double experience, List<TagKey<Item>> tags, List<Item> items) {
+    }
+
+    private record CraftingTakeSmeltDefinition(String name, double experience, List<Item> items) {
     }
 
     private static final class CraftingDataActionBuilder {
@@ -239,6 +309,40 @@ public final class CraftingActionProvider implements DataProvider {
         }
 
         private CraftingDataActionBuilder items(List<Item> items) {
+            for (Item item : items) {
+                item(item);
+            }
+            return this;
+        }
+
+        private CompletableFuture<?> save(CachedOutput output, HolderLookup.Provider registries) {
+            Action<?> action = builder.build();
+            return DataProvider.saveStable(output, registries, Action.TYPED_CODEC, action, pathProvider.json(rl(path)));
+        }
+    }
+
+    private static final class CraftingTakeSmeltActionBuilder {
+        private final String path;
+        private final PackOutput.PathProvider pathProvider;
+        private final TakeSmeltAction.Builder builder;
+
+        private CraftingTakeSmeltActionBuilder(String path, Holder<Profession> profession, PackOutput.PathProvider pathProvider) {
+            this.path = path;
+            this.pathProvider = pathProvider;
+            this.builder = new TakeSmeltAction.Builder(profession);
+        }
+
+        private CraftingTakeSmeltActionBuilder rewardExp(double exp) {
+            builder.reward(new OccupationExperience.Builder().exp(exp));
+            return this;
+        }
+
+        private CraftingTakeSmeltActionBuilder item(Item item) {
+            builder.target(item.builtInRegistryHolder().key());
+            return this;
+        }
+
+        private CraftingTakeSmeltActionBuilder items(List<Item> items) {
             for (Item item : items) {
                 item(item);
             }

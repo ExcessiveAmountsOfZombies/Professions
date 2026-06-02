@@ -1,0 +1,17 @@
+{
+  "action": "professions:block_explode",
+  "blocks": [
+    "minecraft:prismarine",
+    "minecraft:dark_prismarine",
+    "minecraft:prismarine_bricks",
+    "minecraft:prismarine_slab"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 12.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

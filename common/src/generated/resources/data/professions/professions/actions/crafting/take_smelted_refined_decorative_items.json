@@ -1,0 +1,17 @@
+{
+  "action": "professions:take_smelted",
+  "conditions": [],
+  "items": [
+    "minecraft:green_dye",
+    "minecraft:lime_dye",
+    "minecraft:popped_chorus_fruit",
+    "minecraft:smooth_quartz"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 2.5,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

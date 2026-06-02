@@ -1,0 +1,24 @@
+{
+  "action": "professions:take_smelted",
+  "conditions": [],
+  "items": [
+    "minecraft:brick",
+    "minecraft:cracked_deepslate_bricks",
+    "minecraft:cracked_deepslate_tiles",
+    "minecraft:cracked_nether_bricks",
+    "minecraft:cracked_polished_blackstone_bricks",
+    "minecraft:cracked_stone_bricks",
+    "minecraft:nether_brick",
+    "minecraft:smooth_basalt",
+    "minecraft:smooth_red_sandstone",
+    "minecraft:smooth_sandstone",
+    "minecraft:smooth_stone"
+  ],
+  "profession": "professions:crafting",
+  "rewards": [
+    {
+      "expAmount": 2.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

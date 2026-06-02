@@ -1,0 +1,15 @@
+{
+  "action": "professions:block_explode",
+  "blocks": [
+    "minecraft:end_stone",
+    "minecraft:purpur_block"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 14.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

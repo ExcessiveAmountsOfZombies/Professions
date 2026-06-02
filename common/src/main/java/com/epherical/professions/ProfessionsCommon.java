@@ -5,6 +5,7 @@ import com.epherical.professions.api.event.runtime.PlayerJoinEvent;
 import com.epherical.professions.api.event.runtime.perks.PerkClaimedEvent;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.data.config.ProfessionConfig;
+import com.epherical.professions.listener.action.ActionGainExperienceListener;
 import com.epherical.professions.listener.perks.PerkClaimListener;
 import com.epherical.professions.listener.perks.PerkGainExperienceListener;
 import com.epherical.professions.listener.perks.PerkLevelListener;
@@ -83,6 +84,7 @@ public abstract class ProfessionsCommon {
         this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.APPLY, ProfessionEventBus.LAST, new NotificationGainExperienceListener());
 
         this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.MODIFY_EFFECTS, new PerkGainExperienceListener(getPerkManager()));
+        this.eventBus.register(OccupationExperienceEvent.KEY, EventPhase.COMPUTE_EFFECTS, new ActionGainExperienceListener());
         this.eventBus.register(OccupationLevelEvent.KEY, EventPhase.RESOLVE, ProfessionEventBus.EARLY, new PerkLevelListener(getPerkManager()));
         this.eventBus.register(PlayerJoinEvent.KEY, EventPhase.RESOLVE, new PerkPlayerJoinListener(getPerkManager()));
         this.eventBus.register(PerkClaimedEvent.KEY, EventPhase.APPLY, new PerkClaimListener(getPerkManager()));

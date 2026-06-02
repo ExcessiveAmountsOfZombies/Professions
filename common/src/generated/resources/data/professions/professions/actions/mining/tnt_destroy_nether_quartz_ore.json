@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_explode",
+  "blocks": [
+    "minecraft:nether_quartz_ore"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 130.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

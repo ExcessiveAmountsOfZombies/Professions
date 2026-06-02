@@ -1,0 +1,14 @@
+{
+  "action": "professions:take_smelted",
+  "conditions": [],
+  "items": [
+    "minecraft:quartz"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 45.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

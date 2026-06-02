@@ -17,9 +17,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class OccupationInfoList extends AbstractOccupationSelector<OccupationInfoList.Entry> {
 
@@ -41,6 +43,10 @@ public class OccupationInfoList extends AbstractOccupationSelector<OccupationInf
 
         // todo; this will need a specific place. things will get serialized to the player in some way so we probably wont be able to call it like this.
         Collection<Action<?>> actionsByProfession = ProfessionsCommon.INSTANCE.getActionManager().getActionsByProfession(occupation.getProfession());
+
+        Comparator<Action<?>> comparator = Comparator.comparing(action -> action.getClass().getSimpleName());
+        actionsByProfession = actionsByProfession.stream().sorted(comparator).collect(Collectors.toCollection(ArrayList::new));
+
         List<EntryItem> items = new ArrayList<>();
         for (Action<?> action : actionsByProfession) {
             Collection<Holder<?>> actionsByValue = ProfessionsCommon.INSTANCE.getActionManager().getValuesForAction(action);

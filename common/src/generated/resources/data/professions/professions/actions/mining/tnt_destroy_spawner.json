@@ -1,0 +1,14 @@
+{
+  "action": "professions:block_explode",
+  "blocks": [
+    "minecraft:spawner"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 1600.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

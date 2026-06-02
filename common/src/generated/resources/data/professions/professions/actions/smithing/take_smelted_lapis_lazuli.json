@@ -1,0 +1,14 @@
+{
+  "action": "professions:take_smelted",
+  "conditions": [],
+  "items": [
+    "minecraft:lapis_lazuli"
+  ],
+  "profession": "professions:smithing",
+  "rewards": [
+    {
+      "expAmount": 80.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

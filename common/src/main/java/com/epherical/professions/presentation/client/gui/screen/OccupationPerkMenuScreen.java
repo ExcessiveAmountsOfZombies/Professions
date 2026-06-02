@@ -95,6 +95,8 @@ public class OccupationPerkMenuScreen extends Screen {
         addRenderableWidget(closeButton);
         addRenderableWidget(confirmButton);
 
+
+        setInitialFocus(perkList);
     }
 
 

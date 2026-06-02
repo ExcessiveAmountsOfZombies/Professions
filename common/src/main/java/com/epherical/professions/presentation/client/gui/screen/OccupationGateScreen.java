@@ -82,6 +82,10 @@ public class OccupationGateScreen extends Screen  {
 
         addRenderableWidget(gateList);
         addRenderableWidget(closeButton);
+
+
+        setInitialFocus(gateList);
+
     }
 
 

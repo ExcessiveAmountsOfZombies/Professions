@@ -92,6 +92,7 @@ public class OccupationInfoScreen extends Screen {
 
         addRenderableWidget(editBox);
 
+        setInitialFocus(occupationInfoList);
     }
 
 

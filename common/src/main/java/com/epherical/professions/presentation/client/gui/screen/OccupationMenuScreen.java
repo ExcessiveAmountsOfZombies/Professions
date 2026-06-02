@@ -113,6 +113,8 @@ public class OccupationMenuScreen extends Screen {
                 .build();
 
         addRenderableWidget(closeButton);
+
+        setInitialFocus(occupationProfessionList);
     }
 
 

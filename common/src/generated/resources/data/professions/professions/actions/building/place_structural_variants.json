@@ -14,7 +14,8 @@
     "#minecraft:trapdoors",
     "#minecraft:terracotta",
     "#minecraft:wool_carpets",
-    "#minecraft:candles"
+    "#minecraft:candles",
+    "minecraft:bell"
   ],
   "conditions": [],
   "profession": "professions:building",

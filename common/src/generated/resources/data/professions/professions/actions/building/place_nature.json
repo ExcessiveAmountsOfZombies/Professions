@@ -1,15 +1,16 @@
 {
   "action": "professions:block_place",
   "blocks": [
-    "#minecraft:beacon_base_blocks",
-    "minecraft:beacon",
-    "minecraft:reinforced_deepslate"
+    "#minecraft:flowers",
+    "#minecraft:small_flowers",
+    "#minecraft:tall_flowers",
+    "#minecraft:leaves"
   ],
   "conditions": [],
   "profession": "professions:building",
   "rewards": [
     {
-      "expAmount": 180.0,
+      "expAmount": 10.0,
       "reward": "professions:occupation_exp"
     }
   ]

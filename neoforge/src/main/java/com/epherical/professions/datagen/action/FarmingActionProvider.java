@@ -4,6 +4,7 @@ import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.api.actions.Action;
 import com.epherical.professions.model.actions.block.BlockBreakAction;
+import com.epherical.professions.model.actions.block.BlockPlaceAction;
 import com.epherical.professions.api.actions.Condition;
 import com.epherical.professions.model.actions.conditions.FullyGrownCropCondition;
 import com.epherical.professions.model.actions.entity.BreedAction;
@@ -46,10 +47,33 @@ public final class FarmingActionProvider implements DataProvider {
 
             List<CompletableFuture<?>> writes = new ArrayList<>();
 
+
+            writes.add(action("harvest_large_mushrooms", farmingProfession)
+                    .rewardExp(75)
+                    .block(Blocks.MUSHROOM_STEM, Blocks.BROWN_MUSHROOM_BLOCK, Blocks.RED_MUSHROOM_BLOCK)
+                    .save(output, registries));
+
             writes.add(action("harvest_crops", farmingProfession)
                     .rewardExp(60)
                     .fullyGrownCrop()
                     .block(BlockTags.CROPS)
+                    .save(output, registries));
+
+            writes.add(action("harvest_cocoa", farmingProfession)
+                    .rewardExp(25)
+                    .fullyGrownCrop()
+                    .block(Blocks.COCOA)
+                    .save(output, registries));
+
+            writes.add(plantAction("plant_saplings", farmingProfession)
+                    .rewardExp(20)
+                    .block(BlockTags.SAPLINGS)
+                    .save(output, registries));
+
+            writes.add(plantAction("plant_fungi_and_mushrooms", farmingProfession)
+                    .rewardExp(20)
+                    .block(List.of(Blocks.WARPED_FUNGUS, Blocks.BROWN_MUSHROOM, Blocks.RED_MUSHROOM,
+                            Blocks.CRIMSON_FUNGUS))
                     .save(output, registries));
 
             writes.add(action("harvest_flowers", farmingProfession)
@@ -125,6 +149,10 @@ public final class FarmingActionProvider implements DataProvider {
         return new FarmingBlockBreakActionBuilder(path, profession, pathProvider);
     }
 
+    private FarmingBlockPlaceActionBuilder plantAction(String path, Holder<Profession> profession) {
+        return new FarmingBlockPlaceActionBuilder(path, profession, pathProvider);
+    }
+
     private FarmingBreedActionBuilder breedAction(String path, Holder<Profession> profession) {
         return new FarmingBreedActionBuilder(path, profession, pathProvider);
     }
@@ -163,6 +191,13 @@ public final class FarmingActionProvider implements DataProvider {
             return this;
         }
 
+        private FarmingBlockBreakActionBuilder block(Block... blocks) {
+            for (Block block : blocks) {
+                builder.target(block.builtInRegistryHolder().key());
+            }
+            return this;
+        }
+
         private FarmingBlockBreakActionBuilder block(List<Block> blocks) {
             for (Block block : blocks) {
                 builder.target(block.builtInRegistryHolder().key());
@@ -171,6 +206,45 @@ public final class FarmingActionProvider implements DataProvider {
         }
 
         private FarmingBlockBreakActionBuilder block(TagKey<Block> block) {
+            builder.target(block);
+            return this;
+        }
+
+        private CompletableFuture<?> save(CachedOutput output, HolderLookup.Provider registries) {
+            Action<?> action = builder.build();
+            return DataProvider.saveStable(output, registries, Action.TYPED_CODEC, action, pathProvider.json(rl(path)));
+        }
+    }
+
+    private static final class FarmingBlockPlaceActionBuilder {
+        private final String path;
+        private final PackOutput.PathProvider pathProvider;
+        private final BlockPlaceAction.Builder builder;
+
+        private FarmingBlockPlaceActionBuilder(String path, Holder<Profession> profession, PackOutput.PathProvider pathProvider) {
+            this.path = path;
+            this.pathProvider = pathProvider;
+            this.builder = new BlockPlaceAction.Builder(profession);
+        }
+
+        private FarmingBlockPlaceActionBuilder rewardExp(double exp) {
+            builder.reward(new OccupationExperience.Builder().exp(exp));
+            return this;
+        }
+
+        private FarmingBlockPlaceActionBuilder block(Block block) {
+            builder.target(block.builtInRegistryHolder().key());
+            return this;
+        }
+
+        private FarmingBlockPlaceActionBuilder block(List<Block> blocks) {
+            for (Block block : blocks) {
+                builder.target(block.builtInRegistryHolder().key());
+            }
+            return this;
+        }
+
+        private FarmingBlockPlaceActionBuilder block(TagKey<Block> block) {
             builder.target(block);
             return this;
         }

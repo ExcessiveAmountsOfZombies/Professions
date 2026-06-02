@@ -1,0 +1,20 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "minecraft:crimson_nylium",
+    "minecraft:warped_nylium",
+    "minecraft:magma_block",
+    "minecraft:gilded_blackstone",
+    "minecraft:polished_blackstone_bricks",
+    "minecraft:cracked_polished_blackstone_bricks",
+    "minecraft:polished_basalt"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 80.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

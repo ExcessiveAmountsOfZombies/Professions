@@ -1,0 +1,16 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "minecraft:mushroom_stem",
+    "minecraft:brown_mushroom_block",
+    "minecraft:red_mushroom_block"
+  ],
+  "conditions": [],
+  "profession": "professions:farming",
+  "rewards": [
+    {
+      "expAmount": 75.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

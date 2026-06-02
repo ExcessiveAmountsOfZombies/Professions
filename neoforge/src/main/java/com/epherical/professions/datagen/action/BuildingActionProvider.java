@@ -14,6 +14,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +29,22 @@ public final class BuildingActionProvider implements DataProvider {
             new BuildingActionDefinition(
                     "place_foundation_and_masonry",
                     24,
-                    List.of(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER, BlockTags.STONE_BRICKS),
+                    List.of(
+                            BlockTags.BASE_STONE_OVERWORLD,
+                            BlockTags.BASE_STONE_NETHER,
+                            BlockTags.STONE_BRICKS,
+                            Tags.Blocks.SANDSTONE_BLOCKS,
+                            BlockTags.STONE_BUTTONS,
+                            BlockTags.STONE_PRESSURE_PLATES
+                    ),
                     List.of(
                             Blocks.DEEPSLATE_BRICKS, Blocks.CRACKED_DEEPSLATE_BRICKS,
                             Blocks.DEEPSLATE_TILES, Blocks.CRACKED_DEEPSLATE_TILES,
                             Blocks.CHISELED_DEEPSLATE, Blocks.COBBLED_DEEPSLATE, Blocks.POLISHED_DEEPSLATE,
-                            Blocks.COBBLESTONE, Blocks.POLISHED_BASALT,
+                            Blocks.COBBLESTONE, Blocks.SMOOTH_STONE, Blocks.POLISHED_BASALT, Blocks.SMOOTH_BASALT,
                             Blocks.BLACKSTONE, Blocks.GILDED_BLACKSTONE, Blocks.CHISELED_POLISHED_BLACKSTONE,
+                            Blocks.POLISHED_BLACKSTONE, Blocks.TUFF_BRICKS, Blocks.CHISELED_TUFF_BRICKS,
+                            Blocks.CHISELED_TUFF, Blocks.POLISHED_TUFF, Blocks.PACKED_MUD, Blocks.MUD_BRICKS,
                             Blocks.POLISHED_GRANITE, Blocks.POLISHED_DIORITE, Blocks.POLISHED_ANDESITE,
                             Blocks.CALCITE, Blocks.END_STONE_BRICKS,
                             Blocks.PACKED_ICE, Blocks.BLUE_ICE
@@ -43,8 +53,20 @@ public final class BuildingActionProvider implements DataProvider {
             new BuildingActionDefinition(
                     "place_wood_and_textile_surfaces",
                     30,
-                    List.of(BlockTags.PLANKS, BlockTags.WOOL),
-                    List.of()
+                    List.of(
+                            BlockTags.PLANKS,
+                            BlockTags.WOOL,
+                            BlockTags.LOGS,
+                            BlockTags.BEDS,
+                            BlockTags.BANNERS,
+                            BlockTags.ALL_SIGNS,
+                            BlockTags.WOODEN_BUTTONS,
+                            BlockTags.WOODEN_PRESSURE_PLATES
+                    ),
+                    List.of(
+                            Blocks.BAMBOO_BLOCK, Blocks.STRIPPED_BAMBOO_BLOCK, Blocks.BAMBOO_MOSAIC,
+                            Blocks.HAY_BLOCK, Blocks.LADDER, Blocks.SHROOMLIGHT
+                    )
             ),
             new BuildingActionDefinition(
                     "place_structural_variants",
@@ -56,24 +78,29 @@ public final class BuildingActionProvider implements DataProvider {
                             BlockTags.DOORS, BlockTags.TRAPDOORS, BlockTags.TERRACOTTA,
                             BlockTags.WOOL_CARPETS, BlockTags.CANDLES
                     ),
-                    List.of()
+                    List.of(Blocks.BELL)
             ),
             new BuildingActionDefinition(
                     "place_refined_blocks",
                     96,
-                    List.of(),
+                    List.of(Tags.Blocks.SKULLS),
                     List.of(
                             Blocks.BRICKS, Blocks.BOOKSHELF, Blocks.MOSSY_COBBLESTONE,
                             Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN,
                             Blocks.PRISMARINE, Blocks.DARK_PRISMARINE, Blocks.PRISMARINE_BRICKS, Blocks.SEA_LANTERN,
                             Blocks.PURPUR_BLOCK, Blocks.PURPUR_PILLAR,
-                            Blocks.CHISELED_QUARTZ_BLOCK, Blocks.QUARTZ_BLOCK, Blocks.QUARTZ_BRICKS, Blocks.QUARTZ_PILLAR
+                            Blocks.CHISELED_QUARTZ_BLOCK, Blocks.QUARTZ_BLOCK, Blocks.QUARTZ_BRICKS,
+                            Blocks.QUARTZ_PILLAR, Blocks.SMOOTH_QUARTZ,
+                            Blocks.NETHER_BRICKS, Blocks.CRACKED_NETHER_BRICKS, Blocks.CHISELED_NETHER_BRICKS,
+                            Blocks.RED_NETHER_BRICKS,
+                            Blocks.POLISHED_BLACKSTONE_BRICKS, Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS,
+                            Blocks.GLOWSTONE
                     )
             ),
             new BuildingActionDefinition(
                     "place_glass_and_copper_details",
                     36,
-                    List.of(),
+                    List.of(Tags.Blocks.CONCRETES, Tags.Blocks.GLAZED_TERRACOTTAS),
                     List.of(
                             Blocks.GLASS, Blocks.GLASS_PANE, Blocks.IRON_BARS, Blocks.CHAIN,
                             Blocks.WHITE_STAINED_GLASS, Blocks.ORANGE_STAINED_GLASS, Blocks.MAGENTA_STAINED_GLASS,
@@ -90,32 +117,54 @@ public final class BuildingActionProvider implements DataProvider {
                             Blocks.PURPLE_STAINED_GLASS_PANE, Blocks.BLUE_STAINED_GLASS_PANE,
                             Blocks.BROWN_STAINED_GLASS_PANE, Blocks.GREEN_STAINED_GLASS_PANE,
                             Blocks.RED_STAINED_GLASS_PANE, Blocks.BLACK_STAINED_GLASS_PANE,
-                            Blocks.EXPOSED_COPPER, Blocks.WEATHERED_COPPER, Blocks.OXIDIZED_COPPER,
-                            Blocks.CUT_COPPER, Blocks.EXPOSED_CUT_COPPER, Blocks.WEATHERED_CUT_COPPER, Blocks.OXIDIZED_CUT_COPPER,
-                            Blocks.WAXED_COPPER_BLOCK, Blocks.WAXED_EXPOSED_COPPER, Blocks.WAXED_WEATHERED_COPPER, Blocks.WAXED_OXIDIZED_COPPER,
-                            Blocks.WAXED_CUT_COPPER, Blocks.WAXED_EXPOSED_CUT_COPPER, Blocks.WAXED_WEATHERED_CUT_COPPER, Blocks.WAXED_OXIDIZED_CUT_COPPER
+                            Blocks.TINTED_GLASS,
+                            Blocks.COPPER_BLOCK, Blocks.EXPOSED_COPPER, Blocks.WEATHERED_COPPER,
+                            Blocks.OXIDIZED_COPPER,
+                            Blocks.CUT_COPPER, Blocks.EXPOSED_CUT_COPPER, Blocks.WEATHERED_CUT_COPPER,
+                            Blocks.OXIDIZED_CUT_COPPER,
+                            Blocks.CHISELED_COPPER, Blocks.EXPOSED_CHISELED_COPPER,
+                            Blocks.WEATHERED_CHISELED_COPPER, Blocks.OXIDIZED_CHISELED_COPPER,
+                            Blocks.COPPER_GRATE, Blocks.EXPOSED_COPPER_GRATE, Blocks.WEATHERED_COPPER_GRATE,
+                            Blocks.OXIDIZED_COPPER_GRATE,
+                            Blocks.COPPER_BULB, Blocks.EXPOSED_COPPER_BULB, Blocks.WEATHERED_COPPER_BULB,
+                            Blocks.OXIDIZED_COPPER_BULB,
+                            Blocks.WAXED_COPPER_BLOCK, Blocks.WAXED_EXPOSED_COPPER, Blocks.WAXED_WEATHERED_COPPER,
+                            Blocks.WAXED_OXIDIZED_COPPER,
+                            Blocks.WAXED_CUT_COPPER, Blocks.WAXED_EXPOSED_CUT_COPPER,
+                            Blocks.WAXED_WEATHERED_CUT_COPPER, Blocks.WAXED_OXIDIZED_CUT_COPPER,
+                            Blocks.WAXED_CHISELED_COPPER, Blocks.WAXED_EXPOSED_CHISELED_COPPER,
+                            Blocks.WAXED_WEATHERED_CHISELED_COPPER, Blocks.WAXED_OXIDIZED_CHISELED_COPPER,
+                            Blocks.WAXED_COPPER_GRATE, Blocks.WAXED_EXPOSED_COPPER_GRATE,
+                            Blocks.WAXED_WEATHERED_COPPER_GRATE, Blocks.WAXED_OXIDIZED_COPPER_GRATE,
+                            Blocks.WAXED_COPPER_BULB, Blocks.WAXED_EXPOSED_COPPER_BULB,
+                            Blocks.WAXED_WEATHERED_COPPER_BULB, Blocks.WAXED_OXIDIZED_COPPER_BULB
                     )
             ),
             new BuildingActionDefinition(
                     "place_workstations_and_storage",
                     112,
-                    List.of(),
                     List.of(
-                            Blocks.CHEST, Blocks.ENDER_CHEST, Blocks.ANVIL,
+                            BlockTags.ANVIL,
+                            BlockTags.CAMPFIRES
+                    ),
+                    List.of(
+                            Blocks.CHEST, Blocks.ENDER_CHEST,
                             Blocks.FURNACE, Blocks.BLAST_FURNACE, Blocks.SMOKER,
-                            Blocks.CAMPFIRE, Blocks.SOUL_CAMPFIRE, Blocks.CRAFTING_TABLE,
-                            Blocks.ENCHANTING_TABLE, Blocks.JUKEBOX, Blocks.HOPPER
+                            Blocks.CRAFTING_TABLE,
+                            Blocks.ENCHANTING_TABLE, Blocks.JUKEBOX, Blocks.HOPPER,
+                            Blocks.LODESTONE, Blocks.DECORATED_POT
                     )
             ),
             new BuildingActionDefinition(
                     "place_luxury_blocks",
                     180,
-                    List.of(),
-                    List.of(
-                            Blocks.IRON_BLOCK, Blocks.GOLD_BLOCK, Blocks.DIAMOND_BLOCK,
-                            Blocks.EMERALD_BLOCK, Blocks.LAPIS_BLOCK, Blocks.NETHERITE_BLOCK,
-                            Blocks.BEACON
-                    )
+                    List.of(BlockTags.BEACON_BASE_BLOCKS),
+                    List.of(Blocks.BEACON, Blocks.REINFORCED_DEEPSLATE)),
+            new BuildingActionDefinition(
+                    "place_nature",
+                    10,
+                    List.of(BlockTags.FLOWERS, BlockTags.SMALL_FLOWERS, BlockTags.TALL_FLOWERS, BlockTags.LEAVES),
+                    List.of()
             )
     );
 

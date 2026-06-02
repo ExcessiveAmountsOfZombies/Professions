@@ -60,6 +60,7 @@ public final class MinerActionProvider implements DataProvider {
             writes.add(action("mine_stone", miningProfession)
                     .rewardExp(50.0)
                     .blocks(List.of(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER))
+                    .block(List.of(Blocks.MOSSY_COBBLESTONE))
                     .save(output, registries));
 
             writes.add(action("mine_terracotta", miningProfession)
@@ -69,7 +70,14 @@ public final class MinerActionProvider implements DataProvider {
 
             writes.add(action("mine_sandstone", miningProfession)
                     .rewardExp(50)
-                    .block(List.of(Blocks.SANDSTONE, Blocks.RED_SANDSTONE))
+                    .block(List.of(
+                            Blocks.SANDSTONE,
+                            Blocks.RED_SANDSTONE,
+                            Blocks.CHISELED_SANDSTONE,
+                            Blocks.CUT_SANDSTONE,
+                            Blocks.CHISELED_RED_SANDSTONE,
+                            Blocks.SMOOTH_RED_SANDSTONE
+                    ))
                     .save(output, registries));
 
             writes.add(action("mine_obsidian", miningProfession)
@@ -79,7 +87,73 @@ public final class MinerActionProvider implements DataProvider {
 
             writes.add(action("prismarine", miningProfession)
                     .rewardExp(60)
-                    .block(List.of(Blocks.PRISMARINE, Blocks.DARK_PRISMARINE, Blocks.PRISMARINE_BRICKS))
+                    .block(List.of(
+                            Blocks.PRISMARINE,
+                            Blocks.DARK_PRISMARINE,
+                            Blocks.PRISMARINE_BRICKS,
+                            Blocks.PRISMARINE_SLAB
+                    ))
+                    .save(output, registries));
+
+            writes.add(action("mine_nether_bricks", miningProfession)
+                    .rewardExp(75)
+                    .block(List.of(
+                            Blocks.NETHER_BRICKS,
+                            Blocks.CRACKED_NETHER_BRICKS,
+                            Blocks.NETHER_BRICK_STAIRS,
+                            Blocks.NETHER_BRICK_SLAB,
+                            Blocks.NETHER_BRICK_FENCE,
+                            Blocks.NETHER_BRICK_WALL
+                    ))
+                    .save(output, registries));
+
+            writes.add(action("mine_nether_terrain", miningProfession)
+                    .rewardExp(80)
+                    .block(List.of(
+                            Blocks.CRIMSON_NYLIUM,
+                            Blocks.WARPED_NYLIUM,
+                            Blocks.MAGMA_BLOCK,
+                            Blocks.GILDED_BLACKSTONE,
+                            Blocks.POLISHED_BLACKSTONE_BRICKS,
+                            Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS,
+                            Blocks.POLISHED_BASALT
+                    ))
+                    .save(output, registries));
+
+            writes.add(action("mine_end_blocks", miningProfession)
+                    .rewardExp(70)
+                    .block(List.of(
+                            Blocks.END_STONE,
+                            Blocks.PURPUR_BLOCK
+                    ))
+                    .save(output, registries));
+
+            writes.add(action("mine_geode", miningProfession)
+                    .rewardExp(90)
+                    .block(List.of(
+                            Blocks.SMOOTH_BASALT,
+                            Blocks.CALCITE,
+                            Blocks.DRIPSTONE_BLOCK,
+                            Blocks.POINTED_DRIPSTONE,
+                            Blocks.AMETHYST_BLOCK,
+                            Blocks.AMETHYST_CLUSTER
+                    ))
+                    .save(output, registries));
+
+            writes.add(action("mine_nether_quartz_ore", miningProfession)
+                    .rewardExp(650)
+                    .unlessSilkTouchPickaxe(registries)
+                    .block(List.of(Blocks.NETHER_QUARTZ_ORE))
+                    .save(output, registries));
+
+            writes.add(action("mine_ancient_debris", miningProfession)
+                    .rewardExp(5000)
+                    .block(List.of(Blocks.ANCIENT_DEBRIS))
+                    .save(output, registries));
+
+            writes.add(action("mine_spawner", miningProfession)
+                    .rewardExp(8000)
+                    .block(List.of(Blocks.SPAWNER))
                     .save(output, registries));
 
             ORE_ACTIONS.stream()

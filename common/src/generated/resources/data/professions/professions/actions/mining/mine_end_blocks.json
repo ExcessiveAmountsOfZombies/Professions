@@ -1,16 +1,14 @@
 {
   "action": "professions:block_break",
   "blocks": [
-    "minecraft:prismarine",
-    "minecraft:dark_prismarine",
-    "minecraft:prismarine_bricks",
-    "minecraft:prismarine_slab"
+    "minecraft:end_stone",
+    "minecraft:purpur_block"
   ],
   "conditions": [],
   "profession": "professions:mining",
   "rewards": [
     {
-      "expAmount": 60.0,
+      "expAmount": 70.0,
       "reward": "professions:occupation_exp"
     }
   ]

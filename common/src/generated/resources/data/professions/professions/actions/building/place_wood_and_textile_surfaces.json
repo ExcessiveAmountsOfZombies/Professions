@@ -2,7 +2,19 @@
   "action": "professions:block_place",
   "blocks": [
     "#minecraft:planks",
-    "#minecraft:wool"
+    "#minecraft:wool",
+    "#minecraft:logs",
+    "#minecraft:beds",
+    "#minecraft:banners",
+    "#minecraft:all_signs",
+    "#minecraft:wooden_buttons",
+    "#minecraft:wooden_pressure_plates",
+    "minecraft:bamboo_block",
+    "minecraft:stripped_bamboo_block",
+    "minecraft:bamboo_mosaic",
+    "minecraft:hay_block",
+    "minecraft:ladder",
+    "minecraft:shroomlight"
   ],
   "conditions": [],
   "profession": "professions:building",

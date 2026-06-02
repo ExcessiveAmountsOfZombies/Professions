@@ -7,6 +7,8 @@
     "#minecraft:candles",
     "#minecraft:signs",
     "#minecraft:wool_carpets",
+    "#minecraft:slabs",
+    "#minecraft:trapdoors",
     "minecraft:painting",
     "minecraft:flower_pot"
   ],

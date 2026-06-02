@@ -1,4 +1,10 @@
-// 1.21.1	2026-05-05T13:51:46.2635356	Professions Miner Action Provider
+// 1.21.1	2026-06-01T20:11:52.6961316	Professions Miner Action Provider
+13a3c238a2f53f8217a07c10fafa050411ee9cea data/professions/professions/actions/mining/mine_ancient_debris.json
+67f9b4ee5971c8d04439955b8279c4b31f5f0d5a data/professions/professions/actions/mining/mine_end_blocks.json
+5e99714f41845908c615f5a50af774b34c64f851 data/professions/professions/actions/mining/mine_geode.json
+215fad34816cf2ce09ffe0b9c1a9a9d60ffffafe data/professions/professions/actions/mining/mine_nether_bricks.json
+79c2434ee58e3b338bc8fa83b9f802dee8cad89c data/professions/professions/actions/mining/mine_nether_quartz_ore.json
+0996c0540b1dd3c9247d2c47171d312ecc534289 data/professions/professions/actions/mining/mine_nether_terrain.json
 feaed5abea5acd60a126b3b72dd337b1a219d66b data/professions/professions/actions/mining/mine_obsidian.json
 6ac0bbf91aa452481c68a2245b0d4ac93c44c0eb data/professions/professions/actions/mining/mine_ore_coal.json
 52f42725fbc4d58df04164ee4b6ac9c0662e66ff data/professions/professions/actions/mining/mine_ore_copper.json
@@ -8,7 +14,8 @@ f9bb12cd5b9eb3c6ea92386283eb4083b228c1c2 data/professions/professions/actions/mi
 072957c0fd032994a03cab9d7a624d3912097a40 data/professions/professions/actions/mining/mine_ore_iron.json
 78ac7f8f05cc8f00638db39c0c7c3b830432129b data/professions/professions/actions/mining/mine_ore_lapis.json
 8ae6eb46c050a6e903f15529873fc7626b8b6bd9 data/professions/professions/actions/mining/mine_ore_redstone.json
-b281350788db8da99449798a99fab43ee4e4f2c7 data/professions/professions/actions/mining/mine_sandstone.json
-42f1cadbe640459529a9d26fdfaa9c8edee8c81a data/professions/professions/actions/mining/mine_stone.json
+51c5a62713c41e9fd6c00543bcdc96de89fc9ea3 data/professions/professions/actions/mining/mine_sandstone.json
+eb8c030abae00941d74bca591d1b14593cc499b6 data/professions/professions/actions/mining/mine_spawner.json
+5bbd626f6806d17b13d25436e6fe2759e4714661 data/professions/professions/actions/mining/mine_stone.json
 d6b025fb7f80971b373bf41292d5eb1d1da37786 data/professions/professions/actions/mining/mine_terracotta.json
-060be201b69b0034379aaccdd05fc29551e109fd data/professions/professions/actions/mining/prismarine.json
+0e70c35f88e282b35561779aaa83627091e907db data/professions/professions/actions/mining/prismarine.json

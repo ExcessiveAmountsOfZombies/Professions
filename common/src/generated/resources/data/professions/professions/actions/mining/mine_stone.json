@@ -2,7 +2,8 @@
   "action": "professions:block_break",
   "blocks": [
     "#minecraft:base_stone_overworld",
-    "#minecraft:base_stone_nether"
+    "#minecraft:base_stone_nether",
+    "minecraft:mossy_cobblestone"
   ],
   "conditions": [],
   "profession": "professions:mining",

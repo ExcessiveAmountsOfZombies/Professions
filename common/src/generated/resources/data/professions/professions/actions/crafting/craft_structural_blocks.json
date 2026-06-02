@@ -9,6 +9,7 @@
     "#minecraft:wooden_trapdoors",
     "#minecraft:wooden_buttons",
     "#minecraft:boats",
+    "#minecraft:fence_gates",
     "minecraft:ladder"
   ],
   "profession": "professions:crafting",

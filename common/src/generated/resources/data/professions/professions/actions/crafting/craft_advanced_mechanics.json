@@ -5,7 +5,8 @@
     "minecraft:blast_furnace",
     "minecraft:tnt",
     "minecraft:anvil",
-    "minecraft:jukebox"
+    "minecraft:jukebox",
+    "minecraft:shulker_box"
   ],
   "profession": "professions:crafting",
   "rewards": [

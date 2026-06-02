@@ -1,0 +1,19 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "minecraft:smooth_basalt",
+    "minecraft:calcite",
+    "minecraft:dripstone_block",
+    "minecraft:pointed_dripstone",
+    "minecraft:amethyst_block",
+    "minecraft:amethyst_cluster"
+  ],
+  "conditions": [],
+  "profession": "professions:mining",
+  "rewards": [
+    {
+      "expAmount": 90.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

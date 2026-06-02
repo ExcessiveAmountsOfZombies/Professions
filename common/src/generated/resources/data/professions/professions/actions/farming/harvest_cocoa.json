@@ -1,0 +1,18 @@
+{
+  "action": "professions:block_break",
+  "blocks": [
+    "minecraft:cocoa"
+  ],
+  "conditions": [
+    {
+      "condition": "professions:fully_grown_crop"
+    }
+  ],
+  "profession": "professions:farming",
+  "rewards": [
+    {
+      "expAmount": 25.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

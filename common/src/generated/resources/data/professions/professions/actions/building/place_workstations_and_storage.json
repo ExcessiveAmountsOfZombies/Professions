@@ -1,18 +1,19 @@
 {
   "action": "professions:block_place",
   "blocks": [
+    "#minecraft:anvil",
+    "#minecraft:campfires",
     "minecraft:chest",
     "minecraft:ender_chest",
-    "minecraft:anvil",
     "minecraft:furnace",
     "minecraft:blast_furnace",
     "minecraft:smoker",
-    "minecraft:campfire",
-    "minecraft:soul_campfire",
     "minecraft:crafting_table",
     "minecraft:enchanting_table",
     "minecraft:jukebox",
-    "minecraft:hopper"
+    "minecraft:hopper",
+    "minecraft:lodestone",
+    "minecraft:decorated_pot"
   ],
   "conditions": [],
   "profession": "professions:building",

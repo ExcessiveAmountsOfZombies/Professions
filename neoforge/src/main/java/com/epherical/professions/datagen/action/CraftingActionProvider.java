@@ -28,7 +28,9 @@ public final class CraftingActionProvider implements DataProvider {
             new CraftingActionDefinition(
                     "craft_decorative_wood_and_fabric",
                     28,
-                    List.of(ItemTags.WOODEN_PRESSURE_PLATES, ItemTags.BANNERS, ItemTags.CANDLES, ItemTags.SIGNS, ItemTags.WOOL_CARPETS),
+                    List.of(ItemTags.WOODEN_PRESSURE_PLATES, ItemTags.BANNERS, ItemTags.CANDLES, ItemTags.SIGNS, ItemTags.WOOL_CARPETS,
+                            ItemTags.SLABS,
+                            ItemTags.TRAPDOORS),
                     List.of(Items.PAINTING, Items.FLOWER_POT)
             ),
             new CraftingActionDefinition(
@@ -41,7 +43,8 @@ public final class CraftingActionProvider implements DataProvider {
                             ItemTags.WOODEN_DOORS,
                             ItemTags.WOODEN_TRAPDOORS,
                             ItemTags.WOODEN_BUTTONS,
-                            ItemTags.BOATS
+                            ItemTags.BOATS,
+                            ItemTags.FENCE_GATES
                     ),
                     List.of(Items.LADDER)
             ),
@@ -97,13 +100,13 @@ public final class CraftingActionProvider implements DataProvider {
                     "craft_precision_tools",
                     88,
                     List.of(),
-                    List.of(Items.COMPASS, Items.CLOCK, Items.SPYGLASS, Items.FISHING_ROD, Items.BREWING_STAND, Items.LECTERN)
+                    List.of(Items.COMPASS, Items.CLOCK, Items.SPYGLASS, Items.FISHING_ROD, Items.BREWING_STAND, Items.LECTERN, Items.END_CRYSTAL)
             ),
             new CraftingActionDefinition(
                     "craft_advanced_mechanics",
                     120,
                     List.of(),
-                    List.of(Items.BLAST_FURNACE, Items.TNT, Items.ANVIL, Items.JUKEBOX)
+                    List.of(Items.BLAST_FURNACE, Items.TNT, Items.ANVIL, Items.JUKEBOX, Items.SHULKER_BOX)
             ),
             new CraftingActionDefinition(
                     "craft_home_rest_items",

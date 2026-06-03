@@ -54,6 +54,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.bus.api.EventPriority;
@@ -127,6 +129,7 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
         actionManager = new ActionManager(null);
         gateManager = new GateManager(null);
         playerManager = new PlayerManager(actionManager, gateManager, getPerkManager(), null, getEventBus(), getCategoryManager());
+        NeoForgeBlockEntityAttachments.init();
 
         mod = this;
         PlatformBootstrap.init(NEO_FORGE_REGISTRAR_BACKEND);
@@ -341,7 +344,12 @@ public class NeoForgeProfessionsMod extends ProfessionsCommon {
                 return;
             }
 
-            if (entity instanceof ServerPlayer serverPlayer && !serverPlayer.isCreative()) {
+            if (entity instanceof ServerPlayer serverPlayer) {
+                BlockEntity blockEntity = event.getLevel().getBlockEntity(event.getPos());
+                if (blockEntity instanceof BrewingStandBlockEntity) {
+                    NeoForgeBlockEntityAttachments.setPlacedBy(blockEntity, serverPlayer.getUUID());
+                }
+
                 ProfessionContext.Builder builder = ProfessionContext.builder((ServerLevel) event.getLevel(),
                                 Actions.BLOCK_PLACE, mod.playerManager.getPlayer(serverPlayer.getUUID()))
                         .addParameter(ProfessionParameter.THIS_BLOCK_STATE, event.getState())

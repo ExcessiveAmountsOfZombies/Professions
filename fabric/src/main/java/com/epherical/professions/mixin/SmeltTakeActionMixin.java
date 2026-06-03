@@ -28,7 +28,7 @@ public class SmeltTakeActionMixin {
             return;
         }
 
-        IProfessionalPlayer professionalPlayer = FabricProfessionsMod.ensureProfessionalPlayer(mod, serverPlayer);
+        IProfessionalPlayer professionalPlayer = mod.ensureProfessionalPlayer(serverPlayer);
         if (professionalPlayer == null) {
             return;
         }

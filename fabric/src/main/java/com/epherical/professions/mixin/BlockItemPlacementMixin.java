@@ -5,11 +5,14 @@ import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.context.ProfessionContext;
 import com.epherical.professions.core.context.ProfessionParameter;
+import com.epherical.professions.FabricBlockEntityAttachments;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,11 +31,7 @@ public class BlockItemPlacementMixin {
             return;
         }
 
-        if (mod == null) {
-            return;
-        }
-
-        IProfessionalPlayer professionalPlayer = FabricProfessionsMod.ensureProfessionalPlayer(mod, player);
+        IProfessionalPlayer professionalPlayer = mod.ensureProfessionalPlayer(player);
         if (professionalPlayer == null) {
             return;
         }
@@ -40,6 +39,11 @@ public class BlockItemPlacementMixin {
         BlockState blockState = serverLevel.getBlockState(pos);
         if (blockState.isAir()) {
             return;
+        }
+
+        BlockEntity blockEntity = serverLevel.getBlockEntity(pos);
+        if (blockEntity instanceof BrewingStandBlockEntity) {
+            FabricBlockEntityAttachments.setPlacedBy(blockEntity, player.getUUID());
         }
 
         ProfessionContext.Builder builder = ProfessionContext.builder(serverLevel, Actions.BLOCK_PLACE, professionalPlayer)

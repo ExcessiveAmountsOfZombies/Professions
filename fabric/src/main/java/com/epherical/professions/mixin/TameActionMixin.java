@@ -23,7 +23,7 @@ public class TameActionMixin {
             return;
         }
 
-        IProfessionalPlayer professionalPlayer = FabricProfessionsMod.ensureProfessionalPlayer(mod, player);
+        IProfessionalPlayer professionalPlayer = mod.ensureProfessionalPlayer(player);
         if (professionalPlayer == null) {
             return;
         }

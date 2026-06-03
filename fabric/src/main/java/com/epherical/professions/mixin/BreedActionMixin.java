@@ -1,6 +1,7 @@
 package com.epherical.professions.mixin;
 
 import com.epherical.professions.FabricProfessionsMod;
+import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.api.IProfessionalPlayer;
 import com.epherical.professions.bootstrap.Actions;
 import com.epherical.professions.core.context.ProfessionContext;
@@ -24,18 +25,13 @@ public class BreedActionMixin {
             return;
         }
 
-        FabricProfessionsMod mod = FabricProfessionsMod.mod;
-        if (mod == null) {
-            return;
-        }
-
-        IProfessionalPlayer professionalPlayer = FabricProfessionsMod.ensureProfessionalPlayer(mod, player);
+        IProfessionalPlayer professionalPlayer = FabricProfessionsMod.mod.ensureProfessionalPlayer(player);
         if (professionalPlayer == null) {
             return;
         }
 
         ProfessionContext.Builder builder = ProfessionContext.builder(player.serverLevel(), Actions.BREED_ACTION, professionalPlayer)
                 .addParameter(ProfessionParameter.ENTITY, child);
-        mod.getPlayerManager().processAction(player, builder.build());
+        ProfessionsCommon.INSTANCE.getPlayerManager().processAction(player, builder.build());
     }
 }

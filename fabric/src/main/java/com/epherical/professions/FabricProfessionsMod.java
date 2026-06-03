@@ -114,6 +114,7 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
 
         ProfessionsCommon.register();
         NetworkPayloadDispatcher.setPayloadSender(ServerPlayNetworking::send);
+        FabricBlockEntityAttachments.init();
 
         registerNetworking();
         registerReloadListeners();
@@ -254,7 +255,7 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
         getPerkManager().playerJoined(professionalPlayer, player);
     }
 
-    private @Nullable IProfessionalPlayer ensureProfessionalPlayer(ServerPlayer player) {
+    public @Nullable IProfessionalPlayer ensureProfessionalPlayer(ServerPlayer player) {
         IProfessionalPlayer professionalPlayer = playerManager.getPlayer(player.getUUID());
         if (professionalPlayer == null) {
             playerManager.playerJoined(player);
@@ -281,14 +282,5 @@ public class FabricProfessionsMod extends ProfessionsCommon implements ModInitia
     @Override
     public GateManager getGateManager() {
         return gateManager;
-    }
-
-    public static @Nullable IProfessionalPlayer ensureProfessionalPlayer(FabricProfessionsMod mod, ServerPlayer player) {
-        IProfessionalPlayer professionalPlayer = mod.getPlayerManager().getPlayer(player.getUUID());
-        if (professionalPlayer == null) {
-            mod.getPlayerManager().playerJoined(player);
-            professionalPlayer = mod.getPlayerManager().getPlayer(player.getUUID());
-        }
-        return professionalPlayer;
     }
 }

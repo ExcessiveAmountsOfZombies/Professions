@@ -58,6 +58,9 @@ public abstract class ProfessionsCommon {
     public static final ResourceKey<Registry<Profession>> PROFESSION_REGISTRY_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(MOD_ID, "occupations"));
 
+
+    public static final ResourceLocation PLACED_BY_UUID = ResourceLocation.fromNamespaceAndPath(ProfessionsCommon.MOD_ID, "placed_by_uuid");
+
     public static ProfessionsCommon INSTANCE;
 
 
@@ -101,9 +104,7 @@ public abstract class ProfessionsCommon {
         Perks.bootstrap();
     }
 
-    public void registerAfterServerStarts() {
-
-    }
+    public void registerAfterServerStarts() {}
 
 
     public void setActionLoader(ActionLoad3 actionLoader) {

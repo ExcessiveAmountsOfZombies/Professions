@@ -25,10 +25,6 @@ public class PerkLevelListener implements EventListener<OccupationLevelEvent> {
         Occupation occupation = event.getOccupation();
         int level = event.getNewLevel();
 
-        // todo; when we allow changing categories, this could become a problem
-        // right now if you set someones level to a lower than what they were they'll keep their IStartupPerks
-        // if they relog they'll be removed.
-
 
         if (player != null && perkManager.arePerksEnabled(player)) {
             perkManager.setUnclaimedPerks(occupation, level, player);

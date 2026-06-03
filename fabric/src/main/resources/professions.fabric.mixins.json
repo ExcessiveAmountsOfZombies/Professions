@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BlockItemPlacementMixin",
+    "FabricBrewingStandActionMixin",
     "BreedActionMixin",
     "CraftingActionMixin",
     "EnchantActionMixin",
@@ -15,7 +16,6 @@
     "TameActionMixin"
   ],
   "client": [
-    "MixinTitleScreen"
   ],
   "server": [],
   "injectors": {

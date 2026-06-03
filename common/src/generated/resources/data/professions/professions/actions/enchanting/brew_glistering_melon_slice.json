@@ -1,0 +1,14 @@
+{
+  "action": "professions:brew_potion",
+  "conditions": [],
+  "items": [
+    "minecraft:glistering_melon_slice"
+  ],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 55.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

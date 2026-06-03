@@ -1,0 +1,14 @@
+{
+  "action": "professions:brew_potion",
+  "conditions": [],
+  "items": [
+    "minecraft:glowstone_dust"
+  ],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 36.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

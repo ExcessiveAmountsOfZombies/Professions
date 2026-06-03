@@ -1,0 +1,14 @@
+{
+  "action": "professions:brew_potion",
+  "conditions": [],
+  "items": [
+    "minecraft:magma_cream"
+  ],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 85.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

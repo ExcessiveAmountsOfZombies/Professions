@@ -1,0 +1,14 @@
+{
+  "action": "professions:brew_potion",
+  "conditions": [],
+  "items": [
+    "minecraft:gunpowder"
+  ],
+  "profession": "professions:enchanting",
+  "rewards": [
+    {
+      "expAmount": 50.0,
+      "reward": "professions:occupation_exp"
+    }
+  ]
+}

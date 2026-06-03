@@ -3,6 +3,7 @@ package com.epherical.professions.datagen.action;
 import com.epherical.professions.ProfessionsCommon;
 import com.epherical.professions.core.Profession;
 import com.epherical.professions.api.actions.Action;
+import com.epherical.professions.model.actions.item.BrewAction;
 import com.epherical.professions.model.actions.item.EnchantAction;
 import com.epherical.professions.model.actions.rewards.OccupationExperience;
 import net.minecraft.core.Holder;
@@ -72,6 +73,30 @@ public final class EnchantingActionProvider implements DataProvider {
             ))
     );
 
+    private static final List<BrewRecord> BREW_ACTIONS = List.of(
+            new BrewRecord("nether_wart", Items.NETHER_WART, 20),
+            new BrewRecord("redstone_dust", Items.REDSTONE, 28),
+            new BrewRecord("glowstone_dust", Items.GLOWSTONE_DUST, 36),
+            new BrewRecord("fermented_spider_eye", Items.FERMENTED_SPIDER_EYE, 40),
+            new BrewRecord("gunpowder", Items.GUNPOWDER, 50),
+            new BrewRecord("dragon_breath", Items.DRAGON_BREATH, 220),
+            new BrewRecord("sugar", Items.SUGAR, 18),
+            new BrewRecord("rabbit_foot", Items.RABBIT_FOOT, 75),
+            new BrewRecord("glistering_melon_slice", Items.GLISTERING_MELON_SLICE, 55),
+            new BrewRecord("spider_eye", Items.SPIDER_EYE, 26),
+            new BrewRecord("blaze_powder", Items.BLAZE_POWDER, 70),
+            new BrewRecord("golden_carrot", Items.GOLDEN_CARROT, 65),
+            new BrewRecord("ghast_tear", Items.GHAST_TEAR, 120),
+            new BrewRecord("pufferfish", Items.PUFFERFISH, 45),
+            new BrewRecord("magma_cream", Items.MAGMA_CREAM, 85),
+            new BrewRecord("turtle_shell", Items.TURTLE_HELMET, 140),
+            new BrewRecord("phantom_membrane", Items.PHANTOM_MEMBRANE, 95),
+            new BrewRecord("breeze_rod", Items.BREEZE_ROD, 110),
+            new BrewRecord("stone", Items.STONE, 12),
+            new BrewRecord("cobweb", Items.COBWEB, 32),
+            new BrewRecord("slime_block", Items.SLIME_BLOCK, 34)
+    );
+
     private final PackOutput.PathProvider pathProvider;
     private final CompletableFuture<HolderLookup.Provider> lookupProvider;
 
@@ -103,6 +128,13 @@ public final class EnchantingActionProvider implements DataProvider {
                             .save(output, registries))
                     .forEach(writes::add);
 
+            BREW_ACTIONS.stream()
+                    .map(brew -> brewAction("brew_" + brew.name(), enchantingProfession)
+                            .rewardExp(brew.experience())
+                            .ingredient(brew.ingredient())
+                            .save(output, registries))
+                    .forEach(writes::add);
+
             return CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new));
         });
     }
@@ -120,10 +152,17 @@ public final class EnchantingActionProvider implements DataProvider {
         return new EnchantingActionBuilder(path, profession, pathProvider);
     }
 
+    private BrewingActionBuilder brewAction(String path, Holder<Profession> profession) {
+        return new BrewingActionBuilder(path, profession, pathProvider);
+    }
+
     private record ItemTierAction(String name, double experience, List<Item> items) {
     }
 
     private record EnchantmentRarityAction(String name, double experience, List<ResourceKey<Enchantment>> enchantments) {
+    }
+
+    private record BrewRecord(String name, Item ingredient, double experience) {
     }
 
     private static final class EnchantingActionBuilder {
@@ -153,6 +192,33 @@ public final class EnchantingActionProvider implements DataProvider {
             for (ResourceKey<Enchantment> enchantment : enchantments) {
                 builder.enchantment(enchantment);
             }
+            return this;
+        }
+
+        private CompletableFuture<?> save(CachedOutput output, HolderLookup.Provider registries) {
+            Action<?> action = builder.build();
+            return DataProvider.saveStable(output, registries, Action.TYPED_CODEC, action, pathProvider.json(rl(path)));
+        }
+    }
+
+    private static final class BrewingActionBuilder {
+        private final String path;
+        private final PackOutput.PathProvider pathProvider;
+        private final BrewAction.Builder builder;
+
+        private BrewingActionBuilder(String path, Holder<Profession> profession, PackOutput.PathProvider pathProvider) {
+            this.path = path;
+            this.pathProvider = pathProvider;
+            this.builder = new BrewAction.Builder(profession);
+        }
+
+        private BrewingActionBuilder rewardExp(double exp) {
+            builder.reward(new OccupationExperience.Builder().exp(exp));
+            return this;
+        }
+
+        private BrewingActionBuilder ingredient(Item item) {
+            builder.target(item.builtInRegistryHolder().key());
             return this;
         }
 
